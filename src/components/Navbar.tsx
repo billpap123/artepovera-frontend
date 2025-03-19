@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import axios from "axios";
-import "../styles/Navbar.css"; // or wherever your CSS is
+import "../styles/Navbar.css";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -11,10 +11,11 @@ const Navbar = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
+  // Get user & token from localStorage
   const user = JSON.parse(localStorage.getItem("user") || "{}");
   const token = localStorage.getItem("token");
 
-  // ✅ Use your Vite environment variable, fallback to localhost
+  // Read your backend URL from .env (or default)
   const BACKEND_URL = import.meta.env.VITE_API_URL || "http://localhost:50001";
 
   // Fetch notifications
@@ -45,23 +46,20 @@ const Navbar = () => {
   }, [user.user_id, token, BACKEND_URL]);
 
   const toggleMenu = () => setIsMenuOpen((prev) => !prev);
-
-  // Show/hide notifications dropdown
   const toggleDropdown = () => setShowDropdown((prev) => !prev);
 
-  // Mark a notification as read
   const markAsRead = async (notificationId: number) => {
     try {
       await axios.put(
         `${BACKEND_URL}/api/notifications/${notificationId}`,
         {},
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
       setNotifications((prev) =>
         prev.map((notif) =>
-          notif.notification_id === notificationId ? { ...notif, read_status: true } : notif
+          notif.notification_id === notificationId
+            ? { ...notif, read_status: true }
+            : notif
         )
       );
     } catch (err) {
@@ -69,13 +67,14 @@ const Navbar = () => {
     }
   };
 
-  // Delete a notification
   const deleteNotification = async (notificationId: number) => {
     try {
       await axios.delete(`${BACKEND_URL}/api/notifications/${notificationId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setNotifications((prev) => prev.filter((n) => n.notification_id !== notificationId));
+      setNotifications((prev) =>
+        prev.filter((n) => n.notification_id !== notificationId)
+      );
     } catch (err) {
       console.error("Error deleting notification:", err);
     }
@@ -103,16 +102,22 @@ const Navbar = () => {
         <span></span>
       </div>
       <ul className={`nav-links ${isMenuOpen ? "open" : ""}`}>
+        {/* 
+          IMPORTANT CHANGE:
+          "Home" is hardcoded to "/main" 
+        */}
         <li>
-          <NavLink to="/" className={({ isActive }) => (isActive ? "active" : "")}>
+          <NavLink to="/main" className={({ isActive }) => (isActive ? "active" : "")}>
             Home
           </NavLink>
         </li>
+
         <li>
           <NavLink to="/artist-profile" className={({ isActive }) => (isActive ? "active" : "")}>
             Profile
           </NavLink>
         </li>
+
         <li className="notifications">
           <button className="notifications-button" onClick={toggleDropdown}>
             Notifications ({notifications.length})
@@ -131,7 +136,6 @@ const Navbar = () => {
                       className={notif.read_status ? "read" : "unread"}
                     >
                       <div className="notification-item">
-                        {/* If your message is HTML: */}
                         <div dangerouslySetInnerHTML={{ __html: notif.message }} />
                         <div className="timestamp">
                           {new Date(notif.created_at).toLocaleString()}
