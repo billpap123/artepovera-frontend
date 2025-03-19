@@ -53,7 +53,7 @@ const MainPage = () => {
 
         {/* Job Feed Section to the right */}
         <div className="job-feed-section">
-          <h2>Job Feed</h2>
+          <h2>Job feed</h2>
           <JobFeed />
         </div>
       </div>

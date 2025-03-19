@@ -47,7 +47,6 @@ const JobFeed: React.FC = () => {
 
   return (
     <div className="job-feed" style={{ padding: '20px' }}>
-      <h2>Job Feed</h2>
       {jobs.length > 0 ? (
         jobs.map((job) => (
           <div
