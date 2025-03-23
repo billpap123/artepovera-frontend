@@ -4,10 +4,8 @@ import axios from 'axios';
 import Navbar from '../components/Navbar';
 import '../styles/UserProfilePage.css';
 
-// Use API URL from environment variables for deployment
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:50001";
 
-// Portfolio and job posting interfaces
 interface PortfolioItem {
   portfolio_id: number;
   image_url?: string;
@@ -20,11 +18,14 @@ interface JobPosting {
   description?: string;
 }
 
-// Artist/Employer profile interfaces
 interface ArtistProfile {
   artist_id: number;
   bio?: string;
   profile_picture?: string;
+  // ─────────────────────────────────────────────────────────
+  // ADDED: is_student for the artist
+  // ─────────────────────────────────────────────────────────
+  is_student?: boolean;
 }
 
 interface EmployerProfile {
@@ -33,7 +34,6 @@ interface EmployerProfile {
   profile_picture?: string;
 }
 
-// The main user profile
 interface UserProfile {
   user_id: number;
   fullname: string;
@@ -136,24 +136,38 @@ const UserProfilePage: React.FC = () => {
     if (userProfile.user_type === 'Artist' && userProfile.artistProfile?.artist_id) {
       axios.get(`${API_BASE_URL}/api/portfolios/${userProfile.artistProfile.artist_id}`, {
         headers: { Authorization: `Bearer ${token}` }
-      }).then(res => setPortfolio(res.data))
-        .catch(err => console.error('Error fetching portfolio:', err));
+      })
+      .then(res => setPortfolio(res.data))
+      .catch(err => console.error('Error fetching portfolio:', err));
 
     } else if (userProfile.user_type === 'Employer' && userProfile.employerProfile?.employer_id) {
       axios.get(`${API_BASE_URL}/api/job-postings/employer?employer_id=${userProfile.employerProfile.employer_id}`, {
         headers: { Authorization: `Bearer ${token}` }
-      }).then(res => setJobPostings(res.data))
-        .catch(err => console.error('Error fetching job postings:', err));
+      })
+      .then(res => setJobPostings(res.data))
+      .catch(err => console.error('Error fetching job postings:', err));
     }
   }, [userProfile]);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
-  if (!userProfile) return <><Navbar /><p>No user profile data found.</p></>;
+  if (!userProfile) {
+    return (
+      <>
+        <Navbar />
+        <p>No user profile data found.</p>
+      </>
+    );
+  }
 
   const isArtistProfile = userProfile.user_type === 'Artist';
   const bio = isArtistProfile ? userProfile.artistProfile?.bio : userProfile.employerProfile?.bio;
   const profilePic = isArtistProfile ? userProfile.artistProfile?.profile_picture : userProfile.employerProfile?.profile_picture;
+
+  // ─────────────────────────────────────────────────────────
+  // ADDED: Check if is_student is true for the Artist
+  // ─────────────────────────────────────────────────────────
+  const isStudent = isArtistProfile && userProfile.artistProfile?.is_student === true;
 
   return (
     <>
@@ -166,12 +180,25 @@ const UserProfilePage: React.FC = () => {
             className="user-profile-img"
             src={getImageUrl(profilePic)}
             alt="Profile"
-            onError={(e) => { e.currentTarget.src = '/default-profile.png'; }}
+            onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/default-profile.png'; }}
           />
           <h3 className="user-fullname">{userProfile.fullname}</h3>
           <p className="user-bio">{bio || 'No bio available.'}</p>
 
-          <button onClick={handleLike} disabled={liked} className={`like-button ${liked ? 'liked' : ''}`}>
+          {/* ─────────────────────────────────────────────────────────
+              ADDED: If artist is a student => show a “STUDENT ARTIST” badge
+          ───────────────────────────────────────────────────────── */}
+          {isStudent && (
+            <p style={{ color: 'purple', fontWeight: 'bold' }}>
+              STUDENT ARTIST
+            </p>
+          )}
+
+          <button 
+            onClick={handleLike} 
+            disabled={liked} 
+            className={`like-button ${liked ? 'liked' : ''}`}
+          >
             {liked ? 'Liked' : 'Like'}
           </button>
 
@@ -189,7 +216,7 @@ const UserProfilePage: React.FC = () => {
                           className="portfolio-image"
                           src={getImageUrl(item.image_url)}
                           alt="Portfolio"
-                          onError={(e) => { e.currentTarget.src = '/default-portfolio.png'; }}
+                          onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/default-portfolio.png'; }}
                         />
                       )}
                       <p>{item.description || 'No description'}</p>

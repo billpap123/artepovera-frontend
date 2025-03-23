@@ -1,97 +1,193 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import axios from "axios";
-import "../styles/UserProfile.css";
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { useUserContext } from '../context/UserContext';
+import { useNavigate } from 'react-router-dom';
+import Navbar from '../components/Navbar'; // Import Navbar component
 import '../styles/Global.css';
+import '../styles/ArtistProfile.css';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:50001";
+const UserProfile = () => {
+  const { userId, artistId, employerId, setArtistId, setEmployerId } = useUserContext();
+  const [profile, setProfile] = useState({
+    fullname: '',
+    bio: '',
+    profile_picture: '',
+    user_type: '',
+  });
 
-interface PortfolioItem {
-  portfolio_id: number;
-  image_url: string;
-  description: string;
-}
+  // ─────────────────────────────────────────────────────────
+  // ADDED: Track isStudent so we can show the badge
+  // ─────────────────────────────────────────────────────────
+  const [isStudent, setIsStudent] = useState(false);
 
-interface UserProfileData {
-  fullname: string;
-  bio: string;
-  profile_picture: string;
-  user_type: "Artist" | "Employer";
-  portfolio?: PortfolioItem[]; 
-}
+  const [loading, setLoading] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
+  const [newBio, setNewBio] = useState('');
+  const [newProfilePicture, setNewProfilePicture] = useState<File | null>(null);
+  const [saving, setSaving] = useState(false);
+  const navigate = useNavigate();
 
-const UserProfile: React.FC = () => {
-  const { userId } = useParams<{ userId: string }>();
-  const [userData, setUserData] = useState<UserProfileData | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  // ✅ Use your Vite environment variable, fallback to localhost if not set
+  const BACKEND_URL = import.meta.env.VITE_API_URL || 'http://localhost:50001';
 
   useEffect(() => {
-    const fetchUserProfile = async () => {
+    const fetchProfile = async () => {
       try {
-        const token = localStorage.getItem("token");
-        if (!token) {
-          throw new Error("No authentication token found. Please log in.");
-        }
-
-        const response = await axios.get(`${API_BASE_URL}/api/users/${userId}`, {
-          headers: { Authorization: `Bearer ${token}` },
+        const response = await axios.get(`${BACKEND_URL}/api/users/me`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
         });
 
-        setUserData(response.data);
-      } catch (err) {
-        console.error("❌ Error fetching user profile:", err);
-        setError("Failed to fetch user profile. Please try again later.");
+        console.log('API Response:', response.data);
+
+        const { fullname, user_type, artist, employer } = response.data;
+
+        let bio = '';
+        let profile_picture = '';
+
+        if (user_type === 'Artist' && artist) {
+          setArtistId(artist.artist_id);
+          bio = artist.bio;
+          profile_picture = artist.profile_picture;
+
+          // ─────────────────────────────────────────────────────────
+          // ADDED: If the backend returns artist.is_student, store it
+          // ─────────────────────────────────────────────────────────
+          if (artist.is_student) {
+            setIsStudent(true);
+          }
+
+        } else if (user_type === 'Employer' && employer) {
+          setEmployerId(employer.employer_id);
+          bio = employer.bio;
+          profile_picture = employer.profile_picture;
+        }
+
+        setProfile({ fullname, bio, profile_picture, user_type });
+        setNewBio(bio);
+      } catch (error) {
+        console.error('Error fetching profile:', error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchUserProfile();
-  }, [userId]);
+    fetchProfile();
+  }, [setArtistId, setEmployerId, BACKEND_URL]);
 
-  if (loading) return <p>Loading profile...</p>;
-  if (error) return <p className="error-message">{error}</p>;
+  const handleEditToggle = () => {
+    setIsEditing(!isEditing);
+  };
+
+  const handleProfilePictureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && (file.type === 'image/png' || file.type === 'image/jpeg')) {
+      setNewProfilePicture(file);
+    } else {
+      alert('Please upload a valid image file (PNG or JPG).');
+    }
+  };
+
+  const handleSaveChanges = async () => {
+    const formData = new FormData();
+    formData.append('bio', newBio);
+    if (newProfilePicture) formData.append('profile_picture', newProfilePicture);
+
+    try {
+      setSaving(true);
+
+      if (profile.user_type === 'Artist') {
+        await axios.post(
+          `${BACKEND_URL}/api/artists/profile/${artistId}`,
+          formData,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+              Authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+          }
+        );
+      } else if (profile.user_type === 'Employer') {
+        await axios.post(
+          `${BACKEND_URL}/api/employers/profile/${employerId}`,
+          formData,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+              Authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+          }
+        );
+      }
+
+      alert('Profile updated successfully!');
+      setIsEditing(false);
+    } catch (error) {
+      console.error('Error saving changes:', error);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (loading) return <p className="loading-message">Loading profile...</p>;
 
   return (
-    <div className="user-profile">
-      <div className="profile-header">
-        <img
-          src={userData?.profile_picture || "/default-profile.png"}
-          alt={`${userData?.fullname}'s Profile`}
-          className="profile-picture"
-        />
-        <h2>{userData?.fullname}</h2>
-        <p className="user-type">{userData?.user_type}</p>
-      </div>
+    <>
+      <Navbar />
+      <div className="main-content">
+        <div className="profile-container">
+          <h2 className="profile-header">{profile.user_type} profile</h2>
 
-      <div className="profile-bio">
-        <h3>Bio</h3>
-        <p>{userData?.bio || "No bio provided."}</p>
-      </div>
+          <img
+            src={profile.profile_picture || '/default-profile.png'}
+            alt="Profile"
+            className="profile-image"
+          />
 
-      {userData?.user_type === "Artist" && userData.portfolio && (
-        <div className="profile-portfolio">
-          <h3>Portfolio</h3>
-          {userData.portfolio.length > 0 ? (
-            <div className="portfolio-grid">
-              {userData.portfolio.map((item) => (
-                <div key={item.portfolio_id} className="portfolio-item">
-                  <img
-                    src={item.image_url}
-                    alt={item.description || "Portfolio Item"}
-                    className="portfolio-image"
-                  />
-                  <p>{item.description}</p>
-                </div>
-              ))}
-            </div>
+          <h3 className="profile-name">{profile.fullname}</h3>
+
+          {/* ─────────────────────────────────────────────────────────
+              ADDED: Display a “Student Artist” badge if isStudent
+          ───────────────────────────────────────────────────────── */}
+          {profile.user_type === 'Artist' && isStudent && (
+            <p style={{ color: 'purple', fontWeight: 'bold' }}>
+              STUDENT ARTIST
+            </p>
+          )}
+
+          {!isEditing ? (
+            <>
+              <p className="profile-bio">{profile.bio}</p>
+              <button className="edit-button" onClick={handleEditToggle}>
+                Edit profile
+              </button>
+            </>
           ) : (
-            <p>No portfolio items available.</p>
+            <>
+              <textarea
+                value={newBio}
+                onChange={(e) => setNewBio(e.target.value)}
+                className="bio-input"
+              />
+              <input
+                type="file"
+                onChange={handleProfilePictureChange}
+                className="file-input"
+              />
+              <div className="button-group">
+                <button className="save-button" onClick={handleSaveChanges} disabled={saving}>
+                  {saving ? 'Saving...' : 'Save'}
+                </button>
+                <button className="cancel-button" onClick={handleEditToggle}>
+                  Cancel
+                </button>
+              </div>
+            </>
           )}
         </div>
-      )}
-    </div>
+      </div>
+    </>
   );
 };
 
