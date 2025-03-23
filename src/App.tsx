@@ -2,7 +2,6 @@ import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { UserProvider } from "./context/UserContext";
 
-// Pages & Components
 import LandingPage from "./pages/LandingPage";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
@@ -23,16 +22,10 @@ const App = () => {
   return (
     <UserProvider>
       <Routes>
-        {/* If logged in, go to /main, else LandingPage */}
+        {/* If logged in, go to /main, else show LandingPage */}
         <Route
           path="/"
-          element={
-            token ? (
-              <Navigate to="/main" replace />
-            ) : (
-              <LandingPage />
-            )
-          }
+          element={token ? <Navigate to="/main" replace /> : <LandingPage />}
         />
 
         {/* Public routes */}
@@ -53,11 +46,10 @@ const App = () => {
           <Route path="/job-listings" element={<JobListings />} />
         </Route>
 
-        {/* If your “Post Job” route is protected, wrap it in ProtectedRoute, 
-            otherwise you can leave it as a public route */}
+        {/* “Post Job” can be public or protected, your call */}
         <Route path="/post-job" element={<PostJobPage />} />
 
-        {/* Catch-all route: if logged in => /main, else => /login */}
+        {/* Catch-all route */}
         <Route
           path="*"
           element={<Navigate to={token ? "/main" : "/login"} replace />}
