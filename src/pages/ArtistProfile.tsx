@@ -1,219 +1,192 @@
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import Navbar from '../components/Navbar';
-import '../styles/UserProfilePage.css';
+import { useUserContext } from '../context/UserContext';
+import { useNavigate } from 'react-router-dom';
+import Navbar from '../components/Navbar'; // Import Navbar component
+import '../styles/Global.css';
+import '../styles/ArtistProfile.css';
 
-// Use API URL from environment variables for deployment
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:50001";
-
-// Portfolio and job posting interfaces
-interface PortfolioItem {
-  portfolio_id: number;
-  image_url?: string;
-  description?: string;
-}
-
-interface JobPosting {
-  job_id: number;
-  title: string;
-  description?: string;
-}
-
-// Artist/Employer profile interfaces
-interface ArtistProfile {
-  artist_id: number;
-  bio?: string;
-  profile_picture?: string;
-}
-
-interface EmployerProfile {
-  employer_id: number;
-  bio?: string;
-  profile_picture?: string;
-}
-
-// The main user profile
-interface UserProfile {
-  user_id: number;
-  fullname: string;
-  user_type: string;
-  artistProfile?: ArtistProfile | null;
-  employerProfile?: EmployerProfile | null;
-}
-
-const UserProfilePage: React.FC = () => {
-  const { userId } = useParams<{ userId: string }>();
-
-  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
-  const [liked, setLiked] = useState<boolean>(false);
-  const [portfolio, setPortfolio] = useState<PortfolioItem[]>([]);
-  const [jobPostings, setJobPostings] = useState<JobPosting[]>([]);
+const UserProfile = () => {
+  const { userId, artistId, employerId, setArtistId, setEmployerId } = useUserContext();
+  const [profile, setProfile] = useState({
+    fullname: '',
+    bio: '',
+    profile_picture: '',
+    user_type: '',
+    // ADD a local flag to track if the user is a student artist
+    isStudent: false
+  });
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [newBio, setNewBio] = useState('');
+  const [newProfilePicture, setNewProfilePicture] = useState<File | null>(null);
+  const [saving, setSaving] = useState(false);
+  const navigate = useNavigate();
 
-  // Helper function for full image URL
-  const getImageUrl = (path?: string) => {
-    if (!path) return '/default-profile.png';
-    if (path.startsWith('http')) return path;
-    return `${API_BASE_URL}/${path.replace(/^uploads\/uploads\//, 'uploads/')}`;
-  };
+  // ✅ Use your Vite environment variable, fallback to localhost if not set
+  const BACKEND_URL = import.meta.env.VITE_API_URL || 'http://localhost:50001';
 
-  // Fetch Like Status
-  const fetchLikeStatus = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) return;
-
-      const response = await axios.get(`${API_BASE_URL}/api/users/${userId}/like`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setLiked(response.data.liked);
-    } catch (err) {
-      console.error('Error fetching like status:', err);
-    }
-  };
-
-  // Handle Liking User
-  const handleLike = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        alert("You must be logged in to like someone.");
-        return;
-      }
-      if (liked) return;
-      await axios.post(`${API_BASE_URL}/api/users/${userId}/like`, {}, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setLiked(true);
-    } catch (err) {
-      console.error('Error liking user:', err);
-      alert('Failed to like. Check console for details.');
-    }
-  };
-
-  // Fetch User Profile
   useEffect(() => {
-    if (!userId) {
-      setError("Invalid user ID.");
-      setLoading(false);
-      return;
-    }
-
-    const fetchUserProfile = async () => {
+    const fetchProfile = async () => {
       try {
-        const token = localStorage.getItem('token');
-        if (!token) {
-          setError("No token found; user might not be logged in.");
-          setLoading(false);
-          return;
-        }
-
-        const response = await axios.get(`${API_BASE_URL}/api/users/profile/${userId}`, {
-          headers: { Authorization: `Bearer ${token}` }
+        const response = await axios.get(`${BACKEND_URL}/api/users/me`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
         });
 
-        setUserProfile(response.data);
-        fetchLikeStatus();
-      } catch (err) {
-        setError('Error fetching user profile.');
-        console.error(err);
+        console.log('API Response:', response.data); // ✅ Log the full response
+
+        const { fullname, user_type, artist, employer } = response.data;
+
+        let bio = '';
+        let profile_picture = '';
+        let isStudentVal = false; // new local variable to track is_student
+
+        if (user_type === 'Artist' && artist) {
+          setArtistId(artist.artist_id);
+          bio = artist.bio;
+          profile_picture = artist.profile_picture;
+          // If the backend is returning `artist.is_student`, capture it:
+          isStudentVal = !!artist.is_student;
+        } else if (user_type === 'Employer' && employer) {
+          setEmployerId(employer.employer_id);
+          bio = employer.bio;
+          profile_picture = employer.profile_picture;
+        }
+
+        // Now we include isStudentVal in the profile state
+        setProfile({
+          fullname,
+          bio,
+          profile_picture,
+          user_type,
+          isStudent: isStudentVal
+        });
+        setNewBio(bio);
+      } catch (error) {
+        console.error('Error fetching profile:', error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchUserProfile();
-  }, [userId]);
+    fetchProfile();
+  }, [setArtistId, setEmployerId, BACKEND_URL]);
 
-  // Fetch Portfolio or Job Postings
-  useEffect(() => {
-    if (!userProfile) return;
-    const token = localStorage.getItem('token');
-    if (!token) return;
+  const handleEditToggle = () => {
+    setIsEditing(!isEditing);
+  };
 
-    if (userProfile.user_type === 'Artist' && userProfile.artistProfile?.artist_id) {
-      axios.get(`${API_BASE_URL}/api/portfolios/${userProfile.artistProfile.artist_id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      }).then(res => setPortfolio(res.data))
-        .catch(err => console.error('Error fetching portfolio:', err));
-
-    } else if (userProfile.user_type === 'Employer' && userProfile.employerProfile?.employer_id) {
-      axios.get(`${API_BASE_URL}/api/job-postings/employer?employer_id=${userProfile.employerProfile.employer_id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      }).then(res => setJobPostings(res.data))
-        .catch(err => console.error('Error fetching job postings:', err));
+  const handleProfilePictureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && (file.type === 'image/png' || file.type === 'image/jpeg')) {
+      setNewProfilePicture(file);
+    } else {
+      alert('Please upload a valid image file (PNG or JPG).');
     }
-  }, [userProfile]);
+  };
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>{error}</p>;
-  if (!userProfile) return <><Navbar /><p>No user profile data found.</p></>;
+  const handleSaveChanges = async () => {
+    const formData = new FormData();
+    formData.append('bio', newBio);
+    if (newProfilePicture) formData.append('profile_picture', newProfilePicture);
 
-  const isArtistProfile = userProfile.user_type === 'Artist';
-  const bio = isArtistProfile ? userProfile.artistProfile?.bio : userProfile.employerProfile?.bio;
-  const profilePic = isArtistProfile ? userProfile.artistProfile?.profile_picture : userProfile.employerProfile?.profile_picture;
+    try {
+      setSaving(true);
+
+      if (profile.user_type === 'Artist') {
+        await axios.post(
+          `${BACKEND_URL}/api/artists/profile/${artistId}`,
+          formData,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+              Authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+          }
+        );
+      } else if (profile.user_type === 'Employer') {
+        await axios.post(
+          `${BACKEND_URL}/api/employers/profile/${employerId}`,
+          formData,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+              Authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+          }
+        );
+      }
+
+      alert('Profile updated successfully!');
+      setIsEditing(false);
+    } catch (error) {
+      console.error('Error saving changes:', error);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (loading) return <p className="loading-message">Loading profile...</p>;
 
   return (
     <>
-      <Navbar />
+      <Navbar /> {/* Navbar at the top */}
+      <div className="main-content">
+        <div className="profile-container">
+          <h2 className="profile-header">{profile.user_type} profile</h2>
 
-      <div className="user-profile-page">
-        <div className="profile-decor"></div>
-        <div className="profile-card">
           <img
-            className="user-profile-img"
-            src={getImageUrl(profilePic)}
+            src={profile.profile_picture || '/default-profile.png'}
             alt="Profile"
-            onError={(e) => { e.currentTarget.src = '/default-profile.png'; }}
+            className="profile-image"
           />
-          <h3 className="user-fullname">{userProfile.fullname}</h3>
-          <p className="user-bio">{bio || 'No bio available.'}</p>
 
-          <button onClick={handleLike} disabled={liked} className={`like-button ${liked ? 'liked' : ''}`}>
-            {liked ? 'Liked' : 'Like'}
-          </button>
+          <h3 className="profile-name">{profile.fullname}</h3>
 
-          {isArtistProfile ? (
-            <div className="portfolio-section">
-              <h4>Portfolio</h4>
-              {portfolio.length === 0 ? (
-                <p>No portfolio items.</p>
-              ) : (
-                <div className="portfolio-items">
-                  {portfolio.map((item) => (
-                    <div key={item.portfolio_id} className="portfolio-item">
-                      {item.image_url && (
-                        <img
-                          className="portfolio-image"
-                          src={getImageUrl(item.image_url)}
-                          alt="Portfolio"
-                          onError={(e) => { e.currentTarget.src = '/default-portfolio.png'; }}
-                        />
-                      )}
-                      <p>{item.description || 'No description'}</p>
-                    </div>
-                  ))}
-                </div>
-              )}
+          {/* 
+            NEW: If this is an Artist and isStudent is true, 
+            show a “Student Artist” badge or text 
+          */}
+          {profile.user_type === 'Artist' && profile.isStudent && (
+            <div className="student-badge">
+              Student Artist
             </div>
+          )}
+
+          {!isEditing ? (
+            <>
+              <p className="profile-bio">{profile.bio}</p>
+              <button className="edit-button" onClick={handleEditToggle}>
+                Edit profile
+              </button>
+            </>
           ) : (
-            <div className="job-postings-section">
-              <h4>Job feed</h4>
-              {jobPostings.length === 0 ? (
-                <p>No job postings.</p>
-              ) : (
-                <div className="job-postings-list">
-                  {jobPostings.map((job) => (
-                    <div key={job.job_id} className="job-posting-item">
-                      <h5>{job.title}</h5>
-                      <p>{job.description || 'No description'}</p>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+            <>
+              <textarea
+                value={newBio}
+                onChange={(e) => setNewBio(e.target.value)}
+                className="bio-input"
+              />
+              <input
+                type="file"
+                onChange={handleProfilePictureChange}
+                className="file-input"
+              />
+              <div className="button-group">
+                <button
+                  className="save-button"
+                  onClick={handleSaveChanges}
+                  disabled={saving}
+                >
+                  {saving ? 'Saving...' : 'Save'}
+                </button>
+                <button className="cancel-button" onClick={handleEditToggle}>
+                  Cancel
+                </button>
+              </div>
+            </>
           )}
         </div>
       </div>
@@ -221,4 +194,4 @@ const UserProfilePage: React.FC = () => {
   );
 };
 
-export default UserProfilePage;
+export default UserProfile;

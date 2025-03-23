@@ -1,3 +1,5 @@
+// src/pages/Register.tsx
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
@@ -19,24 +21,23 @@ const Register = () => {
   const navigate = useNavigate();
 
   // ─────────────────────────────────────────────────────────
-  // 1) OPTIONAL: Student Artist Checkbox
+  // (A) Student Artist checkbox
   // ─────────────────────────────────────────────────────────
   const [isStudent, setIsStudent] = useState(false);
 
   // ─────────────────────────────────────────────────────────
-  // 2) OPTIONAL: Location Checkbox & State
+  // (B) Location sharing checkbox & state
   // ─────────────────────────────────────────────────────────
   const [enableLocation, setEnableLocation] = useState(false);
   const [coords, setCoords] = useState<[number, number] | null>(null);
 
-  // Whenever enableLocation is checked, try to get user’s location
   useEffect(() => {
     if (enableLocation) {
       if ("geolocation" in navigator) {
         navigator.geolocation.getCurrentPosition(
           (position) => {
             const { latitude, longitude } = position.coords;
-            // Longitude first, then latitude for your "POINT(lon lat)" usage
+            // Your server expects [longitude, latitude]
             setCoords([longitude, latitude]);
           },
           (error) => {
@@ -44,7 +45,7 @@ const Register = () => {
           }
         );
       } else {
-        console.error("Geolocation not supported by this browser.");
+        console.error("Geolocation is not supported by this browser.");
       }
     } else {
       // If user unchecks location, remove coords
@@ -55,9 +56,7 @@ const Register = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      // ─────────────────────────────────────────────────────────
-      // 3) Build the request payload
-      // ─────────────────────────────────────────────────────────
+      // Build request body
       const requestBody: any = {
         username,
         email,
@@ -67,35 +66,31 @@ const Register = () => {
         user_type
       };
 
-      // If location is enabled & we have coordinates, include them
+      // If user chose to share location & we have coords => add them
       if (coords) {
         requestBody.location = {
           coordinates: coords,
         };
       }
 
-      // If you want to send "isStudent" to the backend,
-      // you need to store it in the DB or do something with it.
-      // For now, let's just pass it along:
-      if (isStudent) {
+      // If user is a student, pass it along
+      if (isStudent && user_type === 'Artist') {
         requestBody.isStudent = true;
       }
 
-      // ─────────────────────────────────────────────────────────
-      // 4) Register the user with our new requestBody
-      // ─────────────────────────────────────────────────────────
+      // Post to backend
       const response = await axios.post(`${API_BASE_URL}/api/users/register`, requestBody);
 
       const { user_id, artist_id, employer_id, token } = response.data;
 
-      // Store the token for authentication
+      // Store token
       localStorage.setItem('token', token);
       localStorage.setItem('user', JSON.stringify(response.data));
 
-      // Set userId in context
+      // Set user context
       setUserId(user_id);
 
-      // Navigate based on user type
+      // Navigate
       if (user_type === 'Artist' && artist_id) {
         setArtistId(artist_id);
         navigate('/artist-profile'); 
@@ -103,7 +98,7 @@ const Register = () => {
         setEmployerId(employer_id);
         navigate('/employer-profile'); 
       } else {
-        navigate('/main'); // Fallback
+        navigate('/main');
       }
     } catch (err) {
       setError('Error registering user');
@@ -119,51 +114,57 @@ const Register = () => {
     <div className="register-container">
       <form onSubmit={handleSubmit} className="register-form">
         <h2>Register</h2>
+
         <div>
           <label>Username:</label>
           <input 
-            type="text" 
-            value={username} 
-            onChange={(e) => setUsername(e.target.value)} 
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
             required 
           />
         </div>
+
         <div>
           <label>Email:</label>
           <input 
-            type="email" 
-            value={email} 
-            onChange={(e) => setEmail(e.target.value)} 
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             required 
           />
         </div>
+
         <div>
           <label>Password:</label>
           <input 
-            type="password" 
-            value={password} 
-            onChange={(e) => setPassword(e.target.value)} 
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             required 
           />
         </div>
+
         <div>
           <label>Full Name:</label>
           <input 
-            type="text" 
-            value={fullname} 
-            onChange={(e) => setFullname(e.target.value)} 
+            type="text"
+            value={fullname}
+            onChange={(e) => setFullname(e.target.value)}
             required 
           />
         </div>
+
         <div>
           <label>Phone Number:</label>
           <input 
-            type="tel" 
-            value={phone_number} 
-            onChange={(e) => setPhoneNumber(e.target.value)} 
+            type="tel"
+            value={phone_number}
+            onChange={(e) => setPhoneNumber(e.target.value)}
             required 
           />
         </div>
+
         <div>
           <label>User Type:</label>
           <select value={user_type} onChange={(e) => setUserType(e.target.value)}>
@@ -172,16 +173,13 @@ const Register = () => {
           </select>
         </div>
 
-        {/* ─────────────────────────────────────────────────────────
-            5) Student Artist Checkbox
-            (only relevant if user_type === 'Artist'—but that’s up to you)
-        ───────────────────────────────────────────────────────── */}
+        {/* (A) Show “I am a student” only if user is Artist */}
         {user_type === 'Artist' && (
           <div style={{ margin: '10px 0' }}>
             <label>
-              <input 
-                type="checkbox" 
-                checked={isStudent} 
+              <input
+                type="checkbox"
+                checked={isStudent}
                 onChange={(e) => setIsStudent(e.target.checked)}
               />
               I am a student artist
@@ -189,14 +187,12 @@ const Register = () => {
           </div>
         )}
 
-        {/* ─────────────────────────────────────────────────────────
-            6) Enable Location Checkbox
-        ───────────────────────────────────────────────────────── */}
+        {/* (B) Enable location */}
         <div style={{ margin: '10px 0' }}>
           <label>
-            <input 
-              type="checkbox" 
-              checked={enableLocation} 
+            <input
+              type="checkbox"
+              checked={enableLocation}
               onChange={(e) => setEnableLocation(e.target.checked)}
             />
             Share my current location
@@ -205,7 +201,7 @@ const Register = () => {
 
         <button type="submit">Register</button>
         {error && <p style={{ color: 'red' }}>{error}</p>}
-        
+
         <p style={{ marginTop: '20px' }}>
           Already have an account?{' '}
           <Link to="/login" style={{ color: '#007BFF', textDecoration: 'none' }}>
