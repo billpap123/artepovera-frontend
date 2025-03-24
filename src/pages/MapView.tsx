@@ -15,32 +15,10 @@ import artistIconPath from '../assets/icons/artist-icon.png';
 import employerIconPath from '../assets/icons/employer-icon.png';
 import '../styles/Global.css';
 
-// Read API URL from environment variables or fall back to localhost
+// ✅ Read API URL from environment variables
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:50001';
 
-// Define the shape of each location
-interface LocationData {
-  user_id: number;
-  fullname: string;
-  location: {
-    latitude: number;
-    longitude: number;
-  };
-  // After we fetch the user’s full profile, we store it here:
-  profile?: {
-    // If your server returns a flattened shape:
-    user_id: number;
-    fullname: string;
-    user_type: string;
-    bio?: string;
-    profile_picture?: string;
-    // If you have separate artistProfile/employerProfile, adapt accordingly:
-    // artistProfile?: { bio?: string; profile_picture?: string; is_student?: boolean; };
-    // employerProfile?: { bio?: string; profile_picture?: string; };
-  };
-}
-
-// Define custom Leaflet icons
+// Define custom icons
 const artistIcon = new L.Icon({
   iconUrl: artistIconPath,
   iconSize: [25, 41],
@@ -55,24 +33,49 @@ const employerIcon = new L.Icon({
   popupAnchor: [1, -34],
 });
 
-// (Optional) component that resets the view to `center` on zoom
+// Data from your GET /api/locations?userType=...
+interface LocationData {
+  user_id: number;
+  fullname: string;
+  location: {
+    latitude: number;
+    longitude: number;
+  };
+  // The profile data from GET /api/users/profile/:userId
+  profile?: {
+    user_id: number;
+    fullname: string;
+    user_type: string;
+    artistProfile?: {
+      bio?: string;
+      profile_picture?: string;
+      is_student?: boolean;
+    };
+    employerProfile?: {
+      bio?: string;
+      profile_picture?: string;
+    };
+  };
+}
+
+// (Optional) Component to reset the view on zoom changes
 const ResetViewOnZoom = ({ center }: { center: [number, number] }) => {
   const map = useMapEvents({
     zoomend: () => {
-      map.setView(center); // Keeps the center fixed after zoom
+      map.setView(center); // This keeps the center fixed after zoom
     },
   });
   return null;
 };
 
-// Props: userType is the type of the logged-in user (“Artist” or “Employer”)
 const MapView = ({ userType }: { userType: string }) => {
   const [locations, setLocations] = useState<LocationData[]>([]);
   const navigate = useNavigate();
 
-  // Example center (Patras, Greece). Adjust as needed
+  // Center of Patras, Greece
   const center: [number, number] = [38.246639, 21.734573];
 
+  // Fetch basic location data => Then fetch each user’s full profile
   useEffect(() => {
     const fetchLocations = async () => {
       try {
@@ -82,35 +85,34 @@ const MapView = ({ userType }: { userType: string }) => {
           return;
         }
 
-        // If the logged-in user is an Artist, we fetch Employer locations; else fetch Artist
+        // If I'm an Artist, I want to see Employers, else Artists
         const targetUserType = userType === 'Artist' ? 'Employer' : 'Artist';
 
-        // 1) Fetch the basic location data from your backend
-        const resp = await axios.get(
+        // 1) Fetch the basic location data
+        const response = await axios.get(
           `${API_BASE_URL}/api/locations?userType=${targetUserType}`,
-          { headers: { Authorization: `Bearer ${token}` } }
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
         );
 
-        const fetchedLocations: LocationData[] = resp.data;
+        const fetchedLocations: LocationData[] = response.data;
 
         // 2) For each location, fetch the user’s full profile
         const updatedLocations = await Promise.all(
           fetchedLocations.map(async (loc) => {
             try {
-              const profileResp = await axios.get(
+              const profileRes = await axios.get(
                 `${API_BASE_URL}/api/users/profile/${loc.user_id}`,
                 { headers: { Authorization: `Bearer ${token}` } }
               );
               return {
                 ...loc,
-                profile: profileResp.data,
+                profile: profileRes.data, // This is where we get artistProfile/employerProfile
               };
             } catch (err) {
-              console.error(
-                `Error fetching profile for user_id=${loc.user_id}:`,
-                err
-              );
-              return loc; // fallback with no `profile`
+              console.error('Error fetching profile for user_id=', loc.user_id, err);
+              return loc; // Fallback: keep location as is
             }
           })
         );
@@ -124,12 +126,19 @@ const MapView = ({ userType }: { userType: string }) => {
     fetchLocations();
   }, [userType]);
 
+  // Helper function to build full URLs for images
+  const getImageUrl = (path?: string) => {
+    if (!path) return '/default-profile.png';
+    if (path.startsWith('http')) return path;
+    return `${API_BASE_URL}/${path.replace(/^uploads\/uploads\//, 'uploads/')}`;
+  };
+
   return (
     <div className="map-page">
       <MapContainer
         className="leaflet-map"
         center={center}
-        zoom={14}
+        zoom={15}
         maxZoom={24}
       >
         <ResetViewOnZoom center={center} />
@@ -140,53 +149,61 @@ const MapView = ({ userType }: { userType: string }) => {
         />
 
         {locations.map((loc) => {
-          // The marker icon depends on the user type we’re looking at
-          // If *we* are an Artist, the markers are Employers => use employerIcon
-          // If *we* are an Employer, the markers are Artists => use artistIcon
-          const markerIcon = userType === 'Artist' ? employerIcon : artistIcon;
+          // Decide which icon to use (if I'm Artist => these pins are Employers, else Artists)
+          const pinIcon = userType === 'Artist' ? employerIcon : artistIcon;
+
+          // Prepare top-level fallback name
+          let displayName = loc.fullname;
+          let displayBio: string | null = null;
+          let displayProfilePic: string | null = null;
+
+          // If we have a loaded profile from /api/users/profile/:id
+          if (loc.profile) {
+            displayName = loc.profile.fullname;
+
+            // If this user is an Artist
+            if (loc.profile.user_type === 'Artist' && loc.profile.artistProfile) {
+              displayBio = loc.profile.artistProfile.bio || null;
+              displayProfilePic = loc.profile.artistProfile.profile_picture || null;
+            }
+            // If this user is an Employer
+            else if (loc.profile.user_type === 'Employer' && loc.profile.employerProfile) {
+              displayBio = loc.profile.employerProfile.bio || null;
+              displayProfilePic = loc.profile.employerProfile.profile_picture || null;
+            }
+          }
 
           return (
             <Marker
               key={loc.user_id}
               position={[loc.location.latitude, loc.location.longitude]}
-              icon={markerIcon}
+              icon={pinIcon}
             >
               <Popup>
                 <div className="popup-content">
-                  {/* If we have a full profile, show it */}
-                  {loc.profile ? (
-                    <>
-                      <strong>{loc.profile.fullname}</strong>
-                      <br />
-                      {loc.profile.bio ? (
-                        <em>{loc.profile.bio}</em>
-                      ) : (
-                        <span>No bio available</span>
-                      )}
-                      <br />
-                      {loc.profile.profile_picture && (
-                        <img
-                          src={loc.profile.profile_picture}
-                          alt="Profile"
-                          style={{
-                            width: '60px',
-                            height: '60px',
-                            borderRadius: '50%',
-                          }}
-                        />
-                      )}
-                    </>
+                  <strong>{displayName}</strong>
+                  <br />
+
+                  {displayBio ? (
+                    <em>{displayBio}</em>
                   ) : (
-                    // Fallback if no profile data
-                    <>
-                      <strong>{loc.fullname}</strong>
-                      <br />
-                      <span>Loading profile...</span>
-                    </>
+                    <span>No bio available</span>
                   )}
 
                   <br />
-                  {/* The userType logic: if I'm Artist, this loc is Employer, else Artist */}
+                  {displayProfilePic && (
+                    <img
+                      src={getImageUrl(displayProfilePic)}
+                      alt="Profile"
+                      style={{ width: '60px', height: '60px', borderRadius: '50%' }}
+                      onError={(e) => {
+                        (e.currentTarget as HTMLImageElement).src = '/default-profile.png';
+                      }}
+                    />
+                  )}
+
+                  <br />
+                  {/* The userType logic: if I'm Artist, this location is Employer, else Artist */}
                   <small>{userType === 'Artist' ? 'Employer' : 'Artist'}</small>
                   <br />
 
