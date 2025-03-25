@@ -1,9 +1,9 @@
+// src/pages/Portfolio.tsx
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import "../styles/Portfolio.css";
 import Navbar from "../components/Navbar";
 import '../styles/Global.css';
+import '../styles/Portfolio.css';
 
 interface PortfolioItem {
   portfolio_id: number;
@@ -12,30 +12,27 @@ interface PortfolioItem {
 }
 
 interface PortfolioProps {
-  // This MUST be the actual artist_id from the DB, not user_id
+  // Must be the actual artist_id from the DB
   artistId: number;
 }
 
 const Portfolio: React.FC<PortfolioProps> = ({ artistId }) => {
-  const [portfolioItems, setPortfolioItems] = useState<PortfolioItem[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [items, setItems] = useState<PortfolioItem[]>([]);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [description, setDescription] = useState<string>('');
+  const [description, setDescription] = useState('');
   const [editMode, setEditMode] = useState<{ id: number | null; description: string }>({
     id: null,
     description: '',
   });
 
-  const navigate = useNavigate();
-
-  // Read the base URL from your .env (Vite) or fallback
   const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:50001';
 
   useEffect(() => {
-    // If artistId is invalid (e.g. 0 or undefined), skip
     if (!artistId || artistId <= 0) {
-      setError('Invalid artist ID. Please log in again or check your user data.');
+      setError('Invalid artist ID. Check your user/artist data or login again.');
       setLoading(false);
       return;
     }
@@ -49,32 +46,19 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId }) => {
     try {
       const token = localStorage.getItem('token');
       if (!token) {
-        setError('No token found; you must be logged in.');
+        setError('No token found. Please log in.');
         setLoading(false);
         return;
       }
 
-      const response = await axios.get(`${API_BASE_URL}/api/portfolios/${artistId}`, {
+      const res = await axios.get(`${API_BASE_URL}/api/portfolios/${artistId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      // If your backend returns relative image paths, convert them to absolute:
-      const items: PortfolioItem[] = response.data.map((item: PortfolioItem) => {
-        // If image_url is already absolute (http...), leave it alone
-        if (item.image_url.startsWith('http')) {
-          return item;
-        }
-        // Otherwise, prepend the API_BASE_URL
-        return {
-          ...item,
-          image_url: `${API_BASE_URL}/${item.image_url.replace(/^uploads\//, '')}`,
-        };
-      });
-
-      setPortfolioItems(items);
+      setItems(res.data);
     } catch (err) {
       console.error('Error fetching portfolio:', err);
-      setError('Error fetching portfolio. Please try again later.');
+      setError('Failed to load portfolio items.');
     } finally {
       setLoading(false);
     }
@@ -92,18 +76,17 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId }) => {
       alert('Please select an image first.');
       return;
     }
-
     try {
-      const formData = new FormData();
-      formData.append('image', selectedFile);
-      formData.append('description', description);
-      formData.append('artist_id', artistId.toString());
-
       const token = localStorage.getItem('token');
       if (!token) {
-        alert('No token found; you must be logged in.');
+        alert('No token found. You must be logged in.');
         return;
       }
+
+      const formData = new FormData();
+      formData.append('image', selectedFile); // must match `upload.single("image")`
+      formData.append('description', description);
+      formData.append('artist_id', String(artistId));
 
       await axios.post(`${API_BASE_URL}/api/portfolios`, formData, {
         headers: {
@@ -112,70 +95,63 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId }) => {
         },
       });
 
-      // Reset fields
-      setDescription('');
+      // Reset
       setSelectedFile(null);
-
-      // Refresh
+      setDescription('');
       fetchPortfolio();
     } catch (err) {
       console.error('Error uploading image:', err);
-      alert('Error uploading image. Check console for details.');
+      alert('Failed to upload image.');
     }
   };
 
-  const handleEdit = async (id: number) => {
+  const handleEdit = async (portfolioId: number) => {
     if (!editMode.description.trim()) {
       alert('Description cannot be empty.');
       return;
     }
-
     try {
       const token = localStorage.getItem('token');
       if (!token) {
-        alert('No token found; you must be logged in.');
+        alert('No token found. Please log in.');
         return;
       }
 
       await axios.put(
-        `${API_BASE_URL}/api/portfolios/${id}`,
+        `${API_BASE_URL}/api/portfolios/${portfolioId}`,
         { description: editMode.description },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      // Clear edit mode
       setEditMode({ id: null, description: '' });
-      // Refresh
       fetchPortfolio();
     } catch (err) {
       console.error('Error updating portfolio item:', err);
-      alert('Error updating portfolio item.');
+      alert('Failed to update portfolio item.');
     }
   };
 
-  const handleDelete = async (id: number) => {
-    if (!window.confirm('Are you sure you want to delete this portfolio item?')) return;
-
+  const handleDelete = async (portfolioId: number) => {
+    if (!window.confirm('Are you sure you want to delete this item?')) return;
     try {
       const token = localStorage.getItem('token');
       if (!token) {
-        alert('No token found; you must be logged in.');
+        alert('No token found. Please log in.');
         return;
       }
 
-      await axios.delete(`${API_BASE_URL}/api/portfolios/${id}`, {
+      await axios.delete(`${API_BASE_URL}/api/portfolios/${portfolioId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      // Refresh
       fetchPortfolio();
     } catch (err) {
       console.error('Error deleting portfolio item:', err);
-      alert('Error deleting portfolio item.');
+      alert('Failed to delete portfolio item.');
     }
   };
 
-  if (loading) return <p className="loading-message">Loading portfolio...</p>;
+  if (loading) return <p>Loading portfolio...</p>;
   if (error) return <p className="error-message">{error}</p>;
 
   return (
@@ -205,8 +181,8 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId }) => {
 
           {/* Portfolio Display */}
           <div className="portfolio-grid">
-            {portfolioItems.length > 0 ? (
-              portfolioItems.map((item) => (
+            {items.length > 0 ? (
+              items.map((item) => (
                 <div key={item.portfolio_id} className="portfolio-item">
                   <img
                     src={item.image_url}
@@ -232,10 +208,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId }) => {
                     ) : (
                       <button
                         onClick={() =>
-                          setEditMode({
-                            id: item.portfolio_id,
-                            description: item.description,
-                          })
+                          setEditMode({ id: item.portfolio_id, description: item.description })
                         }
                       >
                         Edit
