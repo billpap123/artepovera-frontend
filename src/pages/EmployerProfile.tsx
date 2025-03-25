@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useUserContext } from "../context/UserContext";
+import { useNavigate } from "react-router-dom"; // 1) Import useNavigate
 import "../styles/Global.css";
 import "../styles/EmployerProfile.css";
 
@@ -8,6 +9,9 @@ const EmployerProfile = () => {
   const { userId, setUserId, employerId, setEmployerId } = useUserContext();
   const [bio, setBio] = useState("");
   const [profilePicture, setProfilePicture] = useState<File | null>(null);
+
+  // React Router navigation hook
+  const navigate = useNavigate(); // 2) Create a navigate instance
 
   // ✅ Use your Vite environment variable, fallback to localhost if not set
   const BACKEND_URL = import.meta.env.VITE_API_URL || "http://localhost:50001";
@@ -73,9 +77,12 @@ const EmployerProfile = () => {
           },
         }
       );
+
       alert("Profile updated successfully!");
+      navigate("/"); // 3) Redirect to homepage (or another route)
     } catch (err) {
       console.error("Error updating employer profile:", err);
+      alert("Something went wrong. Please try again.");
     }
   };
 
