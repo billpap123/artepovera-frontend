@@ -37,9 +37,7 @@ const MainPage = () => {
               </>
             ) : (
               <>
-                <li>
-                  <Link to="/browse-artists">Browse Artists</Link>
-                </li>
+                
                 <li>
                   <Link to="/post-job">Post a Job</Link>
                 </li>
