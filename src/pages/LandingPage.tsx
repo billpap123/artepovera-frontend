@@ -8,19 +8,19 @@ const sampleArtists = [
     id: 1,
     name: "Lana Bright",
     specialty: "Contemporary Dancer",
-    imageUrl: "path/to/dancer.jpg",
+    imageUrl: "/images/dancer.jpg", // Replace with actual image path
   },
   {
     id: 2,
     name: "Marcos Silva",
     specialty: "3D Sculptor",
-    imageUrl: "path/to/sculptor.jpg",
+    imageUrl: "/images/sculptor.jpg",
   },
   {
     id: 3,
     name: "Aisha Wu",
     specialty: "Digital Illustrator",
-    imageUrl: "path/to/illustrator.jpg",
+    imageUrl: "/images/illustrator.jpg",
   },
 ];
 
@@ -30,19 +30,19 @@ const sampleJobs = [
     id: 1,
     title: "Looking for Live Portrait Painter",
     location: "New York, USA",
-    imageUrl: "path/to/portrait-job.jpg",
+    imageUrl: "/images/portrait-job.jpg",
   },
   {
     id: 2,
     title: "3D Sculpture Commission",
     location: "Paris, France",
-    imageUrl: "path/to/sculpture-job.jpg",
+    imageUrl: "/images/sculpture-job.jpg",
   },
   {
     id: 3,
     title: "Illustrator for Children’s Book",
     location: "Remote",
-    imageUrl: "path/to/illustrator-job.jpg",
+    imageUrl: "/images/illustrator-job.jpg",
   },
 ];
 
