@@ -51,7 +51,6 @@
 */
 .nav-links li a,
 .notifications-button {
-  display: inline-flex;
   align-items: center;
   color: #fff;
   background: none;
@@ -146,13 +145,11 @@
 /* Notification Container */
 .notifications {
   position: relative;
-  display: inline-block;
 }
 
 /* We already unify with .notifications-button above */
 .notifications-button {
   position: relative;
-  display: inline-flex;
   align-items: center;
   /* gap, background, border, color, etc. come from the unify rule */
 }
