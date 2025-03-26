@@ -83,10 +83,6 @@ const ArtistProfile: React.FC = () => {
     formData.append("bio", bio);
     formData.append("profile_picture", profilePicture);
 
-    // Portfolio is optional; only append if the user chose a file
-    if (portfolioFile) {
-      formData.append("portfolio", portfolioFile);
-    }
 
     try {
       await axios.post(
@@ -133,11 +129,7 @@ const ArtistProfile: React.FC = () => {
 
         <div className="form-group">
           <label>Portfolio (PNG or JPG):</label>
-          <input
-            type="file"
-            accept="image/png, image/jpeg"
-            onChange={handlePortfolioFileChange}
-          />
+          
         </div>
 
         <button type="submit">Save profile</button>
