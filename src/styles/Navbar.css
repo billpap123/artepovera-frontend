@@ -279,3 +279,25 @@
   vertical-align: middle;
   margin-right: 2px;
 }
+/* This forces the link to become a flex container, centering icon & text */
+.nav-links li a {
+  display: inline-flex;       /* or display: flex; */
+  align-items: center;
+}
+
+/* Some spacing between icon and text */
+.nav-icon {
+  margin-right: 6px;
+  font-size: 1.1rem;   /* Adjust as needed */
+  vertical-align: middle;
+}
+.notifications-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px; /* space between icon and badge */
+  
+}
+.bell-icon {
+  font-size: 1.2rem;
+  vertical-align: middle;
+}
