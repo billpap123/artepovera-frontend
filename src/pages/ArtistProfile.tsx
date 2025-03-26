@@ -1,197 +1,149 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { useUserContext } from '../context/UserContext';
-import { useNavigate } from 'react-router-dom';
-import Navbar from '../components/Navbar'; // Import Navbar component
-import '../styles/Global.css';
-import '../styles/ArtistProfile.css';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { useUserContext } from "../context/UserContext";
+import { useNavigate } from "react-router-dom";
+import "../styles/Global.css";
+import "../styles/ArtistProfile.css"; // Create or reuse EmployerProfile.css
 
-const UserProfile = () => {
-  const { userId, artistId, employerId, setArtistId, setEmployerId } = useUserContext();
-  const [profile, setProfile] = useState({
-    fullname: '',
-    bio: '',
-    profile_picture: '',
-    user_type: '',
-    // ADD a local flag to track if the user is a student artist
-    isStudent: false
-  });
-  const [loading, setLoading] = useState(true);
-  const [isEditing, setIsEditing] = useState(false);
-  const [newBio, setNewBio] = useState('');
-  const [newProfilePicture, setNewProfilePicture] = useState<File | null>(null);
-  const [saving, setSaving] = useState(false);
+const ArtistProfile: React.FC = () => {
+  const { userId, setUserId, artistId, setArtistId } = useUserContext();
+  const [bio, setBio] = useState("");
+  const [profilePicture, setProfilePicture] = useState<File | null>(null);
+  const [portfolioFile, setPortfolioFile] = useState<File | null>(null);
+
+  // React Router navigation hook
   const navigate = useNavigate();
 
-  // ✅ Use your Vite environment variable, fallback to localhost if not set
-  const BACKEND_URL = import.meta.env.VITE_API_URL || 'http://localhost:50001';
+  // Use your Vite environment variable, fallback to localhost if not set
+  const BACKEND_URL = import.meta.env.VITE_API_URL || "http://localhost:50001";
 
   useEffect(() => {
-    const fetchProfile = async () => {
+    const fetchUserId = async () => {
       try {
+        // Fetch the current user data to retrieve user_id and artist_id
         const response = await axios.get(`${BACKEND_URL}/api/users/me`, {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         });
 
-        console.log('API Response:', response.data); // ✅ Log the full response
-
-        const { fullname, user_type, artist, employer } = response.data;
-
-        let bio = '';
-        let profile_picture = '';
-        let isStudentVal = false; // new local variable to track is_student
-
-        if (user_type === 'Artist' && artist) {
+        const { user_id, artist } = response.data;
+        if (!userId) setUserId(user_id);
+        if (artist && artist.artist_id && !artistId) {
           setArtistId(artist.artist_id);
-          bio = artist.bio;
-          profile_picture = artist.profile_picture;
-          // If the backend is returning `artist.is_student`, capture it:
-          isStudentVal = !!artist.is_student;
-        } else if (user_type === 'Employer' && employer) {
-          setEmployerId(employer.employer_id);
-          bio = employer.bio;
-          profile_picture = employer.profile_picture;
         }
-
-        // Now we include isStudentVal in the profile state
-        setProfile({
-          fullname,
-          bio,
-          profile_picture,
-          user_type,
-          isStudent: isStudentVal
-        });
-        setNewBio(bio);
       } catch (error) {
-        console.error('Error fetching profile:', error);
-      } finally {
-        setLoading(false);
+        console.error("Error fetching user ID:", error);
+        alert("Could not retrieve user information. Please log in again.");
       }
     };
 
-    fetchProfile();
-  }, [setArtistId, setEmployerId, BACKEND_URL]);
-
-  const handleEditToggle = () => {
-    setIsEditing(!isEditing);
-  };
+    // Only fetch if we’re missing either userId or artistId
+    if (!userId || !artistId) {
+      fetchUserId();
+    }
+  }, [userId, artistId, setUserId, setArtistId, BACKEND_URL]);
 
   const handleProfilePictureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file && (file.type === 'image/png' || file.type === 'image/jpeg')) {
-      setNewProfilePicture(file);
+    const file = e.target.files ? e.target.files[0] : null;
+    if (file && (file.type === "image/png" || file.type === "image/jpeg")) {
+      setProfilePicture(file);
     } else {
-      alert('Please upload a valid image file (PNG or JPG).');
+      alert("Please upload a valid image file (PNG or JPG).");
     }
   };
 
-  const handleSaveChanges = async () => {
+  const handlePortfolioFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files ? e.target.files[0] : null;
+    if (file && (file.type === "image/png" || file.type === "image/jpeg")) {
+      setPortfolioFile(file);
+    } else {
+      alert("Please upload a valid image file (PNG or JPG).");
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Ensure a profile picture is chosen
+    if (!profilePicture) {
+      alert("Please upload a profile picture.");
+      return;
+    }
+
+    // If we have an artistId, use that; otherwise, fall back to userId
+    const idToUse = artistId || userId;
+    if (!idToUse) {
+      alert("User ID is missing. Please log in again.");
+      return;
+    }
+
+    // Build form data
     const formData = new FormData();
-    formData.append('bio', newBio);
-    if (newProfilePicture) formData.append('profile_picture', newProfilePicture);
+    formData.append("bio", bio);
+    formData.append("profile_picture", profilePicture);
+
+    // Portfolio is optional; only append if the user chose a file
+    if (portfolioFile) {
+      formData.append("portfolio", portfolioFile);
+    }
 
     try {
-      setSaving(true);
+      await axios.post(
+        `${BACKEND_URL}/api/artists/profile/${idToUse}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
 
-      if (profile.user_type === 'Artist') {
-        await axios.post(
-          `${BACKEND_URL}/api/artists/profile/${artistId}`,
-          formData,
-          {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-              Authorization: `Bearer ${localStorage.getItem('token')}`,
-            },
-          }
-        );
-      } else if (profile.user_type === 'Employer') {
-        await axios.post(
-          `${BACKEND_URL}/api/employers/profile/${employerId}`,
-          formData,
-          {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-              Authorization: `Bearer ${localStorage.getItem('token')}`,
-            },
-          }
-        );
-      }
-
-      alert('Profile updated successfully!');
-      setIsEditing(false);
-    } catch (error) {
-      console.error('Error saving changes:', error);
-    } finally {
-      setSaving(false);
+      alert("Artist profile updated successfully!");
+      navigate("/"); // Redirect to homepage or another route
+    } catch (err) {
+      console.error("Error updating artist profile:", err);
+      alert("Something went wrong. Please try again.");
     }
   };
 
-  if (loading) return <p className="loading-message">Loading profile...</p>;
-
   return (
-    <>
-      <Navbar /> {/* Navbar at the top */}
-      <div className="main-content">
-        <div className="profile-container">
-          <h2 className="profile-header">{profile.user_type} profile</h2>
-
-          <img
-            src={profile.profile_picture || '/default-profile.png'}
-            alt="Profile"
-            className="profile-image"
+    <div className="artist-profile">
+      <h2>Create your artist profile</h2>
+      <form onSubmit={handleSubmit} className="profile-form">
+        <div className="form-group">
+          <label>Bio:</label>
+          <textarea
+            value={bio}
+            onChange={(e) => setBio(e.target.value)}
+            required
           />
-
-          <h3 className="profile-name">{profile.fullname}</h3>
-
-          {/* 
-            NEW: If this is an Artist and isStudent is true, 
-            show a “Student Artist” badge or text 
-          */}
-          {profile.user_type === 'Artist' && profile.isStudent && (
-            <div className="student-badge">
-              Student Artist
-            </div>
-          )}
-
-          {!isEditing ? (
-            <>
-              <p className="profile-bio">{profile.bio}</p>
-              <button className="edit-button" onClick={handleEditToggle}>
-                Edit profile
-              </button>
-            </>
-          ) : (
-            <>
-              <textarea
-                value={newBio}
-                onChange={(e) => setNewBio(e.target.value)}
-                className="bio-input"
-              />
-              <input
-                type="file"
-                onChange={handleProfilePictureChange}
-                className="file-input"
-              />
-              <div className="button-group">
-                <button
-                  className="save-button"
-                  onClick={handleSaveChanges}
-                  disabled={saving}
-                >
-                  {saving ? 'Saving...' : 'Save'}
-                </button>
-                <button className="cancel-button" onClick={handleEditToggle}>
-                  Cancel
-                </button>
-              </div>
-            </>
-          )}
         </div>
-      </div>
-    </>
+
+        <div className="form-group">
+          <label>Profile picture (PNG or JPG):</label>
+          <input
+            type="file"
+            accept="image/png, image/jpeg"
+            onChange={handleProfilePictureChange}
+            required
+          />
+        </div>
+
+        <div className="form-group">
+          <label>Portfolio (PNG or JPG):</label>
+          <input
+            type="file"
+            accept="image/png, image/jpeg"
+            onChange={handlePortfolioFileChange}
+          />
+        </div>
+
+        <button type="submit">Save profile</button>
+      </form>
+    </div>
   );
 };
 
-export default UserProfile;
+export default ArtistProfile;

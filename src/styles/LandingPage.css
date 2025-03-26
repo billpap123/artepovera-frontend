@@ -4,14 +4,14 @@
 .landing-page-container {
   font-family: 'Roboto', sans-serif;
   color: #fff;
-  background: #0f0f0f; 
+  background: #774402; 
   overflow-x: hidden;
   margin: 0;
   padding: 0;
 }
 
 .landing-page-container * {
-  box-sizing: border-box;
+  box-sizing:border-box;
 }
 
 /* ───────────────────────────

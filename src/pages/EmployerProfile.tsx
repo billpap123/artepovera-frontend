@@ -99,7 +99,7 @@ const EmployerProfile = () => {
           />
         </div>
         <div className="form-group">
-          <label>Profile Picture (PNG or JPG):</label>
+          <label>Profile picture (PNG or JPG):</label>
           <input
             type="file"
             accept="image/png, image/jpeg"
@@ -107,7 +107,7 @@ const EmployerProfile = () => {
             required
           />
         </div>
-        <button type="submit">Save Profile</button>
+        <button type="submit">Save profile</button>
       </form>
     </div>
   );
