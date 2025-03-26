@@ -1,11 +1,25 @@
-/* Global Reset and Base Styling */
+/****************************************
+ * COLOR VARIABLES (keep your color scheme)
+ ****************************************/
+ :root {
+  --sand-beige: #F5F5DC;
+  --charcoal-gray: #333333;
+  --pure-white: #FFFFFF;
+  --terracotta-red: #C96A50;
+  --dark-red: #8B0000;
+  --light-beige: #E0D7C6;
+  --dark-gray: #444444;
+  --shadow-color: rgba(0, 0, 0, 0.2);
+}
+
+/****************************************
+ * GLOBAL RESET & BASE STYLING
+ ****************************************/
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
-
-
 
 body {
   font-family: 'Arial', sans-serif;
@@ -15,7 +29,7 @@ body {
   justify-content: flex-start;
   min-height: 100vh;
   background-color: var(--sand-beige); /* Soft beige background */
-  color: var(--charcoal-gray); /* Charcoal gray for general text */
+  color: var(--charcoal-gray);         /* Charcoal gray for general text */
 }
 
 #root {
@@ -29,7 +43,9 @@ body {
   padding: 20px;
 }
 
-/* Navbar Styling */
+/****************************************
+ * NAVBAR STYLING
+ ****************************************/
 .navbar {
   display: flex;
   justify-content: space-between;
@@ -79,7 +95,9 @@ body {
   background-color: var(--dark-red);
 }
 
-/* Main Content Area */
+/****************************************
+ * MAIN CONTENT AREA
+ ****************************************/
 .main-content {
   display: flex;
   justify-content: center;
@@ -89,47 +107,89 @@ body {
   width: 100%;
 }
 
-/* Profile Container */
-.profile-container {
+/****************************************
+ * ARTIST PROFILE CONTAINER
+ ****************************************/
+.artist-profile-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20px;
   width: 100%;
-  max-width: 400px;
+  max-width: 500px;
   background: var(--pure-white);
   border-radius: 12px;
   box-shadow: 0 8px 15px var(--shadow-color);
+  padding: 20px;
 }
 
-.profile-container img {
-  width: 150px;
-  height: 150px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin-bottom: 15px;
-  border: 4px solid var(--light-beige);
-}
-
-.profile-header {
+.profile-title {
   font-size: 1.8rem;
   color: var(--charcoal-gray);
-  margin-bottom: 10px;
+  margin-bottom: 15px;
   text-align: center;
 }
 
-.profile-name {
-  font-size: 1.5rem;
+/* Optional badge for “STUDENT ARTIST” */
+.student-badge {
+  background-color: purple;
+  color: var(--pure-white);
+  padding: 5px 10px;
+  border-radius: 4px;
+  margin-bottom: 15px;
   font-weight: bold;
-  color: var(--charcoal-gray);
-  margin-bottom: 10px;
 }
 
-.profile-bio {
+/****************************************
+ * PROFILE PICTURE
+ ****************************************/
+.profile-picture-wrapper {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.profile-picture {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 4px solid var(--light-beige);
+}
+
+/****************************************
+ * BIO TEXT & EDIT FORM
+ ****************************************/
+.bio-text {
   font-size: 1rem;
   color: var(--dark-gray);
   margin-bottom: 15px;
   text-align: center;
+  min-height: 60px;
+}
+
+.edit-btn,
+.save-btn,
+.cancel-btn {
+  background-color: var(--terracotta-red);
+  color: var(--pure-white);
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  margin: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.edit-btn:hover,
+.save-btn:hover,
+.cancel-btn:hover {
+  background-color: var(--dark-red);
+}
+
+.edit-form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 }
 
 .bio-input,
@@ -142,46 +202,86 @@ body {
   border-radius: 5px;
 }
 
+.bio-input:focus,
+.file-input:focus {
+  outline: none;
+  border-color: var(--terracotta-red);
+}
+
+.btn-row {
+  display: flex;
+  justify-content: flex-start;
+}
+
+/****************************************
+ * GLOBAL FORM & LABEL STYLING
+ ****************************************/
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+label {
+  font-size: 1rem;
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: var(--charcoal-gray);
+}
+
 textarea {
+  height: 150px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
   resize: vertical;
 }
 
-.edit-button,
-.save-button,
-.cancel-button {
+textarea:focus {
+  outline: none;
+  border-color: var(--terracotta-red);
+}
+
+input[type="text"],
+input[type="file"] {
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+input[type="text"]:focus,
+input[type="file"]:focus {
+  outline: none;
+  border-color: var(--terracotta-red);
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 1.1rem;
   background-color: var(--terracotta-red);
   color: var(--pure-white);
   border: none;
-  padding: 10px 15px;
   border-radius: 5px;
-  margin: 5px;
   cursor: pointer;
+}
+
+button:hover {
+  background-color: #0056b3; /* Adjust if you want a deeper terracotta or a different color */
+}
+
+/* Error Alert Styling */
+.alert {
+  color: red;
   font-size: 1rem;
-  transition: background-color 0.3s ease;
+  margin-top: 10px;
+  text-align: center;
 }
 
-.edit-button:hover,
-.save-button:hover,
-.cancel-button:hover {
-  background-color: var(--dark-red);
-}
-
-/* Buttons */
-.button {
-  background-color: var(--charcoal-gray);
-  color: var(--pure-white);
-  border: none;
-  padding: 8px 12px;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.button:hover {
-  background-color: var(--dark-gray);
-}
-
-/* Footer */
+/****************************************
+ * FOOTER
+ ****************************************/
 .footer {
   background-color: var(--charcoal-gray);
   color: var(--pure-white);
@@ -192,11 +292,12 @@ textarea {
   margin-top: 20px;
 }
 
-/* Loading Message */
+/****************************************
+ * LOADING MESSAGE
+ ****************************************/
 .loading-message {
   color: var(--terracotta-red);
   font-size: 1.2rem;
   text-align: center;
   margin-top: 50px;
 }
-

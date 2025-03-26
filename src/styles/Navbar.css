@@ -5,10 +5,7 @@
   box-sizing: border-box;
 }
 
-body {
-  font-family: 'Poppins', sans-serif; /* A modern and professional font */
-  background-color: #000000; /* Subtle light background for contrast */
-}
+
 
 /* Navbar Container */
 .navbar {
