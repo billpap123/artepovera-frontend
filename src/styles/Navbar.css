@@ -30,24 +30,28 @@
   cursor: pointer;
   letter-spacing: 2px;
 }
-
 .logo:hover {
   color: #00b4d8; /* Highlight color on hover */
   transition: color 0.3s ease;
 }
 
-/* Nav Links */
+/* Nav Links Container */
 .nav-links {
   list-style: none;
   display: flex;
   gap: 20px;
 }
-
 .nav-links li {
   position: relative;
 }
 
+/* 
+   Make each link an inline-flex container 
+   so icon + text align horizontally.
+*/
 .nav-links li a {
+  display: inline-flex; 
+  align-items: center;
   color: #fff;
   text-decoration: none;
   font-size: 1rem;
@@ -55,6 +59,7 @@
   transition: color 0.3s ease;
 }
 
+/* Hover & Active State */
 .nav-links li a:hover,
 .nav-links li a.active {
   color: #00b4d8;
@@ -69,7 +74,6 @@
   background: #00b4d8;
   transition: width 0.3s ease;
 }
-
 .nav-links li a:hover::after,
 .nav-links li a.active::after {
   width: 100%; /* Full width underline */
@@ -83,7 +87,6 @@
   cursor: pointer;
   transition: all 0.3s ease;
 }
-
 .hamburger span {
   display: block;
   width: 25px;
@@ -122,30 +125,34 @@
 .hamburger.open span:nth-child(1) {
   transform: rotate(45deg) translate(5px, 5px);
 }
-
 .hamburger.open span:nth-child(2) {
   opacity: 0;
 }
-
 .hamburger.open span:nth-child(3) {
   transform: rotate(-45deg) translate(5px, -5px);
 }
 
 /* -----------------------------------------
-   NOTIFICATIONS
-   Replaces "Notifications (#)" with a bell icon + badge
+   ICONS FOR HOME & PROFILE (FaHome, FaUserAlt)
+----------------------------------------- */
+.nav-icon {
+  margin-right: 6px; /* spacing between icon and text */
+  vertical-align: middle;
+  font-size: 1.1rem; /* Adjust as needed */
+}
+
+/* -----------------------------------------
+   NOTIFICATIONS (BELL ICON + BADGE)
 ----------------------------------------- */
 .notifications {
   position: relative;
   display: inline-block;
 }
-
-/* The button that shows the dropdown */
 .notifications-button {
   position: relative;
-  display: flex;       /* So the bell icon & badge can align */
+  display: inline-flex; /* so the bell icon & badge align */
   align-items: center;
-  gap: 6px;            /* Spacing between icon & badge (if any) */
+  gap: 4px; /* space between icon and badge */
   background: transparent;
   border: none;
   color: #fff;
@@ -153,12 +160,12 @@
   font-size: 0.95rem;
   padding: 5px 10px;
 }
-
-/* Bell icon from react-icons */
+/* Bell icon (FaBell) */
 .bell-icon {
-  font-size: 1.2rem; /* Adjust icon size */
+  font-size: 1.2rem;
+  vertical-align: middle;
+  margin-right: 2px;
 }
-
 /* Notification badge */
 .notification-badge {
   background-color: red;
@@ -172,38 +179,35 @@
 /* Dropdown container - absolutely positioned relative to .notifications */
 .notifications-dropdown {
   position: absolute;
-  top: 36px;         /* space below your button */
-  right: 0;          /* align to the right edge of the .notifications container */
-  width: 320px;      /* typical dropdown width */
-  max-height: 160px; /* Only about 2 items show before scrolling */
+  top: 36px;
+  right: 0;
+  width: 320px;
+  max-height: 160px;
   overflow-y: auto;
-  background: #1b1b1b;     /* dark background */
-  color: #ddd;             /* light text */
-  border: 1px solid #333;  /* subtle border */
+  background: #1b1b1b;
+  color: #ddd;
+  border: 1px solid #333;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
   z-index: 9999;
   padding: 8px 0;
 }
-
 /* Optional arrow (triangle) at the top for that "dropdown" look */
 .notifications-dropdown::before {
   content: "";
   position: absolute;
   top: -10px;
-  right: 24px; /* adjust so it points near the button */
+  right: 24px;
   border-left: 10px solid transparent;
   border-right: 10px solid transparent;
-  border-bottom: 10px solid #1b1b1b; /* same color as dropdown */
+  border-bottom: 10px solid #1b1b1b;
 }
-
 /* The UL inside the dropdown */
 .notifications-dropdown ul {
   list-style: none;
   margin: 0;
   padding: 0;
 }
-
 /* Each notification item */
 .notifications-dropdown li {
   border-bottom: 1px solid #333;
@@ -212,34 +216,27 @@
   font-size: 0.9rem;
   box-sizing: border-box;
 }
-
-/* Last item with no border */
 .notifications-dropdown li:last-child {
   border-bottom: none;
 }
-
-/* Hover highlight (slightly lighter) */
 .notifications-dropdown li:hover {
   background-color: #2b2b2b;
 }
-
 /* Unread vs. Read states */
 .unread {
   font-weight: bold;
-  background-color: #202020; /* a slightly different shade for emphasis */
+  background-color: #202020;
 }
 .read {
   opacity: 0.8;
 }
-
 /* The text inside each notification item */
 .notification-item {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  color: #ddd; /* ensure visible on dark background */
+  color: #ddd;
 }
-
 /* Buttons (Mark as Read, Delete) inside notifications */
 .notifications-dropdown button {
   background: #007bff;
@@ -255,49 +252,8 @@
 .notifications-dropdown button:hover {
   background: #0056b3;
 }
-
-/* 
-  Timestamp or smaller text 
-  (if you add a class for the date)
-*/
+/* Timestamp or smaller text */
 .timestamp {
   font-size: 0.75rem;
   color: #999;
-}
-/* For Home and Profile icons (FaHome, FaUserAlt) */
-.nav-icon {
-  margin-right: 6px;      /* spacing between icon and text */
-  vertical-align: middle; /* keeps icon aligned with text */
-  font-size: 1.1rem;      /* adjust size if you like */
-}
-
-/* For the bell icon, you already have .bell-icon. 
-   If you want them all the same, you could unify them. 
-   E.g. use .nav-icon on FaBell as well. */
-.bell-icon {
-  font-size: 1.2rem;
-  vertical-align: middle;
-  margin-right: 2px;
-}
-/* This forces the link to become a flex container, centering icon & text */
-.nav-links li a {
-  display: inline-flex;       /* or display: flex; */
-  align-items: center;
-}
-
-/* Some spacing between icon and text */
-.nav-icon {
-  margin-right: 6px;
-  font-size: 1.1rem;   /* Adjust as needed */
-  vertical-align: middle;
-}
-.notifications-button {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px; /* space between icon and badge */
-  
-}
-.bell-icon {
-  font-size: 1.2rem;
-  vertical-align: middle;
 }
