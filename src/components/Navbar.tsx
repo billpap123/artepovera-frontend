@@ -112,11 +112,21 @@ const Navbar = () => {
           </NavLink>
         </li>
 
-        <li>
-          <NavLink to="/artist-profile" className={({ isActive }) => (isActive ? "active" : "")}>
-            Profile
-          </NavLink>
-        </li>
+         {/* Conditionally render the Profile link */}
+         {user?.user_type === "Artist" && (
+          <li>
+            <NavLink to="/artist-profile" className={({ isActive }) => (isActive ? "active" : "")}>
+              Profile
+            </NavLink>
+          </li>
+        )}
+        {user?.user_type === "Employer" && (
+          <li>
+            <NavLink to="/employer-profile" className={({ isActive }) => (isActive ? "active" : "")}>
+              Profile
+            </NavLink>
+          </li>
+        )}
 
         <li className="notifications">
           <button className="notifications-button" onClick={toggleDropdown}>
