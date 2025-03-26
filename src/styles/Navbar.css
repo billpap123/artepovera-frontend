@@ -10,7 +10,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #1c1f26; /* Sleek dark color */
+  background-color: #462700; /* Sleek dark color */
   color: #fff;
   padding: 10px 20px;
   position: fixed; /* Fixed at the top */
@@ -31,7 +31,7 @@
   letter-spacing: 2px;
 }
 .logo:hover {
-  color: #00b4d8; /* Highlight color on hover */
+  color: #ea660f; /* Highlight color on hover */
   transition: color 0.3s ease;
 }
 
@@ -65,19 +65,7 @@
   color: #00b4d8;
 }
 
-/* Hover Effect Underline */
-.nav-links li a::after {
-  content: '';
-  display: block;
-  width: 0;
-  height: 2px;
-  background: #00b4d8;
-  transition: width 0.3s ease;
-}
-.nav-links li a:hover::after,
-.nav-links li a.active::after {
-  width: 100%; /* Full width underline */
-}
+
 
 /* Hamburger Menu - Hidden on Desktop */
 .hamburger {
@@ -135,11 +123,13 @@
 /* -----------------------------------------
    ICONS FOR HOME & PROFILE (FaHome, FaUserAlt)
 ----------------------------------------- */
+/* Apply the same style to all icons */
 .nav-icon {
-  margin-right: 6px; /* spacing between icon and text */
+  font-size: 1.2rem;    /* same size for Home, Profile, Bell */
   vertical-align: middle;
-  font-size: 1.1rem; /* Adjust as needed */
+  margin-right: 6px;    /* spacing between icon and text */
 }
+
 
 /* -----------------------------------------
    NOTIFICATIONS (BELL ICON + BADGE)
@@ -160,12 +150,7 @@
   font-size: 0.95rem;
   padding: 5px 10px;
 }
-/* Bell icon (FaBell) */
-.bell-icon {
-  font-size: 1.2rem;
-  vertical-align: middle;
-  margin-right: 2px;
-}
+
 /* Notification badge */
 .notification-badge {
   background-color: red;
