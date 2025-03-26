@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useUserContext } from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
+import Navbar from "../components/Navbar"; // Import your Navbar
 import "../styles/ArtistProfile.css";
 
 const ArtistProfile: React.FC = () => {
@@ -133,8 +134,7 @@ const ArtistProfile: React.FC = () => {
       // Update state so UI shows new data
       setBio(newBio);
       if (newProfilePicFile) {
-        // We don't know the final URL. We can either re-fetch from /users/me
-        // or do a quick hack to show a local preview. For simplicity, let's re-fetch:
+        // Re-fetch from /users/me to show updated pic
         const meResponse = await axios.get(`${BACKEND_URL}/api/users/me`, {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -159,64 +159,66 @@ const ArtistProfile: React.FC = () => {
   }
 
   return (
-    <div className="artist-profile-container">
-      <h2 className="profile-title">My Artist Profile</h2>
+    <>
+      <Navbar />
+      <div className="artist-profile-container">
+        <h2 className="profile-title">My Artist Profile</h2>
 
-      {/* If is_student is true, show a badge */}
-      {isStudent && (
-        <div className="student-badge">STUDENT ARTIST</div>
-      )}
+        {/* If is_student is true, show a badge */}
+        {isStudent && (
+          <div className="student-badge">STUDENT ARTIST</div>
+        )}
 
-      {/* Display the current profile picture */}
-      <div className="profile-picture-wrapper">
-        <img
-          src={profilePicture || "/default-profile.png"}
-          alt="Artist Profile"
-          className="profile-picture"
-        />
-      </div>
-
-      {/* Display or Edit the Bio */}
-      {!isEditing ? (
-        <>
-          <p className="bio-text">{bio || "No bio provided yet."}</p>
-          <button className="edit-btn" onClick={handleEditToggle}>
-            Edit Profile
-          </button>
-        </>
-      ) : (
-        <div className="edit-form">
-          <label>Bio:</label>
-          <textarea
-            value={newBio}
-            onChange={(e) => setNewBio(e.target.value)}
-            rows={4}
-            className="bio-input"
+        {/* Display the current profile picture */}
+        <div className="profile-picture-wrapper">
+          <img
+            src={profilePicture || "/default-profile.png"}
+            alt="Artist Profile"
+            className="profile-picture"
           />
-
-          <label>Update Profile Picture (PNG/JPG):</label>
-          <input
-            type="file"
-            accept="image/png, image/jpeg"
-            onChange={handleProfilePictureChange}
-            className="file-input"
-          />
-
-          <div className="btn-row">
-            <button
-              className="save-btn"
-              onClick={handleSaveChanges}
-              disabled={saving}
-            >
-              {saving ? "Saving..." : "Save"}
-            </button>
-            <button className="cancel-btn" onClick={handleEditToggle}>
-              Cancel
-            </button>
-          </div>
         </div>
-      )}
-    </div>
+
+        {!isEditing ? (
+          <>
+            <p className="bio-text">{bio || "No bio provided yet."}</p>
+            <button className="edit-btn" onClick={handleEditToggle}>
+              Edit Profile
+            </button>
+          </>
+        ) : (
+          <div className="edit-form">
+            <label>Bio:</label>
+            <textarea
+              value={newBio}
+              onChange={(e) => setNewBio(e.target.value)}
+              rows={4}
+              className="bio-input"
+            />
+
+            <label>Update Profile Picture (PNG/JPG):</label>
+            <input
+              type="file"
+              accept="image/png, image/jpeg"
+              onChange={handleProfilePictureChange}
+              className="file-input"
+            />
+
+            <div className="btn-row">
+              <button
+                className="save-btn"
+                onClick={handleSaveChanges}
+                disabled={saving}
+              >
+                {saving ? "Saving..." : "Save"}
+              </button>
+              <button className="cancel-btn" onClick={handleEditToggle}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    </>
   );
 };
 

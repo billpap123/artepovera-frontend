@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useUserContext } from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
+import Navbar from "../components/Navbar"; // Import your Navbar
 import "../styles/EmployerProfile.css";
 
 const EmployerProfile: React.FC = () => {
@@ -52,8 +53,7 @@ const EmployerProfile: React.FC = () => {
           setProfilePicture(employer.profile_picture || "");
           setNewBio(employer.bio || "");
         } else {
-          // If no employer data found, either do nothing
-          // or redirect if user is actually an Artist
+          // If no employer data found, optionally redirect if user is actually an Artist
         }
       } catch (error) {
         console.error("Error fetching user/employer data:", error);
@@ -156,59 +156,61 @@ const EmployerProfile: React.FC = () => {
   }
 
   return (
-    <div className="employer-profile-container">
-      <h2 className="profile-title">My Employer Profile</h2>
+    <>
+      <Navbar />
+      <div className="employer-profile-container">
+        <h2 className="profile-title">My Employer Profile</h2>
 
-      {/* Display the current profile picture */}
-      <div className="profile-picture-wrapper">
-        <img
-          src={profilePicture || "/default-profile.png"}
-          alt="Employer Profile"
-          className="profile-picture"
-        />
-      </div>
-
-      {/* Display or Edit the Bio */}
-      {!isEditing ? (
-        <>
-          <p className="bio-text">{bio || "No bio provided yet."}</p>
-          <button className="edit-btn" onClick={handleEditToggle}>
-            Edit Profile
-          </button>
-        </>
-      ) : (
-        <div className="edit-form">
-          <label>Bio:</label>
-          <textarea
-            value={newBio}
-            onChange={(e) => setNewBio(e.target.value)}
-            rows={4}
-            className="bio-input"
+        {/* Display the current profile picture */}
+        <div className="profile-picture-wrapper">
+          <img
+            src={profilePicture || "/default-profile.png"}
+            alt="Employer Profile"
+            className="profile-picture"
           />
-
-          <label>Update Profile Picture (PNG/JPG):</label>
-          <input
-            type="file"
-            accept="image/png, image/jpeg"
-            onChange={handleProfilePictureChange}
-            className="file-input"
-          />
-
-          <div className="btn-row">
-            <button
-              className="save-btn"
-              onClick={handleSaveChanges}
-              disabled={saving}
-            >
-              {saving ? "Saving..." : "Save"}
-            </button>
-            <button className="cancel-btn" onClick={handleEditToggle}>
-              Cancel
-            </button>
-          </div>
         </div>
-      )}
-    </div>
+
+        {!isEditing ? (
+          <>
+            <p className="bio-text">{bio || "No bio provided yet."}</p>
+            <button className="edit-btn" onClick={handleEditToggle}>
+              Edit Profile
+            </button>
+          </>
+        ) : (
+          <div className="edit-form">
+            <label>Bio:</label>
+            <textarea
+              value={newBio}
+              onChange={(e) => setNewBio(e.target.value)}
+              rows={4}
+              className="bio-input"
+            />
+
+            <label>Update Profile Picture (PNG/JPG):</label>
+            <input
+              type="file"
+              accept="image/png, image/jpeg"
+              onChange={handleProfilePictureChange}
+              className="file-input"
+            />
+
+            <div className="btn-row">
+              <button
+                className="save-btn"
+                onClick={handleSaveChanges}
+                disabled={saving}
+              >
+                {saving ? "Saving..." : "Save"}
+              </button>
+              <button className="cancel-btn" onClick={handleEditToggle}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    </>
   );
 };
 
