@@ -1,114 +1,213 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useUserContext } from "../context/UserContext";
-import { useNavigate } from "react-router-dom"; // 1) Import useNavigate
-import "../styles/Global.css";
+import { useNavigate } from "react-router-dom";
 import "../styles/EmployerProfile.css";
 
-const EmployerProfile = () => {
+const EmployerProfile: React.FC = () => {
   const { userId, setUserId, employerId, setEmployerId } = useUserContext();
+
+  // Existing data for display
   const [bio, setBio] = useState("");
-  const [profilePicture, setProfilePicture] = useState<File | null>(null);
+  const [profilePicture, setProfilePicture] = useState<string>("");
 
-  // React Router navigation hook
-  const navigate = useNavigate(); // 2) Create a navigate instance
+  // Data for editing
+  const [newBio, setNewBio] = useState("");
+  const [newProfilePicFile, setNewProfilePicFile] = useState<File | null>(null);
 
-  // ✅ Use your Vite environment variable, fallback to localhost if not set
+  const [loading, setLoading] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
+  const [saving, setSaving] = useState(false);
+
+  const navigate = useNavigate();
   const BACKEND_URL = import.meta.env.VITE_API_URL || "http://localhost:50001";
 
+  // ─────────────────────────────────────────────────────────────
+  // Fetch the current user’s Employer data
+  // ─────────────────────────────────────────────────────────────
   useEffect(() => {
-    const fetchUserId = async () => {
+    const fetchEmployerProfile = async () => {
       try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          alert("No token found. Please log in.");
+          navigate("/login");
+          return;
+        }
+
+        // Get /users/me to retrieve user + employer data
         const response = await axios.get(`${BACKEND_URL}/api/users/me`, {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${token}`,
           },
         });
-        const { user_id, employer_id } = response.data;
 
+        const { user_id, employer } = response.data;
         if (!userId) setUserId(user_id);
-        if (!employerId) setEmployerId(employer_id);
+
+        // If the user is an employer, store their data
+        if (employer && employer.employer_id) {
+          setEmployerId(employer.employer_id);
+          setBio(employer.bio || "");
+          setProfilePicture(employer.profile_picture || "");
+          setNewBio(employer.bio || "");
+        } else {
+          // If no employer data found, either do nothing
+          // or redirect if user is actually an Artist
+        }
       } catch (error) {
-        console.error("Error fetching user ID:", error);
-        alert("Could not retrieve user information. Please log in again.");
+        console.error("Error fetching user/employer data:", error);
+        alert("Could not retrieve employer profile. Please log in again.");
+      } finally {
+        setLoading(false);
       }
     };
 
+    // If we don’t have them, attempt to fetch from /users/me
     if (!userId || !employerId) {
-      fetchUserId();
+      fetchEmployerProfile();
+    } else {
+      setLoading(false);
     }
-  }, [userId, employerId, setUserId, setEmployerId, BACKEND_URL]);
+  }, [userId, employerId, setUserId, setEmployerId, BACKEND_URL, navigate]);
 
+  // ─────────────────────────────────────────────────────────────
+  // Toggle Edit Mode
+  // ─────────────────────────────────────────────────────────────
+  const handleEditToggle = () => {
+    setIsEditing(!isEditing);
+    // If we cancel editing, revert changes
+    if (isEditing) {
+      setNewBio(bio);
+      setNewProfilePicFile(null);
+    }
+  };
+
+  // ─────────────────────────────────────────────────────────────
+  // Handle file selection
+  // ─────────────────────────────────────────────────────────────
   const handleProfilePictureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files ? e.target.files[0] : null;
     if (file && (file.type === "image/png" || file.type === "image/jpeg")) {
-      setProfilePicture(file);
+      setNewProfilePicFile(file);
     } else {
       alert("Please upload a valid image file (PNG or JPG).");
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!profilePicture) {
-      alert("Please upload a profile picture.");
-      return;
-    }
-
-    const idToUse = employerId || userId;
-    if (!idToUse) {
-      alert("User ID is missing. Please log in again.");
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append("bio", bio);
-    formData.append("profile_picture", profilePicture);
-
+  // ─────────────────────────────────────────────────────────────
+  // Save changes (upload new picture, update bio)
+  // ─────────────────────────────────────────────────────────────
+  const handleSaveChanges = async () => {
     try {
-      await axios.post(
-        `${BACKEND_URL}/api/employers/profile/${idToUse}`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+      if (!employerId && !userId) {
+        alert("No valid Employer ID or User ID. Please log in again.");
+        return;
+      }
+
+      setSaving(true);
+      const token = localStorage.getItem("token");
+      if (!token) {
+        alert("No token found. Please log in.");
+        return;
+      }
+
+      // Build form data
+      const formData = new FormData();
+      formData.append("bio", newBio);
+      if (newProfilePicFile) {
+        formData.append("profile_picture", newProfilePicFile);
+      }
+
+      // Post to /api/employers/profile/:employerId
+      const idToUse = employerId || userId;
+      await axios.post(`${BACKEND_URL}/api/employers/profile/${idToUse}`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      // Update state so UI shows new data
+      setBio(newBio);
+      if (newProfilePicFile) {
+        // Re-fetch from /users/me to get the updated pic
+        const meResponse = await axios.get(`${BACKEND_URL}/api/users/me`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const { employer } = meResponse.data;
+        if (employer) {
+          setProfilePicture(employer.profile_picture || "");
         }
-      );
+      }
 
       alert("Profile updated successfully!");
-      navigate("/"); // 3) Redirect to homepage (or another route)
-    } catch (err) {
-      console.error("Error updating employer profile:", err);
+      setIsEditing(false);
+    } catch (error) {
+      console.error("Error saving changes:", error);
       alert("Something went wrong. Please try again.");
+    } finally {
+      setSaving(false);
     }
   };
 
+  if (loading) {
+    return <p>Loading employer profile...</p>;
+  }
+
   return (
-    <div className="employer-profile">
-      <h2>Create your employer profile</h2>
-      <form onSubmit={handleSubmit} className="profile-form">
-        <div className="form-group">
+    <div className="employer-profile-container">
+      <h2 className="profile-title">My Employer Profile</h2>
+
+      {/* Display the current profile picture */}
+      <div className="profile-picture-wrapper">
+        <img
+          src={profilePicture || "/default-profile.png"}
+          alt="Employer Profile"
+          className="profile-picture"
+        />
+      </div>
+
+      {/* Display or Edit the Bio */}
+      {!isEditing ? (
+        <>
+          <p className="bio-text">{bio || "No bio provided yet."}</p>
+          <button className="edit-btn" onClick={handleEditToggle}>
+            Edit Profile
+          </button>
+        </>
+      ) : (
+        <div className="edit-form">
           <label>Bio:</label>
           <textarea
-            value={bio}
-            onChange={(e) => setBio(e.target.value)}
-            required
+            value={newBio}
+            onChange={(e) => setNewBio(e.target.value)}
+            rows={4}
+            className="bio-input"
           />
-        </div>
-        <div className="form-group">
-          <label>Profile picture (PNG or JPG):</label>
+
+          <label>Update Profile Picture (PNG/JPG):</label>
           <input
             type="file"
             accept="image/png, image/jpeg"
             onChange={handleProfilePictureChange}
-            required
+            className="file-input"
           />
+
+          <div className="btn-row">
+            <button
+              className="save-btn"
+              onClick={handleSaveChanges}
+              disabled={saving}
+            >
+              {saving ? "Saving..." : "Save"}
+            </button>
+            <button className="cancel-btn" onClick={handleEditToggle}>
+              Cancel
+            </button>
+          </div>
         </div>
-        <button type="submit">Save profile</button>
-      </form>
+      )}
     </div>
   );
 };
