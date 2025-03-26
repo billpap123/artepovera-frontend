@@ -83,17 +83,20 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId }) => {
         return;
       }
 
-      const formData = new FormData();
-      formData.append('image', selectedFile); // must match `upload.single("image")`
-      formData.append('description', description);
-      formData.append('artist_id', String(artistId));
+      // Suppose you store "artistId" in React state after login:
+// The backend expects "artist_id" in formData
+const formData = new FormData();
+formData.append("artist_id", String(artistId));
+formData.append("description", description);
+formData.append("image", selectedFile); // must match upload.single('image')
 
-      await axios.post(`${API_BASE_URL}/api/portfolios`, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+await axios.post(`${API_BASE_URL}/api/portfolios`, formData, {
+  headers: {
+    Authorization: `Bearer ${token}`,
+    "Content-Type": "multipart/form-data"
+  }
+});
+
 
       // Reset
       setSelectedFile(null);
