@@ -264,3 +264,18 @@
   font-size: 0.75rem;
   color: #999;
 }
+/* For Home and Profile icons (FaHome, FaUserAlt) */
+.nav-icon {
+  margin-right: 6px;      /* spacing between icon and text */
+  vertical-align: middle; /* keeps icon aligned with text */
+  font-size: 1.1rem;      /* adjust size if you like */
+}
+
+/* For the bell icon, you already have .bell-icon. 
+   If you want them all the same, you could unify them. 
+   E.g. use .nav-icon on FaBell as well. */
+.bell-icon {
+  font-size: 1.2rem;
+  vertical-align: middle;
+  margin-right: 2px;
+}

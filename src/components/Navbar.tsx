@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { FaBell } from "react-icons/fa"; // 1) Import the bell icon
+/* 1) Import your chosen icons from react-icons:
+   - FaHome for Home
+   - FaUserAlt (or FaUserCircle) for Profile
+   - FaBell for Notifications
+*/
+import { FaHome, FaUserAlt, FaBell } from "react-icons/fa";
 import "../styles/Navbar.css";
 
 const Navbar = () => {
@@ -19,14 +24,15 @@ const Navbar = () => {
   // Read your backend URL from .env (or default)
   const BACKEND_URL = import.meta.env.VITE_API_URL || "http://localhost:50001";
 
+  // ─────────────────────────────────────────────────────────
   // Fetch notifications
+  // ─────────────────────────────────────────────────────────
   useEffect(() => {
     const fetchNotifications = async () => {
       if (!token || !user.user_id) {
         setLoadingNotifications(false);
         return;
       }
-
       setLoadingNotifications(true);
       try {
         const response = await axios.get(
@@ -42,10 +48,12 @@ const Navbar = () => {
         setLoadingNotifications(false);
       }
     };
-
     fetchNotifications();
   }, [user.user_id, token, BACKEND_URL]);
 
+  // ─────────────────────────────────────────────────────────
+  // Menu toggles & Notification handlers
+  // ─────────────────────────────────────────────────────────
   const toggleMenu = () => setIsMenuOpen((prev) => !prev);
   const toggleDropdown = () => setShowDropdown((prev) => !prev);
 
@@ -94,26 +102,34 @@ const Navbar = () => {
     }
   };
 
+  // ─────────────────────────────────────────────────────────
+  // RENDER
+  // ─────────────────────────────────────────────────────────
   return (
     <nav className="navbar">
       <div className="logo">ARTEPOVERA</div>
+
+      {/* Hamburger for mobile */}
       <div className="hamburger" onClick={toggleMenu}>
         <span></span>
         <span></span>
         <span></span>
       </div>
+
       <ul className={`nav-links ${isMenuOpen ? "open" : ""}`}>
-        {/* Home Link */}
+        {/* Home Link (with icon) */}
         <li>
           <NavLink to="/main" className={({ isActive }) => (isActive ? "active" : "")}>
+            <FaHome className="nav-icon" />
             Home
           </NavLink>
         </li>
 
-        {/* Conditionally render the Profile link */}
+        {/* Conditionally render the Profile link (Artist vs. Employer) */}
         {user?.user_type === "Artist" && (
           <li>
             <NavLink to="/artist-profile" className={({ isActive }) => (isActive ? "active" : "")}>
+              <FaUserAlt className="nav-icon" />
               Profile
             </NavLink>
           </li>
@@ -121,6 +137,7 @@ const Navbar = () => {
         {user?.user_type === "Employer" && (
           <li>
             <NavLink to="/employer-profile" className={({ isActive }) => (isActive ? "active" : "")}>
+              <FaUserAlt className="nav-icon" />
               Profile
             </NavLink>
           </li>
@@ -154,7 +171,7 @@ const Navbar = () => {
                         <div className="timestamp">
                           {new Date(notif.created_at).toLocaleString()}
                         </div>
-                        <div className="notif-buttons">
+                        <div>
                           {!notif.read_status && (
                             <button onClick={() => markAsRead(notif.notification_id)}>
                               Mark as Read
