@@ -10,15 +10,15 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #462700; /* Sleek dark color */
+  background-color: #1c1f26;
   color: #fff;
   padding: 10px 20px;
-  position: fixed; /* Fixed at the top */
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  z-index: 1000; /* Ensure it appears above other content */
-  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+  z-index: 1000;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
   transition: all 0.3s ease-in-out;
 }
 
@@ -31,7 +31,7 @@
   letter-spacing: 2px;
 }
 .logo:hover {
-  color: #ea660f; /* Highlight color on hover */
+  color: #00b4d8;
   transition: color 0.3s ease;
 }
 
@@ -46,28 +46,47 @@
 }
 
 /* 
-   Make each link an inline-flex container 
-   so icon + text align horizontally.
+   Unify link & button styling so they look the same
+   (except for the hover underline on links)
 */
-.nav-links li a {
-  display: inline-flex; 
+.nav-links li a,
+.notifications-button {
+  display: inline-flex;
   align-items: center;
   color: #fff;
+  background: none;
+  border: none;
   text-decoration: none;
   font-size: 1rem;
   font-weight: 500;
+  gap: 6px;           /* spacing between icon & text (if any) */
+  padding: 5px 10px; /* same padding for both */
+  cursor: pointer;
   transition: color 0.3s ease;
 }
 
-/* Hover & Active State */
+/* Hover & Active State for links and button */
 .nav-links li a:hover,
-.nav-links li a.active {
+.nav-links li a.active,
+.notifications-button:hover {
   color: #00b4d8;
 }
 
+/* Underline effect only on links */
+.nav-links li a::after {
+  content: '';
+  display: block;
+  width: 0;
+  height: 2px;
+  background: #00b4d8;
+  transition: width 0.3s ease;
+}
+.nav-links li a:hover::after,
+.nav-links li a.active::after {
+  width: 100%;
+}
 
-
-/* Hamburger Menu - Hidden on Desktop */
+/* Hamburger Menu */
 .hamburger {
   display: none;
   flex-direction: column;
@@ -83,13 +102,10 @@
   border-radius: 2px;
   transition: all 0.3s ease;
 }
-
-/* Mobile Navigation */
 @media screen and (max-width: 768px) {
   .hamburger {
-    display: flex; /* Show hamburger on smaller screens */
+    display: flex;
   }
-
   .nav-links {
     position: absolute;
     top: 60px;
@@ -98,18 +114,15 @@
     background-color: #1c1f26;
     flex-direction: column;
     align-items: center;
-    display: none; /* Hidden by default */
+    display: none;
     gap: 15px;
     padding: 20px 0;
     box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.3);
   }
-
   .nav-links.open {
-    display: flex; /* Show menu when toggled */
+    display: flex;
   }
 }
-
-/* Animations for Hamburger */
 .hamburger.open span:nth-child(1) {
   transform: rotate(45deg) translate(5px, 5px);
 }
@@ -120,35 +133,28 @@
   transform: rotate(-45deg) translate(5px, -5px);
 }
 
-/* -----------------------------------------
-   ICONS FOR HOME & PROFILE (FaHome, FaUserAlt)
------------------------------------------ */
-/* Apply the same style to all icons */
+/* ICONS */
 .nav-icon {
-  font-size: 1.2rem;    /* same size for Home, Profile, Bell */
+  font-size: 1.1rem;
   vertical-align: middle;
-  margin-right: 6px;    /* spacing between icon and text */
+}
+.bell-icon {
+  font-size: 1.2rem;
+  vertical-align: middle;
 }
 
-
-/* -----------------------------------------
-   NOTIFICATIONS (BELL ICON + BADGE)
------------------------------------------ */
+/* Notification Container */
 .notifications {
   position: relative;
   display: inline-block;
 }
+
+/* We already unify with .notifications-button above */
 .notifications-button {
   position: relative;
-  display: inline-flex; /* so the bell icon & badge align */
+  display: inline-flex;
   align-items: center;
-  gap: 4px; /* space between icon and badge */
-  background: transparent;
-  border: none;
-  color: #fff;
-  cursor: pointer;
-  font-size: 0.95rem;
-  padding: 5px 10px;
+  /* gap, background, border, color, etc. come from the unify rule */
 }
 
 /* Notification badge */
@@ -161,7 +167,7 @@
   vertical-align: middle;
 }
 
-/* Dropdown container - absolutely positioned relative to .notifications */
+/* Dropdown container */
 .notifications-dropdown {
   position: absolute;
   top: 36px;
@@ -177,7 +183,6 @@
   z-index: 9999;
   padding: 8px 0;
 }
-/* Optional arrow (triangle) at the top for that "dropdown" look */
 .notifications-dropdown::before {
   content: "";
   position: absolute;
@@ -187,13 +192,11 @@
   border-right: 10px solid transparent;
   border-bottom: 10px solid #1b1b1b;
 }
-/* The UL inside the dropdown */
 .notifications-dropdown ul {
   list-style: none;
   margin: 0;
   padding: 0;
 }
-/* Each notification item */
 .notifications-dropdown li {
   border-bottom: 1px solid #333;
   padding: 10px 16px;
@@ -207,7 +210,6 @@
 .notifications-dropdown li:hover {
   background-color: #2b2b2b;
 }
-/* Unread vs. Read states */
 .unread {
   font-weight: bold;
   background-color: #202020;
@@ -215,14 +217,12 @@
 .read {
   opacity: 0.8;
 }
-/* The text inside each notification item */
 .notification-item {
   display: flex;
   flex-direction: column;
   gap: 4px;
   color: #ddd;
 }
-/* Buttons (Mark as Read, Delete) inside notifications */
 .notifications-dropdown button {
   background: #007bff;
   color: #fff;
@@ -237,7 +237,6 @@
 .notifications-dropdown button:hover {
   background: #0056b3;
 }
-/* Timestamp or smaller text */
 .timestamp {
   font-size: 0.75rem;
   color: #999;
