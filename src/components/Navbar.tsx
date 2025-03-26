@@ -121,7 +121,7 @@ const Navbar = () => {
         <li>
           <NavLink to="/main" className={({ isActive }) => (isActive ? "active" : "")}>
             <FaHome className="nav-icon" />
-            Home
+            
           </NavLink>
         </li>
 
@@ -130,7 +130,8 @@ const Navbar = () => {
           <li>
             <NavLink to="/artist-profile" className={({ isActive }) => (isActive ? "active" : "")}>
               <FaUserAlt className="nav-icon" />
-              Profile
+              
+            
             </NavLink>
           </li>
         )}
