@@ -5,8 +5,6 @@
   box-sizing: border-box;
 }
 
-
-
 /* Navbar Container */
 .navbar {
   display: flex;
@@ -62,7 +60,7 @@
   color: #00b4d8;
 }
 
-/* Hover Effect */
+/* Hover Effect Underline */
 .nav-links li a::after {
   content: '';
   display: block;
@@ -133,12 +131,10 @@
   transform: rotate(-45deg) translate(5px, -5px);
 }
 
-
-/* 
-  Container for the 'Notifications' menu item 
-  (the <li class="notifications"> in your Navbar).
-  We use position: relative so the dropdown can be absolute-positioned.
-*/
+/* -----------------------------------------
+   NOTIFICATIONS
+   Replaces "Notifications (#)" with a bell icon + badge
+----------------------------------------- */
 .notifications {
   position: relative;
   display: inline-block;
@@ -146,6 +142,10 @@
 
 /* The button that shows the dropdown */
 .notifications-button {
+  position: relative;
+  display: flex;       /* So the bell icon & badge can align */
+  align-items: center;
+  gap: 6px;            /* Spacing between icon & badge (if any) */
   background: transparent;
   border: none;
   color: #fff;
@@ -154,27 +154,36 @@
   padding: 5px 10px;
 }
 
+/* Bell icon from react-icons */
+.bell-icon {
+  font-size: 1.2rem; /* Adjust icon size */
+}
+
+/* Notification badge */
+.notification-badge {
+  background-color: red;
+  color: #fff;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 0.75rem;
+  vertical-align: middle;
+}
+
 /* Dropdown container - absolutely positioned relative to .notifications */
 .notifications-dropdown {
   position: absolute;
   top: 36px;         /* space below your button */
   right: 0;          /* align to the right edge of the .notifications container */
   width: 320px;      /* typical dropdown width */
-
-  /* 
-     1) Adjusted max-height so only about 2 items show 
-        (assuming each item ~80px high).
-  */
-  max-height: 160px; 
+  max-height: 160px; /* Only about 2 items show before scrolling */
   overflow-y: auto;
-
   background: #1b1b1b;     /* dark background */
   color: #ddd;             /* light text */
   border: 1px solid #333;  /* subtle border */
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
   z-index: 9999;
-  padding: 8px 0;          /* top/bottom padding inside the dropdown */
+  padding: 8px 0;
 }
 
 /* Optional arrow (triangle) at the top for that "dropdown" look */
@@ -201,11 +210,6 @@
   padding: 10px 16px;
   transition: background-color 0.2s ease;
   font-size: 0.9rem;
-  /* 
-     Approx ~80px height if there's some text & a button. 
-     This is optional—if each item is taller, 
-     you may need to tweak max-height or remove this. 
-  */
   box-sizing: border-box;
 }
 
@@ -260,4 +264,3 @@
   font-size: 0.75rem;
   color: #999;
 }
-

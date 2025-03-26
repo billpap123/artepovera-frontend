@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { FaBell } from "react-icons/fa"; // 1) Import the bell icon
 import "../styles/Navbar.css";
 
 const Navbar = () => {
@@ -102,18 +103,15 @@ const Navbar = () => {
         <span></span>
       </div>
       <ul className={`nav-links ${isMenuOpen ? "open" : ""}`}>
-        {/* 
-          IMPORTANT CHANGE:
-          "Home" is hardcoded to "/main" 
-        */}
+        {/* Home Link */}
         <li>
           <NavLink to="/main" className={({ isActive }) => (isActive ? "active" : "")}>
             Home
           </NavLink>
         </li>
 
-         {/* Conditionally render the Profile link */}
-         {user?.user_type === "Artist" && (
+        {/* Conditionally render the Profile link */}
+        {user?.user_type === "Artist" && (
           <li>
             <NavLink to="/artist-profile" className={({ isActive }) => (isActive ? "active" : "")}>
               Profile
@@ -128,10 +126,16 @@ const Navbar = () => {
           </li>
         )}
 
+        {/* Notifications with Bell Icon */}
         <li className="notifications">
           <button className="notifications-button" onClick={toggleDropdown}>
-            Notifications ({notifications.length})
+            <FaBell className="bell-icon" />
+            {/* If we have any notifications, show a small badge */}
+            {notifications.length > 0 && (
+              <span className="notification-badge">{notifications.length}</span>
+            )}
           </button>
+
           {showDropdown && (
             <div className="notifications-dropdown">
               {loadingNotifications ? (
@@ -150,7 +154,7 @@ const Navbar = () => {
                         <div className="timestamp">
                           {new Date(notif.created_at).toLocaleString()}
                         </div>
-                        <div>
+                        <div className="notif-buttons">
                           {!notif.read_status && (
                             <button onClick={() => markAsRead(notif.notification_id)}>
                               Mark as Read
@@ -171,6 +175,7 @@ const Navbar = () => {
           )}
         </li>
 
+        {/* Logout */}
         <li>
           <button onClick={handleLogout} className="logout-button">
             Logout
