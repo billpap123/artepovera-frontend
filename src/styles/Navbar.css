@@ -54,7 +54,6 @@
 /* Unify link & button styling (for Home, Profile, and Notifications) */
 .nav-links li a,
 .notifications-button {
-  display: inline-flex; /* Ensure icon and text are aligned horizontally */
   align-items: center;  /* Vertically center the contents */
   gap: 6px;           /* Spacing between icon & text (if any) */
   color: #fff;
