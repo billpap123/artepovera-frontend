@@ -11,9 +11,9 @@ const sampleArtists = [
 
 // Sample data for job ads (you already have this)
 const sampleJobs = [
-  { id: 1, title: "Looking for Live Portrait Painter", location: "New York, USA", imageUrl: "/images/portrait-job.jpg" },
-  { id: 2, title: "3D Sculpture Commission", location: "Paris, France", imageUrl: "/images/sculpture-job.jpg" },
-  { id: 3, title: "Illustrator for Children’s Book", location: "Remote", imageUrl: "/images/illustrator-job.jpg" },
+  { id: 1, title: "Looking for live portrait painter", location: "Patras, GR" },
+  { id: 2, title: "3D sculpture commission", location: "Paris, France" },
+  { id: 3, title: "Illustrator for children’s book", location: "Remote" },
 ];
 
 // New sample data for creative portfolios / artistic works
@@ -22,19 +22,19 @@ const samplePortfolios = [
     id: 1,
     title: "Sunset Overdrive",
     description: "A vivid depiction of the urban sunset.",
-    imageUrl: "https://via.placeholder.com/400x300?text=Sunset+Overdrive",
+    imageUrl: "backend/uploads/1739723536954.jpg",
   },
   {
     id: 2,
     title: "Nature's Whisper",
     description: "A serene landscape painting that calms the soul.",
-    imageUrl: "https://via.placeholder.com/400x300?text=Nature%27s+Whisper",
+    imageUrl: "backend/uploads/1739723536954.jpg",
   },
   {
     id: 3,
     title: "Digital Dreamscape",
     description: "Exploring the surreal world of digital art.",
-    imageUrl: "https://via.placeholder.com/400x300?text=Digital+Dreamscape",
+    imageUrl: "backend/uploads/1741806916721.jpeg",
   },
 ];
 
@@ -116,7 +116,6 @@ const LandingPage: React.FC = () => {
         <div className="jobs-grid">
           {sampleJobs.map((job) => (
             <div key={job.id} className="job-card">
-              <img src={job.imageUrl} alt={job.title} className="job-image" />
               <h3>{job.title}</h3>
               <p className="job-location">{job.location}</p>
             </div>
