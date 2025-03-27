@@ -28,6 +28,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId }) => {
 
   // Adjust to your actual Vite env var name
   const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:50001';
+  console.log('🔸 The artistId prop is:', artistId);
 
   // Fetch the portfolio only after we have a valid artistId
   useEffect(() => {
