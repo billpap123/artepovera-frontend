@@ -71,7 +71,8 @@
 
 .hero-btn {
   padding: 0.75rem 1.5rem;
-  background: #E50914; /* Netflix-inspired red */
+ background: #e59f09;
+ /* Netflix-inspired red */
   color: #fff;
   border: none;
   text-decoration: none;
@@ -89,7 +90,7 @@
 
 .hero-btn:hover {
   background: #fff;
-  color: #E50914;
+  color: #e50914;
   transform: translateY(-3px);
   box-shadow: 0 0 20px rgba(229, 9, 20, 0.6);
 }
@@ -269,7 +270,7 @@
 }
 
 .cta-button {
-  background: #E50914;
+  background: #e59f09;
   color: #fff;
   text-decoration: none;
   padding: 1rem 2rem;
@@ -280,7 +281,7 @@
 
 .cta-button:hover {
   background: #fff;
-  color: #E50914;
+  color: #e59f09;
   transform: translateY(-3px);
   box-shadow: 0 0 20px rgba(229, 9, 20, 0.6);
 }
@@ -302,20 +303,17 @@
 /* Creative Showcase Section */
 .creative-showcase-section {
   padding: 40px 20px;
-  background: #f9f9f9; /* Light background for contrast */
   text-align: center;
 }
 
 .creative-showcase-section h2 {
   font-size: 2rem;
   margin-bottom: 15px;
-  color: #1c1f26;
 }
 
 .creative-showcase-section p {
   font-size: 1rem;
   margin-bottom: 30px;
-  color: #555;
 }
 
 .showcase-grid {
@@ -327,15 +325,15 @@
 }
 
 .showcase-card {
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-  transition: transform 0.3s ease;
-}
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  padding: 2rem;
+  backdrop-filter: blur(6px);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;}
 
 .showcase-card:hover {
   transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.5);
 }
 
 .showcase-image {
@@ -347,11 +345,11 @@
 .showcase-card h3 {
   font-size: 1.25rem;
   margin: 15px 10px 5px;
-  color: #1c1f26;
+  color: #ffffff;
 }
 
 .showcase-card p {
   font-size: 0.95rem;
   margin: 0 10px 15px;
-  color: #555;
+  color: #ffffffb3;
 }
