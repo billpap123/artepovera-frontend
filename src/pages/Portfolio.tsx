@@ -10,12 +10,7 @@ export interface PortfolioItem {
   description: string;
 }
 
-export interface PortfolioProps {
-  // The actual artist_id from the DB (must be a number)
-  artistId: number;
-}
-
-const Portfolio: React.FC<PortfolioProps> = ({ artistId }) => {
+const Portfolio: React.FC = () => {
   const [items, setItems] = useState<PortfolioItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -26,17 +21,13 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId }) => {
     description: '',
   });
 
-  // Adjust to your actual Vite env var name
+  // Your Vite environment variable
   const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:50001';
-  console.log('🔸 The artistId prop is:', artistId);
 
-  // Fetch the portfolio only after we have a valid artistId
+  // Fetch the current user's portfolio items on mount
   useEffect(() => {
-    if (!artistId || artistId <= 0) {
-      return;
-    }
     fetchPortfolio();
-  }, [artistId]);
+  }, []);
 
   const fetchPortfolio = async () => {
     setLoading(true);
@@ -50,7 +41,8 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId }) => {
         return;
       }
 
-      const res = await axios.get(`${API_BASE_URL}/api/portfolios/${artistId}`, {
+      // Call GET /api/portfolios/me
+      const res = await axios.get(`${API_BASE_URL}/api/portfolios/me`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setItems(res.data);
@@ -77,14 +69,14 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId }) => {
     try {
       const token = localStorage.getItem('token');
       if (!token) {
-        alert('No token found. You must be logged in.');
+        alert('No token found. Please log in.');
         return;
       }
 
       const formData = new FormData();
-      // We no longer need to send artist_id because the backend will derive it from the token.
+      // No artist_id needed—backend uses the token to find the correct artist
       formData.append("description", description);
-      formData.append("image", selectedFile); // File input name must match backend configuration
+      formData.append("image", selectedFile); // Must match upload.single('image') in backend
 
       const res = await axios.post(`${API_BASE_URL}/api/portfolios`, formData, {
         headers: {
@@ -93,11 +85,11 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId }) => {
         }
       });
 
-      // Directly update state with the new portfolio item returned by the backend
+      // Append the newly created item to our state
       const newItem: PortfolioItem = res.data;
-      setItems(prevItems => [...prevItems, newItem]);
+      setItems(prev => [...prev, newItem]);
 
-      // Reset file and description
+      // Reset
       setSelectedFile(null);
       setDescription('');
     } catch (err) {
@@ -124,7 +116,9 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId }) => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
+      // Clear edit mode
       setEditMode({ id: null, description: '' });
+      // Refresh the portfolio list
       fetchPortfolio();
     } catch (err) {
       console.error('Error updating portfolio item:', err);
@@ -152,18 +146,6 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId }) => {
     }
   };
 
-  // If artistId is still 0 or invalid, show a loading or info message
-  if (!artistId || artistId <= 0) {
-    return (
-      <>
-        <Navbar />
-        <p style={{ textAlign: 'center', marginTop: '2rem' }}>
-          Loading artist data...
-        </p>
-      </>
-    );
-  }
-
   if (loading) return <p>Loading portfolio...</p>;
   if (error) return <p className="error-message">{error}</p>;
 
@@ -178,7 +160,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId }) => {
           <form onSubmit={handleUpload} className="portfolio-upload-form">
             <input
               type="file"
-              name="image"  // Must match the backend multer configuration
+              name="image"
               accept="image/png, image/jpeg"
               onChange={handleFileChange}
               required
