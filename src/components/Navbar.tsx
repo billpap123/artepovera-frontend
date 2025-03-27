@@ -139,7 +139,7 @@ const Navbar = () => {
           <li>
             <NavLink to="/employer-profile" className={({ isActive }) => (isActive ? "active" : "")}>
               <FaUserAlt className="nav-icon" />
-              Profile
+              
             </NavLink>
           </li>
         )}
