@@ -4,13 +4,21 @@ import axios from 'axios';
 import Navbar from "../components/Navbar";
 import '../styles/Portfolio.css';
 
+// Define the type for a single portfolio item
 export interface PortfolioItem {
   portfolio_id: number;
   image_url: string;
   description: string;
 }
 
-const Portfolio: React.FC = () => {
+// Define the props for the Portfolio component
+export interface PortfolioProps {
+  // The actual artist_id from the DB
+  artistId: number;
+}
+
+// Use React.FC with the props type
+const Portfolio: React.FC<PortfolioProps> = ({ artistId }) => {
   const [items, setItems] = useState<PortfolioItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -21,18 +29,21 @@ const Portfolio: React.FC = () => {
     description: '',
   });
 
-  // Your Vite environment variable
+  // Adjust to your actual Vite env var name
   const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:50001';
+  console.log('🔸 The artistId prop is:', artistId);
 
-  // Fetch the current user's portfolio items on mount
+  // Fetch the portfolio only after we have a valid artistId
   useEffect(() => {
+    if (!artistId || artistId <= 0) {
+      return;
+    }
     fetchPortfolio();
-  }, []);
+  }, [artistId]);
 
   const fetchPortfolio = async () => {
     setLoading(true);
     setError(null);
-
     try {
       const token = localStorage.getItem('token');
       if (!token) {
@@ -40,9 +51,7 @@ const Portfolio: React.FC = () => {
         setLoading(false);
         return;
       }
-
-      // Call GET /api/portfolios/me
-      const res = await axios.get(`${API_BASE_URL}/api/portfolios/me`, {
+      const res = await axios.get(`${API_BASE_URL}/api/portfolios/${artistId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setItems(res.data);
@@ -69,14 +78,13 @@ const Portfolio: React.FC = () => {
     try {
       const token = localStorage.getItem('token');
       if (!token) {
-        alert('No token found. Please log in.');
+        alert('No token found. You must be logged in.');
         return;
       }
-
       const formData = new FormData();
-      // No artist_id needed—backend uses the token to find the correct artist
+      // We no longer need to send artist_id since the backend uses the token.
       formData.append("description", description);
-      formData.append("image", selectedFile); // Must match upload.single('image') in backend
+      formData.append("image", selectedFile); // Must match backend's multer configuration
 
       const res = await axios.post(`${API_BASE_URL}/api/portfolios`, formData, {
         headers: {
@@ -85,11 +93,10 @@ const Portfolio: React.FC = () => {
         }
       });
 
-      // Append the newly created item to our state
+      // Append new item to state
       const newItem: PortfolioItem = res.data;
-      setItems(prev => [...prev, newItem]);
-
-      // Reset
+      setItems(prevItems => [...prevItems, newItem]);
+      // Reset file and description
       setSelectedFile(null);
       setDescription('');
     } catch (err) {
@@ -109,16 +116,12 @@ const Portfolio: React.FC = () => {
         alert('No token found. Please log in.');
         return;
       }
-
       await axios.put(
         `${API_BASE_URL}/api/portfolios/${portfolioId}`,
         { description: editMode.description },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-
-      // Clear edit mode
       setEditMode({ id: null, description: '' });
-      // Refresh the portfolio list
       fetchPortfolio();
     } catch (err) {
       console.error('Error updating portfolio item:', err);
@@ -134,17 +137,26 @@ const Portfolio: React.FC = () => {
         alert('No token found. Please log in.');
         return;
       }
-
       await axios.delete(`${API_BASE_URL}/api/portfolios/${portfolioId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-
       fetchPortfolio();
     } catch (err) {
       console.error('Error deleting portfolio item:', err);
       alert('Failed to delete portfolio item.');
     }
   };
+
+  if (!artistId || artistId <= 0) {
+    return (
+      <>
+        <Navbar />
+        <p style={{ textAlign: 'center', marginTop: '2rem' }}>
+          Loading artist data...
+        </p>
+      </>
+    );
+  }
 
   if (loading) return <p>Loading portfolio...</p>;
   if (error) return <p className="error-message">{error}</p>;
@@ -155,7 +167,6 @@ const Portfolio: React.FC = () => {
       <div className="portfolio-page">
         <div className="portfolio-container">
           <h2>My Portfolio</h2>
-
           {/* Upload Form */}
           <form onSubmit={handleUpload} className="portfolio-upload-form">
             <input
@@ -174,7 +185,6 @@ const Portfolio: React.FC = () => {
             />
             <button type="submit">Upload</button>
           </form>
-
           {/* Portfolio Display */}
           <div className="portfolio-grid">
             {items.length > 0 ? (
