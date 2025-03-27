@@ -28,12 +28,13 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId }) => {
     description: '',
   });
 
+  // Adjust to your actual Vite env var name
   const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:50001';
 
+  // Fetch the portfolio only after we have a valid artistId
   useEffect(() => {
     if (!artistId || artistId <= 0) {
-      setError('Invalid artist ID. Check your user/artist data or login again.');
-      setLoading(false);
+      // If artistId is invalid, just skip the fetch for now
       return;
     }
     fetchPortfolio();
@@ -83,20 +84,17 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId }) => {
         return;
       }
 
-      // Suppose you store "artistId" in React state after login:
-// The backend expects "artist_id" in formData
-const formData = new FormData();
-formData.append("artist_id", String(artistId));
-formData.append("description", description);
-formData.append("image", selectedFile); // must match upload.single('image')
+      const formData = new FormData();
+      formData.append("artist_id", String(artistId));
+      formData.append("description", description);
+      formData.append("image", selectedFile); // must match upload.single('image')
 
-await axios.post(`${API_BASE_URL}/api/portfolios`, formData, {
-  headers: {
-    Authorization: `Bearer ${token}`,
-    "Content-Type": "multipart/form-data"
-  }
-});
-
+      await axios.post(`${API_BASE_URL}/api/portfolios`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data"
+        }
+      });
 
       // Reset
       setSelectedFile(null);
@@ -153,6 +151,18 @@ await axios.post(`${API_BASE_URL}/api/portfolios`, formData, {
       alert('Failed to delete portfolio item.');
     }
   };
+
+  // If artistId is still 0 or invalid, show a loading or info message
+  if (!artistId || artistId <= 0) {
+    return (
+      <>
+        <Navbar />
+        <p style={{ textAlign: 'center', marginTop: '2rem' }}>
+          Loading artist data...
+        </p>
+      </>
+    );
+  }
 
   if (loading) return <p>Loading portfolio...</p>;
   if (error) return <p className="error-message">{error}</p>;
