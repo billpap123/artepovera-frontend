@@ -10,7 +10,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #1c1f26;
+  background-color: #1c1f26; /* Sleek dark color */
   color: #fff;
   padding: 10px 20px;
   position: fixed;
@@ -31,7 +31,7 @@
   letter-spacing: 2px;
 }
 .logo:hover {
-  color: #00b4d8;
+  color: #00b4d8; /* Highlight color on hover */
   transition: color 0.3s ease;
 }
 
@@ -39,32 +39,36 @@
 .nav-links {
   list-style: none;
   display: flex;
+  align-items: center; /* Vertically centers items */
   gap: 20px;
+  margin: 0;
+  padding: 0;
 }
+
 .nav-links li {
+  display: flex;       /* Use flex to center content within each li */
+  align-items: center;
   position: relative;
 }
 
-/* 
-   Unify link & button styling so they look the same
-   (except for the hover underline on links)
-*/
+/* Unify link & button styling (for Home, Profile, and Notifications) */
 .nav-links li a,
 .notifications-button {
-  align-items: center;
+  display: inline-flex; /* Ensure icon and text are aligned horizontally */
+  align-items: center;  /* Vertically center the contents */
+  gap: 6px;           /* Spacing between icon & text (if any) */
   color: #fff;
   background: none;
   border: none;
   text-decoration: none;
   font-size: 1rem;
   font-weight: 500;
-  gap: 6px;           /* spacing between icon & text (if any) */
-  padding: 5px 10px; /* same padding for both */
+  padding: 5px 10px;  /* Consistent padding for both links and buttons */
   cursor: pointer;
   transition: color 0.3s ease;
 }
 
-/* Hover & Active State for links and button */
+/* Hover & Active State */
 .nav-links li a:hover,
 .nav-links li a.active,
 .notifications-button:hover {
@@ -85,7 +89,7 @@
   width: 100%;
 }
 
-/* Hamburger Menu */
+/* Hamburger Menu - Hidden on Desktop */
 .hamburger {
   display: none;
   flex-direction: column;
@@ -101,9 +105,11 @@
   border-radius: 2px;
   transition: all 0.3s ease;
 }
+
+/* Mobile Navigation */
 @media screen and (max-width: 768px) {
   .hamburger {
-    display: flex;
+    display: flex; /* Show hamburger on smaller screens */
   }
   .nav-links {
     position: absolute;
@@ -113,15 +119,17 @@
     background-color: #1c1f26;
     flex-direction: column;
     align-items: center;
-    display: none;
+    display: none; /* Hidden by default */
     gap: 15px;
     padding: 20px 0;
     box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.3);
   }
   .nav-links.open {
-    display: flex;
+    display: flex; /* Show menu when toggled */
   }
 }
+
+/* Hamburger Animations */
 .hamburger.open span:nth-child(1) {
   transform: rotate(45deg) translate(5px, 5px);
 }
@@ -142,19 +150,23 @@
   vertical-align: middle;
 }
 
-/* Notification Container */
+/* Notifications */
 .notifications {
   position: relative;
+  display: inline-block;
 }
-
-/* We already unify with .notifications-button above */
 .notifications-button {
   position: relative;
+  display: inline-flex;
   align-items: center;
-  /* gap, background, border, color, etc. come from the unify rule */
+  gap: 4px;
+  background: transparent;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  font-size: 0.95rem;
+  padding: 5px 10px;
 }
-
-/* Notification badge */
 .notification-badge {
   background-color: red;
   color: #fff;
@@ -164,7 +176,7 @@
   vertical-align: middle;
 }
 
-/* Dropdown container */
+/* Notifications Dropdown */
 .notifications-dropdown {
   position: absolute;
   top: 36px;
