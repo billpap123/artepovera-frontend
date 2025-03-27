@@ -2,12 +2,6 @@ import React from "react";
 import { Link } from "react-router-dom";
 import "../styles/LandingPage.css";
 
-// Sample data for artists (you already have this)
-const sampleArtists = [
-  { id: 1, name: "Lana Bright", specialty: "Contemporary Dancer", imageUrl: "/images/dancer.jpg" },
-  { id: 2, name: "Marcos Silva", specialty: "3D Sculptor", imageUrl: "/images/sculptor.jpg" },
-  { id: 3, name: "Aisha Wu", specialty: "Digital Illustrator", imageUrl: "/images/illustrator.jpg" },
-];
 
 // Sample data for job ads (you already have this)
 const sampleJobs = [
@@ -16,27 +10,28 @@ const sampleJobs = [
   { id: 3, title: "Illustrator for children’s book", location: "Remote" },
 ];
 
-// New sample data for creative portfolios / artistic works
 const samplePortfolios = [
   {
     id: 1,
     title: "Sunset Overdrive",
     description: "A vivid depiction of the urban sunset.",
-    imageUrl: "backend/uploads/1739723536954.jpg",
+    imageUrl: "https://source.unsplash.com/400x300/?sunset,city",
   },
   {
     id: 2,
     title: "Nature's Whisper",
     description: "A serene landscape painting that calms the soul.",
-    imageUrl: "backend/uploads/1739723536954.jpg",
+    imageUrl: "https://source.unsplash.com/400x300/?nature,landscape",
   },
   {
     id: 3,
     title: "Digital Dreamscape",
     description: "Exploring the surreal world of digital art.",
-    imageUrl: "backend/uploads/1741806916721.jpeg",
+    imageUrl: "https://source.unsplash.com/400x300/?digital,art",
   },
 ];
+
+
 
 const LandingPage: React.FC = () => {
   return (
