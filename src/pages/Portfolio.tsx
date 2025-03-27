@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Navbar from "../components/Navbar";
-import '../styles/Global.css';
 import '../styles/Portfolio.css';
 
 interface PortfolioItem {
@@ -34,7 +33,6 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId }) => {
   // Fetch the portfolio only after we have a valid artistId
   useEffect(() => {
     if (!artistId || artistId <= 0) {
-      // If artistId is invalid, just skip the fetch for now
       return;
     }
     fetchPortfolio();
@@ -55,7 +53,6 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId }) => {
       const res = await axios.get(`${API_BASE_URL}/api/portfolios/${artistId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-
       setItems(res.data);
     } catch (err) {
       console.error('Error fetching portfolio:', err);
@@ -87,19 +84,22 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId }) => {
       const formData = new FormData();
       formData.append("artist_id", String(artistId));
       formData.append("description", description);
-      formData.append("image", selectedFile); // must match upload.single('image')
+      formData.append("image", selectedFile); // file input now has name "image"
 
-      await axios.post(`${API_BASE_URL}/api/portfolios`, formData, {
+      const res = await axios.post(`${API_BASE_URL}/api/portfolios`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data"
         }
       });
 
-      // Reset
+      // Directly update state with the new portfolio item returned by the backend
+      const newItem: PortfolioItem = res.data;
+      setItems(prevItems => [...prevItems, newItem]);
+
+      // Reset file and description
       setSelectedFile(null);
       setDescription('');
-      fetchPortfolio();
     } catch (err) {
       console.error('Error uploading image:', err);
       alert('Failed to upload image.');
@@ -178,6 +178,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId }) => {
           <form onSubmit={handleUpload} className="portfolio-upload-form">
             <input
               type="file"
+              name="image"  // Ensure this matches the backend multer configuration
               accept="image/png, image/jpeg"
               onChange={handleFileChange}
               required
