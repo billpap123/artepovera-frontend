@@ -11,17 +11,17 @@ export interface PortfolioItem {
   description: string;
 }
 
-// Define the props for the Portfolio component
+// Define the props for the Portfolio component;
+// artistId is optional. If not provided, we fetch the logged‐in artist’s portfolio.
 export interface PortfolioProps {
-  // The actual artist_id from the DB
-  artistId: number;
+  artistId?: number;
 }
 
-// Use React.FC with the props type
 const Portfolio: React.FC<PortfolioProps> = ({ artistId }) => {
   const [items, setItems] = useState<PortfolioItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [description, setDescription] = useState('');
   const [editMode, setEditMode] = useState<{ id: number | null; description: string }>({
@@ -29,18 +29,20 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId }) => {
     description: '',
   });
 
-  // Adjust to your actual Vite env var name
+  // Use your environment variable for the backend URL
   const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:50001';
-  console.log('🔸 The artistId prop is:', artistId);
 
-  // Fetch the portfolio only after we have a valid artistId
+  // Log the provided artistId for debugging
+  console.log('🔸 Provided artistId prop is:', artistId);
+
+  // Fetch portfolio data when the component mounts or when artistId changes
   useEffect(() => {
-    if (!artistId || artistId <= 0) {
-      return;
-    }
     fetchPortfolio();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [artistId]);
 
+  // Depending on whether an artistId is provided, we either fetch the portfolio for that artist
+  // or, if not provided, fetch the logged-in artist's portfolio.
   const fetchPortfolio = async () => {
     setLoading(true);
     setError(null);
@@ -51,9 +53,19 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId }) => {
         setLoading(false);
         return;
       }
-      const res = await axios.get(`${API_BASE_URL}/api/portfolios/${artistId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+
+      let res;
+      if (artistId && artistId > 0) {
+        // Use the provided artistId
+        res = await axios.get(`${API_BASE_URL}/api/portfolios/${artistId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+      } else {
+        // Fetch for the currently logged-in artist
+        res = await axios.get(`${API_BASE_URL}/api/portfolios/me`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+      }
       setItems(res.data);
     } catch (err) {
       console.error('Error fetching portfolio:', err);
@@ -82,9 +94,10 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId }) => {
         return;
       }
       const formData = new FormData();
-      // We no longer need to send artist_id since the backend uses the token.
+      // We don’t send artist_id here because the backend uses the token (for /api/portfolios/me)
+      // or if an artistId is provided, the backend should ignore it if not needed.
       formData.append("description", description);
-      formData.append("image", selectedFile); // Must match backend's multer configuration
+      formData.append("image", selectedFile);
 
       const res = await axios.post(`${API_BASE_URL}/api/portfolios`, formData, {
         headers: {
@@ -96,7 +109,8 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId }) => {
       // Append new item to state
       const newItem: PortfolioItem = res.data;
       setItems(prevItems => [...prevItems, newItem]);
-      // Reset file and description
+
+      // Reset file & description
       setSelectedFile(null);
       setDescription('');
     } catch (err) {
@@ -147,19 +161,8 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId }) => {
     }
   };
 
-  if (!artistId || artistId <= 0) {
-    return (
-      <>
-        <Navbar />
-        <p style={{ textAlign: 'center', marginTop: '2rem' }}>
-          Loading artist data...
-        </p>
-      </>
-    );
-  }
-
-  if (loading) return <p>Loading portfolio...</p>;
-  if (error) return <p className="error-message">{error}</p>;
+  if (loading) return <><Navbar /><p>Loading portfolio...</p></>;
+  if (error) return <><Navbar /><p className="error-message">{error}</p></>;
 
   return (
     <>
@@ -167,6 +170,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId }) => {
       <div className="portfolio-page">
         <div className="portfolio-container">
           <h2>My Portfolio</h2>
+
           {/* Upload Form */}
           <form onSubmit={handleUpload} className="portfolio-upload-form">
             <input
@@ -185,6 +189,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId }) => {
             />
             <button type="submit">Upload</button>
           </form>
+
           {/* Portfolio Display */}
           <div className="portfolio-grid">
             {items.length > 0 ? (
