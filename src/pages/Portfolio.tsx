@@ -4,14 +4,14 @@ import axios from 'axios';
 import Navbar from "../components/Navbar";
 import '../styles/Portfolio.css';
 
-interface PortfolioItem {
+export interface PortfolioItem {
   portfolio_id: number;
   image_url: string;
   description: string;
 }
 
-interface PortfolioProps {
-  // Must be the actual artist_id from the DB
+export interface PortfolioProps {
+  // The actual artist_id from the DB (must be a number)
   artistId: number;
 }
 
@@ -19,7 +19,6 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId }) => {
   const [items, setItems] = useState<PortfolioItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [description, setDescription] = useState('');
   const [editMode, setEditMode] = useState<{ id: number | null; description: string }>({
@@ -82,9 +81,9 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId }) => {
       }
 
       const formData = new FormData();
-      formData.append("artist_id", String(artistId));
+      // We no longer need to send artist_id because the backend will derive it from the token.
       formData.append("description", description);
-      formData.append("image", selectedFile); // file input now has name "image"
+      formData.append("image", selectedFile); // File input name must match backend configuration
 
       const res = await axios.post(`${API_BASE_URL}/api/portfolios`, formData, {
         headers: {
@@ -178,7 +177,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId }) => {
           <form onSubmit={handleUpload} className="portfolio-upload-form">
             <input
               type="file"
-              name="image"  // Ensure this matches the backend multer configuration
+              name="image"  // Must match the backend multer configuration
               accept="image/png, image/jpeg"
               onChange={handleFileChange}
               required
