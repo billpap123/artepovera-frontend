@@ -2,20 +2,23 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import '../styles/Global.css';
 
-// ✅ Use environment variable for API URL
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:50001";
 
-// Define the structure of a job posting
 interface JobPosting {
   id: number;
   title: string;
   description: string;
-  employerName?: string; // Optional employer name if returned
-  created_at?: string;   // If your backend returns a date
+  category?: string;
+  city?: string;
+  address?: string;
+  budget?: number;
+  difficulty?: string;
+  employerName?: string;
+  created_at?: string;
 }
 
 interface JobPostingsProps {
-  employerId?: number; // The employer ID to fetch job postings
+  employerId?: number;
 }
 
 const JobPostings: React.FC<JobPostingsProps> = ({ employerId }) => {
@@ -35,7 +38,7 @@ const JobPostings: React.FC<JobPostingsProps> = ({ employerId }) => {
           return;
         }
 
-        let url = `${API_URL}/api/job-postings`; // ✅ Fixed API URL with .env variable
+        let url = `${API_URL}/api/job-postings`;
         if (employerId) {
           url += `?employer_id=${employerId}`;
         }
@@ -54,7 +57,6 @@ const JobPostings: React.FC<JobPostingsProps> = ({ employerId }) => {
     fetchJobPostings();
   }, [employerId]);
 
-  // Apply logic if user is an Artist
   const handleApply = async (jobId: number) => {
     try {
       const token = localStorage.getItem('token');
@@ -64,8 +66,8 @@ const JobPostings: React.FC<JobPostingsProps> = ({ employerId }) => {
       }
 
       const response = await axios.post(
-        `${API_URL}/api/jobs/${jobId}/apply`, // ✅ Fixed API URL with .env variable
-        {}, // empty body
+        `${API_URL}/api/jobs/${jobId}/apply`,
+        {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
@@ -79,7 +81,6 @@ const JobPostings: React.FC<JobPostingsProps> = ({ employerId }) => {
   return (
     <div className="job-postings" style={{ padding: '20px' }}>
       <h4>Job Postings</h4>
-
       {error ? (
         <p className="error-message">{error}</p>
       ) : jobPostings.length > 0 ? (
@@ -96,19 +97,41 @@ const JobPostings: React.FC<JobPostingsProps> = ({ employerId }) => {
           >
             <h5 style={{ margin: '0 0 5px' }}>{job.title}</h5>
             <p style={{ margin: '5px 0' }}>{job.description}</p>
+            {job.category && (
+              <p style={{ margin: '5px 0' }}>
+                <strong>Category:</strong> {job.category}
+              </p>
+            )}
+            {job.city && (
+              <p style={{ margin: '5px 0' }}>
+                <strong>City:</strong> {job.city}
+              </p>
+            )}
+            {job.address && (
+              <p style={{ margin: '5px 0' }}>
+                <strong>Address:</strong> {job.address}
+              </p>
+            )}
+            {job.budget !== undefined && (
+              <p style={{ margin: '5px 0' }}>
+                <strong>Budget:</strong> ${job.budget}
+              </p>
+            )}
+            {job.difficulty && (
+              <p style={{ margin: '5px 0' }}>
+                <strong>Difficulty:</strong> {job.difficulty}
+              </p>
+            )}
             {job.employerName && (
               <p style={{ margin: '5px 0' }}>
                 <strong>Posted by:</strong> {job.employerName}
               </p>
             )}
-
             {job.created_at && (
               <p style={{ fontSize: '0.9em', color: '#666' }}>
                 Posted on: {new Date(job.created_at).toLocaleString()}
               </p>
             )}
-
-            {/* Only show "Apply" if user is an Artist */}
             {isArtist && (
               <button
                 onClick={() => handleApply(job.id)}
