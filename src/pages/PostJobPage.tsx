@@ -9,18 +9,22 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:50001";
 const PostJobPage: React.FC = () => {
   // 1. Fetch user from localStorage
   const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
-  // 2. Extract the real employer_id (not 0)
   const [employerId, setEmployerId] = useState<number | null>(null);
 
-  // 3. Local form states
+  // 2. Local form states
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [lat, setLat] = useState<number | "">(0);
-  const [lng, setLng] = useState<number | "">(0);
+  const [city, setCity] = useState("");
+  const [address, setAddress] = useState("");
+  const [budget, setBudget] = useState<number | "">(0);
+  const [difficulty, setDifficulty] = useState("");
+  const [deadline, setDeadline] = useState("");
+  const [artistCategory, setArtistCategory] = useState("");
+  const [insurance, setInsurance] = useState(false);
 
   const navigate = useNavigate();
 
-  // 4. On component mount, check if user has employer_id
+  // 3. On component mount, check if user has employer_id
   useEffect(() => {
     if (storedUser && storedUser.user_type === "Employer" && storedUser.employer_id) {
       setEmployerId(storedUser.employer_id);
@@ -29,7 +33,7 @@ const PostJobPage: React.FC = () => {
     }
   }, [storedUser]);
 
-  // 5. Submit the form
+  // 4. Submit the form
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -39,34 +43,35 @@ const PostJobPage: React.FC = () => {
         return;
       }
 
-      // Construct the geometry object for location (lng, lat)
-      const location = {
-        type: "Point",
-        coordinates: [Number(lng), Number(lat)],
+      // Construct payload with the new fields
+      const jobPayload = {
+        employer_id: employerId,
+        title,
+        description,
+        city,
+        address,
+        budget: Number(budget),
+        difficulty,
+        deadline,
+        artistCategory,
+        insurance,
       };
 
-      // Make the POST request to your backend
-      await axios.post(
-        `${API_BASE_URL}/api/job-postings`,
-        {
-          employer_id: employerId,
-          title,
-          description,
-          location,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      await axios.post(`${API_BASE_URL}/api/job-postings`, jobPayload, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
       alert("Job posted successfully!");
       // Clear the form
       setTitle("");
       setDescription("");
-      setLat(0);
-      setLng(0);
+      setCity("");
+      setAddress("");
+      setBudget(0);
+      setDifficulty("");
+      setDeadline("");
+      setArtistCategory("");
+      setInsurance(false);
 
       navigate("/main");
     } catch (error) {
@@ -100,31 +105,81 @@ const PostJobPage: React.FC = () => {
               style={{ marginLeft: "10px" }}
             />
           </div>
-          {/* Hidden latitude & longitude fields */}
-          <div style={{ marginBottom: "10px", display: "none" }}>
-            <label>Latitude:</label>
+          <div style={{ marginBottom: "10px" }}>
+            <label>City:</label>
             <input
-              type="number"
-              step="any"
-              value={lat}
-              onChange={(e) =>
-                setLat(e.target.value === "" ? "" : Number(e.target.value))
-              }
+              type="text"
+              value={city}
+              onChange={(e) => setCity(e.target.value)}
+              required
               style={{ marginLeft: "10px" }}
             />
           </div>
-          <div style={{ marginBottom: "10px", display: "none" }}>
-            <label>Longitude:</label>
+          <div style={{ marginBottom: "10px" }}>
+            <label>Address:</label>
             <input
-              type="number"
-              step="any"
-              value={lng}
-              onChange={(e) =>
-                setLng(e.target.value === "" ? "" : Number(e.target.value))
-              }
+              type="text"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              required
               style={{ marginLeft: "10px" }}
             />
           </div>
+          <div style={{ marginBottom: "10px" }}>
+            <label>Budget:</label>
+            <input
+              type="number"
+              step="any"
+              value={budget}
+              onChange={(e) => setBudget(e.target.value === "" ? "" : Number(e.target.value))}
+              required
+              style={{ marginLeft: "10px" }}
+            />
+          </div>
+          <div style={{ marginBottom: "10px" }}>
+            <label>Difficulty Level:</label>
+            <select
+              value={difficulty}
+              onChange={(e) => setDifficulty(e.target.value)}
+              required
+              style={{ marginLeft: "10px" }}
+            >
+              <option value="">Select Difficulty</option>
+              <option value="Beginner">Beginner</option>
+              <option value="Intermediate">Intermediate</option>
+              <option value="Expert">Expert</option>
+            </select>
+          </div>
+          <div style={{ marginBottom: "10px" }}>
+            <label>Deadline:</label>
+            <input
+              type="date"
+              value={deadline}
+              onChange={(e) => setDeadline(e.target.value)}
+              required
+              style={{ marginLeft: "10px" }}
+            />
+          </div>
+          <div style={{ marginBottom: "10px" }}>
+            <label>Artist Category:</label>
+            <input
+              type="text"
+              value={artistCategory}
+              onChange={(e) => setArtistCategory(e.target.value)}
+              required
+              style={{ marginLeft: "10px" }}
+            />
+          </div>
+          <div style={{ marginBottom: "10px" }}>
+            <label>Insurance Provided:</label>
+            <input
+              type="checkbox"
+              checked={insurance}
+              onChange={(e) => setInsurance(e.target.checked)}
+              style={{ marginLeft: "10px" }}
+            />
+          </div>
+          {/* If you think of anything else, add it here—like a "special instructions" field */}
           <button type="submit">Create Job</button>
         </form>
       </div>
