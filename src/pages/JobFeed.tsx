@@ -24,10 +24,14 @@ const JobFeed: React.FC = () => {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [error, setError] = useState<string | null>(null);
 
+  // Determine if the logged-in user is an artist.
+  const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
+  const isArtist = storedUser?.user_type === "Artist";
+
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem("token");
         if (!token) {
           console.warn("No token found; user might not be logged in.");
           return;
@@ -37,13 +41,31 @@ const JobFeed: React.FC = () => {
         });
         setJobs(response.data);
       } catch (err) {
-        console.error('❌ Error fetching jobs:', err);
-        setError('Failed to fetch jobs. Please try again later.');
+        console.error("❌ Error fetching jobs:", err);
+        setError("Failed to fetch jobs. Please try again later.");
       }
     };
 
     fetchJobs();
   }, []);
+
+  const handleApply = async (jobId: number) => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        alert("You must be logged in as an artist to apply for jobs.");
+        return;
+      }
+      // Assuming your apply endpoint is /api/jobs/:jobId/apply
+      const response = await axios.post(`${API_URL}/api/jobs/${jobId}/apply`, {}, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      alert(response.data.message || "Application successful!");
+    } catch (error) {
+      console.error(`Error applying to job ${jobId}:`, error);
+      alert("Failed to apply. See console for details.");
+    }
+  };
 
   if (error) {
     return <p className="error-message">{error}</p>;
@@ -68,37 +90,31 @@ const JobFeed: React.FC = () => {
             <p style={{ margin: '5px 0' }}>
               <strong>Posted by:</strong> {job.employerName}
             </p>
-            {/* Show location if available */}
             {job.city && job.address && (
               <p style={{ margin: '5px 0' }}>
                 <strong>Location:</strong> {job.city}, {job.address}
               </p>
             )}
-            {/* Show budget */}
             {job.budget !== undefined && (
               <p style={{ margin: '5px 0' }}>
                 <strong>Budget:</strong> ${job.budget}
               </p>
             )}
-            {/* Show difficulty */}
             {job.difficulty && (
               <p style={{ margin: '5px 0' }}>
                 <strong>Difficulty:</strong> {job.difficulty}
               </p>
             )}
-            {/* Show deadline */}
             {job.deadline && (
               <p style={{ margin: '5px 0' }}>
                 <strong>Deadline:</strong> {new Date(job.deadline).toLocaleDateString()}
               </p>
             )}
-            {/* Show artist category */}
             {job.artistCategory && (
               <p style={{ margin: '5px 0' }}>
                 <strong>Artist Category:</strong> {job.artistCategory.replace(/_/g, " ")}
               </p>
             )}
-            {/* Show insurance status */}
             {typeof job.insurance === "boolean" && (
               <p style={{ margin: '5px 0' }}>
                 <strong>Insurance Provided:</strong> {job.insurance ? "Yes" : "No"}
@@ -108,6 +124,15 @@ const JobFeed: React.FC = () => {
               <p style={{ fontSize: '0.9em', color: '#666' }}>
                 Posted on: {new Date(job.created_at).toLocaleString()}
               </p>
+            )}
+            {/* Show "Apply" button if the logged-in user is an Artist */}
+            {isArtist && (
+              <button
+                onClick={() => handleApply(job.id)}
+                style={{ marginTop: "10px", padding: "6px 12px", borderRadius: "4px", cursor: "pointer" }}
+              >
+                Apply
+              </button>
             )}
           </div>
         ))
