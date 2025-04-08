@@ -70,7 +70,7 @@ const PostJobPage: React.FC = () => {
         return;
       }
 
-      // Construct payload with the new fields
+      // Construct payload with the new fields including a default location
       const jobPayload = {
         employer_id: employerId,
         title,
@@ -82,6 +82,8 @@ const PostJobPage: React.FC = () => {
         deadline,
         artistCategory,
         insurance,
+        // Default the location field to [0, 0]
+        location: { type: "Point", coordinates: [0, 0] },
       };
 
       await axios.post(`${API_BASE_URL}/api/job-postings`, jobPayload, {
@@ -214,7 +216,6 @@ const PostJobPage: React.FC = () => {
               style={{ marginLeft: "10px" }}
             />
           </div>
-          {/* If you think of anything else, add it here—like a "special instructions" field */}
           <button type="submit">Create Job</button>
         </form>
       </div>
