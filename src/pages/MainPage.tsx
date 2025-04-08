@@ -29,20 +29,20 @@ const MainPage = () => {
             {user?.user_type === 'Artist' ? (
               <>
                 <li>
-                  <Link to="/portfolio">My Portfolio</Link>
+                  <Link to="/portfolio">My portfolio</Link>
                 </li>
                 <li>
-                  <Link to="/chat">My Chat</Link>
+                  <Link to="/chat">My chat</Link>
                 </li>
               </>
             ) : (
               <>
                 
                 <li>
-                  <Link to="/post-job">Post a Job</Link>
+                  <Link to="/post-job">Post a job</Link>
                 </li>
                 <li>
-                  <Link to="/chat">My Chat</Link>
+                  <Link to="/chat">My chat</Link>
                 </li>
               </>
             )}
@@ -58,7 +58,7 @@ const MainPage = () => {
 
       {/* Map is completely separate, below the layout */}
       <div className="map-section">
-        <h2>Artepovera Members Around the World</h2>
+        <h2>Artepovera members around the world</h2>
         <MapView userType={user?.user_type} />
       </div>
     </>

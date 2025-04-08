@@ -162,7 +162,7 @@ const ArtistProfile: React.FC = () => {
     <>
       <Navbar />
       <div className="artist-profile-container">
-        <h2 className="profile-title">My Artist Profile</h2>
+        <h2 className="profile-title">My artist profile</h2>
 
         {/* If is_student is true, show a badge */}
         {isStudent && (

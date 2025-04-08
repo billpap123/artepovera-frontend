@@ -159,7 +159,7 @@ const EmployerProfile: React.FC = () => {
     <>
       <Navbar />
       <div className="employer-profile-container">
-        <h2 className="profile-title">My Employer Profile</h2>
+        <h2 className="profile-title">My employer profile</h2>
 
         {/* Display the current profile picture */}
         <div className="profile-picture-wrapper">
