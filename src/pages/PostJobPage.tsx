@@ -6,6 +6,33 @@ import Navbar from "../components/Navbar";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:50001";
 
+// Artist categories based on your ENUM
+const artistCategories = [
+  "dancer",
+  "painter",
+  "digital_artist",
+  "graphic_designer",
+  "musician",
+  "sculptor",
+  "photographer",
+  "actress",
+  "actor",
+  "comedian",
+  "poet",
+  "writer",
+  "illustrator",
+  "calligrapher",
+  "filmmaker",
+  "animator",
+  "fashion_designer",
+  "architect",
+  "interior_designer",
+  "jewelry_designer",
+  "industrial_designer",
+  "ceramicist",
+  "woodworker",
+];
+
 const PostJobPage: React.FC = () => {
   // 1. Fetch user from localStorage
   const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
@@ -131,7 +158,9 @@ const PostJobPage: React.FC = () => {
               type="number"
               step="any"
               value={budget}
-              onChange={(e) => setBudget(e.target.value === "" ? "" : Number(e.target.value))}
+              onChange={(e) =>
+                setBudget(e.target.value === "" ? "" : Number(e.target.value))
+              }
               required
               style={{ marginLeft: "10px" }}
             />
@@ -162,13 +191,19 @@ const PostJobPage: React.FC = () => {
           </div>
           <div style={{ marginBottom: "10px" }}>
             <label>Artist Category:</label>
-            <input
-              type="text"
+            <select
               value={artistCategory}
               onChange={(e) => setArtistCategory(e.target.value)}
               required
               style={{ marginLeft: "10px" }}
-            />
+            >
+              <option value="">Select Category</option>
+              {artistCategories.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat.replace(/_/g, " ")}
+                </option>
+              ))}
+            </select>
           </div>
           <div style={{ marginBottom: "10px" }}>
             <label>Insurance Provided:</label>
