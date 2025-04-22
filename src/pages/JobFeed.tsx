@@ -525,8 +525,11 @@ const JobFeed: React.FC = () => {
                 <p className="job-description">{job.description}</p>
                 <div className="job-details-grid">
                   {job.city && <p><strong>Location:</strong> {job.city}{job.address ? `, ${job.address}` : ''}</p>}
-                  {typeof job.budget === 'number' && <p><strong>Budget:</strong> {formatCurrency(job.budget)}</p>}
-                  {job.difficulty && <p><strong>Difficulty:</strong> {job.difficulty}</p>}
+                  {job.budget != null && (
+                    <p>
+                        <strong>Budget:</strong> {formatCurrency(job.budget)}
+                    </p>
+                   )}                  {job.difficulty && <p><strong>Difficulty:</strong> {job.difficulty}</p>}
 
                   {/* Category Display - APPLY FORMATTING HERE */}
                   {job.artistCategory && (
