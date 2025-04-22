@@ -16,6 +16,8 @@ const artistCategories = [
 ];
 
 // --- Formatting Helper Function ---
+// (Capitalizes only the first letter of the first word after replacing underscores)
+// THIS FUNCTION ALREADY IMPLEMENTS YOUR REQUESTED FORMATTING
 const formatCategoryName = (category: string | undefined): string => {
   if (!category) return '';
   const spacedName = category.replace(/_/g, ' ');
@@ -23,71 +25,86 @@ const formatCategoryName = (category: string | undefined): string => {
 };
 // --- End Helper Function ---
 
-// --- Embedded CSS Styles for PostJobPage ---
+// --- NEW Embedded CSS Styles for PostJobPage (Cuter/Modern) ---
 const postJobStyles = `
+  /* Import a font - Example: Nunito */
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap');
+
   .post-job-container {
-    max-width: 800px; /* Slightly wider */
-    margin: 30px auto; /* More vertical margin */
-    padding: 30px; /* More padding */
-    border: 1px solid #e0e0e0; /* Lighter border */
-    border-radius: 10px; /* Slightly more rounded */
-    background-color: #ffffff; /* White background */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Subtle shadow */
-    font-family: Arial, sans-serif; /* Consistent font */
+    max-width: 750px; /* Adjusted width */
+    margin: 40px auto; /* More vertical margin */
+    padding: 35px 40px; /* More padding */
+    border: none; /* Remove border */
+    border-radius: 12px; /* More rounded */
+    background-color: #ffffff; /* Keep white */
+    /* Softer, layered shadow */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04);
+    font-family: 'Nunito', sans-serif; /* Apply the font */
+    color: #495057; /* Default text color */
   }
 
   .post-job-container h2 {
     text-align: center;
-    margin-bottom: 30px; /* More space below heading */
-    color: #333;
-    font-weight: 600; /* Bolder heading */
+    margin-bottom: 35px;
+    color: #343a40; /* Darker heading */
+    font-weight: 700; /* Bold */
+    font-size: 1.8rem; /* Larger heading */
   }
 
   .post-job-form {
     display: flex;
     flex-direction: column;
-    gap: 20px; /* Consistent gap between form elements/groups */
+    gap: 25px; /* Increased gap */
   }
 
   .form-field-group label {
     display: block;
-    margin-bottom: 8px; /* Space between label and input */
-    font-weight: 600; /* Bolder labels */
-    color: #555;
-    font-size: 0.95em;
+    margin-bottom: 10px; /* More space */
+    font-weight: 600;
+    color: #495057; /* Slightly softer label color */
+    font-size: 1rem; /* Slightly larger label */
   }
 
   .form-input,
   .form-select,
   .form-textarea {
     width: 100%;
-    padding: 12px 15px; /* More padding */
-    border: 1px solid #ccc;
-    border-radius: 6px; /* Consistent radius */
+    padding: 14px 18px; /* Adjusted padding */
+    border: 1px solid #dee2e6; /* Lighter border */
+    border-radius: 8px; /* Rounded inputs */
     box-sizing: border-box;
-    font-size: 1rem; /* Standard font size */
-    transition: border-color 0.2s ease, box-shadow 0.2s ease; /* Smooth transitions */
+    font-size: 1rem;
+    background-color: #f8f9fa; /* Very light input background */
+    color: #495057;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+   /* Add placeholder styling */
+  .form-input::placeholder,
+  .form-textarea::placeholder {
+      color: #adb5bd;
+      opacity: 1; /* Firefox */
   }
 
   .form-input:focus,
   .form-select:focus,
   .form-textarea:focus {
-    border-color: #007bff; /* Highlight focus */
-    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2); /* Focus ring */
-    outline: none; /* Remove default outline */
+    border-color: #66aaff; /* Softer blue focus */
+    background-color: #fff; /* White background on focus */
+    box-shadow: 0 0 0 3px rgba(102, 170, 255, 0.2); /* Softer blue ring */
+    outline: none;
   }
 
    .form-textarea {
-      min-height: 100px; /* Ensure textarea has decent height */
-      resize: vertical; /* Allow vertical resize only */
+      min-height: 120px;
+      resize: vertical;
+      font-family: inherit; /* Ensure textarea uses the same font */
    }
 
   .form-row {
     display: flex;
-    gap: 20px; /* Gap between items in a row */
+    gap: 25px; /* Increased gap */
   }
 
-  /* Make items in a row take equal width */
   .form-row > div {
     flex: 1;
   }
@@ -95,53 +112,88 @@ const postJobStyles = `
   .form-checkbox-group {
     display: flex;
     align-items: center;
-    padding-top: 10px; /* Add some space above checkbox */
+    padding-top: 10px;
+    gap: 10px; /* Gap between checkbox and label */
   }
 
-  .form-checkbox-group input[type="checkbox"] {
-    margin-right: 12px;
-    transform: scale(1.3); /* Larger checkbox */
-    cursor: pointer;
-  }
+  /* Custom Checkbox Style (Optional but cuter) */
+   .form-checkbox-group input[type="checkbox"] {
+      appearance: none; /* Remove default */
+      width: 1.4em;
+      height: 1.4em;
+      border: 1px solid #adb5bd;
+      border-radius: 4px;
+      display: inline-block;
+      position: relative;
+      cursor: pointer;
+      margin: 0; /* Reset margin */
+      flex-shrink: 0;
+      transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+    }
+    .form-checkbox-group input[type="checkbox"]:checked {
+      background-color: #20c997; /* Teal check background */
+      border-color: #20c997;
+    }
+     .form-checkbox-group input[type="checkbox"]:checked::before {
+       content: '✔'; /* Checkmark */
+       font-size: 1em;
+       color: white;
+       position: absolute;
+       left: 50%;
+       top: 50%;
+       transform: translate(-50%, -50%);
+     }
+      .form-checkbox-group input[type="checkbox"]:focus {
+          box-shadow: 0 0 0 3px rgba(32, 201, 151, 0.25); /* Teal focus ring */
+          border-color: #1baa80;
+      }
+
    .form-checkbox-group label {
-      margin-bottom: 0; /* Remove bottom margin for checkbox label */
-      font-weight: 500; /* Normal weight */
+      margin-bottom: 0;
+      font-weight: 400; /* Lighter weight */
+      color: #495057;
       cursor: pointer;
    }
 
   .submit-button {
-    padding: 14px 25px; /* Generous padding */
-    background-color: #28a745; /* Success green */
+    padding: 14px 30px;
+    /* Using a softer, modern teal color */
+    background-color: #20c997;
     color: white;
     border: none;
-    border-radius: 6px;
+    border-radius: 8px; /* Match inputs */
     cursor: pointer;
-    font-size: 1.1rem; /* Larger font */
+    font-size: 1.1rem;
     font-weight: 600;
-    margin-top: 15px; /* Space above button */
-    transition: background-color 0.2s ease, transform 0.1s ease; /* Add transform transition */
-    align-self: center; /* Center button */
+    margin-top: 20px;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    align-self: center;
+    box-shadow: 0 2px 5px rgba(32, 201, 151, 0.2); /* Subtle shadow */
   }
 
   .submit-button:hover {
-    background-color: #218838; /* Darker green on hover */
+    background-color: #1baa80; /* Darker teal */
   }
   .submit-button:active {
-     transform: scale(0.98); /* Slight press effect */
+     transform: scale(0.98);
+     box-shadow: none; /* Remove shadow on press */
   }
 
   /* --- Media Query for Responsiveness --- */
-  @media (max-width: 600px) {
+  @media (max-width: 650px) {
     .form-row {
-      flex-direction: column; /* Stack elements in a row */
-      gap: 20px; /* Keep gap consistent */
+      flex-direction: column;
+      gap: 25px;
     }
     .post-job-container {
-        padding: 20px; /* Reduce padding on small screens */
-        margin: 20px 10px;
+        padding: 25px;
+        margin: 20px 15px;
     }
      .submit-button {
-        width: 100%; /* Make button full width */
+        width: 100%;
+     }
+     .post-job-container h2 {
+         font-size: 1.6rem;
      }
   }
 `;
@@ -155,7 +207,7 @@ const PostJobPage: React.FC = () => {
   const [description, setDescription] = useState("");
   const [city, setCity] = useState("");
   const [address, setAddress] = useState("");
-  const [budget, setBudget] = useState<number | "">(""); // Default to empty string for placeholder
+  const [budget, setBudget] = useState<number | "">("");
   const [difficulty, setDifficulty] = useState("");
   const [deadline, setDeadline] = useState("");
   const [artistCategory, setArtistCategory] = useState("");
@@ -173,9 +225,13 @@ const PostJobPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-     // Basic validation example (can be enhanced)
      if (budget !== "" && Number(budget) < 0) {
          alert("Budget cannot be negative.");
+         return;
+     }
+     // Add check for required fields (though 'required' attr helps)
+     if (!title || !description || !city || !address || budget === '' || !difficulty || !deadline || !artistCategory) {
+         alert("Please fill out all required fields.");
          return;
      }
     try {
@@ -186,7 +242,7 @@ const PostJobPage: React.FC = () => {
       }
       const jobPayload = {
         employer_id: employerId, title, description, city, address,
-        budget: budget === "" ? null : Number(budget), // Send null if empty, or number
+        budget: budget === "" ? null : Number(budget), // Send null if budget is empty
         difficulty, deadline, artistCategory, insurance,
         location: { type: "Point", coordinates: [0, 0] },
       };
@@ -205,13 +261,13 @@ const PostJobPage: React.FC = () => {
     }
   };
 
-   // Conditional rendering if not logged in as employer
    if (!employerId && typeof window !== 'undefined' && !localStorage.getItem("user")) {
      return (
        <>
          <Navbar />
-         <div className="post-job-container" style={{textAlign: 'center'}}> {/* Reuse container style */}
-           <p>You must be logged in as an Employer to post a job.</p>
+         {/* Use the styles even for the message */}
+         <div className="post-job-container" style={{textAlign: 'center'}}>
+           <p style={{fontSize: '1.1rem', color: '#6c757d'}}>You must be logged in as an Employer to post a job.</p>
          </div>
        </>
      );
@@ -227,7 +283,6 @@ const PostJobPage: React.FC = () => {
         <h2>Post a New Job Opportunity</h2>
         <form onSubmit={handleSubmit} className="post-job-form">
 
-            {/* Title */}
             <div className="form-field-group">
               <label htmlFor="jobTitle">Job Title</label>
               <input
@@ -241,7 +296,6 @@ const PostJobPage: React.FC = () => {
               />
             </div>
 
-            {/* Description */}
             <div className="form-field-group">
               <label htmlFor="jobDesc">Job Description</label>
               <textarea
@@ -250,12 +304,10 @@ const PostJobPage: React.FC = () => {
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 required
-                rows={5}
                 placeholder="Describe the project, required skills, deliverables, etc."
               />
             </div>
 
-             {/* Location Row */}
             <div className="form-row">
                <div className="form-field-group">
                  <label htmlFor="jobCity">City</label>
@@ -283,7 +335,6 @@ const PostJobPage: React.FC = () => {
                </div>
             </div>
 
-            {/* Budget */}
             <div className="form-field-group">
               <label htmlFor="jobBudget">Budget ($)</label>
               <input
@@ -295,11 +346,10 @@ const PostJobPage: React.FC = () => {
                 value={budget}
                 onChange={(e) => setBudget(e.target.value === "" ? "" : Number(e.target.value))}
                 required
-                placeholder="e.g., 500 (Enter 0 if negotiable/unspecified)"
+                placeholder="e.g., 500 (Required)"
               />
             </div>
 
-             {/* Details Row */}
              <div className="form-row">
                 <div className="form-field-group">
                   <label htmlFor="jobDifficulty">Difficulty Level</label>
@@ -323,6 +373,8 @@ const PostJobPage: React.FC = () => {
                    id="jobDeadline"
                    className="form-input"
                    type="date"
+                   // Set min date to today?
+                   min={new Date().toISOString().split("T")[0]}
                    value={deadline}
                    onChange={(e) => setDeadline(e.target.value)}
                    required
@@ -330,7 +382,6 @@ const PostJobPage: React.FC = () => {
                </div>
             </div>
 
-            {/* Category */}
             <div className="form-field-group">
               <label htmlFor="jobCategory">Artist Category Needed</label>
               <select
@@ -349,7 +400,6 @@ const PostJobPage: React.FC = () => {
               </select>
             </div>
 
-            {/* Insurance */}
             <div className="form-checkbox-group">
               <input
                 id="jobInsurance"
@@ -360,7 +410,6 @@ const PostJobPage: React.FC = () => {
               <label htmlFor="jobInsurance">Insurance Provided by Employer?</label>
             </div>
 
-            {/* Submit Button */}
             <button type="submit" className="submit-button">
               Post Job Posting
             </button>
