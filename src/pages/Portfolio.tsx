@@ -169,7 +169,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId }) => {
       <Navbar />
       <div className="portfolio-page">
         <div className="portfolio-container">
-          <h2>My Portfolio</h2>
+          <h2>My portfolio</h2>
 
           {/* Upload Form */}
           <form onSubmit={handleUpload} className="portfolio-upload-form">
