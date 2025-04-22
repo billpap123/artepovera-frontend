@@ -28,35 +28,45 @@ interface Job {
 }
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:50001";
 
+// --- Formatting Helper Function ---
+// (Capitalizes only the first letter of the first word after replacing underscores)
+const formatCategoryName = (category: string | undefined): string => {
+  if (!category) return ''; // Handle cases where category might be undefined
+  const spacedName = category.replace(/_/g, ' '); // Replace underscores first
+  // Capitalize only the very first character
+  return spacedName.charAt(0).toUpperCase() + spacedName.slice(1);
+};
+// --- End Helper Function ---
+
 // --- Embedded CSS Styles ---
-// KEEP THIS - This holds your actual styles being used
 const componentStyles = `
   .job-feed-container {
-  display: flex;             /* ADD */
-  flex-direction: column;    /* ADD */
+    display: flex;
+    flex-direction: column;
     padding: 20px;
     font-family: Arial, sans-serif;
     max-width: 1200px;
     margin: 0 auto;
-    border-radius: 8px;
-    border: 1px solid #ddd;
-    background-color: #fff;
+    /* Removed border/background from container to apply to specific sections if needed */
+    /* height: calc(100vh - 80px); /* Example: viewport height minus navbar */
   }
 
   .job-feed-container h2 {
     text-align: center;
     margin-bottom: 30px;
     color: #333;
+    flex-shrink: 0;
   }
 
+  /* --- Filter Styles --- */
   .job-filters {
     background: #f9f9f9;
     padding: 20px;
     border-radius: 8px;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    flex-shrink: 0;          /* ADD */
-    margin-bottom: 20px;   
+    border: 1px solid #eee;
+    flex-shrink: 0;
   }
 
   .job-filters h3 {
@@ -104,7 +114,6 @@ const componentStyles = `
 
   .clear-filters-button {
     padding: 10px 15px;
-    /* Updated color from your last paste */
     background-color: #e59f09;
     color: white;
     border: none;
@@ -114,36 +123,26 @@ const componentStyles = `
     font-weight: bold;
   }
   .clear-filters-button:hover {
-      /* Corresponding hover state */
       background-color: #c88a07;
   }
 
+  /* --- Job Listing Styles --- */
   .job-listing {
-  display: grid;
-  /* --- CHANGE: Force 2 columns --- */
-  grid-template-columns: repeat(2, 1fr); /* MODIFY THIS LINE */
-  gap: 20px; /* Keep existing gap */
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2 columns */
+    gap: 20px;
+    max-height: 75vh; /* ADJUST THIS - Height before scroll */
+    overflow-y: auto; /* Enable scroll */
+    padding: 5px 15px 5px 5px; /* Padding (right side for scrollbar) */
+    flex-grow: 1; /* Take available space */
+    min-height: 200px; /* Minimum height */
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: #fdfdfd;
+  }
 
-  /* --- ADD: Height limit and scrolling --- */
-  max-height: 80vh;   /* ADD - ADJUST THIS VALUE (e.g., 75vh, 900px) */
-  overflow-y: auto;   /* ADD - Enable vertical scroll */
-
-  /* --- ADD: Padding for scrollbar --- */
-  /* Adjust existing padding or add new padding */
-  padding: 5px 15px 5px 5px; /* ADD/MODIFY - Top R Bottom L padding (R is for scrollbar) */
-
-  /* --- ADD: Allow this area to grow --- */
-  flex-grow: 1;         /* ADD */
-  min-height: 200px;    /* ADD - Or another minimum */
-
-  /* Optional: Add border/background for visual separation */
-  border: 1px solid #e0e0e0; /* ADD/MODIFY */
-  border-radius: 8px;        /* ADD/MODIFY */
-  background-color: #fdfdfd; /* ADD/MODIFY */
-}
-
+  /* --- Job Card Styles --- */
   .job-card {
-    min-height: 280px; /* ADD - ADJUST AS NEEDED */
     padding: 20px;
     border: 1px solid #ddd;
     border-radius: 8px;
@@ -151,10 +150,10 @@ const componentStyles = `
     box-shadow: 0 2px 5px rgba(0,0,0,0.08);
     display: flex;
     flex-direction: column;
+    min-height: 280px; /* ADJUST AS NEEDED */
   }
 
   .job-card h3 {
-    /* Updated color from your last paste */
     color: #774402;
     margin: 0 0 10px 0;
     font-size: 1.3em;
@@ -203,7 +202,6 @@ const componentStyles = `
   .apply-button {
     margin-top: auto;
     padding: 10px 15px;
-     /* Updated color from your last paste */
     background-color: #C96A50;
     color: white;
     border: none;
@@ -215,29 +213,26 @@ const componentStyles = `
     align-self: flex-start;
   }
   .apply-button:hover {
-     /* Corresponding hover state */
     background-color: #b0563f;
   }
 
-  .error-message {
-    color: red;
+  .error-message, .loading-message, .no-jobs-message {
+    color: #555;
     text-align: center;
-    padding: 20px;
+    padding: 40px 20px;
     grid-column: 1 / -1;
+    font-style: italic;
   }
-
-  .loading-message {
-      text-align: center;
-      padding: 30px;
-      color: #555;
-      grid-column: 1 / -1;
+  .error-message {
+      color: red;
+      font-style: normal;
+      font-weight: bold;
   }
 
   /* --- Autocomplete Styles --- */
   .city-filter-container {
     position: relative;
   }
-
   .city-suggestions {
     position: absolute;
     background-color: white;
@@ -254,58 +249,53 @@ const componentStyles = `
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     box-sizing: border-box;
   }
-
   .city-suggestions li {
     padding: 8px 12px;
     cursor: pointer;
   }
-
   .city-suggestions li:hover {
     background-color: #f0f0f0;
   }
-  /* --- End Autocomplete Styles --- */
 
   .filter-grid > div, .filter-grid > input, .filter-grid > select {
       position: relative;
   }
-      /* 6. Optional but recommended: Media Query for smaller screens */
-/* Add this whole block at the end of componentStyles */
-@media (max-width: 768px) { /* Adjust breakpoint (e.g., 768px) as needed */
-  .job-listing {
-    grid-template-columns: 1fr; /* Switch to 1 column */
-    /* Keep or adjust max-height/overflow for mobile as desired */
+
+  /* --- Media Query for smaller screens --- */
+  @media (max-width: 768px) {
+    .job-listing {
+      grid-template-columns: 1fr; /* Switch to 1 column */
+    }
+     .filter-grid {
+       grid-template-columns: 1fr; /* Stack filters */
+     }
+     .job-details-grid {
+        grid-template-columns: 1fr; /* Stack job details */
+     }
   }
-  /* Optional: stack filters on mobile for better layout */
-   .filter-grid {
-     grid-template-columns: 1fr;
-   }
-}
 `;
 // --- End Embedded CSS ---
 
+// --- React Component ---
 const JobFeed: React.FC = () => {
+  // --- State and Refs ---
   const [allJobs, setAllJobs] = useState<Job[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-
-  // Filter States
   const [filterCity, setFilterCity] = useState('');
   const [filterMinBudget, setFilterMinBudget] = useState<number | ''>('');
   const [filterMaxBudget, setFilterMaxBudget] = useState<number | ''>('');
   const [filterDifficulty, setFilterDifficulty] = useState('');
   const [filterCategory, setFilterCategory] = useState('');
   const [filterInsurance, setFilterInsurance] = useState<'yes' | 'no' | ''>('');
-
-  // Autocomplete State
   const [citySuggestions, setCitySuggestions] = useState<string[]>([]);
   const [showCitySuggestions, setShowCitySuggestions] = useState(false);
-  const cityInputRef = useRef<HTMLDivElement>(null); // Changed Ref to Div container
+  const cityInputRef = useRef<HTMLDivElement>(null);
 
-  // User Type Check
+  // --- Memos and Effects ---
   const storedUser = useMemo(() => JSON.parse(localStorage.getItem("user") || "{}"), []);
   const isArtist = useMemo(() => storedUser?.user_type === "Artist", [storedUser]);
 
-  // Calculate Unique Cities
   const uniqueCities = useMemo(() => {
     const cities = new Set<string>();
     allJobs.forEach(job => {
@@ -316,7 +306,6 @@ const JobFeed: React.FC = () => {
     return Array.from(cities).sort();
   }, [allJobs]);
 
-  // Fetch all jobs on mount
   useEffect(() => {
     const fetchJobs = async () => {
       setIsLoading(true);
@@ -338,21 +327,32 @@ const JobFeed: React.FC = () => {
     fetchJobs();
   }, []);
 
-  // Apply Filters
   const filteredJobs = useMemo(() => {
      return allJobs.filter(job => {
       if (filterCity && !job.city?.toLowerCase().includes(filterCity.toLowerCase())) return false;
       if (filterMinBudget !== '' && (job.budget === undefined || job.budget < filterMinBudget)) return false;
       if (filterMaxBudget !== '' && (job.budget === undefined || job.budget > filterMaxBudget)) return false;
       if (filterDifficulty && job.difficulty !== filterDifficulty) return false;
-      if (filterCategory && job.artistCategory !== filterCategory) return false;
+      if (filterCategory && job.artistCategory !== filterCategory) return false; // Filter using original value
       if (filterInsurance === 'yes' && job.insurance !== true) return false;
       if (filterInsurance === 'no' && job.insurance !== false) return false;
       return true;
     });
   }, [allJobs, filterCity, filterMinBudget, filterMaxBudget, filterDifficulty, filterCategory, filterInsurance]);
 
-  // Handle Apply Button Click
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (cityInputRef.current && !cityInputRef.current.contains(event.target as Node)) {
+        setShowCitySuggestions(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  // --- Handlers ---
    const handleApply = async (jobId: number) => {
     const token = localStorage.getItem("token");
     if (!token || !isArtist) {
@@ -370,8 +370,6 @@ const JobFeed: React.FC = () => {
     }
   };
 
-
-  // Function to reset filters
   const clearFilters = () => {
     setFilterCity('');
     setFilterMinBudget('');
@@ -383,13 +381,11 @@ const JobFeed: React.FC = () => {
     setShowCitySuggestions(false);
   };
 
-  // Format currency utility
-  const formatCurrency = (amount: number | undefined): string => { // Added explicit return type
+  const formatCurrency = (amount: number | undefined): string => {
     if (amount === undefined) return 'N/A';
     return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
   };
 
-  // Autocomplete Handlers
   const handleCityInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setFilterCity(value);
@@ -411,20 +407,6 @@ const JobFeed: React.FC = () => {
     setShowCitySuggestions(false);
   };
 
-  // Close suggestions when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      // Check if the click target is inside the container referenced by cityInputRef
-      if (cityInputRef.current && !cityInputRef.current.contains(event.target as Node)) {
-        setShowCitySuggestions(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
-
 
   return (
     <>
@@ -439,7 +421,6 @@ const JobFeed: React.FC = () => {
           <h3>Filter Jobs</h3>
           <div className="filter-grid">
             {/* City Filter with Autocomplete */}
-            {/* Ensure ref is on the container div */}
             <div className="city-filter-container" ref={cityInputRef}>
               <input
                 className="filter-input"
@@ -447,13 +428,13 @@ const JobFeed: React.FC = () => {
                 placeholder="City"
                 value={filterCity}
                 onChange={handleCityInputChange}
-                onFocus={() => { // Show suggestions on focus if there's input
+                onFocus={() => {
                   if (filterCity.length > 0) {
                     const suggestions = uniqueCities.filter(city =>
                       city.toLowerCase().startsWith(filterCity.toLowerCase())
                     );
                      if (suggestions.length > 0) {
-                       setCitySuggestions(suggestions); // Update suggestions just in case
+                       setCitySuggestions(suggestions);
                        setShowCitySuggestions(true);
                      }
                   }
@@ -471,7 +452,7 @@ const JobFeed: React.FC = () => {
               )}
             </div>
 
-            {/* Other Filters */}
+            {/* Difficulty Filter */}
             <select
               className="filter-select"
               value={filterDifficulty}
@@ -480,14 +461,23 @@ const JobFeed: React.FC = () => {
               <option value="">All Difficulty Levels</option>
               {difficultyLevels.map(level => (<option key={level} value={level}>{level}</option>))}
             </select>
+
+             {/* Category Filter - APPLY FORMATTING HERE */}
             <select
               className="filter-select"
               value={filterCategory}
               onChange={(e) => setFilterCategory(e.target.value)}
             >
               <option value="">All Artist Categories</option>
-              {artistCategories.map((cat) => (<option key={cat} value={cat}>{cat.replace(/_/g, " ")}</option>))}
+              {artistCategories.map((cat) => (
+                 // Use original 'cat' for value, formatted name for display text
+                <option key={cat} value={cat}>
+                  {formatCategoryName(cat)} {/* <--- APPLY FORMATTING HERE */}
+                </option>
+              ))}
             </select>
+
+            {/* Budget Filter */}
             <div className="budget-filter-group">
               <input
                 className="filter-input"
@@ -505,6 +495,8 @@ const JobFeed: React.FC = () => {
                 onChange={(e) => setFilterMaxBudget(e.target.value === '' ? '' : Number(e.target.value))}
               />
             </div>
+
+             {/* Insurance Filter */}
             <select
               className="filter-select"
               value={filterInsurance}
@@ -534,10 +526,17 @@ const JobFeed: React.FC = () => {
                 <p className="job-description">{job.description}</p>
                 <div className="job-details-grid">
                   {job.city && <p><strong>Location:</strong> {job.city}{job.address ? `, ${job.address}` : ''}</p>}
-                  {/* Use explicit check for budget rendering */}
                   {typeof job.budget === 'number' && <p><strong>Budget:</strong> {formatCurrency(job.budget)}</p>}
                   {job.difficulty && <p><strong>Difficulty:</strong> {job.difficulty}</p>}
-                  {job.artistCategory && <p><strong>Category:</strong> {job.artistCategory.replace(/_/g, " ")}</p>}
+
+                  {/* Category Display - APPLY FORMATTING HERE */}
+                  {job.artistCategory && (
+                    <p>
+                        <strong>Category:</strong>{' '}
+                        {formatCategoryName(job.artistCategory)} {/* <--- APPLY FORMATTING HERE */}
+                    </p>
+                   )}
+
                   {job.deadline && <p><strong>Deadline:</strong> {new Date(job.deadline).toLocaleDateString()}</p>}
                   {typeof job.insurance === 'boolean' && <p><strong>Insurance:</strong> {job.insurance ? "Yes" : "No"}</p>}
                 </div>
@@ -557,7 +556,8 @@ const JobFeed: React.FC = () => {
               </div>
             ))
           ) : (
-            <p>No jobs match your current filters. Try adjusting them or check back later!</p>
+            // Added class for specific styling if needed
+            <p className="no-jobs-message">No jobs match your current filters. Try adjusting them or check back later!</p>
           )}
         </div>
       </div>
@@ -565,7 +565,5 @@ const JobFeed: React.FC = () => {
   );
 };
 
-// REMOVED the unused 'styles' object from here
-// const styles: { [key: string]: React.CSSProperties } = { ... };
 
 export default JobFeed;
