@@ -414,11 +414,10 @@ const JobFeed: React.FC = () => {
       <style>{componentStyles}</style>
       <Navbar />
       <div className="job-feed-container">
-        <h2>Find Your Next Opportunity</h2>
 
         {/* --- Filter Section --- */}
         <div className="job-filters">
-          <h3>Filter Jobs</h3>
+          <h3>Filter jobs</h3>
           <div className="filter-grid">
             {/* City Filter with Autocomplete */}
             <div className="city-filter-container" ref={cityInputRef}>
@@ -458,7 +457,7 @@ const JobFeed: React.FC = () => {
               value={filterDifficulty}
               onChange={(e) => setFilterDifficulty(e.target.value)}
             >
-              <option value="">All Difficulty Levels</option>
+              <option value="">All difficulty levels</option>
               {difficultyLevels.map(level => (<option key={level} value={level}>{level}</option>))}
             </select>
 
@@ -468,7 +467,7 @@ const JobFeed: React.FC = () => {
               value={filterCategory}
               onChange={(e) => setFilterCategory(e.target.value)}
             >
-              <option value="">All Artist Categories</option>
+              <option value="">All artist categories</option>
               {artistCategories.map((cat) => (
                  // Use original 'cat' for value, formatted name for display text
                 <option key={cat} value={cat}>
@@ -503,8 +502,8 @@ const JobFeed: React.FC = () => {
               onChange={(e) => setFilterInsurance(e.target.value as 'yes' | 'no' | '')}
             >
               <option value="">Insurance (All)</option>
-              <option value="yes">Insurance Provided</option>
-              <option value="no">No Insurance</option>
+              <option value="yes">Insurance provided</option>
+              <option value="no">No insurance</option>
             </select>
             <button onClick={clearFilters} className="clear-filters-button">
               Clear Filters
