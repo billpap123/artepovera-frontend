@@ -12,6 +12,8 @@ const artistCategories = [
   "industrial_designer", "ceramicist", "woodworker",
 ];
 const difficultyLevels = ["Beginner", "Intermediate", "Expert"];
+
+// --- FIX: CORRECT INTERFACE DEFINITION ---
 interface Job {
   id: number;
   title: string;
@@ -20,12 +22,14 @@ interface Job {
   created_at?: string;
   city?: string;
   address?: string;
-  budget?: number;
+  budget?: string | null; // <-- CORRECTED: Allow string or null
   difficulty?: string;
   deadline?: string;
   artistCategory?: string;
   insurance?: boolean;
 }
+// --- END INTERFACE FIX ---
+
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:50001";
 
 // --- Formatting Helper Function ---
@@ -327,18 +331,26 @@ const JobFeed: React.FC = () => {
     fetchJobs();
   }, []);
 
+  // --- Filtering Logic (Handles string budget) ---
   const filteredJobs = useMemo(() => {
      return allJobs.filter(job => {
+      // Parse budget string/null to number/undefined for comparisons
+      // Added type assertion (as string) because interface now correctly allows string/null
+      // parseFloat handles null input returning NaN, which is checked below
+      const jobBudgetNumber = job.budget == null ? undefined : parseFloat(job.budget as string);
+
       if (filterCity && !job.city?.toLowerCase().includes(filterCity.toLowerCase())) return false;
-      if (filterMinBudget !== '' && (job.budget === undefined || job.budget < filterMinBudget)) return false;
-      if (filterMaxBudget !== '' && (job.budget === undefined || job.budget > filterMaxBudget)) return false;
+      // Use parsed number for budget filtering, check for NaN
+      if (filterMinBudget !== '' && (jobBudgetNumber === undefined || isNaN(jobBudgetNumber) || jobBudgetNumber < filterMinBudget)) return false;
+      if (filterMaxBudget !== '' && (jobBudgetNumber === undefined || isNaN(jobBudgetNumber) || jobBudgetNumber > filterMaxBudget)) return false;
       if (filterDifficulty && job.difficulty !== filterDifficulty) return false;
-      if (filterCategory && job.artistCategory !== filterCategory) return false; // Filter using original value
+      if (filterCategory && job.artistCategory !== filterCategory) return false;
       if (filterInsurance === 'yes' && job.insurance !== true) return false;
       if (filterInsurance === 'no' && job.insurance !== false) return false;
       return true;
     });
   }, [allJobs, filterCity, filterMinBudget, filterMaxBudget, filterDifficulty, filterCategory, filterInsurance]);
+  // --- End Filtering Logic ---
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -381,8 +393,10 @@ const JobFeed: React.FC = () => {
     setShowCitySuggestions(false);
   };
 
+  // Updated formatCurrency to handle potential NaN from parseFloat
   const formatCurrency = (amount: number | undefined): string => {
-    if (amount === undefined) return 'N/A';
+    // Check for undefined OR NaN before formatting
+    if (amount === undefined || isNaN(amount)) return 'N/A';
     return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
   };
 
@@ -419,153 +433,62 @@ const JobFeed: React.FC = () => {
         <div className="job-filters">
           <h3>Filter jobs</h3>
           <div className="filter-grid">
-            {/* City Filter with Autocomplete */}
+            {/* City Filter */}
             <div className="city-filter-container" ref={cityInputRef}>
-              <input
-                className="filter-input"
-                type="text"
-                placeholder="City"
-                value={filterCity}
-                onChange={handleCityInputChange}
-                onFocus={() => {
-                  if (filterCity.length > 0) {
-                    const suggestions = uniqueCities.filter(city =>
-                      city.toLowerCase().startsWith(filterCity.toLowerCase())
-                    );
-                     if (suggestions.length > 0) {
-                       setCitySuggestions(suggestions);
-                       setShowCitySuggestions(true);
-                     }
-                  }
-                }}
-                autoComplete="off"
-              />
-              {showCitySuggestions && citySuggestions.length > 0 && (
-                <ul className="city-suggestions">
-                  {citySuggestions.map((city, index) => (
-                    <li key={index} onClick={() => handleSuggestionClick(city)}>
-                      {city}
-                    </li>
-                  ))}
-                </ul>
-              )}
+              <input className="filter-input" type="text" placeholder="City" value={filterCity} onChange={handleCityInputChange} onFocus={() => { if (filterCity.length > 0) { const suggestions = uniqueCities.filter(city => city.toLowerCase().startsWith(filterCity.toLowerCase())); if (suggestions.length > 0) { setCitySuggestions(suggestions); setShowCitySuggestions(true); } } }} autoComplete="off" />
+              {showCitySuggestions && citySuggestions.length > 0 && ( <ul className="city-suggestions"> {citySuggestions.map((city, index) => ( <li key={index} onClick={() => handleSuggestionClick(city)}>{city}</li> ))} </ul> )}
             </div>
-
-            {/* Difficulty Filter */}
-            <select
-              className="filter-select"
-              value={filterDifficulty}
-              onChange={(e) => setFilterDifficulty(e.target.value)}
-            >
-              <option value="">All difficulty levels</option>
-              {difficultyLevels.map(level => (<option key={level} value={level}>{level}</option>))}
-            </select>
-
-             {/* Category Filter - APPLY FORMATTING HERE */}
-            <select
-              className="filter-select"
-              value={filterCategory}
-              onChange={(e) => setFilterCategory(e.target.value)}
-            >
-              <option value="">All artist categories</option>
-              {artistCategories.map((cat) => (
-                 // Use original 'cat' for value, formatted name for display text
-                <option key={cat} value={cat}>
-                  {formatCategoryName(cat)} {/* <--- APPLY FORMATTING HERE */}
-                </option>
-              ))}
-            </select>
-
-            {/* Budget Filter */}
-            <div className="budget-filter-group">
-              <input
-                className="filter-input"
-                type="number"
-                placeholder="Min Budget"
-                value={filterMinBudget}
-                onChange={(e) => setFilterMinBudget(e.target.value === '' ? '' : Number(e.target.value))}
-              />
-              <span>-</span>
-              <input
-                className="filter-input"
-                type="number"
-                placeholder="Max Budget"
-                value={filterMaxBudget}
-                onChange={(e) => setFilterMaxBudget(e.target.value === '' ? '' : Number(e.target.value))}
-              />
-            </div>
-
+             {/* Difficulty Filter */}
+             <select className="filter-select" value={filterDifficulty} onChange={(e) => setFilterDifficulty(e.target.value)}> <option value="">All difficulty levels</option> {difficultyLevels.map(level => (<option key={level} value={level}>{level}</option>))} </select>
+             {/* Category Filter */}
+             <select className="filter-select" value={filterCategory} onChange={(e) => setFilterCategory(e.target.value)}> <option value="">All artist categories</option> {artistCategories.map((cat) => ( <option key={cat} value={cat}>{formatCategoryName(cat)}</option> ))} </select>
+             {/* Budget Filter */}
+             <div className="budget-filter-group"> <input className="filter-input" type="number" placeholder="Min Budget" value={filterMinBudget} onChange={(e) => setFilterMinBudget(e.target.value === '' ? '' : Number(e.target.value))} /> <span>-</span> <input className="filter-input" type="number" placeholder="Max Budget" value={filterMaxBudget} onChange={(e) => setFilterMaxBudget(e.target.value === '' ? '' : Number(e.target.value))} /> </div>
              {/* Insurance Filter */}
-            <select
-              className="filter-select"
-              value={filterInsurance}
-              onChange={(e) => setFilterInsurance(e.target.value as 'yes' | 'no' | '')}
-            >
-              <option value="">Insurance (All)</option>
-              <option value="yes">Insurance provided</option>
-              <option value="no">No insurance</option>
-            </select>
-            <button onClick={clearFilters} className="clear-filters-button">
-              Clear Filters
-            </button>
+             <select className="filter-select" value={filterInsurance} onChange={(e) => setFilterInsurance(e.target.value as 'yes' | 'no' | '')}> <option value="">Insurance (All)</option> <option value="yes">Insurance provided</option> <option value="no">No insurance</option> </select>
+             {/* Clear Button */}
+             <button onClick={clearFilters} className="clear-filters-button"> Clear Filters </button>
           </div>
         </div>
 
         {/* --- Job Listing Section --- */}
         <div className="job-listing">
-           {isLoading ? (
-            <p className="loading-message">Loading jobs...</p>
-          ) : error ? (
-            <p className="error-message">{error}</p>
-          ) : filteredJobs.length > 0 ? (
-            filteredJobs.map((job) => (
-              <div key={job.id} className="job-card">
-                <h3>{job.title}</h3>
-                <p className="employer-name">Posted by: {job.employerName || 'Unknown Employer'}</p>
-                <p className="job-description">{job.description}</p>
-                <div className="job-details-grid">
-                  {job.city && <p><strong>Location:</strong> {job.city}{job.address ? `, ${job.address}` : ''}</p>}
-                  {job.budget != null && (
-                    <p>
-                        <strong>Budget:</strong> {formatCurrency(job.budget)}
-                    </p>
-                   )}                  {job.difficulty && <p><strong>Difficulty:</strong> {job.difficulty}</p>}
+           {isLoading ? ( <p className="loading-message">Loading jobs...</p> )
+            : error ? ( <p className="error-message">{error}</p> )
+            : filteredJobs.length > 0 ? (
+                filteredJobs.map((job) => (
+                  <div key={job.id} className="job-card">
+                    <h3>{job.title}</h3>
+                    <p className="employer-name">Posted by: {job.employerName || 'Unknown Employer'}</p>
+                    <p className="job-description">{job.description}</p>
+                    <div className="job-details-grid">
+                      {job.city && <p><strong>Location:</strong> {job.city}{job.address ? `, ${job.address}` : ''}</p>}
 
-                  {/* Category Display - APPLY FORMATTING HERE */}
-                  {job.artistCategory && (
-                    <p>
-                        <strong>Category:</strong>{' '}
-                        {formatCategoryName(job.artistCategory)} {/* <--- APPLY FORMATTING HERE */}
-                    </p>
-                   )}
+                      {/* --- Display Logic using parseFloat (with type assertion) --- */}
+                      {/* Check if budget string exists AND is a parsable number */}
+                      {/* Added type assertion (as string) to satisfy TS */}
+                      {job.budget != null && !isNaN(parseFloat(job.budget as string)) && (
+                           <p>
+                             <strong>Budget:</strong> {formatCurrency(parseFloat(job.budget as string))}
+                           </p>
+                      )}
+                      {/* --- End Display Logic --- */}
 
-                  {job.deadline && <p><strong>Deadline:</strong> {new Date(job.deadline).toLocaleDateString()}</p>}
-                  {typeof job.insurance === 'boolean' && <p><strong>Insurance:</strong> {job.insurance ? "Yes" : "No"}</p>}
-                </div>
-                 {job.created_at && (
-                    <p className="posted-date">
-                    Posted on: {new Date(job.created_at).toLocaleString()}
-                    </p>
-                )}
-                {isArtist && (
-                  <button
-                    onClick={() => handleApply(job.id)}
-                    className="apply-button"
-                  >
-                    Apply Now
-                  </button>
-                )}
-              </div>
-            ))
-          ) : (
-            // Added class for specific styling if needed
-            <p className="no-jobs-message">No jobs match your current filters. Try adjusting them or check back later!</p>
-          )}
+                      {job.difficulty && <p><strong>Difficulty:</strong> {job.difficulty}</p>}
+                      {job.artistCategory && ( <p> <strong>Category:</strong>{' '} {formatCategoryName(job.artistCategory)} </p> )}
+                      {job.deadline && <p><strong>Deadline:</strong> {new Date(job.deadline).toLocaleDateString()}</p>}
+                      {typeof job.insurance === 'boolean' && <p><strong>Insurance:</strong> {job.insurance ? "Yes" : "No"}</p>}
+                    </div>
+                    {job.created_at && ( <p className="posted-date"> Posted on: {new Date(job.created_at).toLocaleString()} </p> )}
+                    {isArtist && ( <button onClick={() => handleApply(job.id)} className="apply-button"> Apply Now </button> )}
+                  </div>
+                ))
+              ) : ( <p className="no-jobs-message">No jobs match your current filters. Try adjusting them or check back later!</p> )
+          }
         </div>
       </div>
     </>
   );
 };
-
 
 export default JobFeed;
