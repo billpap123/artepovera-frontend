@@ -100,54 +100,65 @@ const EmployerProfile: React.FC = () => {
   // ─────────────────────────────────────────────────────────────
   const handleSaveChanges = async () => {
     try {
-      if (!employerId && !userId) {
-        alert("No valid Employer ID or User ID. Please log in again.");
-        return;
-      }
-
+      // Keep check for token
       setSaving(true);
       const token = localStorage.getItem("token");
       if (!token) {
         alert("No token found. Please log in.");
+        setSaving(false);
         return;
       }
 
       // Build form data
       const formData = new FormData();
-      formData.append("bio", newBio);
+      formData.append("bio", newBio); // Send current bio text
       if (newProfilePicFile) {
+        // Use 'profile_picture' field name matching backend middleware
         formData.append("profile_picture", newProfilePicFile);
       }
 
-      // Post to /api/employers/profile/:employerId
-      const idToUse = employerId || userId;
-      await axios.post(`${BACKEND_URL}/api/employers/profile/${idToUse}`, formData, {
+      // --- CORRECTED URL ---
+      // Post to /api/employers/profile (No ID needed in URL path)
+      const url = `${BACKEND_URL}/api/employers/profile`;
+      // --- END CORRECTION ---
+
+      const response = await axios.post(url, formData, {
         headers: {
-          "Content-Type": "multipart/form-data",
+          // 'Content-Type': 'multipart/form-data', // Axios sets this for FormData
           Authorization: `Bearer ${token}`,
         },
       });
 
-      // Update state so UI shows new data
-      setBio(newBio);
-      if (newProfilePicFile) {
-        // Re-fetch from /users/me to get the updated pic
-        const meResponse = await axios.get(`${BACKEND_URL}/api/users/me`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const { employer } = meResponse.data;
-        if (employer) {
-          setProfilePicture(employer.profile_picture || "");
-        }
+      // Update state with data returned from backend (preferred)
+      const updatedEmployerData = response.data?.employer; // Assuming backend returns updated data
+
+      if (updatedEmployerData) {
+         setBio(updatedEmployerData.bio || "");
+         setProfilePicture(updatedEmployerData.profile_picture || ""); // Use the new Cloudinary URL
+         setNewBio(updatedEmployerData.bio || ""); // Reset edit form field
+      } else {
+          // Fallback if backend doesn't return data
+          setBio(newBio);
+          // Need to re-fetch if pic changed and backend didn't return it
+          if (newProfilePicFile) {
+              // Re-fetching '/users/me' is a safe way
+              const meResponse = await axios.get(`${BACKEND_URL}/api/users/me`, {
+                  headers: { Authorization: `Bearer ${token}` },
+              });
+              setProfilePicture(meResponse.data?.employer?.profile_picture || "");
+          }
       }
 
+      setNewProfilePicFile(null); // Clear selected file
       alert("Profile updated successfully!");
-      setIsEditing(false);
-    } catch (error) {
+      setIsEditing(false); // Exit editing mode
+
+    } catch (error: any) { // Added type
       console.error("Error saving changes:", error);
-      alert("Something went wrong. Please try again.");
+      const message = error.response?.data?.message || "Something went wrong. Please try again.";
+      alert(message);
     } finally {
-      setSaving(false);
+      setSaving(false); // Ensure saving state is always reset
     }
   };
 

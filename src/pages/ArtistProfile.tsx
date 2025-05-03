@@ -103,54 +103,76 @@ const ArtistProfile: React.FC = () => {
   // ─────────────────────────────────────────────────────────────
   const handleSaveChanges = async () => {
     try {
-      if (!artistId && !userId) {
-        alert("No valid Artist ID or User ID. Please log in again.");
-        return;
-      }
+      // Keep this check, maybe just rely on token check later
+      // if (!artistId && !userId) {
+      //   alert("No valid Artist ID or User ID. Please log in again.");
+      //   return;
+      // }
 
       setSaving(true);
       const token = localStorage.getItem("token");
       if (!token) {
-        alert("No token found. Please log in.");
+        alert("Authentication token not found. Please log in.");
+        setSaving(false); // Stop saving state
         return;
       }
 
       // Build form data
       const formData = new FormData();
-      formData.append("bio", newBio);
+      formData.append("bio", newBio); // Send current bio text
       if (newProfilePicFile) {
+        // Use 'profile_picture' as the field name matching backend middleware
         formData.append("profile_picture", newProfilePicFile);
       }
 
-      // Post to /api/artists/profile/:artistId
-      const idToUse = artistId || userId;
-      await axios.post(`${BACKEND_URL}/api/artists/profile/${idToUse}`, formData, {
+      // --- CORRECTED URL ---
+      // Post to /api/artists/profile (No ID needed in URL path)
+      const url = `${BACKEND_URL}/api/artists/profile`;
+      // --- END CORRECTION ---
+
+      const response = await axios.post(url, formData, {
         headers: {
-          "Content-Type": "multipart/form-data",
+          // 'Content-Type': 'multipart/form-data', // Axios sets this for FormData
           Authorization: `Bearer ${token}`,
         },
       });
 
-      // Update state so UI shows new data
-      setBio(newBio);
-      if (newProfilePicFile) {
-        // Re-fetch from /users/me to show updated pic
-        const meResponse = await axios.get(`${BACKEND_URL}/api/users/me`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const { artist } = meResponse.data;
-        if (artist) {
-          setProfilePicture(artist.profile_picture || "");
-        }
+      // Update state with data returned from backend (preferred) or local state
+      const updatedArtistData = response.data?.artist; // Assuming backend returns updated data
+
+      if (updatedArtistData) {
+         setBio(updatedArtistData.bio || "");
+         setProfilePicture(updatedArtistData.profile_picture || ""); // Use the new Cloudinary URL from response
+         setNewBio(updatedArtistData.bio || ""); // Reset edit form field
+      } else {
+          // Fallback if backend doesn't return data (less ideal)
+          setBio(newBio);
+          // Need to re-fetch if pic changed and backend didn't return it
+          if (newProfilePicFile) {
+              // You could potentially use the URL returned in response.data.imageUrl here
+              // Or re-fetch '/users/me' like you had before
+              // For simplicity, let's assume the backend returns the new URL:
+              // setProfilePicture(response.data.imageUrl || profilePicture); // If backend sends imageUrl directly
+              // Re-fetching is safer if backend response structure is uncertain:
+              const meResponse = await axios.get(`${BACKEND_URL}/api/users/me`, {
+                  headers: { Authorization: `Bearer ${token}` },
+              });
+              setProfilePicture(meResponse.data?.artist?.profile_picture || "");
+          }
       }
 
+
+      setNewProfilePicFile(null); // Clear the selected file state
       alert("Profile updated successfully!");
-      setIsEditing(false);
-    } catch (error) {
+      setIsEditing(false); // Exit editing mode
+
+    } catch (error: any) { // Added type
       console.error("Error saving changes:", error);
-      alert("Something went wrong. Please try again.");
+      // Provide more specific error if available
+      const message = error.response?.data?.message || "Something went wrong. Please try again.";
+      alert(message);
     } finally {
-      setSaving(false);
+      setSaving(false); // Ensure saving state is always reset
     }
   };
 
