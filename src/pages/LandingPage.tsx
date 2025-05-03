@@ -1,45 +1,44 @@
 // src/pages/LandingPage.tsx
 import React from 'react';
 import { Link } from 'react-router-dom';
-// Removed sample data import
-// Removed CSS import, styles are embedded below
 
-// --- Embedded CSS Styles for LandingPage ---
+// --- Embedded CSS Styles for LandingPage (Earthy Tones) ---
 const landingPageStyles = `
   /* Import Font */
   @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap');
 
   .landing-page-container {
     font-family: 'Nunito', sans-serif;
-    color: #333;
+    color: #4d4033; /* Dark Brown for default text */
     line-height: 1.6;
+    background-color: #fdfbf7; /* Off-white base background */
   }
 
   /* --- Hero Section --- */
   .hero-section {
     position: relative;
-    height: 85vh; /* Adjust height as needed */
+    height: 85vh;
     min-height: 500px;
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
     color: white;
-    /* --- BACKGROUND IMAGE/VIDEO NEEDED --- */
-    background: url('/hero-background.jpg') no-repeat center center/cover; /* Placeholder */
-    /* Or use a video: */
-    /* background: black; */ /* Fallback color */
+    /* Background handled by <video> tag */
+    background-color: #654321; /* Fallback: Dark Brown */
+    overflow: hidden;
   }
 
-  /* Optional Video Background Styling */
   .hero-video-background {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* Cover entire area */
+    top: 50%;
+    left: 50%;
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
     z-index: 1;
+    transform: translate(-50%, -50%);
   }
 
   .hero-overlay {
@@ -48,7 +47,7 @@ const landingPageStyles = `
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* Dark overlay for text contrast */
+    background-color: rgba(77, 64, 51, 0.6); /* Dark Brown Overlay */
     z-index: 2;
   }
 
@@ -60,19 +59,21 @@ const landingPageStyles = `
   }
 
   .hero-title {
-    font-size: 3.5rem; /* Adjust size */
+    font-size: 3.5rem;
     font-weight: 800;
     margin-bottom: 0.5em;
     letter-spacing: 1px;
-    /* Optional: Text shadow for better readability */
-    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.6);
+     /* CSS text-transform can override inline text if needed */
+     /* text-transform: uppercase; */ /* Example */
   }
 
   .hero-subtitle {
     font-size: 1.5rem;
     font-weight: 600;
     margin-bottom: 1em;
-    opacity: 0.9;
+    opacity: 0.95;
+     /* Capitalization handled inline */
   }
 
   .hero-description {
@@ -81,13 +82,14 @@ const landingPageStyles = `
     max-width: 600px;
     margin-left: auto;
     margin-right: auto;
-    opacity: 0.85;
+    opacity: 0.9;
+     /* Standard sentence case */
   }
   .hero-description em {
       font-style: normal;
-      color: #90cdf4; /* Example accent color */
+      color: #E2725B; /* Terracotta accent */
+      font-weight: 600;
   }
-
 
   .hero-cta-buttons {
     display: flex;
@@ -98,17 +100,18 @@ const landingPageStyles = `
 
   .hero-btn {
     padding: 12px 30px;
-    border-radius: 25px; /* Pill shape */
+    border-radius: 25px;
     text-decoration: none;
     font-weight: 700;
     font-size: 1rem;
     transition: all 0.3s ease;
     border: 2px solid white;
     background-color: white;
-    color: #333; /* Dark text on light button */
+    color: #4d4033; /* Dark brown text */
+     /* Capitalization handled inline */
   }
    .hero-btn:hover {
-       background-color: transparent;
+       background-color: rgba(255, 255, 255, 0.15); /* Transparent white */
        color: white;
        transform: translateY(-2px);
    }
@@ -119,159 +122,171 @@ const landingPageStyles = `
    }
     .hero-btn.alt:hover {
         background-color: white;
-        color: #333;
+        color: #4d4033;
     }
 
 
   /* --- Section Base Styles --- */
   .landing-section {
-      padding: 60px 20px;
+      padding: 70px 20px;
       text-align: center;
   }
    .landing-section h2 {
        font-size: 2.5rem;
        font-weight: 700;
-       color: #343a40;
-       margin-bottom: 20px;
+       color: #654321; /* Deep Brown Heading */
+       margin-bottom: 25px;
+        /* Capitalization handled inline */
    }
     .landing-section .section-intro {
-        font-size: 1.1rem;
-        color: #6c757d;
-        max-width: 700px;
-        margin: 0 auto 40px auto; /* Center intro text */
+        font-size: 1.15rem;
+        color: #7d746b; /* Warm Grey */
+        max-width: 750px;
+        margin: 0 auto 50px auto;
+         /* Standard sentence case */
     }
 
   /* --- Category Showcase Section --- */
   .category-showcase-section {
-    background-color: #f8f9fa; /* Light background */
+    background-color: #f5f0e8; /* Light Beige background */
   }
 
   .category-grid {
     display: grid;
-    /* Responsive grid: 1 column mobile, 3 columns desktop */
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 30px;
+    gap: 35px;
     max-width: 1100px;
-    margin: 40px auto 0 auto; /* Add top margin */
+    margin: 40px auto 0 auto;
   }
 
   .category-card {
     background-color: #fff;
-    border-radius: 10px;
-    overflow: hidden; /* Contain image */
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 5px 20px rgba(101, 67, 33, 0.1); /* Brownish shadow */
     text-align: center;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    padding-bottom: 25px; /* Space below button */
+    padding-bottom: 30px;
   }
 
   .category-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    transform: translateY(-6px);
+    box-shadow: 0 10px 25px rgba(101, 67, 33, 0.15);
   }
 
   .category-card img {
     width: 100%;
-    height: 200px; /* Fixed height for images */
-    object-fit: cover; /* Cover the area, might crop */
+    height: 210px;
+    object-fit: cover;
     display: block;
   }
 
   .category-card h3 {
-    font-size: 1.5rem;
+    font-size: 1.6rem;
     font-weight: 700;
-    color: #20c997; /* Teal color for category titles */
-    margin: 20px 15px 10px 15px;
+    color: #A0522D; /* Sienna */
+    margin: 25px 15px 10px 15px;
+     /* Capitalization handled inline */
   }
 
   .category-card p {
     font-size: 1rem;
-    color: #6c757d;
-    padding: 0 20px; /* Side padding for text */
-    margin-bottom: 20px;
-    min-height: 60px; /* Give some space for text */
+    color: #7d746b;
+    padding: 0 25px;
+    margin-bottom: 25px;
+    min-height: 60px;
+     /* Standard sentence case */
   }
 
   .category-link {
     display: inline-block;
-    padding: 8px 20px;
+    padding: 9px 22px;
     border-radius: 20px;
-    background-color: #f8f9fa; /* Light background */
-    color: #495057;
+    background-color: transparent;
+    color: #A0522D; /* Sienna */
     text-decoration: none;
     font-weight: 600;
-    border: 1px solid #dee2e6;
-    transition: background-color 0.2s ease, color 0.2s ease;
+    border: 2px solid #dcd3c7; /* Light brown border */
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+     /* Capitalization handled inline */
   }
 
   .category-link:hover {
-    background-color: #20c997; /* Teal on hover */
+    background-color: #A0522D; /* Sienna */
     color: white;
-    border-color: #20c997;
+    border-color: #A0522D;
   }
 
-   /* --- Simplified What We Offer / Features Section --- */
+   /* --- Features Section --- */
   .features-section {
-      background-color: #fff;
+      background-color: #fdfbf7; /* Off-white */
   }
    .features-grid {
        display: grid;
        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-       gap: 30px;
+       gap: 35px;
        max-width: 900px;
        margin: 40px auto 0 auto;
        text-align: left;
    }
    .feature-item {
        display: flex;
-       align-items: flex-start; /* Align icon top */
-       gap: 15px;
+       align-items: flex-start;
+       gap: 18px;
    }
    .feature-icon {
-       font-size: 2rem; /* Adjust icon size */
-       color: #20c997; /* Teal icon color */
-       margin-top: 5px;
+       font-size: 2.2rem;
+       color: #CC7722; /* Ochre icon color */
+       margin-top: 3px;
+       flex-shrink: 0;
    }
    .feature-item h4 {
-       margin: 0 0 5px 0;
-       font-size: 1.2rem;
+       margin: 0 0 8px 0;
+       font-size: 1.25rem;
        font-weight: 700;
-       color: #343a40;
+       color: #654321; /* Deep brown */
+       /* Capitalization handled inline */
    }
    .feature-item p {
        margin: 0;
-       color: #6c757d;
-       font-size: 0.95rem;
+       color: #7d746b;
+       font-size: 1rem;
+        /* Standard sentence case */
    }
 
   /* --- Call to Action Section --- */
   .cta-section {
-    background-color: #343a40; /* Dark background */
-    color: #fff;
+    background-color: #654321; /* Deep Brown background */
+    color: #fdfbf7; /* Off-white text */
   }
   .cta-section h2 {
       color: #fff;
-      margin-bottom: 15px;
+      margin-bottom: 20px;
+       /* Capitalization handled inline */
   }
   .cta-section p {
-      color: rgba(255, 255, 255, 0.8);
-      margin-bottom: 30px;
+      color: rgba(253, 251, 247, 0.85); /* Off-white transparent */
+      margin-bottom: 35px;
+       /* Standard sentence case */
   }
   .cta-button {
-    padding: 14px 35px;
+    padding: 15px 40px;
     border-radius: 30px;
     text-decoration: none;
     font-weight: 700;
-    font-size: 1.1rem;
+    font-size: 1.15rem;
     transition: all 0.3s ease;
-    background-color: #20c997; /* Teal button */
+    background-color: #A0522D; /* Sienna */
     color: white;
-    border: 2px solid #20c997;
+    border: 2px solid #A0522D;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+     /* Capitalization handled inline */
   }
   .cta-button:hover {
-    background-color: #1baa80;
-    border-color: #1baa80;
-    transform: scale(1.05);
+    background-color: #804123; /* Darker Sienna */
+    border-color: #804123;
+    transform: scale(1.03);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
   }
 
    /* Responsive Adjustments */
@@ -279,8 +294,8 @@ const landingPageStyles = `
         .hero-title { font-size: 2.8rem; }
         .hero-subtitle { font-size: 1.2rem; }
         .landing-section h2 { font-size: 2rem; }
-        .category-grid { grid-template-columns: 1fr; } /* Stack categories */
-        .features-grid { grid-template-columns: 1fr; } /* Stack features */
+        .category-grid { grid-template-columns: 1fr; }
+        .features-grid { grid-template-columns: 1fr; }
    }
     @media (max-width: 480px) {
          .hero-title { font-size: 2.2rem; }
@@ -297,111 +312,100 @@ const LandingPage: React.FC = () => {
     <>
       {/* Inject styles */}
       <style>{landingPageStyles}</style>
-      {/* Navbar can be outside container if it's fixed/full-width */}
       {/* <Navbar /> */}
       <div className="landing-page-container">
 
-        {/* ───────────────────────────
-            HERO SECTION
-        ─────────────────────────── */}
+        {/* ─────────────────────────── HERO SECTION ─────────────────────────── */}
         <header className="hero-section">
-          {/* --- Optional Video Background --- */}
-          {/* <video className="hero-video-background" autoPlay loop muted playsInline>
-              <source src="/background-video.mp4" type="video/mp4" />
+          <video className="hero-video-background" autoPlay loop muted playsInline>
+              <source src="/video.mp4" type="video/mp4" />
               Your browser does not support the video tag.
-          </video> */}
-          {/* --- End Video Background --- */}
-
+          </video>
           <div className="hero-overlay"></div>
           <div className="hero-content">
+            {/* NOTE: ARTEPOVERA is likely a proper noun/brand, keeping it uppercase */}
             <h1 className="hero-title">ARTEPOVERA</h1>
+            {/* Applying rule to subtitle */}
             <p className="hero-subtitle">Where imagination meets opportunity.</p>
+            {/* Paragraphs use sentence case */}
             <p className="hero-description">
               Showcase your talents, discover unique gigs, and connect with the creative world—<em>all in one place</em>.
             </p>
             <div className="hero-cta-buttons">
-              <Link to="/login" className="hero-btn">Log In</Link>
-              <Link to="/register" className="hero-btn alt">Sign Up</Link>
+              {/* Applying rule to buttons */}
+              <Link to="/login" className="hero-btn">Log in</Link>
+              <Link to="/register" className="hero-btn alt">Sign up</Link>
             </div>
           </div>
         </header>
 
-        {/* ───────────────────────────
-            CATEGORY SHOWCASE SECTION
-        ─────────────────────────── */}
+        {/* ─────────────────────────── CATEGORY SHOWCASE SECTION ─────────────────────────── */}
         <section className="landing-section category-showcase-section">
-          <h2>Explore Opportunities</h2>
+          {/* Applying rule to heading */}
+          <h2>Explore opportunities</h2>
+          {/* Paragraphs use sentence case */}
           <p className="section-intro">
             Find jobs tailored to your craft. Connect with employers looking for painters, musicians, performers, and more.
           </p>
           <div className="category-grid">
             {/* --- Painter Card --- */}
             <div className="category-card">
-              {/* --- IMAGE NEEDED (e.g., 400x300 or similar aspect ratio) --- */}
-              <img src="/images/landing-painter.jpg" alt="Painting and Visual Arts" />
-              <h3>Visual Creators</h3>
+              <img src="/images/painter.jpg" alt="Painting and Visual Arts" />
+              {/* Applying rule to card heading */}
+              <h3>Visual creators</h3>
+              {/* Paragraphs use sentence case */}
               <p>Find commissions, gallery showings, illustration gigs, and graphic design projects.</p>
-              {/* Link could go to job feed filtered for relevant categories */}
-              <Link to="/main?category=painter&category=digital_artist&category=graphic_designer" className="category-link">Browse Visual Gigs</Link>
+              {/* Applying rule to link text */}
+              <Link to="/main?category=painter&category=digital_artist&category=graphic_designer" className="category-link">Browse visual gigs</Link>
             </div>
-
             {/* --- Musician Card --- */}
             <div className="category-card">
-               {/* --- IMAGE NEEDED --- */}
-              <img src="/images/landing-musician.jpg" alt="Music and Composition" />
-              <h3>Musicians & Composers</h3>
+              <img src="/images/musician.jpg" alt="Music and Composition" />
+              {/* Applying rule to card heading */}
+              <h3>Musicians & composers</h3>
+              {/* Paragraphs use sentence case */}
               <p>Discover live performance opportunities, scoring jobs, session work, and band openings.</p>
-               {/* Link could go to job feed filtered for relevant categories */}
-              <Link to="/main?category=musician" className="category-link">Find Music Opps</Link>
+              {/* Applying rule to link text */}
+              <Link to="/main?category=musician" className="category-link">Find music opps</Link>
             </div>
-
             {/* --- Actor Card --- */}
             <div className="category-card">
-               {/* --- IMAGE NEEDED --- */}
-              <img src="/images/landing-actor.jpg" alt="Acting and Performance" />
-              <h3>Actors & Performers</h3>
+              <img src="/images/actor.jpg" alt="Acting and Performance" />
+              {/* Applying rule to card heading */}
+              <h3>Actors & performers</h3>
+              {/* Paragraphs use sentence case */}
               <p>Get cast in your next role. Find auditions for theatre, film, voice-over, and live events.</p>
-               {/* Link could go to job feed filtered for relevant categories */}
-              <Link to="/main?category=actor&category=actress&category=dancer&category=comedian" className="category-link">See Casting Calls</Link>
+              {/* Applying rule to link text */}
+              <Link to="/main?category=actor&category=actress&category=dancer&category=comedian" className="category-link">See casting calls</Link>
             </div>
           </div>
         </section>
 
-        {/* ───────────────────────────
-            FEATURES SECTION (Example using icons - requires icon library)
-            You can uncomment and use this OR the old "What we offer" text cards
-        ─────────────────────────── */}
+        {/* ─────────────────────────── FEATURES SECTION (Example) ─────────────────────────── */}
+         {/* If uncommented, apply rule to h4 elements */}
          {/*
          <section className="landing-section features-section">
-              <h2>How It Works</h2>
+              <h2>How it works</h2> // <-- Apply rule
               <p className="section-intro">A platform designed for creative connections and career growth.</p>
               <div className="features-grid">
                   <div className="feature-item">
-                       {/* Example: Using placeholder text - Replace with actual Icon component */}
-                       {/* <span className="feature-icon">🎨</span> */}
-                       {/* Example with React Icons (install react-icons first: npm install react-icons)
-                       import { FaPalette } from 'react-icons/fa';
-                       <FaPalette className="feature-icon" />
-                       */}
-        {/*
-                       <div>
-                           <h4>Build Your Portfolio</h4>
+                       {/* <FaPalette className="feature-icon" /> */}
+        {/* <div>
+                           <h4>Build your portfolio</h4> // <-- Apply rule
                            <p>Showcase your best work with a beautiful, easy-to-manage portfolio.</p>
                        </div>
                    </div>
                    <div className="feature-item">
-                       {/* <span className="feature-icon">🔍</span> */}
-        {/*
-                       <div>
-                           <h4>Find Opportunities</h4>
+                       {/* <FaSearch className="feature-icon" /> */}
+        {/* <div>
+                           <h4>Find opportunities</h4> // <-- Apply rule
                            <p>Browse relevant job postings and gigs filtered by your artistic discipline.</p>
                        </div>
                    </div>
                   <div className="feature-item">
-                       {/* <span className="feature-icon">🤝</span> */}
-        {/*
-                       <div>
-                           <h4>Connect & Collaborate</h4>
+                      {/* <FaHandshake className="feature-icon" /> */}
+       {/* <div>
+                           <h4>Connect & collaborate</h4> // <-- Apply rule
                            <p>Directly message employers and fellow artists to build your network.</p>
                        </div>
                    </div>
@@ -410,15 +414,16 @@ const LandingPage: React.FC = () => {
          */}
 
 
-        {/* ───────────────────────────
-            CALL TO ACTION
-        ─────────────────────────── */}
+        {/* ─────────────────────────── CALL TO ACTION ─────────────────────────── */}
         <section className="landing-section cta-section">
-          <h2>Ready to Join the Creative Revolution?</h2>
+          {/* Applying rule to heading */}
+          <h2>Ready to join the creative revolution?</h2>
+          {/* Paragraphs use sentence case */}
           <p className="section-intro">
             Unlock your full potential—sign up and connect with a vibrant community of artists and employers today.
           </p>
-          <Link to="/register" className="cta-button">Sign Up Now</Link>
+           {/* Applying rule to button text */}
+          <Link to="/register" className="cta-button">Sign up now</Link>
         </section>
 
          {/* Optional Footer */}
