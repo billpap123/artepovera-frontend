@@ -318,7 +318,7 @@ const LandingPage: React.FC = () => {
         {/* ─────────────────────────── HERO SECTION ─────────────────────────── */}
         <header className="hero-section">
           <video className="hero-video-background" autoPlay loop muted playsInline>
-              <source src="/video.mp4" type="video/mp4" />
+              <source src="/public/video.mp4" type="video/mp4" />
               Your browser does not support the video tag.
           </video>
           <div className="hero-overlay"></div>
