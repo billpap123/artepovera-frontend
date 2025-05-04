@@ -330,29 +330,39 @@ const ArtistProfile: React.FC = () => {
                 </div>
 
                 {/* --- ADD Reviews Section --- */}
+                {/* --- ADD Reviews Section --- */}
                 <div className="reviews-section profile-section">
                      <h4>Reviews ({reviewCount})</h4>
                      {reviewsLoading ? ( <p>Loading reviews...</p> )
                       : reviews.length > 0 ? (
                          <div className="reviews-list">
-                             {reviews.map((review) => (
-                                <div key={review.review_id} className="review-item">
-                                    <div className="review-header">
-                                        <img src={review.reviewer?.profile_picture || '/default-profile.png'} alt={review.reviewer?.fullname || 'Reviewer'} className="reviewer-pic"/>
-                                        <div className="reviewer-info">
-                                            <strong>{review.reviewer?.fullname || 'Anonymous'}</strong>
-                                            <span className="review-date">{formatDate(review.created_at || (review as any).createdAt)}</span> 
-                                            </div>
-                                        <div className="review-stars">
-                                            <DisplayStars rating={review.overall_rating} />
-                                        </div>
-                                    </div>
-                                    {review.specific_answers?.comment && (
-                                        <p className="review-comment">"{review.specific_answers.comment}"</p>
-                                    )}
-                                    {/* You could display other specific answers here if needed */}
-                                </div>
-                             ))}
+                             {reviews.map((review) => { // Start of map function body
+
+                                // <<< --- ADD THE CONSOLE LOG HERE --- >>>
+                                const dateValue = review.created_at || (review as any).createdAt; // Get potential date value
+                                console.log(`Processing review ${review.review_id}, Date value received:`, dateValue, "| Type:", typeof dateValue);
+                                // <<< --- END ADDED CONSOLE LOG --- >>>
+
+                                return ( // Return the JSX for the review item
+                                  <div key={review.review_id} className="review-item">
+                                      <div className="review-header">
+                                          <img src={review.reviewer?.profile_picture || '/default-profile.png'} alt={review.reviewer?.fullname || 'Reviewer'} className="reviewer-pic"/>
+                                          <div className="reviewer-info">
+                                              <strong>{review.reviewer?.fullname || 'Anonymous'}</strong>
+                                              {/* Use the dateValue variable here */}
+                                              <span className="review-date">{formatDate(dateValue)}</span>
+                                          </div>
+                                          <div className="review-stars">
+                                              <DisplayStars rating={review.overall_rating} />
+                                          </div>
+                                      </div>
+                                      {review.specific_answers?.comment && (
+                                          <p className="review-comment">"{review.specific_answers.comment}"</p>
+                                      )}
+                                      {/* You could display other specific answers here if needed */}
+                                  </div>
+                                ); // End of return
+                             })} {/* End of map function */}
                          </div>
                      ) : ( <p className="no-reviews">No reviews have been submitted yet.</p> )}
                 </div>
