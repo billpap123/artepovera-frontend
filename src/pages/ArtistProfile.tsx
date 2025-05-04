@@ -53,7 +53,25 @@ const DisplayStars = ({ rating }: { rating: number | null }) => {
 };
 // --- END Star Display Component ---
 
-
+// Add this function inside your ArtistProfile/EmployerProfile component,
+// or put it in a shared utils file and import it.
+const formatDate = (dateString: string | undefined | null): string => {
+  if (!dateString) {
+      return 'Date unknown'; // Or return empty string ''
+  }
+  try {
+      const date = new Date(dateString);
+      // Check if the date object is valid after parsing
+      if (isNaN(date.getTime())) {
+          return 'Invalid Date'; // Return specific string if parsing failed
+      }
+      // Return formatted date (adjust options as needed)
+      return date.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+  } catch (e) {
+       console.error("Error parsing date:", dateString, e);
+       return 'Invalid Date'; // Fallback on any parsing error
+  }
+};
 const ArtistProfile: React.FC = () => {
   const { userId, setUserId, artistId, setArtistId } = useUserContext();
 
@@ -323,8 +341,8 @@ const ArtistProfile: React.FC = () => {
                                         <img src={review.reviewer?.profile_picture || '/default-profile.png'} alt={review.reviewer?.fullname || 'Reviewer'} className="reviewer-pic"/>
                                         <div className="reviewer-info">
                                             <strong>{review.reviewer?.fullname || 'Anonymous'}</strong>
-                                            <span className="review-date">{new Date(review.created_at).toLocaleDateString()}</span>
-                                        </div>
+                                            <span className="review-date">{formatDate(review.created_at || (review as any).createdAt)}</span> 
+                                            </div>
                                         <div className="review-stars">
                                             <DisplayStars rating={review.overall_rating} />
                                         </div>
