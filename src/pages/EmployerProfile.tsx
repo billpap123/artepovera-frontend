@@ -250,7 +250,3 @@ const EmployerProfile: React.FC = () => {
 };
 
 export default EmployerProfile;
-
-// Add styles for .profile-container, .profile-section,
-// .form-field-group, .bio-input, .file-input, .save-btn, .cancel-btn, .delete-btn
-// in your EmployerProfile.css file for a better look.
