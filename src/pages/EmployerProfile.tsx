@@ -194,9 +194,7 @@ const EmployerProfile: React.FC = () => {
             </div>
 
             <div className="profile-summary">
-                 <h3 className="profile-name">{profileUserName || 'Employer Name'}</h3>
-                 {/* Add any other relevant summary info for employer? */}
-
+                
                 {/* --- ADD Average Rating Display --- */}
                 <div className="average-rating-display">
                     {reviewsLoading ? ( <span>Loading rating...</span> )

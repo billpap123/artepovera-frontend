@@ -272,9 +272,7 @@ const ArtistProfile: React.FC = () => {
             </div>
 
             <div className="profile-summary">
-                 {/* Display Name (fetched) */}
-                 <h3 className="profile-name">{profileUserName || 'Artist Name'}</h3>
-
+                
                  {/* Student Badge */}
                  {isStudent && (<span className="student-badge">STUDENT ARTIST</span>)}
 
