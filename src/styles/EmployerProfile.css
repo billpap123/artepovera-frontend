@@ -349,7 +349,7 @@ button:hover {
 
 .review-count {
   color: var(--dark-gray); /* Using dark-gray */
-  font-size: 0.85em;
+  font-size: 0.45em;
 }
 
 .no-rating {
