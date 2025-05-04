@@ -302,3 +302,22 @@ button:hover {
   text-align: center;
   margin-top: 50px;
 }
+.delete-btn {
+  background-color: #dc3545; 
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9em;
+  transition: background-color 0.2s ease;
+}
+
+.delete-btn:hover {
+  background-color: #c82333; 
+}
+
+.delete-btn:disabled {
+  background-color: #e08a93;
+  cursor: not-allowed;
+}

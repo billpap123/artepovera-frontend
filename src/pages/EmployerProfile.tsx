@@ -1,16 +1,17 @@
+// src/pages/EmployerProfile.tsx
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useUserContext } from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar"; // Import your Navbar
-import "../styles/EmployerProfile.css";
+import "../styles/EmployerProfile.css"; // Make sure this CSS file exists
 
 const EmployerProfile: React.FC = () => {
   const { userId, setUserId, employerId, setEmployerId } = useUserContext();
 
-  // Existing data for display
+  // State for displaying & editing
   const [bio, setBio] = useState("");
-  const [profilePicture, setProfilePicture] = useState<string>("");
+  const [profilePicture, setProfilePicture] = useState<string | null>(null); // Use null default
 
   // Data for editing
   const [newBio, setNewBio] = useState("");
@@ -19,41 +20,33 @@ const EmployerProfile: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false); // <<< State for delete loading
 
   const navigate = useNavigate();
   const BACKEND_URL = import.meta.env.VITE_API_URL || "http://localhost:50001";
 
-  // ─────────────────────────────────────────────────────────────
   // Fetch the current user’s Employer data
-  // ─────────────────────────────────────────────────────────────
   useEffect(() => {
     const fetchEmployerProfile = async () => {
+      setLoading(true);
       try {
         const token = localStorage.getItem("token");
         if (!token) {
           alert("No token found. Please log in.");
-          navigate("/login");
-          return;
+          navigate("/login"); return;
         }
-
-        // Get /users/me to retrieve user + employer data
         const response = await axios.get(`${BACKEND_URL}/api/users/me`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         });
 
         const { user_id, employer } = response.data;
         if (!userId) setUserId(user_id);
 
-        // If the user is an employer, store their data
         if (employer && employer.employer_id) {
           setEmployerId(employer.employer_id);
           setBio(employer.bio || "");
-          setProfilePicture(employer.profile_picture || "");
+          setProfilePicture(employer.profile_picture || null); // Set null if empty/null
           setNewBio(employer.bio || "");
-        } else {
-          // If no employer data found, optionally redirect if user is actually an Artist
         }
       } catch (error) {
         console.error("Error fetching user/employer data:", error);
@@ -62,159 +55,190 @@ const EmployerProfile: React.FC = () => {
         setLoading(false);
       }
     };
-
-    // If we don’t have them, attempt to fetch from /users/me
-    if (!userId || !employerId) {
-      fetchEmployerProfile();
+     // Only fetch if needed data isn't already in context
+    if (!employerId) { // Assuming employerId means profile is loaded
+        fetchEmployerProfile();
     } else {
-      setLoading(false);
+        setLoading(false);
     }
   }, [userId, employerId, setUserId, setEmployerId, BACKEND_URL, navigate]);
 
-  // ─────────────────────────────────────────────────────────────
   // Toggle Edit Mode
-  // ─────────────────────────────────────────────────────────────
   const handleEditToggle = () => {
     setIsEditing(!isEditing);
-    // If we cancel editing, revert changes
-    if (isEditing) {
-      setNewBio(bio);
-      setNewProfilePicFile(null);
-    }
+    if (isEditing) { setNewBio(bio); setNewProfilePicFile(null); }
   };
 
-  // ─────────────────────────────────────────────────────────────
   // Handle file selection
-  // ─────────────────────────────────────────────────────────────
   const handleProfilePictureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files ? e.target.files[0] : null;
     if (file && (file.type === "image/png" || file.type === "image/jpeg")) {
       setNewProfilePicFile(file);
     } else {
       alert("Please upload a valid image file (PNG or JPG).");
+      e.target.value = ""; // Clear the input if file is invalid
     }
   };
 
-  // ─────────────────────────────────────────────────────────────
   // Save changes (upload new picture, update bio)
-  // ─────────────────────────────────────────────────────────────
   const handleSaveChanges = async () => {
     try {
-      // Keep check for token
       setSaving(true);
       const token = localStorage.getItem("token");
-      if (!token) {
-        alert("No token found. Please log in.");
-        setSaving(false);
-        return;
-      }
+      if (!token) { /* handle no token */ setSaving(false); return; }
 
-      // Build form data
       const formData = new FormData();
-      formData.append("bio", newBio); // Send current bio text
+      formData.append("bio", newBio);
       if (newProfilePicFile) {
-        // Use 'profile_picture' field name matching backend middleware
         formData.append("profile_picture", newProfilePicFile);
       }
 
-      // --- CORRECTED URL ---
-      // Post to /api/employers/profile (No ID needed in URL path)
-      const url = `${BACKEND_URL}/api/employers/profile`;
-      // --- END CORRECTION ---
-
-      const response = await axios.post(url, formData, {
-        headers: {
-          // 'Content-Type': 'multipart/form-data', // Axios sets this for FormData
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      // Update state with data returned from backend (preferred)
-      const updatedEmployerData = response.data?.employer; // Assuming backend returns updated data
+      const url = `${BACKEND_URL}/api/employers/profile`; // Correct endpoint
+      const response = await axios.post(url, formData, { headers: { Authorization: `Bearer ${token}` } });
+      const updatedEmployerData = response.data?.employer;
 
       if (updatedEmployerData) {
          setBio(updatedEmployerData.bio || "");
-         setProfilePicture(updatedEmployerData.profile_picture || ""); // Use the new Cloudinary URL
-         setNewBio(updatedEmployerData.bio || ""); // Reset edit form field
+         setProfilePicture(updatedEmployerData.profile_picture || null); // Use null
+         setNewBio(updatedEmployerData.bio || "");
       } else {
-          // Fallback if backend doesn't return data
           setBio(newBio);
-          // Need to re-fetch if pic changed and backend didn't return it
-          if (newProfilePicFile) {
-              // Re-fetching '/users/me' is a safe way
-              const meResponse = await axios.get(`${BACKEND_URL}/api/users/me`, {
-                  headers: { Authorization: `Bearer ${token}` },
-              });
-              setProfilePicture(meResponse.data?.employer?.profile_picture || "");
+          if (newProfilePicFile) { // Re-fetch if needed
+             const meResponse = await axios.get(`${BACKEND_URL}/api/users/me`, { headers: { Authorization: `Bearer ${token}` } });
+             setProfilePicture(meResponse.data?.employer?.profile_picture || null); // Use null
           }
       }
-
-      setNewProfilePicFile(null); // Clear selected file
+      setNewProfilePicFile(null);
       alert("Profile updated successfully!");
-      setIsEditing(false); // Exit editing mode
-
-    } catch (error: any) { // Added type
+      setIsEditing(false);
+    } catch (error: any) {
       console.error("Error saving changes:", error);
-      const message = error.response?.data?.message || "Something went wrong. Please try again.";
+      const message = error.response?.data?.message || "Something went wrong saving profile.";
       alert(message);
     } finally {
-      setSaving(false); // Ensure saving state is always reset
+      setSaving(false);
     }
   };
 
+  // --- ADD DELETE PICTURE FUNCTION ---
+  const handleDeletePicture = async () => {
+    if (!window.confirm("Are you sure you want to delete your profile picture?")) {
+      return;
+    }
+    setDeleting(true);
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) { alert("Authentication token not found."); setDeleting(false); return; }
+
+      // IMPORTANT: Make sure this endpoint exists on your backend!
+      const url = `${BACKEND_URL}/api/employers/profile/picture`;
+      await axios.delete(url, { headers: { Authorization: `Bearer ${token}` } });
+
+      // Update frontend state
+      setProfilePicture(null); // Set to null to show default
+      setNewProfilePicFile(null); // Clear any staged file
+
+      alert("Profile picture deleted successfully.");
+      // Optional: remain in edit mode or exit
+      // setIsEditing(false);
+
+    } catch (error: any) {
+      console.error("Error deleting profile picture:", error);
+      const message = error.response?.data?.message || "Failed to delete profile picture.";
+      alert(message);
+    } finally {
+      setDeleting(false);
+    }
+  };
+  // --- END DELETE PICTURE FUNCTION ---
+
   if (loading) {
-    return <p>Loading employer profile...</p>;
+    // Consider a more visual loading state (spinner, skeleton)
+    return <div style={{ padding: '40px', textAlign: 'center' }}>Loading employer profile...</div>;
   }
 
   return (
     <>
       <Navbar />
-      <div className="employer-profile-container">
-        <h2 className="profile-title">My employer profile</h2>
+      {/* Use a consistent class name */}
+      <div className="profile-container employer-profile-container"> {/* Added base 'profile-container' */}
+        <h2 className="profile-title">My Employer Profile</h2>
 
-        {/* Display the current profile picture */}
         <div className="profile-picture-wrapper">
           <img
-            src={profilePicture || "/default-profile.png"}
+            // Use ternary operator for clarity with null state
+            src={profilePicture ? profilePicture : "/default-profile.png"}
             alt="Employer Profile"
             className="profile-picture"
           />
         </div>
 
         {!isEditing ? (
-          <>
-            <p className="bio-text">{bio || "No bio provided yet."}</p>
+          // Display Mode
+          <div className="profile-display">
+            <div className="profile-section">
+                <h4>Bio</h4>
+                <p className="bio-text">{bio || "No bio provided yet."}</p>
+            </div>
+            {/* Add display for other employer fields if needed */}
             <button className="edit-btn" onClick={handleEditToggle}>
               Edit Profile
             </button>
-          </>
+          </div>
         ) : (
+          // Editing Mode
           <div className="edit-form">
-            <label>Bio:</label>
-            <textarea
-              value={newBio}
-              onChange={(e) => setNewBio(e.target.value)}
-              rows={4}
-              className="bio-input"
-            />
+            <div className="form-field-group"> {/* Wrap fields */}
+                <label htmlFor="employerBio">Bio:</label>
+                <textarea
+                  id="employerBio"
+                  value={newBio}
+                  onChange={(e) => setNewBio(e.target.value)}
+                  rows={4}
+                  className="bio-input" // Use consistent class names if defined in CSS
+                />
+            </div>
 
-            <label>Update Profile Picture (PNG/JPG):</label>
-            <input
-              type="file"
-              accept="image/png, image/jpeg"
-              onChange={handleProfilePictureChange}
-              className="file-input"
-            />
+            <div className="form-field-group"> {/* Wrap fields */}
+                <label htmlFor="employerPic">Update Profile Picture (PNG/JPG):</label>
+                <input
+                  id="employerPic"
+                  type="file"
+                  accept="image/png, image/jpeg"
+                  onChange={handleProfilePictureChange}
+                  className="file-input" // Use consistent class names if defined in CSS
+                />
+            </div>
 
-            <div className="btn-row">
+            {/* --- ADD DELETE BUTTON --- */}
+            {/* Only show if a picture currently exists */}
+            {profilePicture && (
+              <div style={{ marginTop: '15px', textAlign: 'left' }}> {/* Align left */}
+                  <button
+                    type="button"
+                    className="delete-btn" // Needs styling in EmployerProfile.css
+                    onClick={handleDeletePicture}
+                    disabled={deleting || saving} // Disable if deleting or saving
+                  >
+                    {deleting ? "Deleting..." : "Delete Picture"}
+                  </button>
+              </div>
+            )}
+            {/* --- END ADD DELETE BUTTON --- */}
+
+            <div className="btn-row" style={{marginTop: '25px'}}> {/* Consistent spacing */}
               <button
-                className="save-btn"
+                className="save-btn" // Needs styling
                 onClick={handleSaveChanges}
-                disabled={saving}
+                disabled={saving || deleting} // Disable if saving or deleting
               >
-                {saving ? "Saving..." : "Save"}
+                {saving ? "Saving..." : "Save Changes"}
               </button>
-              <button className="cancel-btn" onClick={handleEditToggle}>
+              <button
+                className="cancel-btn" // Needs styling
+                onClick={handleEditToggle}
+                disabled={saving || deleting} // Disable if busy
+              >
                 Cancel
               </button>
             </div>
@@ -226,3 +250,7 @@ const EmployerProfile: React.FC = () => {
 };
 
 export default EmployerProfile;
+
+// Add styles for .profile-container, .profile-section,
+// .form-field-group, .bio-input, .file-input, .save-btn, .cancel-btn, .delete-btn
+// in your EmployerProfile.css file for a better look.
