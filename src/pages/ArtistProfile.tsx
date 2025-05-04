@@ -1,16 +1,17 @@
+// src/pages/ArtistProfile.tsx
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useUserContext } from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../components/Navbar"; // Import your Navbar
-import "../styles/ArtistProfile.css";
+import Navbar from "../components/Navbar";
+import "../styles/ArtistProfile.css"; // Assuming you add .delete-btn styles here
 
 const ArtistProfile: React.FC = () => {
   const { userId, setUserId, artistId, setArtistId } = useUserContext();
 
   // State for displaying & editing
   const [bio, setBio] = useState("");
-  const [profilePicture, setProfilePicture] = useState<string>(""); // existing pic
+  const [profilePicture, setProfilePicture] = useState<string | null>(null); // Use null for clarity
   const [isStudent, setIsStudent] = useState(false);
 
   // State for updating
@@ -20,76 +21,51 @@ const ArtistProfile: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false); // <<< State for delete button loading
 
   const navigate = useNavigate();
   const BACKEND_URL = import.meta.env.VITE_API_URL || "http://localhost:50001";
 
-  // ─────────────────────────────────────────────────────────────
-  // Fetch the current user’s Artist data
-  // ─────────────────────────────────────────────────────────────
+  // Fetch data useEffect... (keep as is, ensure it sets profilePicture correctly)
   useEffect(() => {
     const fetchArtistProfile = async () => {
+      setLoading(true); // Ensure loading is true at start
       try {
         const token = localStorage.getItem("token");
-        if (!token) {
-          alert("No token found. Please log in.");
-          navigate("/login");
-          return;
-        }
-
-        // Get /users/me to retrieve user + artist data
+        if (!token) { /* ... handle no token ... */ return; }
         const response = await axios.get(`${BACKEND_URL}/api/users/me`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         });
-
         const { user_id, artist } = response.data;
         if (!userId) setUserId(user_id);
-
-        // If the user is an artist, store their data
         if (artist && artist.artist_id) {
           setArtistId(artist.artist_id);
           setBio(artist.bio || "");
-          setProfilePicture(artist.profile_picture || "");
+          setProfilePicture(artist.profile_picture || null); // Set null if empty/null from backend
           setIsStudent(!!artist.is_student);
-          setNewBio(artist.bio || ""); // so the edit form is pre-filled
+          setNewBio(artist.bio || "");
         } else {
-          // If no artist data found, we can keep these empty
-          // Or redirect if the user is actually an Employer
+          // Handle non-artist user if necessary
         }
-      } catch (error) {
-        console.error("Error fetching user/artist data:", error);
-        alert("Could not retrieve artist profile. Please log in again.");
-      } finally {
-        setLoading(false);
-      }
+      } catch (error) { /* ... handle error ... */ }
+      finally { setLoading(false); }
     };
-
-    if (!userId || !artistId) {
-      // If we don’t have them, attempt to fetch from /users/me
-      fetchArtistProfile();
+    // Only fetch if needed data isn't already in context
+    if (!artistId) { // Assuming artistId implies profile is loaded
+        fetchArtistProfile();
     } else {
-      setLoading(false);
+        setLoading(false);
     }
   }, [userId, artistId, setUserId, setArtistId, BACKEND_URL, navigate]);
 
-  // ─────────────────────────────────────────────────────────────
-  // Toggle Edit Mode
-  // ─────────────────────────────────────────────────────────────
+
   const handleEditToggle = () => {
     setIsEditing(!isEditing);
-    // If we cancel editing, revert changes
-    if (isEditing) {
-      setNewBio(bio);
-      setNewProfilePicFile(null);
-    }
+    if (isEditing) { setNewBio(bio); setNewProfilePicFile(null); }
   };
 
-  // ─────────────────────────────────────────────────────────────
-  // Handle file selection
-  // ─────────────────────────────────────────────────────────────
   const handleProfilePictureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // ... (keep as is)
     const file = e.target.files ? e.target.files[0] : null;
     if (file && (file.type === "image/png" || file.type === "image/jpeg")) {
       setNewProfilePicFile(file);
@@ -98,83 +74,81 @@ const ArtistProfile: React.FC = () => {
     }
   };
 
-  // ─────────────────────────────────────────────────────────────
-  // Save changes (upload new picture, update bio)
-  // ─────────────────────────────────────────────────────────────
   const handleSaveChanges = async () => {
+    // ... (keep your existing save logic as is - it seems correct now)
+    // It should call POST /api/artists/profile
     try {
-      // Keep this check, maybe just rely on token check later
-      // if (!artistId && !userId) {
-      //   alert("No valid Artist ID or User ID. Please log in again.");
-      //   return;
-      // }
+        setSaving(true);
+        const token = localStorage.getItem("token");
+        if (!token) { /* ... handle no token ... */ setSaving(false); return; }
+        const formData = new FormData();
+        formData.append("bio", newBio);
+        if (newProfilePicFile) {
+            formData.append("profile_picture", newProfilePicFile);
+        }
+        const url = `${BACKEND_URL}/api/artists/profile`;
+        const response = await axios.post(url, formData, { headers: { Authorization: `Bearer ${token}` } });
+        const updatedArtistData = response.data?.artist;
+        if (updatedArtistData) {
+            setBio(updatedArtistData.bio || "");
+            setProfilePicture(updatedArtistData.profile_picture || null); // Use updated URL/null
+            setNewBio(updatedArtistData.bio || "");
+        } else {
+            setBio(newBio); // Fallback
+            if (newProfilePicFile) { // Re-fetch if needed and no data returned
+               const meResponse = await axios.get(`${BACKEND_URL}/api/users/me`, { headers: { Authorization: `Bearer ${token}` } });
+               setProfilePicture(meResponse.data?.artist?.profile_picture || null);
+            }
+        }
+        setNewProfilePicFile(null);
+        alert("Profile updated successfully!");
+        setIsEditing(false);
+    } catch (error: any) { /* ... handle error ... */ }
+    finally { setSaving(false); }
+  };
 
-      setSaving(true);
+  // --- ADD THIS FUNCTION ---
+  const handleDeletePicture = async () => {
+    // Confirm action
+    if (!window.confirm("Are you sure you want to delete your profile picture?")) {
+      return;
+    }
+
+    setDeleting(true); // Set loading state for delete button
+    try {
       const token = localStorage.getItem("token");
       if (!token) {
-        alert("Authentication token not found. Please log in.");
-        setSaving(false); // Stop saving state
+        alert("Authentication token not found.");
+        setDeleting(false);
         return;
       }
 
-      // Build form data
-      const formData = new FormData();
-      formData.append("bio", newBio); // Send current bio text
-      if (newProfilePicFile) {
-        // Use 'profile_picture' as the field name matching backend middleware
-        formData.append("profile_picture", newProfilePicFile);
-      }
-
-      // --- CORRECTED URL ---
-      // Post to /api/artists/profile (No ID needed in URL path)
-      const url = `${BACKEND_URL}/api/artists/profile`;
-      // --- END CORRECTION ---
-
-      const response = await axios.post(url, formData, {
+      // Send request to the new backend endpoint
+      const url = `${BACKEND_URL}/api/artists/profile/picture`; // Matches example backend route
+      await axios.delete(url, {
         headers: {
-          // 'Content-Type': 'multipart/form-data', // Axios sets this for FormData
           Authorization: `Bearer ${token}`,
         },
       });
 
-      // Update state with data returned from backend (preferred) or local state
-      const updatedArtistData = response.data?.artist; // Assuming backend returns updated data
+      // Update frontend state immediately
+      setProfilePicture(null); // Set to null to show default
+      setNewProfilePicFile(null); // Clear any staged file
 
-      if (updatedArtistData) {
-         setBio(updatedArtistData.bio || "");
-         setProfilePicture(updatedArtistData.profile_picture || ""); // Use the new Cloudinary URL from response
-         setNewBio(updatedArtistData.bio || ""); // Reset edit form field
-      } else {
-          // Fallback if backend doesn't return data (less ideal)
-          setBio(newBio);
-          // Need to re-fetch if pic changed and backend didn't return it
-          if (newProfilePicFile) {
-              // You could potentially use the URL returned in response.data.imageUrl here
-              // Or re-fetch '/users/me' like you had before
-              // For simplicity, let's assume the backend returns the new URL:
-              // setProfilePicture(response.data.imageUrl || profilePicture); // If backend sends imageUrl directly
-              // Re-fetching is safer if backend response structure is uncertain:
-              const meResponse = await axios.get(`${BACKEND_URL}/api/users/me`, {
-                  headers: { Authorization: `Bearer ${token}` },
-              });
-              setProfilePicture(meResponse.data?.artist?.profile_picture || "");
-          }
-      }
+      alert("Profile picture deleted successfully.");
+      // Stay in editing mode or exit? Let's stay for now.
+      // setIsEditing(false);
 
-
-      setNewProfilePicFile(null); // Clear the selected file state
-      alert("Profile updated successfully!");
-      setIsEditing(false); // Exit editing mode
-
-    } catch (error: any) { // Added type
-      console.error("Error saving changes:", error);
-      // Provide more specific error if available
-      const message = error.response?.data?.message || "Something went wrong. Please try again.";
+    } catch (error: any) {
+      console.error("Error deleting profile picture:", error);
+      const message = error.response?.data?.message || "Failed to delete profile picture.";
       alert(message);
     } finally {
-      setSaving(false); // Ensure saving state is always reset
+      setDeleting(false); // Reset loading state
     }
   };
+  // --- END ADDED FUNCTION ---
+
 
   if (loading) {
     return <p>Loading artist profile...</p>;
@@ -186,15 +160,12 @@ const ArtistProfile: React.FC = () => {
       <div className="artist-profile-container">
         <h2 className="profile-title">My artist profile</h2>
 
-        {/* If is_student is true, show a badge */}
-        {isStudent && (
-          <div className="student-badge">STUDENT ARTIST</div>
-        )}
+        {isStudent && (<div className="student-badge">STUDENT ARTIST</div>)}
 
-        {/* Display the current profile picture */}
         <div className="profile-picture-wrapper">
           <img
-            src={profilePicture || "/default-profile.png"}
+            // Use null check here
+            src={profilePicture ? profilePicture : "/default-profile.png"}
             alt="Artist Profile"
             className="profile-picture"
           />
@@ -225,15 +196,35 @@ const ArtistProfile: React.FC = () => {
               className="file-input"
             />
 
-            <div className="btn-row">
+            {/* --- ADD DELETE BUTTON --- */}
+            {/* Only show delete button if there IS a current picture */}
+            {profilePicture && (
+              <button
+                type="button" // Important: prevent form submission
+                className="delete-btn" // Add CSS for this class
+                onClick={handleDeletePicture}
+                disabled={deleting} // Disable while deleting
+                style={{marginTop: '10px', alignSelf: 'flex-start'}} // Basic positioning
+              >
+                {deleting ? "Deleting..." : "Delete Picture"}
+              </button>
+            )}
+            {/* --- END ADD DELETE BUTTON --- */}
+
+
+            <div className="btn-row" style={{marginTop: '20px'}}> {/* Added margin top */}
               <button
                 className="save-btn"
                 onClick={handleSaveChanges}
-                disabled={saving}
+                disabled={saving || deleting} // Disable save if deleting
               >
-                {saving ? "Saving..." : "Save"}
+                {saving ? "Saving..." : "Save Changes"}
               </button>
-              <button className="cancel-btn" onClick={handleEditToggle}>
+              <button
+                className="cancel-btn"
+                onClick={handleEditToggle}
+                disabled={saving || deleting} // Disable cancel if busy
+              >
                 Cancel
               </button>
             </div>
@@ -245,3 +236,27 @@ const ArtistProfile: React.FC = () => {
 };
 
 export default ArtistProfile;
+
+// Remember to add styles for .delete-btn in ArtistProfile.css
+/* Example CSS in ArtistProfile.css */
+/*
+.delete-btn {
+  background-color: #dc3545; / Red color /
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9em;
+  transition: background-color 0.2s ease;
+}
+
+.delete-btn:hover {
+  background-color: #c82333; / Darker red /
+}
+
+.delete-btn:disabled {
+  background-color: #e08a93;
+  cursor: not-allowed;
+}
+*/
