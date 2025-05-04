@@ -66,3 +66,171 @@
     cursor: pointer;
 }
 
+
+/* ======================================== */
+/* Styles for Rating Prompt in Chat Window */
+/* ======================================== */
+
+.rating-prompt-banner {
+    background-color: #f5f0e8; /* Light Beige */
+    border: 1px solid #dcd3c7; /* Light brown/grey border */
+    border-radius: 8px; /* Match other rounded corners */
+    padding: 18px 25px; /* Slightly more padding */
+    margin: 15px 10px; /* Add margin top/bottom and side */
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(101, 67, 33, 0.1); /* Softer brownish shadow */
+    animation: fadeInPrompt 0.5s ease-out; /* Optional fade-in */
+    font-family: 'Nunito', sans-serif; /* Ensure consistent font */
+  }
+  
+  .rating-prompt-banner p {
+    margin: 0 0 15px 0; /* Space below text */
+    color: #654321; /* Deep Brown text */
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+  
+  .rating-prompt-banner p span { /* For the "(Reminder)" text */
+      font-style: italic;
+      color: #7d746b; /* Warm Grey */
+      font-size: 0.9em;
+      margin-left: 5px; /* Space before reminder */
+  }
+  
+  .prompt-buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px 20px; /* Vertical and horizontal gap */
+    flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
+  }
+  
+  /* Base style for all prompt buttons */
+  .prompt-buttons button {
+    padding: 8px 20px; /* Slightly more horizontal padding */
+    border-radius: 20px; /* Pill shape */
+    border: 1px solid transparent;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 120px; /* Give buttons reasonable width */
+    text-align: center;
+    line-height: 1.4; /* Adjust for better text centering */
+  }
+  
+  /* Disabled state for all prompt buttons */
+  .prompt-buttons button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important; /* Prevent hover/active transforms */
+  }
+  
+  /* Yes / Rate Now Button */
+  .prompt-yes {
+    background-color: #A0522D; /* Sienna */
+    color: white;
+    border-color: #A0522D;
+  }
+  .prompt-yes:hover:not(:disabled) {
+    background-color: #804123; /* Darker Sienna */
+    border-color: #804123;
+    transform: translateY(-1px); /* Subtle lift */
+  }
+  
+  /* Maybe Later Button */
+  .prompt-later {
+    background-color: transparent;
+    color: #CC7722; /* Ochre */
+    border: 1px solid #CC7722;
+  }
+   .prompt-later:hover:not(:disabled) {
+     background-color: rgba(204, 119, 34, 0.08); /* Very light Ochre background */
+     /* Keep border color */
+     /* transform: translateY(-1px); */ /* Optional lift */
+   }
+  
+  /* No Thanks Button */
+  .prompt-no {
+     background-color: transparent;
+     color: #7d746b; /* Warm Grey */
+     border: 1px solid #dcd3c7; /* Light brown border */
+  }
+   .prompt-no:hover:not(:disabled) {
+     background-color: #f5f0e8; /* Light beige */
+     border-color: #bcaea0; /* Slightly darker border on hover */
+   }
+  
+  
+  /* Simple fade-in animation */
+  @keyframes fadeInPrompt {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  /* Add some basic styling for the chat messages if not already present */
+  /* Make sure these don't conflict with your existing styles */
+  .message-bubble {
+    padding: 8px 14px;
+    border-radius: 15px;
+    margin-bottom: 8px;
+    max-width: 75%;
+    word-wrap: break-word;
+  }
+  .message-bubble p {
+      margin: 0;
+      line-height: 1.4;
+  }
+  
+  .message-bubble.sent {
+    background-color: #e1f5fe; /* Example: Light blue for sent */
+    margin-left: auto;
+    border-bottom-right-radius: 5px;
+    text-align: right;
+  }
+  
+  .message-bubble.received {
+    background-color: #f1f0f0; /* Example: Light grey for received */
+    margin-right: auto;
+    border-bottom-left-radius: 5px;
+    text-align: left;
+  }
+  
+  .no-messages {
+      text-align: center;
+      color: #999;
+      padding: 30px;
+      font-style: italic;
+  }
+  
+  .message-input-area {
+      display: flex;
+      padding: 10px;
+      border-top: 1px solid #eee;
+      background-color: #f9f9f9;
+  }
+  
+  .message-input-area input {
+      flex-grow: 1;
+      border: 1px solid #ccc;
+      padding: 10px;
+      border-radius: 20px;
+      margin-right: 10px;
+  }
+  
+  .message-input-area button {
+      padding: 10px 15px;
+      border-radius: 20px;
+      border: none;
+      background-color: #A0522D; /* Sienna */
+      color: white;
+      cursor: pointer;
+      font-weight: 600;
+  }
+  .message-input-area button:disabled {
+      background-color: #c4a79a; /* Lighter disabled sienna */
+      cursor: not-allowed;
+  }
+  .message-input-area button:hover:not(:disabled) {
+       background-color: #804123; /* Darker Sienna */
+  }
