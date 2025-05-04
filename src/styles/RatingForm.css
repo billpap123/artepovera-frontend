@@ -1,0 +1,222 @@
+/* src/styles/RatingForm.css */
+
+/* Ensure consistent font if not inheriting */
+.rating-form {
+    font-family: 'Nunito', sans-serif;
+  }
+  
+  /* Styling for the form container itself (rendered inside the overlay) */
+  .rating-form {
+    background-color: #ffffff; /* White background for the form */
+    padding: 30px 35px; /* Generous padding */
+    border-radius: 12px; /* Rounded corners */
+    box-shadow: 0 5px 20px rgba(101, 67, 33, 0.15); /* Brownish shadow */
+    max-width: 550px; /* Max width for the form */
+    width: 90%; /* Responsive width */
+    text-align: center;
+    max-height: 90vh; /* Prevent excessive height */
+    overflow-y: auto; /* Allow scrolling within form if needed */
+    box-sizing: border-box;
+  }
+  
+  .rating-form h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: #654321; /* Deep Brown */
+    font-weight: 700;
+    font-size: 1.6rem;
+  }
+  
+  .rating-form-subtext {
+    font-size: 1rem;
+    color: #7d746b; /* Warm Grey */
+    margin-top: 0;
+    margin-bottom: 30px;
+  }
+  
+  /* Styles for the form element itself */
+  .rating-form form {
+    display: flex;
+    flex-direction: column;
+    gap: 25px; /* Space between form groups */
+    text-align: left; /* Align labels left */
+  }
+  
+  /* Styling for each label + input group */
+  .form-group {
+    margin-bottom: 0; /* Using gap on parent instead */
+  }
+  
+  .form-group label,
+  label[id$="-label"] { /* Target labels by ID pattern too */
+    display: block;
+    margin-bottom: 10px; /* More space */
+    font-weight: 600;
+    color: #4d4033; /* Dark Brown */
+    font-size: 1rem;
+  }
+  
+  /* Styling for Yes/No radio button group */
+  .form-group-radio {
+    padding: 10px 0;
+  }
+  .form-group-radio label#deal-made-label { /* Target the main label */
+     margin-bottom: 12px;
+  }
+  
+  .radio-options {
+    display: flex;
+    gap: 25px; /* More space */
+    margin-top: 8px;
+    align-items: center;
+  }
+  
+  .radio-options label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: normal;
+    color: #4d4033;
+    cursor: pointer;
+    margin-bottom: 0; /* Override default */
+    font-size: 1rem;
+  }
+  
+  .radio-options input[type="radio"] {
+    margin-right: 5px;
+    cursor: pointer;
+    accent-color: #A0522D; /* Sienna accent for radio */
+    transform: scale(1.2); /* Slightly larger */
+  }
+  
+  /* Styling for textareas */
+  .form-group textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #dcd3c7; /* Light brown/grey border */
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 1rem;
+    min-height: 80px;
+    resize: vertical;
+    box-sizing: border-box;
+    background-color: #fdfbf7; /* Very light background */
+    color: #4d4033;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .form-group textarea:focus {
+     border-color: #A0522D; /* Sienna focus */
+     outline: none;
+     box-shadow: 0 0 0 3px rgba(160, 82, 45, 0.2); /* Sienna focus ring */
+     background-color: #fff;
+  }
+  
+  /* Star Rating Specific Styles */
+  .star-rating {
+    line-height: 1; /* Prevent extra space */
+    margin-top: 5px; /* Space above stars */
+    /* Add focus styles for keyboard navigation */
+  }
+  .star-rating span {
+     transition: color 0.1s ease-in-out; /* Smooth color change */
+  }
+  .star-rating span:focus {
+     /* Basic focus indicator for accessibility */
+     outline: 2px dotted #A0522D;
+     outline-offset: 3px;
+     border-radius: 2px; /* Slight rounding on focus */
+  }
+  
+  /* Container for follow-up questions */
+  .follow-up-questions {
+    margin-top: 15px;
+    padding-top: 20px;
+    border-top: 1px solid #eee; /* Separator */
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Space between follow-up questions */
+  }
+  .follow-up-questions .rating-form-subtext {
+      margin-bottom: 15px; /* Less margin for sub-heading */
+      text-align: left;
+  }
+  
+  /* Action buttons container */
+  .form-actions {
+    display: flex;
+    justify-content: flex-end; /* Align buttons to the right */
+    gap: 15px;
+    margin-top: 30px; /* More space above buttons */
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+  }
+  
+  /* Base button styles */
+  .form-actions button {
+    padding: 10px 25px; /* Good size */
+    border-radius: 8px;
+    border: none;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+  }
+  
+  /* Submit button */
+  .form-actions .submit-btn {
+    background-color: #A0522D; /* Sienna */
+    color: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  .form-actions .submit-btn:hover:not(:disabled) {
+    background-color: #804123; /* Darker Sienna */
+    box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+    transform: translateY(-1px);
+  }
+  .form-actions .submit-btn:active:not(:disabled) {
+      transform: translateY(0px);
+      box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+  }
+  
+  
+  /* Cancel button */
+  .form-actions .cancel-btn {
+    background-color: #f8f9fa; /* Light grey */
+    color: #4d4033; /* Dark Brown text */
+    border: 1px solid #dcd3c7; /* Light border */
+  }
+  .form-actions .cancel-btn:hover:not(:disabled) {
+    background-color: #e9ecef; /* Slightly darker grey */
+    border-color: #c7bdb1;
+  }
+  
+  /* Disabled state for buttons */
+  .form-actions button:disabled {
+    background-color: #dcd3c7; /* Muted color */
+    color: #fff;
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+  
+  /* Error message styling */
+  .error-message {
+    color: #a02d2d; /* Darker red */
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    border-radius: 4px;
+    padding: 10px 15px;
+    margin-top: 15px;
+    text-align: center;
+    font-size: 0.9rem;
+  }
+  
+  /* Simple Fade-in animation for conditional sections */
+  .fade-in {
+    animation: fadeInFormElement 0.4s ease-in-out;
+  }
+  
+  @keyframes fadeInFormElement {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
