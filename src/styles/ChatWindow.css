@@ -234,3 +234,16 @@
   .message-input-area button:hover:not(:disabled) {
        background-color: #804123; /* Darker Sienna */
   }
+  .rating-form-modal-overlay {
+    position: fixed; /* Or absolute if chat window has relative positioning */
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent black */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000; /* Make sure it's on top */
+    padding: 20px;
+  }
