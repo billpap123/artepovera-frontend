@@ -358,6 +358,10 @@ button:hover {
 .review-count {
   color: var(--dark-gray); /* Using dark-gray */
   font-size: 0.45em;
+  white-space: nowrap; /* <<< ADD THIS LINE */
+  overflow: hidden; /* Optional: Hide overflow if it still happens */
+  text-overflow: ellipsis; /* Optional: Add ellipsis if content overflows */
+
 }
 
 .no-rating {
