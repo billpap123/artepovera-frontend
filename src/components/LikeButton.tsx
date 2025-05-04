@@ -1,54 +1,91 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react"; // Added useEffect, useCallback
 import axios from "axios";
 
 interface LikeButtonProps {
-  userId: number;
-  likedUserId: number;
+  // userId: number; // Logged-in user ID comes from token, not needed as prop
+  likedUserId: number; // The ID of the profile being viewed/liked
 }
 
-const LikeButton: React.FC<LikeButtonProps> = ({ userId, likedUserId }) => {
-  const [isLiked, setIsLiked] = useState(false);
+const LikeButton: React.FC<LikeButtonProps> = ({ likedUserId }) => {
+  const [isLiked, setIsLiked] = useState<boolean | null>(null); // Use null for initial loading state
+  const [isLoading, setIsLoading] = useState(false); // Prevent double clicks
 
-  // ✅ Use Vite environment variable, fallback to localhost for dev
   const BACKEND_URL = import.meta.env.VITE_API_URL || "http://localhost:50001";
 
-  const handleLike = async () => {
+  // --- Fetch initial like status ---
+  const checkInitialLike = useCallback(async () => {
+    const token = localStorage.getItem("token");
+    if (!token || !likedUserId) {
+      setIsLiked(false); // Can't like if not logged in or no target
+      return;
+    }
     try {
-      // Send like request
-      await axios.post(`${BACKEND_URL}/api/users/${userId}/like`, { likedUserId });
+      // Use the backend checkLike endpoint
+      const response = await axios.get(`${BACKEND_URL}/api/users/${likedUserId}/like`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setIsLiked(response.data.liked); // Set initial state based on response
+    } catch (error) {
+      console.error("Error checking initial like status:", error);
+      setIsLiked(false); // Default to not liked on error
+    }
+  }, [likedUserId, BACKEND_URL]);
 
-      // Check for mutual like
-      const response = await axios.get(`${BACKEND_URL}/api/users/${userId}/like`);
-      const { isMutualLike } = response.data;
+  useEffect(() => {
+    checkInitialLike();
+  }, [checkInitialLike]); // Run once on mount
 
-      if (isMutualLike) {
-        alert("It’s a match! A chat has been created!");
-        createChat();
+
+  // --- Handle Like/Unlike Click ---
+  const handleLikeToggle = async () => {
+    setIsLoading(true);
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Please log in to like users.");
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      // Call the backend toggleLike endpoint (liking the likedUserId)
+      // Send empty body {} as data isn't needed, user identified by token, liked user by URL
+      const response = await axios.post(`${BACKEND_URL}/api/users/${likedUserId}/like`, {}, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      // Update state based on backend response (which should indicate the new status)
+      setIsLiked(response.data.liked); // Assuming backend returns { liked: boolean }
+
+      // Optionally show match alert based on response
+      if (response.data.message?.includes("mutual")) {
+         alert("It's a match! You can now chat.");
+      } else if (response.data.liked === true) {
+         // alert("User liked!"); // Maybe too noisy
       } else {
-        alert("You liked this user!");
+         // alert("Like removed."); // Maybe too noisy
       }
 
-      setIsLiked(true);
-    } catch (error) {
-      console.error("Error liking user:", error);
-      alert("An error occurred. Please try again.");
+    } catch (error: any) {
+      console.error("Error toggling like:", error);
+      const message = error.response?.data?.message || error.response?.data?.error || "Failed to update like status.";
+      alert(`An error occurred: ${message}`);
+      // Optionally revert state on error, or re-fetch state
+      // checkInitialLike(); // Re-fetch to be sure
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const createChat = async () => {
-    try {
-      await axios.post(`${BACKEND_URL}/api/chats`, {
-        artist_id: userId,
-        employer_id: likedUserId,
-      });
-    } catch (error) {
-      console.error("Error creating chat:", error);
-    }
-  };
+  // --- REMOVED createChat function - Backend handles this ---
+
+  // Handle loading state for the button
+  if (isLiked === null) {
+    return <button disabled>Loading...</button>;
+  }
 
   return (
-    <button onClick={handleLike} disabled={isLiked}>
-      {isLiked ? "Liked" : "Like"}
+    <button onClick={handleLikeToggle} disabled={isLoading}>
+      {isLoading ? '...' : (isLiked ? "Liked" : "Like")}
     </button>
   );
 };
