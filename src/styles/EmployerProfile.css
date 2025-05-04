@@ -312,3 +312,177 @@ button:hover {
   background-color: #e08a93;
   cursor: not-allowed;
 }
+
+/****************************************
+ * COLOR VARIABLES (using your defined scheme)
+ ****************************************/
+ :root {
+  --sand-beige: #f7f0c9; /* Appears unused in current rules */
+  --charcoal-gray: #333333;
+  --pure-white: #FFFFFF;
+  --terracotta-red: #C96A50; /* Main Accent */
+  /* --dark-red: #8B0000; */ /* Original dark red */
+  --dark-red: #A14D36; /* Darker Terracotta for hover (consistent) */
+  --light-beige: #E0D7C6; /* For borders, light backgrounds */
+  --dark-gray: #444444; /* Dark text */
+  --shadow-color: rgba(0, 0, 0, 0.15); /* Slightly darker shadow */
+  --star-filled-color: #ffc107; /* Gold for stars */
+  --star-empty-color: #e0e0e0; /* Light grey for empty stars */
+  --text-muted: #6c757d; /* Muted text color */
+}
+
+/****************************************
+ * GLOBAL RESET & BASE STYLING (Keep as is)
+ ****************************************/
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Nunito', 'Arial', sans-serif; /* Added Nunito preference */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f4f7f6; /* Lighter page background */
+  color: var(--charcoal-gray);
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px 20px 20px; /* Consistent padding */
+}
+
+/****************************************
+ * NAVBAR STYLING (Keep as is)
+ ****************************************/
+.navbar { display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; left: 0; width: 100%; background-color: var(--charcoal-gray); color: var(--pure-white); padding: 15px 40px; z-index: 1000; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); }
+.navbar .logo { font-size: 1.8rem; font-weight: bold; color: var(--terracotta-red); }
+.navbar a { color: var(--pure-white); text-decoration: none; margin-right: 20px; font-weight: bold; font-size: 1rem; transition: color 0.3s ease; }
+.navbar a:hover { color: var(--terracotta-red); }
+.logout-button { background-color: var(--terracotta-red); color: var(--pure-white); border: none; border-radius: 5px; padding: 8px 12px; cursor: pointer; font-size: 1rem; transition: background-color 0.3s ease; }
+.logout-button:hover { background-color: var(--dark-red); }
+
+/****************************************
+ * MAIN CONTENT AREA (Keep as is)
+ ****************************************/
+.main-content { display: flex; justify-content: center; flex-grow: 1; margin-top: 30px; width: 100%; }
+
+/****************************************
+ * PROFILE CONTAINER (Base) - Reusing from ArtistProfile CSS
+ ****************************************/
+.profile-container { /* Base style for profile pages */
+  width: 100%;
+  max-width: 850px;
+  background: var(--pure-white);
+  border-radius: 12px;
+  box-shadow: 0 6px 20px var(--shadow-color);
+  padding: 30px 40px;
+  margin: 30px auto;
+  font-family: 'Nunito', sans-serif; /* Ensure font */
+}
+
+/* Specific container (can be same as artist) */
+
+.profile-title {
+  font-size: 2rem;
+  color: var(--charcoal-gray);
+  margin-bottom: 30px;
+  text-align: center;
+  font-weight: 700;
+}
+
+/****************************************
+ * PROFILE HEADER (Pic + Summary) - Reusing from ArtistProfile CSS
+ ****************************************/
+.profile-header { display: flex; align-items: flex-start; gap: 30px; margin-bottom: 30px; padding-bottom: 30px; border-bottom: 1px solid #eee; }
+.profile-picture-wrapper { position: relative; flex-shrink: 0; text-align: center; }
+.profile-picture { width: 130px; height: 130px; object-fit: cover; border-radius: 50%; border: 4px solid var(--pure-white); box-shadow: 0 2px 6px rgba(0,0,0,0.15); background-color: #f0f0f0; display: block; margin: 0 auto 10px auto; }
+.edit-picture-options { display: flex; justify-content: center; gap: 8px; margin-top: 5px; }
+.upload-pic-btn, .delete-btn.small { background-color: var(--light-beige); border: 1px solid #ccc; color: var(--dark-gray); font-size: 0.8rem; cursor: pointer; padding: 4px 8px; border-radius: 4px; transition: background-color 0.2s ease; }
+.upload-pic-btn:hover, .delete-btn.small:hover { background-color: #dcd3c6; }
+.delete-btn.small { background-color: #f8d7da; border-color: #f5c6cb; color: #721c24; }
+.delete-btn.small:hover { background-color: #f5c6cb; }
+
+.profile-summary { flex-grow: 1; padding-top: 10px; }
+.profile-name { margin: 0 0 8px 0; font-size: 1.9rem; font-weight: 700; color: var(--charcoal-gray); }
+.edit-btn { background-color: var(--terracotta-red); color: var(--pure-white); border: none; padding: 8px 18px; border-radius: 5px; cursor: pointer; font-size: 0.9rem; font-weight: 600; transition: background-color 0.3s ease; margin-top: 10px; }
+.edit-btn:hover { background-color: var(--dark-red); }
+
+/****************************************
+ * AVERAGE RATING DISPLAY (NEW - Copied from ArtistProfile CSS)
+ ****************************************/
+.average-rating-display { display: flex; align-items: center; gap: 8px; margin-bottom: 20px; font-size: 1rem; }
+.star-display { display: inline-block; color: var(--star-filled-color); font-size: 1.3rem; line-height: 1; }
+.star-display .star { margin-right: 2px; }
+.star-display .empty { color: var(--star-empty-color); }
+.star-display .half { position: relative; display: inline-block; }
+.star-display .half::before { content: '★'; position: absolute; left: 0; top: 0; width: 50%; overflow: hidden; color: var(--star-filled-color); }
+.rating-value { font-weight: 700; color: var(--charcoal-gray); margin-left: 2px; }
+.review-count { color: var(--text-muted); font-size: 0.9em; }
+.no-rating { font-size: 0.9em; color: var(--text-muted); font-style: italic; }
+
+/****************************************
+ * PROFILE CONTENT (Bio/Reviews or Edit Form) - Reusing structure
+ ****************************************/
+.profile-content { margin-top: 10px; width: 100%; }
+.profile-section { margin-bottom: 35px; text-align: left; }
+.profile-section h4 { font-size: 1.4rem; color: var(--dark-red); margin-bottom: 15px; padding-bottom: 8px; border-bottom: 2px solid var(--light-beige); }
+.bio-text { font-size: 1rem; color: var(--dark-gray); line-height: 1.7; white-space: pre-wrap; margin-bottom: 0; }
+
+/****************************************
+ * REVIEWS SECTION STYLES (NEW - Copied from ArtistProfile CSS)
+ ****************************************/
+.reviews-list { margin-top: 15px; display: flex; flex-direction: column; gap: 25px; }
+.review-item { border: 1px solid #eee; border-left: 4px solid var(--light-beige); border-radius: 4px; padding: 15px 20px; background-color: #fff; }
+.review-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px; }
+.reviewer-pic { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+.reviewer-info { flex-grow: 1; text-align: left; margin-top: 2px; }
+.reviewer-info strong { display: block; font-size: 1rem; font-weight: 600; color: var(--charcoal-gray); }
+.review-date { font-size: 0.85em; color: var(--text-muted); }
+.review-stars { flex-shrink: 0; margin-top: 2px; }
+.review-stars .star-display { font-size: 1rem; }
+.review-comment { font-style: italic; color: var(--dark-gray); text-align: left; margin-top: 8px; padding-left: 52px; position: relative; line-height: 1.5; }
+/* Optional quote style */
+/* .review-comment::before { content: '"'; position: absolute; left: 35px; top: -2px; font-size: 1.8em; color: #ccc; line-height: 1;} */
+.no-reviews { font-style: italic; color: var(--text-muted); margin-top: 20px; text-align: center; }
+
+/****************************************
+ * EDIT FORM STYLING - Reusing structure
+ ****************************************/
+.edit-form { display: flex; flex-direction: column; width: 100%; gap: 20px; }
+.form-field-group { margin-bottom: 0; }
+.edit-form label { font-size: 0.95rem; font-weight: 600; margin-bottom: 6px; color: var(--dark-gray); display: block; }
+.bio-input, .file-input { width: 100%; padding: 12px; margin-bottom: 0; font-size: 1rem; border: 1px solid var(--light-beige); border-radius: 6px; background-color: #f9f9f9; box-sizing: border-box; }
+.bio-input { min-height: 100px; resize: vertical; }
+.file-input { padding: 8px; background-color: #fff; }
+.bio-input:focus, .file-input:focus { outline: none; border-color: var(--terracotta-red); box-shadow: 0 0 0 2px rgba(201, 106, 80, 0.2); }
+
+/* Using existing .delete-btn styles provided by user */
+.delete-btn { background-color: #dc3545; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.9em; transition: background-color 0.2s ease; }
+.delete-btn:hover:not(:disabled) { background-color: #c82333; }
+.delete-btn:disabled { background-color: #e08a93; cursor: not-allowed; }
+/* Ensure delete button in form aligns */
+.edit-form .delete-btn { align-self: flex-start; margin-top: -10px; margin-bottom: 10px; }
+
+/* Edit Form Button Row */
+.btn-row { display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px; }
+.save-btn, .cancel-btn { background-color: var(--terracotta-red); color: var(--pure-white); border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 1rem; font-weight: 600; transition: background-color 0.3s ease; margin: 0; }
+.cancel-btn { background-color: #ccc; color: #333; }
+.save-btn:hover:not(:disabled) { background-color: var(--dark-red); }
+.cancel-btn:hover:not(:disabled) { background-color: #bbb; }
+.save-btn:disabled, .cancel-btn:disabled { background-color: #e0b8af; cursor: not-allowed; opacity: 0.7; }
+.cancel-btn:disabled { background-color: #e0e0e0; }
+
+/****************************************
+ * FOOTER & LOADING (Keep as is or modify)
+ ****************************************/
+.footer { background-color: var(--charcoal-gray); color: var(--pure-white); text-align: center; padding: 10px 0; font-size: 0.9rem; width: 100%; margin-top: auto; }
+.loading-message { color: var(--terracotta-red); font-size: 1.2rem; text-align: center; margin-top: 50px; padding: 30px; }

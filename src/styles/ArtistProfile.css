@@ -1,15 +1,18 @@
 /****************************************
- * COLOR VARIABLES (keep your color scheme)
+ * COLOR VARIABLES (Using your defined scheme)
  ****************************************/
  :root {
-  --sand-beige: #f7f0c9;
+  --sand-beige: #f7f0c9; /* Not used much in profile? */
   --charcoal-gray: #333333;
   --pure-white: #FFFFFF;
-  --terracotta-red: #C96A50;
-  --dark-red: #8B0000;
-  --light-beige: #E0D7C6;
-  --dark-gray: #444444;
-  --shadow-color: rgba(0, 0, 0, 0.2);
+  --terracotta-red: #C96A50; /* Main Accent */
+  --dark-red: #A14D36; /* Darker Terracotta for hover */
+  --light-beige: #E0D7C6; /* For borders, light backgrounds */
+  --dark-gray: #444444; /* Dark text */
+  --shadow-color: rgba(0, 0, 0, 0.15); /* Slightly darker shadow */
+  --star-filled-color: #ffc107; /* Gold for stars */
+  --star-empty-color: #e0e0e0; /* Light grey for empty stars */
+  --text-muted: #6c757d; /* Muted text color */
 }
 
 /****************************************
@@ -22,302 +25,441 @@
 }
 
 body {
-  font-family: 'Arial', sans-serif;
+  font-family: 'Nunito', 'Arial', sans-serif; /* Use Nunito if available */
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
+  /* justify-content: flex-start; */ /* Removed to allow centering */
   min-height: 100vh;
-  background-color: var(--sand-beige); /* Soft beige background */
-  color: var(--charcoal-gray);         /* Charcoal gray for general text */
+  background-color: #f4f7f6; /* Lighter overall page background */
+  color: var(--charcoal-gray);
 }
 
 #root {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  /* justify-content: center; */ /* Removed */
   width: 100%;
-  max-width: 1200px; /* Prevents stretching on large screens */
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 0 20px 20px 20px; /* No top padding needed due to fixed nav */
 }
 
 /****************************************
- * NAVBAR STYLING
+ * NAVBAR STYLING (Keep as is)
  ****************************************/
 .navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  position: fixed;
+  position: sticky; /* Changed to sticky */
   top: 0;
   left: 0;
   width: 100%;
-  background-color: var(--charcoal-gray); /* Charcoal gray */
+  background-color: var(--charcoal-gray);
   color: var(--pure-white);
   padding: 15px 40px;
   z-index: 1000;
-  box-shadow: 0 2px 5px var(--shadow-color);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Adjusted shadow */
 }
 
-.navbar .logo {
-  font-size: 1.8rem;
-  font-weight: bold;
-  color: var(--terracotta-red); /* Terracotta red logo */
-}
-
-.navbar a {
-  color: var(--pure-white);
-  text-decoration: none;
-  margin-right: 20px;
-  font-weight: bold;
-  font-size: 1rem;
-  transition: color 0.3s ease;
-}
-
-.navbar a:hover {
-  color: var(--terracotta-red);
-}
-
-.logout-button {
-  background-color: var(--terracotta-red);
-  color: var(--pure-white);
-  border: none;
-  border-radius: 5px;
-  padding: 8px 12px;
-  cursor: pointer;
-  font-size: 1rem;
-  transition: background-color 0.3s ease;
-}
-
-.logout-button:hover {
-  background-color: var(--dark-red);
-}
+.navbar .logo { font-size: 1.8rem; font-weight: bold; color: var(--terracotta-red); }
+.navbar a { color: var(--pure-white); text-decoration: none; margin-right: 20px; font-weight: bold; font-size: 1rem; transition: color 0.3s ease; }
+.navbar a:hover { color: var(--terracotta-red); }
+.logout-button { background-color: var(--terracotta-red); color: var(--pure-white); border: none; border-radius: 5px; padding: 8px 12px; cursor: pointer; font-size: 1rem; transition: background-color 0.3s ease; }
+.logout-button:hover { background-color: var(--dark-red); }
 
 /****************************************
- * MAIN CONTENT AREA
+ * MAIN CONTENT AREA (Adjusted)
  ****************************************/
 .main-content {
   display: flex;
   justify-content: center;
-  align-items: center;
+  /* align-items: center; */ /* Let content align top */
   flex-grow: 1;
-  margin-top: 100px; /* Push below the navbar */
+  margin-top: 30px; /* Space below sticky navbar */
   width: 100%;
 }
 
 /****************************************
- * ARTIST PROFILE CONTAINER
+ * PROFILE CONTAINER (Base)
  ****************************************/
-.artist-profile-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.profile-container { /* Base style for artist/employer */
   width: 100%;
-  max-width: 500px;
+  max-width: 850px; /* Increased width */
   background: var(--pure-white);
   border-radius: 12px;
-  box-shadow: 0 8px 15px var(--shadow-color);
-  padding: 120px;
-  margin: 120px;
+  box-shadow: 0 6px 20px var(--shadow-color);
+  padding: 30px 40px; /* Adjusted padding */
+  margin: 30px auto; /* Center container */
 }
 
 .profile-title {
-  font-size: 1.8rem;
+  font-size: 2rem; /* Slightly larger */
   color: var(--charcoal-gray);
-  margin-bottom: 15px;
+  margin-bottom: 30px;
   text-align: center;
+  font-weight: 700;
 }
 
-/* Optional badge for “STUDENT ARTIST” */
-.student-badge {
-  background-color: purple;
-  color: var(--pure-white);
-  padding: 5px 10px;
-  border-radius: 4px;
-  margin-bottom: 15px;
-  font-weight: bold;
-}
+/* Specific container (if needed for overrides) */
 
 /****************************************
- * PROFILE PICTURE
+ * PROFILE HEADER (Pic + Summary)
  ****************************************/
+.profile-header {
+    display: flex;
+    align-items: flex-start; /* Align items top */
+    gap: 30px;
+    margin-bottom: 30px;
+    padding-bottom: 30px;
+    border-bottom: 1px solid #eee; /* Separator */
+}
+
 .profile-picture-wrapper {
-  text-align: center;
-  margin-bottom: 1rem;
+    position: relative;
+    flex-shrink: 0;
+    text-align: center; /* Center elements inside */
 }
 
 .profile-picture {
-  width: 150px;
-  height: 150px;
-  object-fit: cover;
-  border-radius: 50%;
-  border: 4px solid var(--light-beige);
+    width: 130px; /* Adjusted size */
+    height: 130px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 4px solid var(--pure-white); /* White border */
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15); /* Shadow for depth */
+    background-color: #f0f0f0; /* Placeholder bg */
+    display: block; /* Remove extra space */
+    margin: 0 auto 10px auto; /* Center and add space below */
 }
 
+/* Edit options appear below picture when editing */
+.edit-picture-options {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 5px;
+}
+
+.upload-pic-btn, /* Label styled as button */
+.delete-btn.small {
+    background-color: var(--light-beige);
+    border: 1px solid #ccc;
+    color: var(--dark-gray);
+    font-size: 0.8rem;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+.upload-pic-btn:hover,
+.delete-btn.small:hover {
+    background-color: #dcd3c6;
+}
+.delete-btn.small {
+    background-color: #f8d7da; /* Light red for delete */
+    border-color: #f5c6cb;
+    color: #721c24;
+}
+.delete-btn.small:hover {
+     background-color: #f5c6cb;
+}
+
+.profile-summary {
+    flex-grow: 1;
+    padding-top: 10px; /* Align text better vertically */
+}
+.profile-name {
+    margin: 0 0 8px 0;
+    font-size: 1.9rem;
+    font-weight: 700;
+    color: var(--charcoal-gray);
+}
+.student-badge {
+    display: inline-block;
+    background-color: #bfdbfe; /* Lighter purple/blue */
+    color: #3b82f6; /* Matching blue text */
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin-bottom: 15px; /* Space below badge */
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* --- RATING DISPLAY STYLES (NEW) --- */
+.average-rating-display {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px; /* Space below rating */
+    font-size: 1rem;
+}
+.star-display {
+    display: inline-block;
+    color: var(--star-filled-color); /* Gold */
+    font-size: 1.3rem; /* Make stars slightly larger */
+    line-height: 1; /* Prevent extra line height */
+}
+.star-display .star { margin-right: 2px; }
+.star-display .empty { color: var(--star-empty-color); }
+.star-display .half { position: relative; display: inline-block; }
+.star-display .half::before {
+    content: '★'; position: absolute; left: 0; top: 0;
+    width: 50%; /* Adjust for desired half-fill */
+    overflow: hidden; color: var(--star-filled-color);
+}
+.rating-value { font-weight: 700; color: var(--charcoal-gray); margin-left: 2px; }
+.review-count { color: var(--text-muted); font-size: 0.9em; }
+.no-rating { font-size: 0.9em; color: var(--text-muted); font-style: italic; }
+/* --- END RATING DISPLAY --- */
+
+/* Edit button in display mode */
+.edit-btn {
+  background-color: var(--terracotta-red);
+  color: var(--pure-white);
+  border: none;
+  padding: 8px 18px; /* Adjusted padding */
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+  margin-top: 10px; /* Ensure some space */
+}
+.edit-btn:hover { background-color: var(--dark-red); }
+
+
 /****************************************
- * BIO TEXT & EDIT FORM
+ * PROFILE CONTENT (Bio/Reviews or Edit Form)
  ****************************************/
+.profile-content {
+    margin-top: 10px; /* Space below header */
+    width: 100%;
+}
+
+.profile-section {
+    margin-bottom: 35px; /* Space between sections */
+    text-align: left; /* Align section content left */
+}
+.profile-section h4 {
+    font-size: 1.4rem; /* Section headings */
+    color: var(--dark-red); /* Use accent */
+    margin-bottom: 15px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--light-beige);
+}
+
 .bio-text {
   font-size: 1rem;
   color: var(--dark-gray);
-  margin-bottom: 15px;
-  text-align: center;
-  min-height: 60px;
+  line-height: 1.7;
+  white-space: pre-wrap; /* Preserve line breaks */
+  margin-bottom: 0; /* Handled by section margin */
 }
 
-.edit-btn,
+/* --- REVIEWS SECTION STYLES (NEW) --- */
+
+.reviews-list {
+    margin-top: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 25px; /* Space between reviews */
+}
+
+.review-item {
+    border: 1px solid #eee;
+    border-left: 4px solid var(--light-beige); /* Accent border */
+    border-radius: 4px;
+    padding: 15px 20px;
+    background-color: #fff;
+}
+
+.review-header {
+    display: flex;
+    align-items: flex-start; /* Align top */
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.reviewer-pic {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.reviewer-info {
+    flex-grow: 1;
+    text-align: left;
+    margin-top: 2px; /* Align text better */
+}
+.reviewer-info strong {
+    display: block;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--charcoal-gray);
+}
+.review-date {
+    font-size: 0.8em;
+    color: var(--text-muted);
+}
+
+.review-stars {
+    flex-shrink: 0;
+    margin-top: 2px; /* Align with name */
+}
+/* Adjust star size within reviews */
+.review-stars .star-display { font-size: 1rem; }
+
+.review-comment {
+    font-style: italic;
+    color: var(--dark-gray);
+    text-align: left;
+    margin-top: 8px;
+    padding-left: 52px; /* Indent comment roughly below pic+gap */
+    position: relative;
+    line-height: 1.5;
+}
+/* Optional quote style */
+/* .review-comment::before { */
+    /* content: '"'; */
+    /* position: absolute; */
+    /* left: 35px; */
+    /* top: -2px; */
+    /* font-size: 1.8em; */
+    /* color: #ccc; */
+    /* line-height: 1; */
+/* } */
+
+.no-reviews {
+    font-style: italic;
+    color: var(--text-muted);
+    margin-top: 20px;
+    text-align: center;
+}
+/* --- END REVIEWS SECTION --- */
+
+
+/****************************************
+ * EDIT FORM STYLING
+ ****************************************/
+.edit-form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 20px; /* Space between form elements */
+}
+
+
+
+.edit-form label { /* Style labels within edit form */
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: var(--dark-gray);
+}
+
+.bio-input, /* Apply consistent input styling */
+.file-input { /* Apply consistent input styling */
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 0; /* Using gap from parent */
+  font-size: 1rem;
+  border: 1px solid var(--light-beige);
+  border-radius: 6px;
+  background-color: #f9f9f9; /* Light background for inputs */
+}
+.bio-input { min-height: 100px; }
+.file-input { padding: 8px; background-color: #fff; } /* Different bg for file input */
+
+
+.bio-input:focus,
+.file-input:focus { /* Consistent focus */
+  outline: none;
+  border-color: var(--terracotta-red);
+  box-shadow: 0 0 0 2px rgba(201, 106, 80, 0.2);
+}
+
+/* Delete Button in Edit Form */
+.delete-btn {
+  background-color: #e74c3c; /* Different red */
+  color: white;
+  border: none;
+  padding: 8px 14px; /* Match edit button */
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+  align-self: flex-start; /* Align left */
+  margin-top: -10px; /* Pull up slightly */
+  margin-bottom: 10px;
+}
+.delete-btn:hover:not(:disabled) { background-color: #c0392b; }
+.delete-btn:disabled { background-color: #f0a1a8; cursor: not-allowed; }
+
+
+/* Edit Form Button Row */
+.btn-row {
+  display: flex;
+  justify-content: flex-end; /* Align buttons right */
+  gap: 10px;
+  margin-top: 15px; /* Space above buttons */
+}
+
+/* Specific Save/Cancel in Edit Form */
 .save-btn,
 .cancel-btn {
   background-color: var(--terracotta-red);
   color: var(--pure-white);
   border: none;
-  padding: 10px 15px;
+  padding: 10px 20px; /* Consistent padding */
   border-radius: 5px;
-  margin: 5px;
   cursor: pointer;
   font-size: 1rem;
+  font-weight: 600;
   transition: background-color 0.3s ease;
+  margin: 0; /* Reset margin */
+}
+.cancel-btn {
+    background-color: #ccc; /* Grey cancel */
+    color: #333;
 }
 
-.edit-btn:hover,
-.save-btn:hover,
-.cancel-btn:hover {
-  background-color: var(--dark-red);
+.save-btn:hover:not(:disabled) { background-color: var(--dark-red); }
+.cancel-btn:hover:not(:disabled) { background-color: #bbb; }
+
+.save-btn:disabled,
+.cancel-btn:disabled {
+    background-color: #e0b8af; /* Muted terracotta */
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+.cancel-btn:disabled {
+     background-color: #e0e0e0; /* Muted grey */
 }
 
-.edit-form {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-}
-
-.bio-input,
-.file-input {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 10px;
-  font-size: 1rem;
-  border: 1px solid var(--light-beige);
-  border-radius: 5px;
-}
-
-.bio-input:focus,
-.file-input:focus {
-  outline: none;
-  border-color: var(--terracotta-red);
-}
-
-.btn-row {
-  display: flex;
-  justify-content: flex-start;
-}
 
 /****************************************
- * GLOBAL FORM & LABEL STYLING
+ * GLOBAL FORM & LABEL STYLING (Remove if redundant)
  ****************************************/
-form {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-label {
-  font-size: 1rem;
-  font-weight: bold;
-  margin-bottom: 5px;
-  color: var(--charcoal-gray);
-}
-
-textarea {
-  height: 150px;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 1rem;
-  resize: vertical;
-}
-
-textarea:focus {
-  outline: none;
-  border-color: var(--terracotta-red);
-}
-
-input[type="text"],
-input[type="file"] {
-  padding: 10px;
-  font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
-
-input[type="text"]:focus,
-input[type="file"]:focus {
-  outline: none;
-  border-color: var(--terracotta-red);
-}
-
-button {
-  padding: 10px 20px;
-  font-size: 1.1rem;
-  background-color: var(--terracotta-red);
-  color: var(--pure-white);
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-button:hover {
-  background-color: #0056b3; /* Adjust if you want a deeper terracotta or a different color */
-}
-
-/* Error Alert Styling */
-.alert {
-  color: red;
-  font-size: 1rem;
-  margin-top: 10px;
-  text-align: center;
-}
+/* Keep if used on other pages, otherwise remove/scope these */
+/* form { display: flex; flex-direction: column; gap: 15px; } */
+/* label { font-size: 1rem; font-weight: bold; margin-bottom: 5px; color: var(--charcoal-gray); } */
+/* textarea { height: 150px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 1rem; resize: vertical; } */
+/* textarea:focus { outline: none; border-color: var(--terracotta-red); } */
+/* input[type="text"], input[type="file"] { padding: 10px; font-size: 1rem; border: 1px solid #ccc; border-radius: 5px; } */
+/* input[type="text"]:focus, input[type="file"]:focus { outline: none; border-color: var(--terracotta-red); } */
+/* button { padding: 10px 20px; font-size: 1.1rem; background-color: var(--terracotta-red); color: var(--pure-white); border: none; border-radius: 5px; cursor: pointer; } */
+/* button:hover { background-color: var(--dark-red); } */
 
 /****************************************
- * FOOTER
+ * FOOTER & LOADING (Keep as is or modify)
  ****************************************/
-.footer {
-  background-color: var(--charcoal-gray);
-  color: var(--pure-white);
-  text-align: center;
-  padding: 10px 0;
-  font-size: 0.9rem;
-  width: 100%;
-  margin-top: 20px;
-}
-
-/****************************************
- * LOADING MESSAGE
- ****************************************/
-.loading-message {
-  color: var(--terracotta-red);
-  font-size: 1.2rem;
-  text-align: center;
-  margin-top: 50px;
-}
-.delete-btn {
-  background-color: #dc3545; 
-  color: white;
-  border: none;
-  padding: 6px 12px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.9em;
-  transition: background-color 0.2s ease;
-}
-
-.delete-btn:hover {
-  background-color: #c82333; 
-}
-
-.delete-btn:disabled {
-  background-color: #e08a93;
-  cursor: not-allowed;
-}
+.footer { background-color: var(--charcoal-gray); color: var(--pure-white); text-align: center; padding: 10px 0; font-size: 0.9rem; width: 100%; margin-top: auto; /* Pushes to bottom if content short */ }
+.loading-message { color: var(--terracotta-red); font-size: 1.2rem; text-align: center; margin-top: 50px; padding: 30px; }

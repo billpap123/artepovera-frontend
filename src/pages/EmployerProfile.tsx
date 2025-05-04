@@ -1,252 +1,293 @@
 // src/pages/EmployerProfile.tsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react"; // Added useMemo if needed
 import axios from "axios";
 import { useUserContext } from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../components/Navbar"; // Import your Navbar
-import "../styles/EmployerProfile.css"; // Make sure this CSS file exists
+import Navbar from "../components/Navbar";
+import "../styles/EmployerProfile.css"; // Ensure this file exists and has styles
+
+// --- ADD Review Interface ---
+// (Adjust based on your actual Review model attributes and API response)
+interface Reviewer {
+  user_id: number;
+  fullname: string;
+  profile_picture: string | null;
+}
+interface ReviewData {
+  review_id: number;
+  overall_rating: number;
+  specific_answers?: { // Make optional as it might be null/empty
+    comment?: string;
+    // Add other specific answers if you have them
+  };
+  created_at: string; // Should be a date string
+  reviewer?: Reviewer; // Assuming backend includes reviewer info
+}
+// --- END Review Interface ---
+
+// --- ADD Star Display Component ---
+// (Simple display-only version - move to shared utils?)
+const DisplayStars = ({ rating }: { rating: number | null }) => {
+    if (rating === null || typeof rating !== 'number' || rating <= 0) {
+        return <span className="no-rating">(No rating yet)</span>;
+    }
+    const fullStars = Math.floor(rating);
+    const halfStar = Math.round(rating * 2) % 2 !== 0 ? 1 : 0;
+    const emptyStars = 5 - fullStars - halfStar;
+    const validFull = Math.max(0, fullStars);
+    const validHalf = Math.max(0, halfStar);
+    const validEmpty = Math.max(0, 5 - validFull - validHalf);
+
+    return (
+        <div className="star-display" title={`${rating.toFixed(1)} out of 5 stars`}>
+            {[...Array(validFull)].map((_, i) => <span key={`full-${i}`} className="star filled">★</span>)}
+            {validHalf === 1 && <span key="half" className="star half">★</span>}
+            {[...Array(validEmpty)].map((_, i) => <span key={`empty-${i}`} className="star empty">☆</span>)}
+        </div>
+    );
+};
+// --- END Star Display Component ---
+
 
 const EmployerProfile: React.FC = () => {
   const { userId, setUserId, employerId, setEmployerId } = useUserContext();
 
   // State for displaying & editing
   const [bio, setBio] = useState("");
-  const [profilePicture, setProfilePicture] = useState<string | null>(null); // Use null default
+  const [profilePicture, setProfilePicture] = useState<string | null>(null);
+  const [profileUserName, setProfileUserName] = useState(""); // Store fetched name
 
   // Data for editing
   const [newBio, setNewBio] = useState("");
   const [newProfilePicFile, setNewProfilePicFile] = useState<File | null>(null);
 
-  const [loading, setLoading] = useState(true);
+  // Loading states
+  const [loading, setLoading] = useState(true); // For initial profile load
   const [isEditing, setIsEditing] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const [deleting, setDeleting] = useState(false); // <<< State for delete loading
+  const [saving, setSaving] = useState(false); // For saving changes
+  const [deleting, setDeleting] = useState(false); // For deleting picture
+
+  // --- ADD State for Ratings/Reviews ---
+  const [averageRating, setAverageRating] = useState<number | null>(null);
+  const [reviewCount, setReviewCount] = useState<number>(0);
+  const [reviews, setReviews] = useState<ReviewData[]>([]);
+  const [reviewsLoading, setReviewsLoading] = useState<boolean>(true);
+  // --- END ADD ---
+
 
   const navigate = useNavigate();
   const BACKEND_URL = import.meta.env.VITE_API_URL || "http://localhost:50001";
 
-  // Fetch the current user’s Employer data
+  // --- UPDATED useEffect to Fetch Profile AND Ratings ---
   useEffect(() => {
-    const fetchEmployerProfile = async () => {
+    let isMounted = true;
+
+    const fetchProfileAndRatings = async () => {
       setLoading(true);
+      setReviewsLoading(true);
       try {
         const token = localStorage.getItem("token");
-        if (!token) {
-          alert("No token found. Please log in.");
-          navigate("/login"); return;
-        }
-        const response = await axios.get(`${BACKEND_URL}/api/users/me`, {
+        if (!token) { alert("Authentication required."); navigate("/login"); return; }
+
+        // 1. Get base user/profile data
+        const profileResponse = await axios.get(`${BACKEND_URL}/api/users/me`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        const { user_id, employer } = response.data;
-        if (!userId) setUserId(user_id);
+        const { user_id, employer, fullname } = profileResponse.data;
+        let currentEmployerId = null;
 
-        if (employer && employer.employer_id) {
-          setEmployerId(employer.employer_id);
-          setBio(employer.bio || "");
-          setProfilePicture(employer.profile_picture || null); // Set null if empty/null
-          setNewBio(employer.bio || "");
+        if (isMounted) {
+            setProfileUserName(fullname || "");
+            if (!userId) setUserId(user_id);
+
+            if (employer && employer.employer_id) {
+               setEmployerId(employer.employer_id); // Set context/state
+               currentEmployerId = employer.employer_id; // Use this ID for context
+               setBio(employer.bio || "");
+               setProfilePicture(employer.profile_picture || null);
+               setNewBio(employer.bio || "");
+            } else {
+                console.warn("Logged in user does not have an associated employer profile.");
+                // Handle non-employer user
+            }
         }
+
+         // 2. Fetch ratings/reviews using the user_id from the profile fetch
+         const profileOwnerUserId = user_id;
+         if (profileOwnerUserId && isMounted) {
+             const ratingPromise = axios.get(`${BACKEND_URL}/api/users/${profileOwnerUserId}/average-rating`);
+             const reviewsPromise = axios.get(`${BACKEND_URL}/api/users/${profileOwnerUserId}/reviews`);
+
+             const [ratingResponse, reviewsResponse] = await Promise.all([ratingPromise, reviewsPromise]);
+
+             if (isMounted) {
+                 setAverageRating(ratingResponse.data.averageRating);
+                 setReviewCount(ratingResponse.data.reviewCount);
+                 setReviews(reviewsResponse.data.reviews || []);
+             }
+         } else if (isMounted) {
+             setAverageRating(null); setReviewCount(0); setReviews([]);
+         }
+
       } catch (error) {
-        console.error("Error fetching user/employer data:", error);
-        alert("Could not retrieve employer profile. Please log in again.");
+        console.error("Error fetching profile or ratings:", error);
+        // setError("Failed to load profile data."); // Use error state if available
       } finally {
-        setLoading(false);
+        if (isMounted) { setLoading(false); setReviewsLoading(false); }
       }
     };
-     // Only fetch if needed data isn't already in context
-    if (!employerId) { // Assuming employerId means profile is loaded
-        fetchEmployerProfile();
-    } else {
-        setLoading(false);
-    }
-  }, [userId, employerId, setUserId, setEmployerId, BACKEND_URL, navigate]);
 
-  // Toggle Edit Mode
-  const handleEditToggle = () => {
-    setIsEditing(!isEditing);
-    if (isEditing) { setNewBio(bio); setNewProfilePicFile(null); }
-  };
+    fetchProfileAndRatings();
 
-  // Handle file selection
-  const handleProfilePictureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files ? e.target.files[0] : null;
-    if (file && (file.type === "image/png" || file.type === "image/jpeg")) {
-      setNewProfilePicFile(file);
-    } else {
-      alert("Please upload a valid image file (PNG or JPG).");
-      e.target.value = ""; // Clear the input if file is invalid
-    }
-  };
+    // Cleanup
+    return () => { isMounted = false; };
 
-  // Save changes (upload new picture, update bio)
-  const handleSaveChanges = async () => {
-    try {
-      setSaving(true);
-      const token = localStorage.getItem("token");
-      if (!token) { /* handle no token */ setSaving(false); return; }
+  }, [userId, setUserId, setEmployerId, BACKEND_URL, navigate]); // Removed employerId dependency
+  // --- END UPDATED useEffect ---
 
-      const formData = new FormData();
-      formData.append("bio", newBio);
-      if (newProfilePicFile) {
-        formData.append("profile_picture", newProfilePicFile);
-      }
 
-      const url = `${BACKEND_URL}/api/employers/profile`; // Correct endpoint
-      const response = await axios.post(url, formData, { headers: { Authorization: `Bearer ${token}` } });
-      const updatedEmployerData = response.data?.employer;
+  // --- Handler Functions (Keep as is) ---
+  const handleEditToggle = () => { /* ... */ setIsEditing(!isEditing); if (isEditing) { setNewBio(bio); setNewProfilePicFile(null); } };
+  const handleProfilePictureChange = (e: React.ChangeEvent<HTMLInputElement>) => { /* ... */ };
+  const handleSaveChanges = async () => { /* ... */ };
+  const handleDeletePicture = async () => { /* ... */ };
+  // --- End Handler Functions ---
 
-      if (updatedEmployerData) {
-         setBio(updatedEmployerData.bio || "");
-         setProfilePicture(updatedEmployerData.profile_picture || null); // Use null
-         setNewBio(updatedEmployerData.bio || "");
-      } else {
-          setBio(newBio);
-          if (newProfilePicFile) { // Re-fetch if needed
-             const meResponse = await axios.get(`${BACKEND_URL}/api/users/me`, { headers: { Authorization: `Bearer ${token}` } });
-             setProfilePicture(meResponse.data?.employer?.profile_picture || null); // Use null
-          }
-      }
-      setNewProfilePicFile(null);
-      alert("Profile updated successfully!");
-      setIsEditing(false);
-    } catch (error: any) {
-      console.error("Error saving changes:", error);
-      const message = error.response?.data?.message || "Something went wrong saving profile.";
-      alert(message);
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  // --- ADD DELETE PICTURE FUNCTION ---
-  const handleDeletePicture = async () => {
-    if (!window.confirm("Are you sure you want to delete your profile picture?")) {
-      return;
-    }
-    setDeleting(true);
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) { alert("Authentication token not found."); setDeleting(false); return; }
-
-      // IMPORTANT: Make sure this endpoint exists on your backend!
-      const url = `${BACKEND_URL}/api/employers/profile/picture`;
-      await axios.delete(url, { headers: { Authorization: `Bearer ${token}` } });
-
-      // Update frontend state
-      setProfilePicture(null); // Set to null to show default
-      setNewProfilePicFile(null); // Clear any staged file
-
-      alert("Profile picture deleted successfully.");
-      // Optional: remain in edit mode or exit
-      // setIsEditing(false);
-
-    } catch (error: any) {
-      console.error("Error deleting profile picture:", error);
-      const message = error.response?.data?.message || "Failed to delete profile picture.";
-      alert(message);
-    } finally {
-      setDeleting(false);
-    }
-  };
-  // --- END DELETE PICTURE FUNCTION ---
 
   if (loading) {
-    // Consider a more visual loading state (spinner, skeleton)
-    return <div style={{ padding: '40px', textAlign: 'center' }}>Loading employer profile...</div>;
+    return (
+        <>
+            <Navbar />
+            <div className="profile-container employer-profile-container" style={{textAlign: 'center', padding: '40px'}}>
+                Loading employer profile...
+            </div>
+        </>
+    );
   }
 
   return (
     <>
       <Navbar />
-      {/* Use a consistent class name */}
-      <div className="profile-container employer-profile-container"> {/* Added base 'profile-container' */}
-        <h2 className="profile-title">My Employer Profile</h2>
+      <div className="profile-container employer-profile-container">
+        <h2 className="profile-title">{isEditing ? "Edit Profile" : (profileUserName || "My Employer Profile")}</h2>
 
-        <div className="profile-picture-wrapper">
-          <img
-            // Use ternary operator for clarity with null state
-            src={profilePicture ? profilePicture : "/default-profile.png"}
-            alt="Employer Profile"
-            className="profile-picture"
-          />
+        {/* --- Profile Header --- */}
+        <div className="profile-header">
+            <div className="profile-picture-wrapper">
+              <img
+                src={profilePicture ? profilePicture : "/default-profile.png"}
+                alt="Employer Profile"
+                className="profile-picture"
+              />
+              {isEditing && (
+                   <div className="edit-picture-options">
+                       <label htmlFor="profilePicUpload" className="upload-pic-btn">Change</label>
+                       <input id="profilePicUpload" type="file" accept="image/png, image/jpeg" onChange={handleProfilePictureChange} style={{display: 'none'}} />
+                       {profilePicture && (
+                          <button type="button" className="delete-btn small" onClick={handleDeletePicture} disabled={deleting || saving}>
+                              {deleting ? "..." : "Remove"}
+                          </button>
+                       )}
+                   </div>
+              )}
+            </div>
+
+            <div className="profile-summary">
+                 <h3 className="profile-name">{profileUserName || 'Employer Name'}</h3>
+                 {/* Add any other relevant summary info for employer? */}
+
+                {/* --- ADD Average Rating Display --- */}
+                <div className="average-rating-display">
+                    {reviewsLoading ? ( <span>Loading rating...</span> )
+                     : reviewCount > 0 ? (
+                         <>
+                             <DisplayStars rating={averageRating} />
+                             <span className="rating-value">{averageRating?.toFixed(1)}</span>
+                             <span className="review-count">({reviewCount} review{reviewCount !== 1 ? 's' : ''})</span>
+                         </>
+                     ) : (
+                         <span className="no-rating">No reviews yet</span>
+                     )}
+                </div>
+                {/* --- END Average Rating Display --- */}
+
+                {!isEditing && (
+                    <button className="edit-btn" onClick={handleEditToggle}>
+                        Edit Profile
+                    </button>
+                )}
+            </div>
         </div>
 
-        {!isEditing ? (
-          // Display Mode
-          <div className="profile-display">
-            <div className="profile-section">
-                <h4>Bio</h4>
-                <p className="bio-text">{bio || "No bio provided yet."}</p>
-            </div>
-            {/* Add display for other employer fields if needed */}
-            <button className="edit-btn" onClick={handleEditToggle}>
-              Edit Profile
-            </button>
-          </div>
-        ) : (
-          // Editing Mode
-          <div className="edit-form">
-            <div className="form-field-group"> {/* Wrap fields */}
-                <label htmlFor="employerBio">Bio:</label>
-                <textarea
-                  id="employerBio"
-                  value={newBio}
-                  onChange={(e) => setNewBio(e.target.value)}
-                  rows={4}
-                  className="bio-input" // Use consistent class names if defined in CSS
-                />
-            </div>
+        {/* --- Main Profile Content --- */}
+        <div className="profile-content">
+            {!isEditing ? (
+              // --- Display Mode ---
+              <>
+                <div className="profile-section">
+                    <h4>Bio</h4>
+                    <p className="bio-text">{bio || "No bio provided yet."}</p>
+                </div>
 
-            <div className="form-field-group"> {/* Wrap fields */}
-                <label htmlFor="employerPic">Update Profile Picture (PNG/JPG):</label>
-                <input
-                  id="employerPic"
-                  type="file"
-                  accept="image/png, image/jpeg"
-                  onChange={handleProfilePictureChange}
-                  className="file-input" // Use consistent class names if defined in CSS
-                />
-            </div>
+                {/* --- ADD Reviews Section --- */}
+                <div className="reviews-section profile-section">
+                     <h4>Reviews Received ({reviewCount})</h4>
+                     {reviewsLoading ? ( <p>Loading reviews...</p> )
+                      : reviews.length > 0 ? (
+                         <div className="reviews-list">
+                             {reviews.map((review) => (
+                                <div key={review.review_id} className="review-item">
+                                    <div className="review-header">
+                                        <img src={review.reviewer?.profile_picture || '/default-profile.png'} alt={review.reviewer?.fullname || 'Reviewer'} className="reviewer-pic"/>
+                                        <div className="reviewer-info">
+                                            <strong>{review.reviewer?.fullname || 'Anonymous'}</strong>
+                                            <span className="review-date">{new Date(review.created_at).toLocaleDateString()}</span>
+                                        </div>
+                                        <div className="review-stars">
+                                            <DisplayStars rating={review.overall_rating} />
+                                        </div>
+                                    </div>
+                                    {review.specific_answers?.comment && (
+                                        <p className="review-comment">"{review.specific_answers.comment}"</p>
+                                    )}
+                                    {/* Display other specific answers if needed */}
+                                </div>
+                             ))}
+                         </div>
+                     ) : ( <p className="no-reviews">No reviews have been submitted for this employer yet.</p> )}
+                </div>
+                {/* --- END Reviews Section --- */}
+              </>
 
-            {/* --- ADD DELETE BUTTON --- */}
-            {/* Only show if a picture currently exists */}
-            {profilePicture && (
-              <div style={{ marginTop: '15px', textAlign: 'left' }}> {/* Align left */}
-                  <button
-                    type="button"
-                    className="delete-btn" // Needs styling in EmployerProfile.css
-                    onClick={handleDeletePicture}
-                    disabled={deleting || saving} // Disable if deleting or saving
-                  >
-                    {deleting ? "Deleting..." : "Delete Picture"}
-                  </button>
+            ) : (
+              // --- Editing Mode ---
+              <div className="edit-form">
+                <div className="form-field-group">
+                    <label htmlFor="employerBio">Bio:</label>
+                    <textarea id="employerBio" value={newBio} onChange={(e) => setNewBio(e.target.value)} rows={5} className="bio-input" />
+                </div>
+                {/* File input handled near picture */}
+                <div className="btn-row form-actions">
+                  <button className="save-btn submit-btn" onClick={handleSaveChanges} disabled={saving || deleting}> {saving ? "Saving..." : "Save Changes"} </button>
+                  <button type="button" className="cancel-btn" onClick={handleEditToggle} disabled={saving || deleting}> Cancel </button>
+                </div>
               </div>
+              // --- End Editing Mode ---
             )}
-            {/* --- END ADD DELETE BUTTON --- */}
-
-            <div className="btn-row" style={{marginTop: '25px'}}> {/* Consistent spacing */}
-              <button
-                className="save-btn" // Needs styling
-                onClick={handleSaveChanges}
-                disabled={saving || deleting} // Disable if saving or deleting
-              >
-                {saving ? "Saving..." : "Save Changes"}
-              </button>
-              <button
-                className="cancel-btn" // Needs styling
-                onClick={handleEditToggle}
-                disabled={saving || deleting} // Disable if busy
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        )}
+        </div>
       </div>
     </>
   );
 };
 
 export default EmployerProfile;
+
+// Add/reuse CSS for:
+// .profile-container, .profile-header, .profile-picture-wrapper, .profile-picture,
+// .edit-picture-options, .upload-pic-btn, .delete-btn.small,
+// .profile-summary, .profile-name, .average-rating-display, etc...
+// .profile-content, .profile-section, h4, .bio-text, .edit-btn
+// .reviews-section, .reviews-list, .review-item, .review-header, .reviewer-pic,
+// .reviewer-info, .review-date, .review-stars, .review-comment, .no-reviews
+// .edit-form, .form-field-group, .bio-input, .btn-row, .form-actions, .save-btn, .cancel-btn
