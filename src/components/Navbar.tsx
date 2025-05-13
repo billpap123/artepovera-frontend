@@ -99,7 +99,7 @@ const Navbar = () => {
       {/* --- UPDATED LOGO --- */}
       <Link to="/main" className="logo-link"> {/* Use Link component, can reuse 'logo' class or new 'logo-link' */}
         {/* Replace '/your-logo.png' with the actual path to your logo image in the public folder */}
-        <img src="../public/images/logo2.png" alt="Artepovera Home" className="logo-image" />
+        <img src="/images/logo2.png" alt="Artepovera Home" className="logo-image" />
       </Link>
       {/* --- END UPDATED LOGO --- */}
 
