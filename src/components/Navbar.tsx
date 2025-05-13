@@ -1,11 +1,7 @@
+// src/components/Navbar.tsx
 import React, { useState, useEffect } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate, Link } from "react-router-dom"; // <<< ADD Link HERE
 import axios from "axios";
-/* 1) Import your chosen icons from react-icons:
-   - FaHome for Home
-   - FaUserAlt (or FaUserCircle) for Profile
-   - FaBell for Notifications
-*/
 import { FaHome, FaUserAlt, FaBell } from "react-icons/fa";
 import "../styles/Navbar.css";
 
@@ -17,16 +13,10 @@ const Navbar = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  // Get user & token from localStorage
   const user = JSON.parse(localStorage.getItem("user") || "{}");
   const token = localStorage.getItem("token");
-
-  // Read your backend URL from .env (or default)
   const BACKEND_URL = import.meta.env.VITE_API_URL || "http://localhost:50001";
 
-  // ─────────────────────────────────────────────────────────
-  // Fetch notifications
-  // ─────────────────────────────────────────────────────────
   useEffect(() => {
     const fetchNotifications = async () => {
       if (!token || !user.user_id) {
@@ -48,16 +38,16 @@ const Navbar = () => {
         setLoadingNotifications(false);
       }
     };
-    fetchNotifications();
-  }, [user.user_id, token, BACKEND_URL]);
+    if (user.user_id) { // Only fetch if user_id exists
+        fetchNotifications();
+    }
+  }, [user.user_id, token, BACKEND_URL]); // user.user_id dependency
 
-  // ─────────────────────────────────────────────────────────
-  // Menu toggles & Notification handlers
-  // ─────────────────────────────────────────────────────────
   const toggleMenu = () => setIsMenuOpen((prev) => !prev);
   const toggleDropdown = () => setShowDropdown((prev) => !prev);
 
   const markAsRead = async (notificationId: number) => {
+    // ... (your existing function)
     try {
       await axios.put(
         `${BACKEND_URL}/api/notifications/${notificationId}`,
@@ -77,6 +67,7 @@ const Navbar = () => {
   };
 
   const deleteNotification = async (notificationId: number) => {
+    // ... (your existing function)
     try {
       await axios.delete(`${BACKEND_URL}/api/notifications/${notificationId}`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -90,6 +81,7 @@ const Navbar = () => {
   };
 
   const handleLogout = () => {
+    // ... (your existing function)
     if (window.confirm("Are you sure you want to log out?")) {
       localStorage.clear();
       sessionStorage.clear();
@@ -102,14 +94,15 @@ const Navbar = () => {
     }
   };
 
-  // ─────────────────────────────────────────────────────────
-  // RENDER
-  // ─────────────────────────────────────────────────────────
   return (
     <nav className="navbar">
-      <div className="logo">ARTEPOVERA</div>
+      {/* --- UPDATED LOGO --- */}
+      <Link to="/main" className="logo-link"> {/* Use Link component, can reuse 'logo' class or new 'logo-link' */}
+        {/* Replace '/your-logo.png' with the actual path to your logo image in the public folder */}
+        <img src="../assets/icons/logo2.png" alt="Artepovera Home" className="logo-image" />
+      </Link>
+      {/* --- END UPDATED LOGO --- */}
 
-      {/* Hamburger for mobile */}
       <div className="hamburger" onClick={toggleMenu}>
         <span></span>
         <span></span>
@@ -117,88 +110,80 @@ const Navbar = () => {
       </div>
 
       <ul className={`nav-links ${isMenuOpen ? "open" : ""}`}>
-        {/* Home Link (with icon) */}
         <li>
-          <NavLink to="/main" className={({ isActive }) => (isActive ? "active" : "")}>
+          <NavLink to="/main" className={({ isActive }) => (isActive ? "active" : "")} onClick={() => setIsMenuOpen(false)}>
             <FaHome className="nav-icon" />
-            
+            <span className="nav-text">Home</span>
           </NavLink>
         </li>
 
-        {/* Conditionally render the Profile link (Artist vs. Employer) */}
         {user?.user_type === "Artist" && (
           <li>
-            <NavLink to="/artist-profile" className={({ isActive }) => (isActive ? "active" : "")}>
+            <NavLink to="/artist-profile" className={({ isActive }) => (isActive ? "active" : "")} onClick={() => setIsMenuOpen(false)}>
               <FaUserAlt className="nav-icon" />
-              
-            
+              <span className="nav-text">Profile</span>
             </NavLink>
           </li>
         )}
         {user?.user_type === "Employer" && (
           <li>
-            <NavLink to="/employer-profile" className={({ isActive }) => (isActive ? "active" : "")}>
+            <NavLink to="/employer-profile" className={({ isActive }) => (isActive ? "active" : "")} onClick={() => setIsMenuOpen(false)}>
               <FaUserAlt className="nav-icon" />
-              
+              <span className="nav-text">Profile</span>
             </NavLink>
           </li>
         )}
+        {/* Fallback if user_type is not Artist or Employer but user is logged in */}
+        {!user?.user_type && user?.user_id && (
+            <li>
+                <NavLink to="/some-default-profile-or-page" className={({ isActive }) => (isActive ? "active" : "")} onClick={() => setIsMenuOpen(false)}>
+                    <FaUserAlt className="nav-icon" />
+                    <span className="nav-text">Profile</span>
+                </NavLink>
+            </li>
+        )}
 
-        {/* Notifications with Bell Icon */}
-        <li className="notifications">
-          <button className="notifications-button" onClick={toggleDropdown}>
-            <FaBell className="bell-icon" />
-            {/* If we have any notifications, show a small badge */}
-            {notifications.length > 0 && (
-              <span className="notification-badge">{notifications.length}</span>
-            )}
-          </button>
 
-          {showDropdown && (
-            <div className="notifications-dropdown">
-              {loadingNotifications ? (
-                <p>Loading...</p>
-              ) : error ? (
-                <p className="error">{error}</p>
-              ) : notifications.length > 0 ? (
-                <ul>
-                  {notifications.map((notif) => (
-                    <li
-                      key={notif.notification_id}
-                      className={notif.read_status ? "read" : "unread"}
-                    >
-                      <div className="notification-item">
-                        <div dangerouslySetInnerHTML={{ __html: notif.message }} />
-                        <div className="timestamp">
-                          {new Date(notif.created_at).toLocaleString()}
-                        </div>
-                        <div>
-                          {!notif.read_status && (
-                            <button onClick={() => markAsRead(notif.notification_id)}>
-                              Mark as Read
-                            </button>
-                          )}
-                          <button onClick={() => deleteNotification(notif.notification_id)}>
-                            Delete
-                          </button>
-                        </div>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p>No notifications</p>
+        {user?.user_id && ( // Only show notifications and logout if user is logged in
+          <>
+            <li className="notifications">
+              <button className="notifications-button" onClick={() => {toggleDropdown(); setIsMenuOpen(false);}}>
+                <FaBell className="bell-icon" />
+                {notifications.filter(n => !n.read_status).length > 0 && ( // Count only unread
+                  <span className="notification-badge">{notifications.filter(n => !n.read_status).length}</span>
+                )}
+              </button>
+
+              {showDropdown && (
+                <div className="notifications-dropdown">
+                  {loadingNotifications ? ( <p>Loading...</p> )
+                   : error ? ( <p className="error">{error}</p> )
+                   : notifications.length > 0 ? (
+                    <ul>
+                      {notifications.map((notif) => (
+                        <li key={notif.notification_id} className={notif.read_status ? "read" : "unread"}>
+                          <div className="notification-item">
+                            <div dangerouslySetInnerHTML={{ __html: notif.message }} />
+                            <div className="timestamp">{new Date(notif.created_at).toLocaleString()}</div>
+                            <div className="notification-actions">
+                              {!notif.read_status && ( <button className="mark-read-btn" onClick={() => markAsRead(notif.notification_id)}> Mark as Read </button> )}
+                              <button className="delete-notif-btn" onClick={() => deleteNotification(notif.notification_id)}> Delete </button>
+                            </div>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : ( <p>No new notifications</p> )}
+                </div>
               )}
-            </div>
-          )}
-        </li>
-
-        {/* Logout */}
-        <li>
-          <button onClick={handleLogout} className="logout-button">
-            Logout
-          </button>
-        </li>
+            </li>
+            <li>
+              <button onClick={() => {handleLogout(); setIsMenuOpen(false);}} className="logout-button">
+                Logout
+              </button>
+            </li>
+          </>
+        )}
       </ul>
     </nav>
   );

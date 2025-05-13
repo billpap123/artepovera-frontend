@@ -274,7 +274,7 @@ const UserProfilePage: React.FC = () => {
 
             {/* --- ADD Reviews Section --- */}
             <div className="reviews-section profile-section-public">
-                 <h4>Reviews Received ({reviewCount})</h4>
+                 <h4>Reviews received ({reviewCount})</h4>
                  {reviewsLoading ? ( <p>Loading reviews...</p> )
                   : reviews.length > 0 ? (
                      <div className="reviews-list">
