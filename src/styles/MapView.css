@@ -1,59 +1,174 @@
-/* Outer container: wide rectangle, centered, 500px tall */
-.map-page { /* In your JSX, this is likely .map-page-container */
-  width: 90vw;       /* 90% of viewport width */
-  max-width: 2000px; /* never exceed 2000px */
-  height: 400px;     /* <<< FIXED HEIGHT FOR THE PARENT */
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  overflow: hidden;  /* <<< HIDES ANYTHING LARGER THAN 400PX TALL */
-  align-items: center;
-  place-items: center;
-  margin-bottom: 100px;
+/* src/styles/MapView.css */
+
+/* Overall page container for the map view */
+.map-page-container {
+  width: 100%;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* Space between controls and map */
+  background-color: var(--bg-page, #fdfbf7); /* Fallback if var not set */
+  font-family: 'Nunito', sans-serif; /* Assuming Nunito from landing page */
 }
 
-.leaflet-map { /* This is the class for your MapContainer */
-  height: 70vh; /* Example: 70% of the viewport height */
-  /* OR a fixed height: */
-  /* height: 500px; */
+/* Area for filter controls */
+.map-controls-area {
+  background-color: var(--bg-card, #fff);
+  padding: 15px 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px var(--shadow-color-light, rgba(0,0,0,0.05));
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  flex-wrap: wrap; /* Allow filters to wrap */
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filter-group label {
+  font-weight: 600;
+  color: var(--text-medium, #654321);
+  font-size: 0.9rem;
+}
+
+.map-filter-select {
+  padding: 8px 12px;
+  border: 1px solid var(--border-color, #dcd3c7);
+  border-radius: 6px;
+  background-color: var(--bg-page, #fdfbf7);
+  color: var(--text-dark, #4d4033);
+  font-family: inherit;
+  font-size: 0.9rem;
+  min-width: 150px; /* Give select some width */
+}
+
+.map-filter-select:focus {
+  outline: none;
+  border-color: var(--accent-primary, #A0522D);
+  box-shadow: 0 0 0 2px rgba(160, 82, 45, 0.2); /* Sienna focus ring */
+}
+
+/* Map Container Itself */
+.leaflet-map {
+  height: 70vh; /* Or a fixed height like 500px, 600px */
   width: 100%;
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  margin-top: 20px; /* Add some space below the filter */
+  box-shadow: 0 4px 12px var(--shadow-color-medium, rgba(0,0,0,0.1));
+  z-index: 0; /* Ensure it's below any fixed navbar if navbar has higher z-index */
 }
 
-/* Optional popup button styling */
+/* Loading and Error Messages */
+.loading-map,
+.error-map {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 70vh; /* Match map height */
+  width: 100%;
+  background-color: var(--bg-container-light, #f5f0e8);
+  border-radius: 8px;
+}
+
+.loading-message,
+.error-message { /* These might be globally styled, adjust if needed */
+  font-size: 1.2rem;
+  color: var(--text-light, #7d746b);
+  font-style: italic;
+}
+.error-message {
+  color: #a02d2d; /* Darker red for errors */
+}
+
+
+/* Popup Styling */
+.leaflet-popup-content-wrapper { /* Leaflet's default class */
+  border-radius: 8px !important; /* Override default if needed */
+  box-shadow: 0 2px 10px var(--shadow-color-medium, rgba(0,0,0,0.15)) !important;
+}
+
+.leaflet-popup-content { /* Leaflet's default class */
+  margin: 13px 20px !important; /* Adjust padding */
+  font-family: 'Nunito', sans-serif;
+  line-height: 1.5;
+  min-width: 220px; /* Give popup some width */
+}
+
+.map-popup-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+}
+
+.popup-profile-pic {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--border-color-light, #eee);
+  margin-bottom: 5px;
+  background-color: var(--default-profile-bg, #e9ecef);
+}
+
+.popup-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.popup-name {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--text-dark, #4d4033);
+}
+
+.popup-user-type,
+.popup-location {
+  font-size: 0.85rem;
+  color: var(--text-light, #7d746b);
+  text-transform: capitalize;
+}
+.popup-location::before {
+  content: "📍 "; /* Optional location pin emoji */
+  margin-right: 3px;
+}
+
+
+.popup-bio {
+  font-size: 0.9rem;
+  color: var(--text-medium, #654321);
+  margin: 8px 0;
+  max-height: 60px; /* Limit bio height in popup */
+  overflow-y: auto; /* Allow scroll for longer bios */
+  font-style: italic;
+}
+.popup-bio span { /* For "No bio available" */
+    font-style: normal;
+    color: var(--text-light, #7d746b);
+}
+
+
 .popup-button {
-  margin-top: 10px;
-  padding: 8px 12px;
-  background-color: #4caf50;
-  color: white;
+  margin-top: 12px;
+  padding: 8px 18px;
+  background-color: var(--accent-primary, #A0522D); /* Sienna */
+  color: var(--pure-white, #fff);
   border: none;
-  border-radius: 4px;
+  border-radius: 20px; /* Pill shape */
   cursor: pointer;
-  font-size: 14px;
-  font-weight: 500;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-}
-.popup-button:hover {
-  background-color: #43a047;
-  transform: scale(1.05);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none; /* If it's a Link */
+  transition: background-color 0.2s ease, transform 0.1s ease;
 }
 
-
-/* Popup Button (if you have one) */
-.popup-button {
-  margin-top: 10px;
-  padding: 8px 12px;
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 500;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-}
 .popup-button:hover {
-  background-color: #43a047;
-  transform: scale(1.05);
+  background-color: var(--accent-primary-dark, #804123); /* Darker Sienna */
+  transform: scale(1.03);
 }
