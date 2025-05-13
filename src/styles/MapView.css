@@ -1,21 +1,24 @@
 /* Outer container: wide rectangle, centered, 500px tall */
-.map-page {
+.map-page { /* In your JSX, this is likely .map-page-container */
   width: 90vw;       /* 90% of viewport width */
   max-width: 2000px; /* never exceed 2000px */
-  height: 400px;
+  height: 400px;     /* <<< FIXED HEIGHT FOR THE PARENT */
   border: 1px solid #ddd;
   border-radius: 8px;
-  overflow: hidden;      /* Hide any overflow from the Leaflet map */
-  align-items: center; /* aligns the items vertically */
-  place-items: center; /* aligns the items vertically and horizontally */
-margin-bottom: 100px;
+  overflow: hidden;  /* <<< HIDES ANYTHING LARGER THAN 400PX TALL */
+  align-items: center;
+  place-items: center;
+  margin-bottom: 100px;
 }
 
-/* The Leaflet map itself should fill .map-page completely */
-.leaflet-map {
+.leaflet-map { /* This is the class for your MapContainer */
+  height: 70vh; /* Example: 70% of the viewport height */
+  /* OR a fixed height: */
+  /* height: 500px; */
   width: 100%;
-  height: 100%;
-  border-radius: inherit; 
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  margin-top: 20px; /* Add some space below the filter */
 }
 
 /* Optional popup button styling */
