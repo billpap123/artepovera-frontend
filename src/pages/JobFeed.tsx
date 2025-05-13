@@ -443,11 +443,11 @@ const JobFeed: React.FC = () => {
              {/* Category Filter */}
              <select className="filter-select" value={filterCategory} onChange={(e) => setFilterCategory(e.target.value)}> <option value="">All artist categories</option> {artistCategories.map((cat) => ( <option key={cat} value={cat}>{formatCategoryName(cat)}</option> ))} </select>
              {/* Budget Filter */}
-             <div className="budget-filter-group"> <input className="filter-input" type="number" placeholder="Min Budget" value={filterMinBudget} onChange={(e) => setFilterMinBudget(e.target.value === '' ? '' : Number(e.target.value))} /> <span>-</span> <input className="filter-input" type="number" placeholder="Max Budget" value={filterMaxBudget} onChange={(e) => setFilterMaxBudget(e.target.value === '' ? '' : Number(e.target.value))} /> </div>
+             <div className="budget-filter-group"> <input className="filter-input" type="number" placeholder="Min budget" value={filterMinBudget} onChange={(e) => setFilterMinBudget(e.target.value === '' ? '' : Number(e.target.value))} /> <span>-</span> <input className="filter-input" type="number" placeholder="Max budget" value={filterMaxBudget} onChange={(e) => setFilterMaxBudget(e.target.value === '' ? '' : Number(e.target.value))} /> </div>
              {/* Insurance Filter */}
              <select className="filter-select" value={filterInsurance} onChange={(e) => setFilterInsurance(e.target.value as 'yes' | 'no' | '')}> <option value="">Insurance (All)</option> <option value="yes">Insurance provided</option> <option value="no">No insurance</option> </select>
              {/* Clear Button */}
-             <button onClick={clearFilters} className="clear-filters-button"> Clear Filters </button>
+             <button onClick={clearFilters} className="clear-filters-button"> Clear filters </button>
           </div>
         </div>
 
@@ -480,7 +480,7 @@ const JobFeed: React.FC = () => {
                       {typeof job.insurance === 'boolean' && <p><strong>Insurance:</strong> {job.insurance ? "Yes" : "No"}</p>}
                     </div>
                     {job.created_at && ( <p className="posted-date"> Posted on: {new Date(job.created_at).toLocaleString()} </p> )}
-                    {isArtist && ( <button onClick={() => handleApply(job.id)} className="apply-button"> Apply Now </button> )}
+                    {isArtist && ( <button onClick={() => handleApply(job.id)} className="apply-button"> Apply now </button> )}
                   </div>
                 ))
               ) : ( <p className="no-jobs-message">No jobs match your current filters. Try adjusting them or check back later!</p> )

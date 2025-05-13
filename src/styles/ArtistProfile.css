@@ -131,13 +131,22 @@ body {
 }
 
 /* Optional badge for “STUDENT ARTIST” */
+/* Add or replace this in your ArtistProfile.css or global CSS */
 .student-badge {
-  background-color: purple;
-  color: var(--pure-white);
-  padding: 5px 10px;
-  border-radius: 4px;
-  margin-bottom: 15px;
-  font-weight: bold;
+  display: inline-block; /* Ensures it flows with text but can have padding/margin */
+  background-color: var(--light-beige, #E0D7C6); /* Use your light-beige variable */
+  color: var(--dark-gray, #444444);          /* Use a darker text color for readability */
+  padding: 6px 12px;                       /* Slightly more padding */
+  border-radius: 15px;                     /* More rounded, pill-shape */
+  margin-bottom: 15px;                     /* Keep or adjust as needed for layout */
+  font-weight: 600;                        /* Slightly less bold for a softer look */
+  font-size: 0.75rem;                      /* Smaller font size for a badge */
+  text-transform: uppercase;               /* Makes it feel more like a badge */
+  letter-spacing: 0.5px;                   /* A bit of letter spacing */
+  border: 1px solid var(--terracotta-red, #C96A50); /* Subtle border with accent color */
+  white-space: nowrap;                     /* <<< THIS KEEPS "STUDENT ARTIST" ON ONE LINE */
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);   /* Optional: subtle shadow for depth */
+  text-align: center;                      /* Ensure text is centered if badge width varies */
 }
 
 /****************************************

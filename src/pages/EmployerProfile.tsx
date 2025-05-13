@@ -345,7 +345,7 @@ const EmployerProfile: React.FC = () => {
                 </div>
                  {/* Delete button moved near picture */}
                 <div className="btn-row form-actions">
-                  <button className="save-btn submit-btn" onClick={handleSaveChanges} disabled={saving || deleting}> {saving ? "Saving..." : "Save Changes"} </button>
+                  <button className="save-btn submit-btn" onClick={handleSaveChanges} disabled={saving || deleting}> {saving ? "Saving..." : "Save changes"} </button>
                   <button type="button" className="cancel-btn" onClick={handleEditToggle} disabled={saving || deleting}> Cancel </button>
                 </div>
               </div>

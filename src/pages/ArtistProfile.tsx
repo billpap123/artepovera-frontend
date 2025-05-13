@@ -265,7 +265,7 @@ const ArtistProfile: React.FC = () => {
     <>
       <Navbar />
       <div className="profile-container artist-profile-container"> {/* Use consistent class */}
-        <h2 className="profile-title">{isEditing ? "Edit Profile" : (profileUserName || "My Artist Profile")}</h2>
+        <h2 className="profile-title">{isEditing ? "Edit profile" : (profileUserName || "My Artist Profile")}</h2>
 
         {/* --- Profile Header Area --- */}
         <div className="profile-header">
@@ -382,7 +382,7 @@ const ArtistProfile: React.FC = () => {
 
                 <div className="btn-row form-actions"> {/* Use consistent form classes */}
                   <button className="save-btn submit-btn" onClick={handleSaveChanges} disabled={saving || deleting}>
-                    {saving ? "Saving..." : "Save Changes"}
+                    {saving ? "Saving..." : "Save changes"}
                   </button>
                   <button type="button" className="cancel-btn" onClick={handleEditToggle} disabled={saving || deleting}>
                     Cancel
