@@ -50,7 +50,24 @@
   align-items: center;
   position: relative;
 }
+/* Container for the logo link (if you want to style the link itself) */
+.navbar .logo-link {
+  display: flex; /* Helps with vertical alignment of the image if needed */
+  align-items: center;
+  /* If your navbar has a fixed height, you can set this to 100%
+     to make the entire logo area clickable up to the navbar's height */
+  height: 100%;
+  text-decoration: none; /* Removes underline from link */
+}
 
+/* Styles for the logo image itself */
+.navbar .logo-image {
+  height: 40px; /* <<< ADJUST THIS VALUE TO CONTROL THE LOGO SIZE */
+  width: auto;  /* This will maintain the aspect ratio of your logo */
+  display: block; /* Good for images to remove extra space below */
+  /* You can add some margin if needed, e.g., if it's too close to other elements */
+  /* margin-right: 15px; */
+}
 /* Unify link & button styling (for Home, Profile, and Notifications) */
 .nav-links li a,
 .notifications-button {
