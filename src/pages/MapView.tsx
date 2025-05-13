@@ -1,4 +1,5 @@
-import React, { useEffect, useState, useCallback } from 'react'; // Added useCallback
+// src/pages/MapView.tsx
+import React, { useEffect, useState, useCallback } from 'react';
 import {
   MapContainer,
   TileLayer,
@@ -28,7 +29,6 @@ const employerIcon = new L.Icon({
   iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34],
 });
 
-// --- UPDATED LocationData Interface ---
 interface LocationData {
   user_id: number;
   fullname: string; // From the initial /api/locations fetch
@@ -39,9 +39,9 @@ interface LocationData {
   // Profile data is fetched separately and added
   profile?: {
     user_id: number;
-    fullname: string; // Might be more up-to-date than initial loc.fullname
+    fullname: string;
     user_type: 'Artist' | 'Employer' | string; // Type of the user on the map
-    city?: string; // <<< ASSUMING backend /api/users/profile/:id returns this
+    city?: string; // <<< Crucial: Backend /api/users/profile/:id MUST return this
     artistProfile?: {
       bio?: string;
       profile_picture?: string;
@@ -54,7 +54,6 @@ interface LocationData {
   };
 }
 
-// (Optional) Component to reset the view on zoom changes (kept as is)
 const ResetViewOnZoom = ({ center }: { center: [number, number] }) => {
   const map = useMapEvents({
     zoomend: () => { map.setView(center); },
@@ -63,103 +62,122 @@ const ResetViewOnZoom = ({ center }: { center: [number, number] }) => {
 };
 
 const MapView = ({ userType: loggedInUserType }: { userType: string }) => {
-  // State for all locations after all profile fetches are complete
   const [allLocationsWithProfiles, setAllLocationsWithProfiles] = useState<LocationData[]>([]);
-  // State for locations to be displayed on the map (filtered)
   const [filteredLocations, setFilteredLocations] = useState<LocationData[]>([]);
-  // State for the city filter dropdown
-  const [availableCities, setAvailableCities] = useState<string[]>([]);
+  const [availableCities, setAvailableCities] = useState<string[]>(['All Cities']); // Start with 'All Cities'
   const [selectedCity, setSelectedCity] = useState<string>(''); // '' means "All Cities"
 
-  const [loading, setLoading] = useState(true); // For initial data load
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const center: [number, number] = [38.246639, 21.734573]; // Patras, Greece
   const initialZoom = 13;
 
-  // Fetch locations and then full profiles
   useEffect(() => {
-    setLoading(true);
-    setError(null);
+    let isMounted = true; // For cleanup
+
     const fetchLocationsAndProfiles = async () => {
+      if (!isMounted) return;
+      setLoading(true);
+      setError(null);
+      setAllLocationsWithProfiles([]); // Reset on new fetch
+      setFilteredLocations([]);
+      setAvailableCities(['All Cities']);
+
+
       try {
         const token = localStorage.getItem('token');
-        if (!token) {
+        if (!token && loggedInUserType) { // Only block if viewing a protected map view
           console.warn('No token found; user might not be logged in.');
-          setError("Authentication required to view locations.");
+          if (isMounted) setError("Authentication required to view locations.");
           setLoading(false);
           return;
         }
 
         const targetUserTypeOnMap = loggedInUserType === 'Artist' ? 'Employer' : 'Artist';
 
-        // 1) Fetch the basic location data (user_id, fullname, lat/lng)
+        console.log(`[MapView] Fetching initial locations for type: ${targetUserTypeOnMap}`);
         const response = await axios.get(
           `${API_BASE_URL}/api/locations?userType=${targetUserTypeOnMap}`,
-          { headers: { Authorization: `Bearer ${token}` } }
+          { headers: token ? { Authorization: `Bearer ${token}` } : {} }
         );
 
         const initialFetchedLocations: LocationData[] = response.data.locations || response.data || [];
+        console.log("[MapView] Initial locations fetched:", initialFetchedLocations.length);
+
+        if (!isMounted) return;
+
         if (!initialFetchedLocations.length) {
-            setAllLocationsWithProfiles([]);
-            setFilteredLocations([]);
-            setAvailableCities(['All Cities']);
-            console.log("No initial locations found.");
-            setLoading(false);
+            console.log("[MapView] No initial locations found.");
+            if (isMounted) {
+                setAllLocationsWithProfiles([]);
+                setFilteredLocations([]);
+                setAvailableCities(['All Cities']);
+                setLoading(false);
+            }
             return;
         }
 
-        // 2) For each location, fetch the user’s full profile (includes city, user_type of marker)
+        console.log("[MapView] Fetching detailed profiles for locations...");
         const profilePromises = initialFetchedLocations.map(async (loc) => {
+          if (!isMounted) return loc; // Early exit if unmounted
           try {
             const profileRes = await axios.get(
-              `${API_BASE_URL}/api/users/profile/${loc.user_id}`, // Fetch full profile
-              { headers: { Authorization: `Bearer ${token}` } }
+              `${API_BASE_URL}/api/users/profile/${loc.user_id}`,
+              { headers: token ? { Authorization: `Bearer ${token}` } : {} }
             );
-            return {
-              ...loc, // Keep initial lat/lng and user_id
-              profile: profileRes.data, // Add the full profile data
-            };
+            if (!isMounted) return loc; // Check again after await
+            return { ...loc, profile: profileRes.data };
           } catch (err) {
             console.error('Error fetching profile for user_id=', loc.user_id, err);
             return { ...loc, profile: undefined }; // Keep location even if profile fetch fails
           }
         });
 
-        const locationsWithFullProfiles = await Promise.all(profilePromises);
-        setAllLocationsWithProfiles(locationsWithFullProfiles);
-        setFilteredLocations(locationsWithFullProfiles); // Initially show all
+        const locationsWithFullProfilesData = await Promise.all(profilePromises);
+        if (!isMounted) return;
 
-        // 3) Populate available cities for the filter (from the fetched profile data)
+        console.log("[MapView] All profiles fetched. Number of profiles:", locationsWithFullProfilesData.length);
+        setAllLocationsWithProfiles(locationsWithFullProfilesData);
+        setFilteredLocations(locationsWithFullProfilesData);
+
         const cities = new Set<string>();
-        locationsWithFullProfiles.forEach(loc => {
-            // --- ASSUMPTION: profile data contains 'city' ---
-            if (loc.profile?.city) {
+        locationsWithFullProfilesData.forEach(loc => {
+            if (loc.profile?.city) { // Ensure city is present in profile data
                 cities.add(loc.profile.city);
             }
         });
-        setAvailableCities(['All Cities', ...Array.from(cities).sort()]);
+        if (isMounted) {
+            setAvailableCities(['All Cities', ...Array.from(cities).sort()]);
+            console.log("[MapView] Available cities:", ['All Cities', ...Array.from(cities).sort()]);
+        }
 
       } catch (error: any) {
         console.error('Error fetching initial locations or profiles:', error);
-        setError(error.response?.data?.message || 'Failed to load location data.');
+        if (isMounted) setError(error.response?.data?.message || 'Failed to load location data.');
       } finally {
-        setLoading(false);
+        if (isMounted) {
+            console.log("[MapView] Setting loading to false.");
+            setLoading(false);
+        }
       }
     };
 
-    if (loggedInUserType) { // Only fetch if loggedInUserType is determined
+    if (loggedInUserType) {
         fetchLocationsAndProfiles();
     } else {
-        setError("User type not determined. Cannot fetch locations.");
-        setLoading(false);
+        if (isMounted) {
+             setError("User type not determined. Cannot fetch locations.");
+             setLoading(false);
+        }
     }
-  // Dependency: re-fetch if the type of user we are looking for changes
-  }, [loggedInUserType, API_BASE_URL]); // Removed navigate, not used in effect
+    return () => { isMounted = false; }; // Cleanup
+  }, [loggedInUserType, API_BASE_URL]);
 
-  // Effect to filter locations when selectedCity or allLocationsWithProfiles changes
+
   useEffect(() => {
+    console.log("[MapView] Filtering locations. Selected city:", selectedCity, "All locations:", allLocationsWithProfiles.length);
     if (selectedCity === '' || selectedCity === 'All Cities') {
       setFilteredLocations(allLocationsWithProfiles);
     } else {
@@ -170,19 +188,20 @@ const MapView = ({ userType: loggedInUserType }: { userType: string }) => {
   }, [selectedCity, allLocationsWithProfiles]);
 
 
-  // Helper function to build full URLs for images (keep as is)
   const getImageUrl = (path?: string | null) => {
     if (!path) return '/default-profile.png';
     if (path.startsWith('http')) return path;
     return `${API_BASE_URL}/${path.replace(/^uploads\/uploads\//, 'uploads/')}`;
   };
 
-  // --- RENDER LOGIC ---
+  // RENDER LOGIC
+  console.log("[MapView] Render - Loading:", loading, "Error:", error, "Filtered Locations:", filteredLocations.length);
+
   if (loading) {
     return (
         <>
             <Navbar />
-            <div className="map-page-container loading-map"> {/* Added loading-map class */}
+            <div className="map-page-container loading-map">
                 <p className="loading-message">Loading map and locations...</p>
             </div>
         </>
@@ -193,7 +212,7 @@ const MapView = ({ userType: loggedInUserType }: { userType: string }) => {
     return (
         <>
             <Navbar />
-            <div className="map-page-container error-map"> {/* Added error-map class */}
+            <div className="map-page-container error-map">
                 <p className="error-message">{error}</p>
             </div>
         </>
@@ -203,14 +222,17 @@ const MapView = ({ userType: loggedInUserType }: { userType: string }) => {
   return (
     <div className="map-page-container">
       <Navbar />
-      <div className="map-controls-area"> {/* Container for filters */}
+      <div className="map-controls-area">
         <div className="filter-group">
           <label htmlFor="city-filter">Filter by City: </label>
           <select
             id="city-filter"
             value={selectedCity}
-            onChange={(e) => setSelectedCity(e.target.value)}
-            className="map-filter-select" // Class for styling
+            onChange={(e) => {
+                console.log("[MapView] City filter changed to:", e.target.value);
+                setSelectedCity(e.target.value);
+            }}
+            className="map-filter-select"
           >
             {availableCities.map(city => (
               <option key={city} value={city === 'All Cities' ? '' : city}>
@@ -221,31 +243,25 @@ const MapView = ({ userType: loggedInUserType }: { userType: string }) => {
         </div>
       </div>
 
+      {/* Only render MapContainer if not loading and no error */}
       <MapContainer
-        className="leaflet-map"
+        className="leaflet-map" // IMPORTANT: This class needs CSS height: eg. height: 70vh;
         center={center}
-        zoom={initialZoom} // Use initialZoom
-        // maxZoom={24} // Keep your maxZoom
-        // scrollWheelZoom={false} // Optional
+        zoom={initialZoom}
       >
-        {/* <ResetViewOnZoom center={center} /> You can uncomment this if needed */}
-
+        {/* <ResetViewOnZoom center={center} /> */}
         <TileLayer
           url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
           attribution='&copy; <a href="https://carto.com/" target="_blank" rel="noopener noreferrer">CartoDB</a> &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors'
         />
 
-        {/* Map over filteredLocations now */}
         {filteredLocations.map((loc) => {
-          // Icon depends on the user_type OF THE MARKER ITSELF
-          // which comes from loc.profile.user_type
           const markerUserType = loc.profile?.user_type;
           const pinIcon = markerUserType === 'Artist' ? artistIcon :
                           markerUserType === 'Employer' ? employerIcon :
-                          artistIcon; // Default icon if type unknown
+                          artistIcon; // Default fallback
 
-          // Prepare display data from loc.profile
-          const displayName = loc.profile?.fullname || loc.fullname; // Fallback to initial fullname
+          const displayName = loc.profile?.fullname || loc.fullname;
           let displayBio: string | null = null;
           let displayProfilePic: string | null = null;
 
@@ -259,9 +275,8 @@ const MapView = ({ userType: loggedInUserType }: { userType: string }) => {
             }
           }
 
-          // Only render marker if location is valid
           if (!loc.location?.latitude || !loc.location?.longitude) {
-            console.warn("Skipping marker for location with invalid coordinates:", loc);
+            console.warn("Skipping marker due to invalid coordinates:", loc);
             return null;
           }
 
@@ -272,23 +287,14 @@ const MapView = ({ userType: loggedInUserType }: { userType: string }) => {
               icon={pinIcon}
             >
               <Popup>
-                <div className="map-popup-content"> {/* Class for styling popup */}
-                  <img
-                      src={getImageUrl(displayProfilePic)}
-                      alt={displayName}
-                      className="popup-profile-pic" // Class for styling
-                      onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/default-profile.png'; }}
-                  />
+                <div className="map-popup-content">
+                  <img src={getImageUrl(displayProfilePic)} alt={displayName} className="popup-profile-pic" onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/default-profile.png'; }} />
                   <div className="popup-info">
                       <strong className="popup-name">{displayName}</strong>
-                      {/* Display the type of the user on the map */}
                       {markerUserType && <span className="popup-user-type">{markerUserType}</span>}
                       {loc.profile?.city && <span className="popup-location">{loc.profile.city}</span>}
                       {displayBio ? ( <p className="popup-bio"><em>{displayBio}</em></p> ) : ( <p className="popup-bio"><span>No bio available</span></p> )}
-                      <button
-                        className="popup-button" // Class for styling
-                        onClick={() => navigate(`/user-profile/${loc.user_id}`)}
-                      >
+                      <button className="popup-button" onClick={() => navigate(`/user-profile/${loc.user_id}`)} >
                         View Profile
                       </button>
                   </div>
