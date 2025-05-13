@@ -62,7 +62,7 @@
 
 /* Styles for the logo image itself */
 .navbar .logo-image {
-  height: 150px; /* <<< ADJUST THIS VALUE TO CONTROL THE LOGO SIZE */
+  height: 100px; /* <<< ADJUST THIS VALUE TO CONTROL THE LOGO SIZE */
   width: auto;  /* This will maintain the aspect ratio of your logo */
   display: block; /* Good for images to remove extra space below */
   /* You can add some margin if needed, e.g., if it's too close to other elements */
