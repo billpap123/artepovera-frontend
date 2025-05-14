@@ -47,9 +47,9 @@ const Login = () => {
         } catch (err: any) { // Typed err
             console.error('Login error:', err);
             if (axios.isAxiosError(err) && err.response) {
-              setError(err.response.data.message || 'Invalid email or password.');
+                setError(err.response.data.message || 'Invalid email or password.');
             } else {
-              setError('An unexpected error occurred during login.');
+                setError('An unexpected error occurred during login.');
             }
         }
     };
@@ -57,10 +57,10 @@ const Login = () => {
     return (
         <div className="auth-page-container"> {/* Main page wrapper */}
             <div className="auth-logo-container">
-              <Link to="/"> {/* Link to landing page (root) */}
-                {/* Ensure logo path is correct, assuming it's in public/images/logo2.png */}
-                <img src="/images/logo2.png" alt="Artepovera Home" className="auth-logo" />
-              </Link>
+                <Link to="/">
+                    <img src="/images/logo2.png" alt="Artepovera Home" className="auth-logo" />
+                    <span style={{ marginLeft: '8px' }}>Back to main page</span> {/* Added span for spacing if logo first */}
+                </Link>
             </div>
 
             <div className="login-container auth-form-container"> {/* Container for the form */}

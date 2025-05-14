@@ -119,10 +119,11 @@ const Register = () => {
   return (
     <div className="auth-page-container">
         <div className="auth-logo-container">
-          <Link to="/"> Back to main page
-            <img src="/images/logo2.png" alt="Artepovera Home" className="auth-logo" />
-          </Link>
-        </div>
+  <Link to="/">
+    <img src="/images/logo2.png" alt="Artepovera Home" className="auth-logo" />
+    <span style={{ marginLeft: '8px' }}>Back to main page</span> {/* Added span for spacing if logo first */}
+  </Link>
+</div>
 
         <div className="register-container auth-form-container">
           <form onSubmit={handleSubmit} className="register-form auth-form">
