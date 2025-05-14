@@ -260,3 +260,52 @@
   }
   
   
+
+.portfolio-page {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto; /* Changed from 30px auto to allow navbar space control */
+    padding: 20px;
+    /* --- ADD PADDING-TOP --- */
+    /* Adjust this value to be a bit more than your navbar's height */
+    padding-top: 90px; /* Example: if navbar is 70px, add some extra space */
+    /* --- END ADD --- */
+    font-family: 'Nunito', sans-serif;
+    min-height: calc(100vh - 70px); /* Example: ensure content area can fill below navbar */
+    display: flex; /* Added to help with alignment if needed later */
+    flex-direction: column; /* Stack header and grid */
+  }
+  
+  /* Keep your existing .portfolio-header styles */
+  .portfolio-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid var(--border-color, #dcd3c7);
+    width: 100%; /* Ensure header takes full width of .portfolio-page */
+  }
+  
+  .portfolio-header h2 {
+    font-size: 2rem; /* Or your preferred size */
+    color: var(--text-medium, #654321);
+    margin: 0;
+  }
+  
+  .add-item-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    font-size: 0.95rem;
+    background-color: var(--accent-primary, #A0522D); /* Use your theme colors */
+    color: var(--white, #fff);
+  }
+  .add-item-button:hover {
+    background-color: var(--accent-primary-dark, #804123);
+    transform: translateY(-1px);
+  }
+  
