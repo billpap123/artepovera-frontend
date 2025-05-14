@@ -85,3 +85,22 @@
 .register-link-text:hover {
     color: #a5533b;
 }
+
+/* Styles for the logo on Auth Pages (Login/Register) */
+
+.auth-logo-container {
+    margin-bottom: 30px; /* Space between the logo and the form */
+    text-align: center;  /* Center the logo if its container is block */
+  }
+  
+  .auth-logo {
+    height: 60px; /* Adjust this to your preferred logo height */
+    width: auto;   /* Maintain aspect ratio */
+    max-width: 250px; /* Prevent the logo from becoming too wide if it's a wide design */
+    display: inline-block; /* Allows centering via text-align on parent */
+    transition: transform 0.3s ease; /* Smooth transition for hover */
+  }
+  
+  .auth-logo-container a:hover .auth-logo { /* Optional: slight zoom effect on hover */
+    transform: scale(1.05);
+  }
