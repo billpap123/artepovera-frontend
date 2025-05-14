@@ -1,77 +1,262 @@
-/* Portfolio Page Reset */
+/* src/styles/Portfolio.css */
+
 .portfolio-page {
-    padding-top: 80px; /* Ensure content starts below the fixed navbar */
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-}
-
-.portfolio-container {
-    max-width: 1200px;
     width: 100%;
+    max-width: 1200px; /* Allow more width for grid */
+    margin: 30px auto;
     padding: 20px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    text-align: center;
-}
-
-.portfolio-container h2 {
-    margin-bottom: 20px;
-    color: #343a40;
+    font-family: 'Nunito', sans-serif;
+  }
+  
+  .portfolio-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid var(--border-color, #dcd3c7);
+  }
+  
+  .portfolio-header h2 {
     font-size: 2rem;
-}
-
-/* Portfolio Grid Layout */
-.portfolio-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-    justify-content: center;
-}
-
-.portfolio-item {
-    background: #fff;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    overflow: hidden;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    color: var(--text-medium, #654321);
+    margin: 0;
+  }
+  
+  .add-item-button,
+  .portfolio-upload-form .submit-btn,
+  .portfolio-upload-form .cancel-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    font-size: 0.95rem;
+  }
+  
+  .add-item-button,
+  .portfolio-upload-form .submit-btn {
+    background-color: var(--accent-primary, #A0522D);
+    color: var(--white, #fff);
+  }
+  .add-item-button:hover,
+  .portfolio-upload-form .submit-btn:hover:not(:disabled) {
+    background-color: var(--accent-primary-dark, #804123);
+    transform: translateY(-1px);
+  }
+  
+  .portfolio-upload-form .cancel-btn {
+    background-color: #e9ecef;
+    color: var(--text-dark, #4d4033);
+    border: 1px solid var(--border-color, #dcd3c7);
+  }
+  .portfolio-upload-form .cancel-btn:hover:not(:disabled) {
+    background-color: #dee2e6;
+  }
+  .portfolio-upload-form button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  
+  /* Card style for upload form and portfolio items */
+  .card-style {
+    background-color: var(--white, #fff);
+    border-radius: 10px;
+    box-shadow: 0 4px 12px var(--shadow-light, rgba(0,0,0,0.08));
+    padding: 25px;
+    margin-bottom: 30px; /* Space below upload form */
+  }
+  
+  .portfolio-upload-form h3 {
     text-align: center;
-}
-
-.portfolio-item:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-}
-
-.portfolio-image {
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: var(--accent-primary, #A0522D);
+  }
+  
+  .portfolio-upload-form .form-group {
+    margin-bottom: 15px;
+  }
+  .portfolio-upload-form label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: var(--text-dark, #4d4033);
+  }
+  .portfolio-upload-form input[type="file"],
+  .portfolio-upload-form textarea {
     width: 100%;
-    height: 200px;
+    padding: 10px;
+    border: 1px solid var(--border-color, #dcd3c7);
+    border-radius: 6px;
+    font-size: 0.95rem;
+    background-color: var(--bg-light, #fdfbf7);
+  }
+  .portfolio-upload-form input[type="file"] {
+    padding: 8px; /* File inputs often need different padding */
+  }
+  .portfolio-upload-form textarea {
+    min-height: 80px;
+    resize: vertical;
+  }
+  .portfolio-upload-form .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 15px;
+  }
+  
+  .portfolio-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 25px;
+  }
+  
+  .portfolio-item {
+    /* card-style already applied */
+    padding: 0; /* Override card-style padding if image/video is flush */
+    overflow: hidden; /* Clip contents to border-radius */
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .portfolio-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px var(--shadow-medium, rgba(0,0,0,0.12));
+  }
+  .portfolio-item.editing {
+      border: 2px solid var(--accent-secondary, #CC7722); /* Highlight when editing */
+  }
+  
+  .portfolio-media { /* Common container for image, pdf, video */
+    width: 100%;
+    height: 220px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--bg-medium, #f5f0e8);
+    position: relative; /* For potential overlays or icons */
+  }
+  
+  .portfolio-image { /* Specifically for img tag inside portfolio-media */
+    width: 100%;
+    height: 100%; /* Make image fill the .portfolio-media container */
     object-fit: cover;
-    border-bottom: 1px solid #ddd;
-}
-
-.portfolio-item p {
-    padding: 10px 15px;
+    display: block;
+  }
+  
+  .portfolio-pdf-item .file-icon,
+  .portfolio-other-item .file-icon {
+    font-size: 3.5rem; /* For emoji icon */
+    margin-bottom: 10px;
+    color: var(--accent-primary, #A0522D);
+  }
+  .portfolio-pdf-item .file-name,
+  .portfolio-other-item .file-name {
+    font-weight: 600;
+    color: var(--text-dark, #4d4033);
+    margin-bottom: 15px;
     font-size: 0.9rem;
-    color: #555;
-}
-
-/* Loading and Error Messages */
-.loading-message,
-.error-message {
+    word-break: break-all;
+    padding: 0 10px;
+  }
+  .portfolio-pdf-item .view-file-link,
+  .portfolio-other-item .view-file-link {
+    display: inline-block;
+    padding: 6px 15px;
+    background-color: var(--accent-primary, #A0522D);
+    color: var(--white, #fff);
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: background-color 0.2s ease;
+  }
+  .portfolio-pdf-item .view-file-link:hover,
+  .portfolio-other-item .view-file-link:hover {
+    background-color: var(--accent-primary-dark, #804123);
+  }
+  
+  .portfolio-video-item video {
+    max-width: 100%;
+    max-height: 100%;
+    display: block;
+  }
+  
+  .portfolio-item-content {
+    padding: 15px;
+    text-align: left;
+    flex-grow: 1; /* Allow content to push actions down */
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .portfolio-description {
+    font-size: 0.9rem;
+    color: var(--text-light, #7d746b);
+    margin-bottom: 15px;
+    line-height: 1.5;
+    flex-grow: 1; /* Allow description to take space */
+  }
+  
+  .edit-description-input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid var(--border-color, #dcd3c7);
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+    min-height: 70px;
+    resize: vertical;
+    box-sizing: border-box;
+  }
+  .edit-description-input:focus {
+    border-color: var(--accent-primary, #A0522D);
+    outline: none;
+  }
+  
+  .portfolio-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: auto; /* Push actions to the bottom of the card */
+    padding-top: 10px;
+    border-top: 1px solid var(--border-color-light, #e9e4dd);
+  }
+  
+  .action-btn {
+    background: none;
+    border: 1px solid transparent;
+    padding: 6px 10px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border-radius: 4px;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  }
+  .action-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  
+  .action-btn.edit { color: var(--accent-secondary, #CC7722); border-color: var(--accent-secondary, #CC7722); }
+  .action-btn.edit:hover:not(:disabled) { background-color: rgba(204, 119, 34, 0.1); }
+  
+  .action-btn.delete { color: var(--danger-red, #dc3545); border-color: var(--danger-red, #dc3545); }
+  .action-btn.delete:hover:not(:disabled) { background-color: rgba(220, 53, 69, 0.1); }
+  
+  .action-btn.save { color: #28a745; border-color: #28a745; } /* Green for save */
+  .action-btn.save:hover:not(:disabled) { background-color: rgba(40, 167, 69, 0.1); }
+  
+  .action-btn.cancel { color: var(--text-light, #7d746b); border-color: var(--text-light, #7d746b); }
+  .action-btn.cancel:hover:not(:disabled) { background-color: #efefef; }
+  
+  .no-items-message {
+    grid-column: 1 / -1; /* Span full width if grid */
     text-align: center;
-    color: #d9534f;
-    margin-top: 20px;
-}
-
-/* Responsive Adjustments */
-@media (max-width: 768px) {
-    .portfolio-container {
-        padding: 10px;
-    }
-
-    .portfolio-item p {
-        font-size: 0.8rem;
-    }
-}
+    padding: 40px 20px;
+    color: var(--text-light, #7d746b);
+    font-style: italic;
+    font-size: 1.1rem;
+  }
+  
+  

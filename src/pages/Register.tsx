@@ -127,7 +127,7 @@ const Register = () => {
 
         <div className="register-container auth-form-container">
           <form onSubmit={handleSubmit} className="register-form auth-form">
-            <h2>Create Your Account</h2>
+            <h2>Create your account</h2>
 
             <div>
               <label htmlFor="username">Username:</label>
