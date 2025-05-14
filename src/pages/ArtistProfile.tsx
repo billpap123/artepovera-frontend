@@ -1,13 +1,13 @@
 // src/pages/ArtistProfile.tsx
-import React, { useState, useEffect, useMemo } from "react"; // Added useMemo if needed by context
+import React, { useState, useEffect } from "react"; // Removed useMemo as it's not used
 import axios from "axios";
 import { useUserContext } from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import "../styles/ArtistProfile.css"; // Assuming you add styles for ratings/reviews here too
+import "../styles/ArtistProfile.css";
+import { FaFilePdf } from 'react-icons/fa'; // Example for PDF icon
 
-// --- ADD Review Interface ---
-// (Adjust based on your actual Review model attributes and API response)
+// --- Review Interface ---
 interface Reviewer {
   user_id: number;
   fullname: string;
@@ -18,193 +18,155 @@ interface ReviewData {
   overall_rating: number;
   specific_answers?: {
     comment?: string;
-    // Add other fields you might return, like dealMade, etc.
   };
-  created_at: string; // Should be a date string
-  reviewer?: Reviewer; // Make optional as include might fail
+  created_at: string;
+  reviewer?: Reviewer;
 }
 // --- END Review Interface ---
 
-// --- ADD Star Display Component ---
-// (Simple display-only version)
+// --- Star Display Component ---
 const DisplayStars = ({ rating }: { rating: number | null }) => {
     if (rating === null || typeof rating !== 'number' || rating <= 0) {
-        // Return null or a placeholder if no valid rating
         return <span className="no-rating">(No rating yet)</span>;
     }
     const fullStars = Math.floor(rating);
-    // Simple half star: round to nearest .5, check if decimal is .5
     const halfStar = Math.round(rating * 2) % 2 !== 0 ? 1 : 0;
     const emptyStars = 5 - fullStars - halfStar;
-
-    // Ensure stars don't exceed 5 if rating is somehow > 5
     const validFull = Math.max(0, fullStars);
     const validHalf = Math.max(0, halfStar);
     const validEmpty = Math.max(0, 5 - validFull - validHalf);
 
-
     return (
         <div className="star-display" title={`${rating.toFixed(1)} out of 5 stars`}>
             {[...Array(validFull)].map((_, i) => <span key={`full-${i}`} className="star filled">★</span>)}
-            {validHalf === 1 && <span key="half" className="star half">★</span>} {/* Needs CSS for half appearance */}
+            {validHalf === 1 && <span key="half" className="star half">★</span>}
             {[...Array(validEmpty)].map((_, i) => <span key={`empty-${i}`} className="star empty">☆</span>)}
         </div>
     );
 };
 // --- END Star Display Component ---
 
-// Add this function inside your ArtistProfile/EmployerProfile component,
-// or put it in a shared utils file and import it.
+// --- Formatting Function ---
 const formatDate = (dateString: string | undefined | null): string => {
   if (!dateString) {
-      return 'Date unknown'; // Or return empty string ''
+      return 'Date unknown';
   }
   try {
       const date = new Date(dateString);
-      // Check if the date object is valid after parsing
       if (isNaN(date.getTime())) {
-          return 'Invalid Date'; // Return specific string if parsing failed
+          return 'Invalid Date';
       }
-      // Return formatted date (adjust options as needed)
       return date.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
   } catch (e) {
        console.error("Error parsing date:", dateString, e);
-       return 'Invalid Date'; // Fallback on any parsing error
+       return 'Invalid Date';
   }
 };
+// --- End Formatting Function ---
+
 const ArtistProfile: React.FC = () => {
   const { userId, setUserId, artistId, setArtistId } = useUserContext();
 
-  // State for displaying & editing profile
+  // Profile State
   const [bio, setBio] = useState("");
   const [profilePicture, setProfilePicture] = useState<string | null>(null);
   const [isStudent, setIsStudent] = useState(false);
-  const [profileUserName, setProfileUserName] = useState(""); // To store fetched name
+  const [profileUserName, setProfileUserName] = useState("");
 
-  // State for updating profile
+  // Editing State
   const [newBio, setNewBio] = useState("");
   const [newProfilePicFile, setNewProfilePicFile] = useState<File | null>(null);
 
-  // Loading states
-  const [loading, setLoading] = useState(true); // For initial profile load
-  const [isEditing, setIsEditing] = useState(false);
-  const [saving, setSaving] = useState(false); // For saving changes
-  const [deleting, setDeleting] = useState(false); // For deleting picture
+  // CV State
+  const [cvUrl, setCvUrl] = useState<string | null>(null);
+  const [newCvFile, setNewCvFile] = useState<File | null>(null);
+  const [cvProcessing, setCvProcessing] = useState(false);
 
-  // --- ADD State for Ratings/Reviews ---
+  // General UI State
+  const [loading, setLoading] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
+  const [saving, setSaving] = useState(false); // For bio/profile pic save
+  const [deleting, setDeleting] = useState(false); // For profile pic delete
+  const [error, setErrorState] = useState<string | null>(null); // Renamed from setError
+
+  // Reviews State
   const [averageRating, setAverageRating] = useState<number | null>(null);
   const [reviewCount, setReviewCount] = useState<number>(0);
   const [reviews, setReviews] = useState<ReviewData[]>([]);
   const [reviewsLoading, setReviewsLoading] = useState<boolean>(true);
-  // --- END ADD ---
 
   const navigate = useNavigate();
   const BACKEND_URL = import.meta.env.VITE_API_URL || "http://localhost:50001";
 
-  // --- UPDATED useEffect to Fetch Profile AND Ratings ---
+  // Fetch Profile, Ratings, AND CV
   useEffect(() => {
-    let isMounted = true; // Flag for cleanup
-
-    const fetchProfileAndRatings = async () => {
-      setLoading(true);
-      setReviewsLoading(true);
+    let isMounted = true;
+    const fetchProfileAndData = async () => { // Function name was corrected
+      setLoading(true); setReviewsLoading(true); setErrorState(null);
       try {
         const token = localStorage.getItem("token");
-        if (!token) {
-            alert("Authentication required."); navigate("/login"); return;
-        }
+        if (!token) { alert("Authentication required."); if(isMounted) navigate("/login"); return; }
 
-        // 1. Get base user/profile data
-        const profileResponse = await axios.get(`${BACKEND_URL}/api/users/me`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const profileResponse = await axios.get(`${BACKEND_URL}/api/users/me`, { headers: { Authorization: `Bearer ${token}` } });
+        if (!isMounted) return;
 
         const { user_id, artist, fullname } = profileResponse.data;
-        let currentArtistId = null; // To store the ID for fetching ratings
+        setProfileUserName(fullname || "");
+        if (!userId) setUserId(user_id);
 
-        if (isMounted) {
-            setProfileUserName(fullname || ""); // Store fullname
-             if (!userId) setUserId(user_id);
+        if (artist && artist.artist_id) {
+          setArtistId(artist.artist_id);
+          setBio(artist.bio || "");
+          setProfilePicture(artist.profile_picture || null);
+          setIsStudent(!!artist.is_student);
+          setNewBio(artist.bio || "");
+          setCvUrl(artist.cv_url || null); // Fetch and set CV URL
+        } else { console.warn("Logged in user does not have an associated artist profile."); }
 
-             if (artist && artist.artist_id) {
-                setArtistId(artist.artist_id); // Set context/state
-                currentArtistId = artist.artist_id; // Use this ID for ratings
-                setBio(artist.bio || "");
-                setProfilePicture(artist.profile_picture || null);
-                setIsStudent(!!artist.is_student);
-                setNewBio(artist.bio || "");
-             } else {
-                 // Handle case where user logged in isn't an artist profile
-                 console.warn("Logged in user does not have an associated artist profile.");
-                 // Maybe navigate away or show a message?
-             }
-         }
-
-         // 2. Fetch ratings/reviews only if we have the user ID (of the profile owner)
-         // Since we fetch '/users/me', the profile owner ID is user_id
-         const profileOwnerUserId = user_id; // Get the ID from the first response
-         if (profileOwnerUserId && isMounted) {
-             // Fetch average rating and reviews concurrently
-             const ratingPromise = axios.get(`${BACKEND_URL}/api/users/${profileOwnerUserId}/average-rating`);
-             const reviewsPromise = axios.get(`${BACKEND_URL}/api/users/${profileOwnerUserId}/reviews`);
-
-             const [ratingResponse, reviewsResponse] = await Promise.all([ratingPromise, reviewsPromise]);
-
-             if (isMounted) {
-                 // Process rating data
-                 setAverageRating(ratingResponse.data.averageRating);
-                 setReviewCount(ratingResponse.data.reviewCount);
-                 // Process reviews data
-                 setReviews(reviewsResponse.data.reviews || []);
-             }
-         } else if (isMounted) {
-             // No user ID found from profile fetch, cannot fetch ratings
-             setAverageRating(null);
-             setReviewCount(0);
-             setReviews([]);
-         }
-
-      } catch (error) {
-        console.error("Error fetching profile or ratings:", error);
-        // Handle errors appropriately
-        if (isMounted) setError("Failed to load profile data."); // Use error state if you have one
+        const profileOwnerUserId = user_id;
+        if (profileOwnerUserId) {
+          const ratingPromise = axios.get(`${BACKEND_URL}/api/users/${profileOwnerUserId}/average-rating`);
+          const reviewsPromise = axios.get(`${BACKEND_URL}/api/users/${profileOwnerUserId}/reviews`);
+          const [ratingResponse, reviewsResponse] = await Promise.all([ratingPromise, reviewsPromise]);
+          if (isMounted) {
+            setAverageRating(ratingResponse.data.averageRating);
+            setReviewCount(ratingResponse.data.reviewCount);
+            setReviews(reviewsResponse.data.reviews || []);
+          }
+        } else { if(isMounted) {setAverageRating(null); setReviewCount(0); setReviews([]);} }
+      } catch (fetchError: any) {
+        console.error("Error fetching profile or related data:", fetchError);
+        if (isMounted) setErrorState(fetchError.response?.data?.message || "Failed to load profile data.");
       } finally {
-        if (isMounted) {
-            setLoading(false);
-            setReviewsLoading(false);
-        }
+        if (isMounted) { setLoading(false); setReviewsLoading(false); }
       }
     };
-
-    fetchProfileAndRatings();
-
-    // Cleanup function
+    fetchProfileAndData(); // Correct function call
     return () => { isMounted = false; };
-
-    // Dependencies - fetch when component mounts or relevant IDs change (if applicable)
-    // Using userId from context ensures we refetch if the logged-in user changes
   }, [userId, setUserId, setArtistId, BACKEND_URL, navigate]);
-  // --- END UPDATED useEffect ---
 
 
-  // --- Handler Functions (handleEditToggle, handleProfilePictureChange, handleSaveChanges, handleDeletePicture) ---
-  // Keep these exactly as they were in the previous correct version
+  // --- Handler Functions ---
   const handleEditToggle = () => {
     setIsEditing(!isEditing);
-    if (isEditing) { setNewBio(bio); setNewProfilePicFile(null); }
+    if (isEditing) { // When canceling edit
+        setNewBio(bio);
+        setNewProfilePicFile(null);
+        setNewCvFile(null); // Reset staged CV file
+        setErrorState(null); // Clear any edit-related errors
+    }
   };
 
   const handleProfilePictureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files ? e.target.files[0] : null;
-    if (file && (file.type === "image/png" || file.type === "image/jpeg")) {
-      setNewProfilePicFile(file);
-    } else {
-      alert("Please upload a valid image file (PNG or JPG).");
-      e.target.value = ""; // Clear invalid file
-    }
+    if (file && (file.type === "image/png" || file.type === "image/jpeg")) { setNewProfilePicFile(file); }
+    else { alert("Please upload a valid image file (PNG or JPG)."); e.target.value = ""; }
   };
 
   const handleSaveChanges = async () => {
+    // This function handles saving Bio and Profile Picture changes
+    console.log("[SAVE ARTIST - 1] handleSaveChanges (Bio/Pic) called");
+    setErrorState(null); // Clear previous errors
     try {
         setSaving(true);
         const token = localStorage.getItem("token");
@@ -219,21 +181,31 @@ const ArtistProfile: React.FC = () => {
             setBio(updatedArtistData.bio || "");
             setProfilePicture(updatedArtistData.profile_picture || null);
             setNewBio(updatedArtistData.bio || "");
-        } else {
+            // Backend might also return updated cv_url if that endpoint does full profile return
+            if (updatedArtistData.cv_url !== undefined) setCvUrl(updatedArtistData.cv_url || null);
+        } else { // Fallback if no specific artist data is in response
             setBio(newBio);
-            if (newProfilePicFile) { // Re-fetch just to be sure
+            if (newProfilePicFile) { // Re-fetch if picture changed and no detailed data returned
                const meResponse = await axios.get(`${BACKEND_URL}/api/users/me`, { headers: { Authorization: `Bearer ${token}` } });
                setProfilePicture(meResponse.data?.artist?.profile_picture || null);
+               if (meResponse.data?.artist?.cv_url !== undefined) setCvUrl(meResponse.data.artist.cv_url || null);
             }
         }
-        setNewProfilePicFile(null); alert("Profile updated successfully!"); setIsEditing(false);
-    } catch (error: any) { console.error("Error saving changes:", error); const message = error.response?.data?.message || "Something went wrong."; alert(message); }
-    finally { setSaving(false); }
+        setNewProfilePicFile(null);
+        alert("Profile changes (Bio/Photo) saved successfully!");
+        // Consider if setIsEditing(false) should be here or if user might want to upload CV next
+    } catch (error: any) {
+        console.error("Error saving profile changes:", error);
+        const message = error.response?.data?.message || "Something went wrong saving profile changes.";
+        setErrorState(message); alert(message);
+    } finally {
+        setSaving(false);
+    }
   };
 
   const handleDeletePicture = async () => {
-    if (!window.confirm("Are you sure?")) { return; }
-    setDeleting(true);
+    if (!window.confirm("Are you sure you want to delete your profile picture?")) { return; }
+    setDeleting(true); setErrorState(null);
     try {
       const token = localStorage.getItem("token");
       if (!token) { alert("Authentication token not found."); setDeleting(false); return; }
@@ -241,158 +213,154 @@ const ArtistProfile: React.FC = () => {
       await axios.delete(url, { headers: { Authorization: `Bearer ${token}` } });
       setProfilePicture(null); setNewProfilePicFile(null);
       alert("Profile picture deleted successfully.");
-    } catch (error: any) { console.error("Error deleting profile picture:", error); const message = error.response?.data?.message || "Failed to delete."; alert(message); }
-    finally { setDeleting(false); }
+    } catch (error: any) {
+      console.error("Error deleting profile picture:", error);
+      const message = error.response?.data?.message || "Failed to delete profile picture.";
+      setErrorState(message); alert(message);
+    } finally {
+      setDeleting(false);
+    }
   };
-  // --- End Handler Functions ---
+
+  // --- CV Management Handlers ---
+  const handleCvFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files ? e.target.files[0] : null;
+    if (file && file.type === "application/pdf") { setNewCvFile(file); }
+    else if (file) { alert("Please upload a valid PDF file for your CV."); e.target.value = ""; setNewCvFile(null); }
+    else { setNewCvFile(null); }
+  };
+
+  const handleCvUpload = async () => {
+    if (!newCvFile) { alert("Please select a PDF file to upload."); return; }
+    setCvProcessing(true); setErrorState(null);
+    const token = localStorage.getItem("token");
+    if (!token) { alert("Authentication required."); setCvProcessing(false); return; }
+    const formData = new FormData();
+    formData.append("cv", newCvFile); // Backend endpoint should expect a field named "cv"
+    try {
+      const response = await axios.post(`${BACKEND_URL}/api/artists/profile/cv`, formData, { headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" } });
+      setCvUrl(response.data.cv_url); // Assume backend returns new { cv_url: "..." }
+      setNewCvFile(null);
+      alert("CV uploaded successfully!");
+    } catch (err: any) {
+      console.error("Error uploading CV:", err);
+      const message = err.response?.data?.message || "Failed to upload CV.";
+      setErrorState(message); alert(message);
+    } finally {
+      setCvProcessing(false);
+    }
+  };
+
+  const handleCvDelete = async () => {
+    if (!cvUrl) { alert("No CV to remove."); return; }
+    if (!window.confirm("Are you sure you want to remove your CV?")) return;
+    setCvProcessing(true); setErrorState(null);
+    const token = localStorage.getItem("token");
+    if (!token) { alert("Authentication required."); setCvProcessing(false); return; }
+    try {
+      await axios.delete(`${BACKEND_URL}/api/artists/profile/cv`, { headers: { Authorization: `Bearer ${token}` } });
+      setCvUrl(null);
+      setNewCvFile(null);
+      alert("CV removed successfully.");
+    } catch (err: any) {
+      console.error("Error deleting CV:", err);
+      const message = err.response?.data?.message || "Failed to delete CV.";
+      setErrorState(message); alert(message);
+    } finally {
+      setCvProcessing(false);
+    }
+  };
+  // --- End CV Handlers ---
 
 
-  // --- Loading State ---
-  // Use the combined 'loading' state for the initial profile data
-  if (loading) {
-    return (
-        <>
-            <Navbar />
-            <div className="profile-container artist-profile-container" style={{textAlign: 'center', padding: '40px'}}>
-                Loading artist profile...
-            </div>
-        </>
-    );
+  if (loading) { return ( <> <Navbar /> <div className="profile-container artist-profile-container loading-profile"> <p>Loading artist profile...</p> </div> </> ); }
+  // Display general load error if not in an active saving/deleting/cvProcessing state
+  if (error && !isEditing && !saving && !deleting && !cvProcessing) {
+     return ( <> <Navbar /> <div className="profile-container artist-profile-container error-profile"> <p className="error-message">{error}</p> </div> </> );
   }
-  // --- End Loading State ---
 
   return (
     <>
       <Navbar />
-      <div className="profile-container artist-profile-container"> {/* Use consistent class */}
-        <h2 className="profile-title">{isEditing ? "Edit profile" : (profileUserName || "My Artist Profile")}</h2>
+      <div className="profile-container artist-profile-container">
+        <h2 className="profile-title">{isEditing ? "Edit Your Profile" : (profileUserName || "My Artist Profile")}</h2>
+        {/* Display specific action errors when editing */}
+        {error && isEditing && <p className="error-message inline-error">{error}</p>}
 
-        {/* --- Profile Header Area --- */}
         <div className="profile-header">
             <div className="profile-picture-wrapper">
-              <img
-                src={profilePicture ? profilePicture : "/default-profile.png"}
-                alt="Artist Profile"
-                className="profile-picture"
-              />
-              {/* Display Edit/Delete buttons near picture when editing */}
-              {isEditing && (
-                   <div className="edit-picture-options">
-                       <label htmlFor="profilePicUpload" className="upload-pic-btn">Change</label>
-                       <input id="profilePicUpload" type="file" accept="image/png, image/jpeg" onChange={handleProfilePictureChange} style={{display: 'none'}} />
-                       {profilePicture && (
-                          <button type="button" className="delete-btn small" onClick={handleDeletePicture} disabled={deleting || saving}>
-                              {deleting ? "..." : "Remove"}
-                          </button>
-                       )}
-                   </div>
-              )}
+              <img src={profilePicture ? profilePicture : "/default-profile.png"} alt="Artist Profile" className="profile-picture" />
+              {isEditing && ( <div className="edit-picture-options"> <label htmlFor="profilePicUpload" className="upload-pic-btn">Change Photo</label> <input id="profilePicUpload" type="file" accept="image/png, image/jpeg" onChange={handleProfilePictureChange} style={{display: 'none'}} /> {profilePicture && (<button type="button" className="delete-btn small" onClick={handleDeletePicture} disabled={deleting || saving || cvProcessing}> {deleting ? "..." : "Remove"} </button> )} </div> )}
             </div>
-
             <div className="profile-summary">
-                
-                 {/* Student Badge */}
+                 <h3 className="profile-name">{profileUserName || 'Artist Name'}</h3>
                  {isStudent && (<span className="student-badge">STUDENT ARTIST</span>)}
-
-                {/* --- ADD Average Rating Display --- */}
-                <div className="average-rating-display">
-                    {reviewsLoading ? ( <span>Loading rating...</span> )
-                     : reviewCount > 0 ? (
-                         <>
-                             <DisplayStars rating={averageRating} />
-                             <span className="rating-value">{averageRating?.toFixed(1)}</span>
-                             <span className="review-count">({reviewCount} review{reviewCount !== 1 ? 's' : ''})</span>
-                         </>
-                     ) : (
-                         <span className="no-rating">No reviews yet</span>
-                     )}
-                </div>
-                {/* --- END Average Rating Display --- */}
-
-                {/* Show Edit button only when not editing */}
-                {!isEditing && (
-                    <button className="edit-btn" onClick={handleEditToggle}>
-                        Edit Profile
-                    </button>
-                )}
+                 <div className="average-rating-display"> {reviewsLoading ? ( <span>Loading...</span> ) : reviewCount > 0 ? ( <> <DisplayStars rating={averageRating} /> <span className="rating-value">{averageRating?.toFixed(1)}</span> <span className="review-count">({reviewCount} review{reviewCount !== 1 ? 's' : ''})</span> </> ) : ( <span className="no-rating">No reviews yet</span> )} </div>
+                 {!isEditing && ( <button className="edit-btn" onClick={handleEditToggle}> Edit Profile </button> )}
             </div>
         </div>
 
-
-        {/* --- Main Profile Content (Bio/Reviews or Edit Form) --- */}
         <div className="profile-content">
             {!isEditing ? (
               // --- Display Mode ---
               <>
-                <div className="profile-section">
-                    <h4>Bio</h4>
-                    <p className="bio-text">{bio || "No bio provided yet."}</p>
+                <div className="profile-section"> <h4>Bio</h4> <p className="bio-text">{bio || "No bio provided."}</p> </div>
+                {/* CV Display Section */}
+                <div className="profile-section cv-section">
+                  <h4>Curriculum Vitae (CV)</h4>
+                  {cvUrl ? ( <div className="cv-display"> <FaFilePdf className="pdf-icon" /> <a href={cvUrl} target="_blank" rel="noopener noreferrer" className="cv-link"> View CV </a> </div> )
+                   : ( <p className="no-cv-message">No CV uploaded yet.</p> )}
                 </div>
-
-                {/* --- ADD Reviews Section --- */}
-                {/* --- ADD Reviews Section --- */}
+                {/* Reviews Section */}
                 <div className="reviews-section profile-section">
                      <h4>Reviews ({reviewCount})</h4>
-                     {reviewsLoading ? ( <p>Loading reviews...</p> )
-                      : reviews.length > 0 ? (
-                         <div className="reviews-list">
-                             {reviews.map((review) => { // Start of map function body
-
-                                // <<< --- ADD THE CONSOLE LOG HERE --- >>>
-                                const dateValue = review.created_at || (review as any).createdAt; // Get potential date value
-                                console.log(`Processing review ${review.review_id}, Date value received:`, dateValue, "| Type:", typeof dateValue);
-                                // <<< --- END ADDED CONSOLE LOG --- >>>
-
-                                return ( // Return the JSX for the review item
+                     {reviewsLoading ? ( <p>Loading...</p> ) : reviews.length > 0 ? ( <div className="reviews-list"> {reviews.map((review) => {
+                                const dateValue = review.created_at || (review as any).createdAt;
+                                // console.log(`Review ${review.review_id} date:`, dateValue); // Keep for date debug if needed
+                                return (
                                   <div key={review.review_id} className="review-item">
                                       <div className="review-header">
                                           <img src={review.reviewer?.profile_picture || '/default-profile.png'} alt={review.reviewer?.fullname || 'Reviewer'} className="reviewer-pic"/>
-                                          <div className="reviewer-info">
-                                              <strong>{review.reviewer?.fullname || 'Anonymous'}</strong>
-                                              {/* Use the dateValue variable here */}
-                                              <span className="review-date">{formatDate(dateValue)}</span>
-                                          </div>
-                                          <div className="review-stars">
-                                              <DisplayStars rating={review.overall_rating} />
-                                          </div>
+                                          <div className="reviewer-info"> <strong>{review.reviewer?.fullname || 'Anonymous'}</strong> <span className="review-date">{formatDate(dateValue)}</span> </div>
+                                          <div className="review-stars"> <DisplayStars rating={review.overall_rating} /> </div>
                                       </div>
-                                      {review.specific_answers?.comment && (
-                                          <p className="review-comment">"{review.specific_answers.comment}"</p>
-                                      )}
-                                      {/* You could display other specific answers here if needed */}
-                                  </div>
-                                ); // End of return
-                             })} {/* End of map function */}
-                         </div>
-                     ) : ( <p className="no-reviews">No reviews have been submitted yet.</p> )}
+                                      {review.specific_answers?.comment && ( <p className="review-comment">"{review.specific_answers.comment}"</p> )}
+                                  </div> );
+                             })} </div>
+                     ) : ( <p className="no-reviews">No reviews yet.</p> )}
                 </div>
-                {/* --- END Reviews Section --- */}
               </>
-
             ) : (
               // --- Editing Mode ---
               <div className="edit-form">
-                <div className="form-field-group">
-                    <label htmlFor="artistBio">Bio:</label>
-                    <textarea id="artistBio" value={newBio} onChange={(e) => setNewBio(e.target.value)} rows={5} className="bio-input" />
+                <div className="form-field-group"> <label htmlFor="artistBio">Bio:</label> <textarea id="artistBio" value={newBio} onChange={(e) => setNewBio(e.target.value)} rows={5} className="bio-input" /> </div>
+                {/* Profile Picture upload is handled near image */}
+
+                {/* CV Upload/Management Section in Edit Mode */}
+                <div className="form-field-group cv-edit-section">
+                  <label htmlFor="cvUpload">Update Curriculum Vitae (PDF only):</label>
+                  <input id="cvUpload" type="file" accept="application/pdf" onChange={handleCvFileChange} className="file-input" />
+                  {newCvFile && ( <button type="button" onClick={handleCvUpload} disabled={cvProcessing || saving || deleting} className="action-btn upload-cv-btn"> {cvProcessing && !saving && !deleting ? "Uploading CV..." : `Upload ${newCvFile.name.substring(0,20)}...`} </button> )}
+                  {cvUrl && (
+                    <div className="current-cv-display">
+                        <p>Current CV: <FaFilePdf className="pdf-icon-small" /> <a href={cvUrl} target="_blank" rel="noopener noreferrer" className="cv-link-small">View</a></p>
+                        {!newCvFile && (
+                            <button type="button" onClick={handleCvDelete} disabled={cvProcessing || saving || deleting} className="action-btn delete-cv-btn danger">
+                                {cvProcessing && !saving && !deleting ? "Removing..." : "Remove CV"}
+                            </button>
+                        )}
+                    </div>
+                  )}
                 </div>
+                {/* End CV Upload Section */}
 
-                {/* File input is now near the image */}
-                {/* Delete button is now near the image */}
-
-                <div className="btn-row form-actions"> {/* Use consistent form classes */}
-                  <button className="save-btn submit-btn" onClick={handleSaveChanges} disabled={saving || deleting}>
-                    {saving ? "Saving..." : "Save changes"}
-                  </button>
-                  <button type="button" className="cancel-btn" onClick={handleEditToggle} disabled={saving || deleting}>
-                    Cancel
-                  </button>
+                <div className="btn-row form-actions">
+                  <button className="save-btn submit-btn" onClick={handleSaveChanges} disabled={saving || deleting || cvProcessing}> {saving ? "Saving Profile..." : "Save Bio/Photo"} </button>
+                  <button type="button" className="cancel-btn" onClick={handleEditToggle} disabled={saving || deleting || cvProcessing}> Done Editing </button>
                 </div>
               </div>
-              // --- End Editing Mode ---
             )}
         </div>
-
       </div>
     </>
   );
@@ -400,7 +368,5 @@ const ArtistProfile: React.FC = () => {
 
 export default ArtistProfile;
 
-function setError(arg0: string) {
-  throw new Error("Function not implemented.");
-}
-
+// REMOVE any stray function setError(arg0: string) { throw new Error("Function not implemented."); }
+// if it was accidentally left at the bottom of your file.
