@@ -75,6 +75,7 @@ body {
   width: 100%; /* Take full width of parent user-profile-page */
   text-align: center;
   padding: 20px; /* Padding within the card */
+  padding-top:100px;
 }
 
 /* --- New Layout for Profile Header --- */
