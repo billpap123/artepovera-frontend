@@ -119,7 +119,7 @@ const Register = () => {
   return (
     <div className="auth-page-container">
         <div className="auth-logo-container">
-          <Link to="/">
+          <Link to="/"> Back to main page
             <img src="/images/logo2.png" alt="Artepovera Home" className="auth-logo" />
           </Link>
         </div>
