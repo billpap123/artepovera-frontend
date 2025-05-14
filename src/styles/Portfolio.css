@@ -268,7 +268,7 @@
     padding: 20px;
     /* --- ADD PADDING-TOP --- */
     /* Adjust this value to be a bit more than your navbar's height */
-    padding-top: 90px; /* Example: if navbar is 70px, add some extra space */
+    padding-top: 200px; /* Example: if navbar is 70px, add some extra space */
     /* --- END ADD --- */
     font-family: 'Nunito', sans-serif;
     min-height: calc(100vh - 70px); /* Example: ensure content area can fill below navbar */
