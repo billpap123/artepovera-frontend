@@ -355,7 +355,7 @@ const ArtistProfile: React.FC = () => {
                 {/* End CV Upload Section */}
 
                 <div className="btn-row form-actions">
-                  <button className="save-btn submit-btn" onClick={handleSaveChanges} disabled={saving || deleting || cvProcessing}> {saving ? "Saving Profile..." : "Save Bio/Photo"} </button>
+                  <button className="save-btn submit-btn" onClick={handleSaveChanges} disabled={saving || deleting || cvProcessing}> {saving ? "Saving Profile..." : "Save profile"} </button>
                   <button type="button" className="cancel-btn" onClick={handleEditToggle} disabled={saving || deleting || cvProcessing}> Done Editing </button>
                 </div>
               </div>
