@@ -66,7 +66,7 @@
 
 /* Adjust the logo image when it's part of this link */
 .auth-logo-container .auth-logo {
-  height: 28px;   /* Smaller height to fit well with the text - ADJUST AS NEEDED */
+  height: 158px;   /* Smaller height to fit well with the text - ADJUST AS NEEDED */
   width: auto;    /* Maintain aspect ratio */
   margin-left: 8px; /* Space between "Back to main page" text and the logo image */
                   /* If you want logo first: remove margin-left, add margin-right to text, and reorder in JSX */
