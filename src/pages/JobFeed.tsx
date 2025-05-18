@@ -132,17 +132,25 @@ const componentStyles = `
 
   /* --- Job Listing Styles --- */
   .job-listing {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr); /* 2 columns */
+    display: grid; /* Keep as grid if you want columns when there ARE jobs */
+    /* If there are no jobs, we want the container to still feel substantial */
+    /* and center the "no jobs" message. */
+    /* We can add specific styles when it's empty via a class or make it flex for centering */
+    grid-template-columns: repeat(2, 1fr); /* 2 columns when jobs are present */
     gap: 20px;
-    max-height: 75vh; /* ADJUST THIS - Height before scroll */
-    overflow-y: auto; /* Enable scroll */
-    padding: 5px 15px 5px 5px; /* Padding (right side for scrollbar) */
-    flex-grow: 1; /* Take available space */
-    min-height: 200px; /* Minimum height */
+    max-height: 75vh;
+    overflow-y: auto;
+    padding: 15px; /* More consistent padding */
+    flex-grow: 1;
+    min-height: 400px; /* <<< INCREASED MINIMUM HEIGHT (Adjust as needed) */
     border: 1px solid #e0e0e0;
     border-radius: 8px;
     background-color: #fdfdfd;
+    /* Added for centering the .no-jobs-message when it's the only child */
+    /* These will apply if the grid has only one child spanning all columns */
+    /* or if you change display to flex when empty */
+    align-content: center; /* Vertically center grid content if less than container height */
+    justify-content: center; /* Horizontally center if items don't fill */
   }
 
   /* --- Job Card Styles --- */
@@ -220,18 +228,27 @@ const componentStyles = `
     background-color: #b0563f;
   }
 
-  .error-message, .loading-message, .no-jobs-message {
+   .error-message, .loading-message, .no-jobs-message {
     color: #555;
     text-align: center;
     padding: 40px 20px;
-    grid-column: 1 / -1;
+    grid-column: 1 / -1; /* Spans all grid columns */
     font-style: italic;
+    font-size: 1.1em; /* Slightly larger message text */
+    /* Added to help center within the min-height of .job-listing */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%; /* Try to make it fill the parent if it's the only item */
+    min-height: 150px; /* Give the message itself some presence */
   }
   .error-message {
       color: red;
       font-style: normal;
       font-weight: bold;
   }
+
 
   /* --- Autocomplete Styles --- */
   .city-filter-container {
