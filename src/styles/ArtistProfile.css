@@ -492,3 +492,137 @@ button:hover {
     justify-content: flex-end; /* Align save/cancel right */
     margin-top: 15px;
 }
+/* src/styles/ArtistProfile.css or your main profile styles */
+
+/* ... your existing .profile-container, .edit-form, .form-field-group ... */
+
+.cv-edit-section {
+  margin-top: 25px;
+  padding-top: 25px;
+  border-top: 1px solid var(--light-beige, #e0e0e0); /* Separator */
+  background-color: #fcfaf6; /* Slightly different background to stand out */
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color-light, #e9e4dd);
+}
+
+.cv-edit-section .cv-section-title { /* Using this class for the main label of the section */
+  display: block;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-medium, #654321);
+  margin-bottom: 15px;
+}
+
+/* Styling the label to look like a button for file input */
+.cv-upload-label {
+  display: inline-block; /* Important for button-like appearance */
+  padding: 10px 20px;
+  background-color: var(--accent-secondary, #CC7722); /* Example: Ochre or your secondary accent */
+  color: var(--pure-white, #fff);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-align: center;
+  transition: background-color 0.2s ease;
+  margin-bottom: 10px; /* Space below the "Choose File" button */
+}
+
+.cv-upload-label:hover {
+  background-color: #b86b1e; /* Darker shade of secondary accent */
+}
+
+/* The actual upload button that appears after selecting a file */
+.upload-cv-btn {
+  /* Uses .action-btn base style if defined, then override/add */
+  background-color: var(--accent-primary, #A0522D) !important; /* Sienna - use important if needed */
+  color: var(--pure-white, #fff) !important;
+  display: block; /* Make it take full width or inline-block as needed */
+  margin-top: 10px;
+}
+.upload-cv-btn:hover:not(:disabled) {
+  background-color: var(--accent-primary-dark, #804123) !important;
+}
+
+
+.current-cv-display {
+  margin-top: 15px;
+  padding: 10px;
+  background-color: var(--bg-container-light, #f5f0e8);
+  border-radius: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+}
+
+.current-cv-display p { /* If you keep the <p> tag wrapping the text and link */
+  margin: 0;
+  display: flex;
+  align-items: center;
+  color: var(--text-dark, #4d4033);
+}
+.current-cv-display span { /* If you use span directly as in updated JSX */
+  display: flex;
+  align-items: center;
+  color: var(--text-dark, #4d4033);
+}
+
+
+.pdf-icon-inline { /* For the FaFilePdf icon next to current CV link */
+  margin-right: 8px;
+  color: var(--terracotta-red, #C96A50); /* Or another distinct color */
+  font-size: 1.2em;
+}
+
+.cv-link-inline {
+  color: var(--accent-primary, #A0522D);
+  font-weight: 600;
+  text-decoration: none;
+  margin-left: 5px;
+}
+.cv-link-inline:hover {
+  text-decoration: underline;
+}
+
+.delete-cv-btn {
+  /* Uses .action-btn.danger base if defined, or style specifically */
+  /* background-color: var(--danger-red, #dc3545) !important; */
+  /* color: var(--pure-white, #fff) !important; */
+  margin-left: 10px; /* Space it from the "View" link */
+}
+
+.no-cv-message-edit {
+    font-style: italic;
+    color: var(--text-light, #7d746b);
+    font-size: 0.9rem;
+    margin-top: 10px;
+}
+
+/* Ensure action-btn styles are defined well (you might have these globally or in profile.css) */
+/*
+.action-btn {
+  padding: 8px 15px;
+  border-radius: 5px;
+  border: 1px solid transparent;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s;
+  font-size: 0.9rem;
+}
+.action-btn.danger {
+  background-color: var(--danger-red, #e74c3c);
+  color: var(--pure-white, #fff);
+  border-color: var(--danger-red, #e74c3c);
+}
+.action-btn.danger:hover:not(:disabled) {
+  background-color: #c0392b;
+  border-color: #c0392b;
+}
+.action-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+*/

@@ -1,11 +1,11 @@
 // src/pages/ArtistProfile.tsx
-import React, { useState, useEffect } from "react"; // Removed useMemo as it's not used
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useUserContext } from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import "../styles/ArtistProfile.css";
-import { FaFilePdf } from 'react-icons/fa'; // Example for PDF icon
+import { FaFilePdf } from 'react-icons/fa'; // Assuming you want to use this for PDF icons
 
 // --- Review Interface ---
 interface Reviewer {
@@ -48,19 +48,12 @@ const DisplayStars = ({ rating }: { rating: number | null }) => {
 
 // --- Formatting Function ---
 const formatDate = (dateString: string | undefined | null): string => {
-  if (!dateString) {
-      return 'Date unknown';
-  }
+  if (!dateString) { return 'Date unknown'; }
   try {
       const date = new Date(dateString);
-      if (isNaN(date.getTime())) {
-          return 'Invalid Date';
-      }
+      if (isNaN(date.getTime())) { return 'Invalid Date'; }
       return date.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
-  } catch (e) {
-       console.error("Error parsing date:", dateString, e);
-       return 'Invalid Date';
-  }
+  } catch (e) { console.error("Error parsing date:", dateString, e); return 'Invalid Date'; }
 };
 // --- End Formatting Function ---
 
@@ -85,9 +78,9 @@ const ArtistProfile: React.FC = () => {
   // General UI State
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
-  const [saving, setSaving] = useState(false); // For bio/profile pic save
-  const [deleting, setDeleting] = useState(false); // For profile pic delete
-  const [error, setErrorState] = useState<string | null>(null); // Renamed from setError
+  const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [error, setErrorState] = useState<string | null>(null);
 
   // Reviews State
   const [averageRating, setAverageRating] = useState<number | null>(null);
@@ -98,31 +91,26 @@ const ArtistProfile: React.FC = () => {
   const navigate = useNavigate();
   const BACKEND_URL = import.meta.env.VITE_API_URL || "http://localhost:50001";
 
-  // Fetch Profile, Ratings, AND CV
   useEffect(() => {
     let isMounted = true;
-    const fetchProfileAndData = async () => { // Function name was corrected
+    const fetchProfileAndData = async () => {
       setLoading(true); setReviewsLoading(true); setErrorState(null);
       try {
         const token = localStorage.getItem("token");
         if (!token) { alert("Authentication required."); if(isMounted) navigate("/login"); return; }
-
         const profileResponse = await axios.get(`${BACKEND_URL}/api/users/me`, { headers: { Authorization: `Bearer ${token}` } });
         if (!isMounted) return;
-
         const { user_id, artist, fullname } = profileResponse.data;
         setProfileUserName(fullname || "");
         if (!userId) setUserId(user_id);
-
         if (artist && artist.artist_id) {
           setArtistId(artist.artist_id);
           setBio(artist.bio || "");
           setProfilePicture(artist.profile_picture || null);
           setIsStudent(!!artist.is_student);
           setNewBio(artist.bio || "");
-          setCvUrl(artist.cv_url || null); // Fetch and set CV URL
+          setCvUrl(artist.cv_url || null);
         } else { console.warn("Logged in user does not have an associated artist profile."); }
-
         const profileOwnerUserId = user_id;
         if (profileOwnerUserId) {
           const ratingPromise = axios.get(`${BACKEND_URL}/api/users/${profileOwnerUserId}/average-rating`);
@@ -141,32 +129,26 @@ const ArtistProfile: React.FC = () => {
         if (isMounted) { setLoading(false); setReviewsLoading(false); }
       }
     };
-    fetchProfileAndData(); // Correct function call
+    fetchProfileAndData();
     return () => { isMounted = false; };
   }, [userId, setUserId, setArtistId, BACKEND_URL, navigate]);
 
-
-  // --- Handler Functions ---
   const handleEditToggle = () => {
     setIsEditing(!isEditing);
-    if (isEditing) { // When canceling edit
-        setNewBio(bio);
-        setNewProfilePicFile(null);
-        setNewCvFile(null); // Reset staged CV file
-        setErrorState(null); // Clear any edit-related errors
-    }
+    if (isEditing) { setNewBio(bio); setNewProfilePicFile(null); setNewCvFile(null); setErrorState(null); }
+    else { setNewBio(bio); }
   };
 
   const handleProfilePictureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files ? e.target.files[0] : null;
     if (file && (file.type === "image/png" || file.type === "image/jpeg")) { setNewProfilePicFile(file); }
-    else { alert("Please upload a valid image file (PNG or JPG)."); e.target.value = ""; }
+    else if (file) { alert("Please upload a valid image file (PNG or JPG)."); e.target.value = ""; setNewProfilePicFile(null); }
+    else { setNewProfilePicFile(null); }
   };
 
   const handleSaveChanges = async () => {
-    // This function handles saving Bio and Profile Picture changes
     console.log("[SAVE ARTIST - 1] handleSaveChanges (Bio/Pic) called");
-    setErrorState(null); // Clear previous errors
+    setErrorState(null);
     try {
         setSaving(true);
         const token = localStorage.getItem("token");
@@ -181,11 +163,10 @@ const ArtistProfile: React.FC = () => {
             setBio(updatedArtistData.bio || "");
             setProfilePicture(updatedArtistData.profile_picture || null);
             setNewBio(updatedArtistData.bio || "");
-            // Backend might also return updated cv_url if that endpoint does full profile return
             if (updatedArtistData.cv_url !== undefined) setCvUrl(updatedArtistData.cv_url || null);
-        } else { // Fallback if no specific artist data is in response
+        } else {
             setBio(newBio);
-            if (newProfilePicFile) { // Re-fetch if picture changed and no detailed data returned
+            if (newProfilePicFile) {
                const meResponse = await axios.get(`${BACKEND_URL}/api/users/me`, { headers: { Authorization: `Bearer ${token}` } });
                setProfilePicture(meResponse.data?.artist?.profile_picture || null);
                if (meResponse.data?.artist?.cv_url !== undefined) setCvUrl(meResponse.data.artist.cv_url || null);
@@ -193,7 +174,6 @@ const ArtistProfile: React.FC = () => {
         }
         setNewProfilePicFile(null);
         alert("Profile changes (Bio/Photo) saved successfully!");
-        // Consider if setIsEditing(false) should be here or if user might want to upload CV next
     } catch (error: any) {
         console.error("Error saving profile changes:", error);
         const message = error.response?.data?.message || "Something went wrong saving profile changes.";
@@ -204,7 +184,7 @@ const ArtistProfile: React.FC = () => {
   };
 
   const handleDeletePicture = async () => {
-    if (!window.confirm("Are you sure you want to delete your profile picture?")) { return; }
+    if (!window.confirm("Are you sure?")) { return; }
     setDeleting(true); setErrorState(null);
     try {
       const token = localStorage.getItem("token");
@@ -222,7 +202,6 @@ const ArtistProfile: React.FC = () => {
     }
   };
 
-  // --- CV Management Handlers ---
   const handleCvFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files ? e.target.files[0] : null;
     if (file && file.type === "application/pdf") { setNewCvFile(file); }
@@ -236,10 +215,10 @@ const ArtistProfile: React.FC = () => {
     const token = localStorage.getItem("token");
     if (!token) { alert("Authentication required."); setCvProcessing(false); return; }
     const formData = new FormData();
-    formData.append("cv", newCvFile); // Backend endpoint should expect a field named "cv"
+    formData.append("cv", newCvFile);
     try {
       const response = await axios.post(`${BACKEND_URL}/api/artists/profile/cv`, formData, { headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" } });
-      setCvUrl(response.data.cv_url); // Assume backend returns new { cv_url: "..." }
+      setCvUrl(response.data.cv_url);
       setNewCvFile(null);
       alert("CV uploaded successfully!");
     } catch (err: any) {
@@ -259,8 +238,7 @@ const ArtistProfile: React.FC = () => {
     if (!token) { alert("Authentication required."); setCvProcessing(false); return; }
     try {
       await axios.delete(`${BACKEND_URL}/api/artists/profile/cv`, { headers: { Authorization: `Bearer ${token}` } });
-      setCvUrl(null);
-      setNewCvFile(null);
+      setCvUrl(null); setNewCvFile(null);
       alert("CV removed successfully.");
     } catch (err: any) {
       console.error("Error deleting CV:", err);
@@ -270,11 +248,8 @@ const ArtistProfile: React.FC = () => {
       setCvProcessing(false);
     }
   };
-  // --- End CV Handlers ---
-
 
   if (loading) { return ( <> <Navbar /> <div className="profile-container artist-profile-container loading-profile"> <p>Loading artist profile...</p> </div> </> ); }
-  // Display general load error if not in an active saving/deleting/cvProcessing state
   if (error && !isEditing && !saving && !deleting && !cvProcessing) {
      return ( <> <Navbar /> <div className="profile-container artist-profile-container error-profile"> <p className="error-message">{error}</p> </div> </> );
   }
@@ -284,7 +259,6 @@ const ArtistProfile: React.FC = () => {
       <Navbar />
       <div className="profile-container artist-profile-container">
         <h2 className="profile-title">{isEditing ? "Edit Your Profile" : (profileUserName || "My Artist Profile")}</h2>
-        {/* Display specific action errors when editing */}
         {error && isEditing && <p className="error-message inline-error">{error}</p>}
 
         <div className="profile-header">
@@ -302,21 +276,17 @@ const ArtistProfile: React.FC = () => {
 
         <div className="profile-content">
             {!isEditing ? (
-              // --- Display Mode ---
               <>
                 <div className="profile-section"> <h4>Bio</h4> <p className="bio-text">{bio || "No bio provided."}</p> </div>
-                {/* CV Display Section */}
                 <div className="profile-section cv-section">
                   <h4>Curriculum Vitae (CV)</h4>
                   {cvUrl ? ( <div className="cv-display"> <FaFilePdf className="pdf-icon" /> <a href={cvUrl} target="_blank" rel="noopener noreferrer" className="cv-link"> View CV </a> </div> )
                    : ( <p className="no-cv-message">No CV uploaded yet.</p> )}
                 </div>
-                {/* Reviews Section */}
                 <div className="reviews-section profile-section">
                      <h4>Reviews ({reviewCount})</h4>
                      {reviewsLoading ? ( <p>Loading...</p> ) : reviews.length > 0 ? ( <div className="reviews-list"> {reviews.map((review) => {
                                 const dateValue = review.created_at || (review as any).createdAt;
-                                // console.log(`Review ${review.review_id} date:`, dateValue); // Keep for date debug if needed
                                 return (
                                   <div key={review.review_id} className="review-item">
                                       <div className="review-header">
@@ -331,31 +301,26 @@ const ArtistProfile: React.FC = () => {
                 </div>
               </>
             ) : (
-              // --- Editing Mode ---
               <div className="edit-form">
                 <div className="form-field-group"> <label htmlFor="artistBio">Bio:</label> <textarea id="artistBio" value={newBio} onChange={(e) => setNewBio(e.target.value)} rows={5} className="bio-input" /> </div>
-                {/* Profile Picture upload is handled near image */}
-
-                {/* CV Upload/Management Section in Edit Mode */}
                 <div className="form-field-group cv-edit-section">
-                  <label htmlFor="cvUpload">Update Curriculum Vitae (PDF only):</label>
-                  <input id="cvUpload" type="file" accept="application/pdf" onChange={handleCvFileChange} className="file-input" />
-                  {newCvFile && ( <button type="button" onClick={handleCvUpload} disabled={cvProcessing || saving || deleting} className="action-btn upload-cv-btn"> {cvProcessing && !saving && !deleting ? "Uploading CV..." : `Upload ${newCvFile.name.substring(0,20)}...`} </button> )}
+                  <label htmlFor="cvUpload" className="cv-section-title">Update Curriculum Vitae (PDF only):</label> {/* Use specific title class */}
+                  <label htmlFor="cvUpload" className="cv-upload-label action-btn"> {/* Styled label for file input */}
+                    {newCvFile ? `Selected: ${newCvFile.name.substring(0, 25)}${newCvFile.name.length > 25 ? '...' : ''}` : (cvUrl ? "Change CV File" : "Choose CV File")}
+                  </label>
+                  <input id="cvUpload" type="file" accept="application/pdf" onChange={handleCvFileChange} style={{ display: 'none' }} className="file-input-hidden" />
+                  {newCvFile && ( <button type="button" onClick={handleCvUpload} disabled={cvProcessing || saving || deleting} className="action-btn upload-cv-btn" style={{marginTop: '10px'}}> {cvProcessing && !saving && !deleting ? "Uploading CV..." : `Upload Selected CV`} </button> )}
                   {cvUrl && (
                     <div className="current-cv-display">
-                        <p>Current CV: <FaFilePdf className="pdf-icon-small" /> <a href={cvUrl} target="_blank" rel="noopener noreferrer" className="cv-link-small">View</a></p>
-                        {!newCvFile && (
-                            <button type="button" onClick={handleCvDelete} disabled={cvProcessing || saving || deleting} className="action-btn delete-cv-btn danger">
-                                {cvProcessing && !saving && !deleting ? "Removing..." : "Remove CV"}
-                            </button>
-                        )}
+                        <span>Current CV: <FaFilePdf className="pdf-icon-inline" /> <a href={cvUrl} target="_blank" rel="noopener noreferrer" className="cv-link-inline">View</a></span>
+                        {!newCvFile && ( <button type="button" onClick={handleCvDelete} disabled={cvProcessing || saving || deleting} className="action-btn delete-cv-btn danger"> {cvProcessing && !saving && !deleting ? "Removing..." : "Remove CV"} </button> )}
                     </div>
                   )}
+                  {!cvUrl && !newCvFile && <p className="no-cv-message-edit">No CV uploaded yet. Choose one above.</p>}
                 </div>
-                {/* End CV Upload Section */}
-
                 <div className="btn-row form-actions">
-                  <button className="save-btn submit-btn" onClick={handleSaveChanges} disabled={saving || deleting || cvProcessing}> {saving ? "Saving Profile..." : "Save profile"} </button>
+                  {/* This is the button that was causing the error on line 331 */}
+                  <button className="save-btn submit-btn" onClick={handleSaveChanges} disabled={saving || deleting || cvProcessing}> {saving ? "Saving Profile..." : "Save Bio/Photo"} </button>
                   <button type="button" className="cancel-btn" onClick={handleEditToggle} disabled={saving || deleting || cvProcessing}> Done Editing </button>
                 </div>
               </div>
@@ -367,6 +332,3 @@ const ArtistProfile: React.FC = () => {
 };
 
 export default ArtistProfile;
-
-// REMOVE any stray function setError(arg0: string) { throw new Error("Function not implemented."); }
-// if it was accidentally left at the bottom of your file.
