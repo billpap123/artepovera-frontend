@@ -44,15 +44,16 @@ const formatCategoryName = (category: string | undefined): string => {
 
 // --- Embedded CSS Styles ---
 const componentStyles = `
-  .job-feed-container {
+   .job-feed-container {
     display: flex;
     flex-direction: column;
     padding: 20px;
-    font-family: 'Nunito', Arial, sans-serif; /* Using Nunito as primary */
-    max-width: 1200px; /* Max width of the whole page content */
-    margin: 30px auto; /* Centering the page content */
+    font-family: 'Nunito', Arial, sans-serif;
+    max-width: 1200px;
+    margin: 30px auto;
     width: 100%;
   }
+
 
   .job-feed-container h2 {
     text-align: center;
@@ -65,16 +66,17 @@ const componentStyles = `
 
   /* --- Filter Styles --- */
   .job-filters {
-    background: #f9f9f9; /* Consider var(--bg-container-light) */
+    background: #f9f9f9;
     padding: 25px;
     border-radius: 8px;
     margin-bottom: 30px;
     box-shadow: 0 3px 8px rgba(0,0,0,0.07);
-    border: 1px solid #e0e0e0; /* Consider var(--border-color-light) */
+    border: 1px solid #e0e0e0;
     flex-shrink: 0;
-    width: 100%; /* Ensure filters take full width within container */
+    width: 100%;
     box-sizing: border-box;
   }
+
 
   .job-filters h3 {
       margin-top: 0;
@@ -87,10 +89,15 @@ const componentStyles = `
 
   .filter-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 18px;
-    align-items: center;
+    /* Explicitly try for 3 columns for filters to encourage 2 rows */
+    grid-template-columns: repeat(3, 1fr);
+    /* If some filter items are wider (like budget group), you might need to adjust,
+       or use auto-fit with a larger minmax if you prefer more flexibility:
+       grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); */
+    gap: 20px; /* Increased gap slightly */
+    align-items: end; /* Align items to the bottom of their cell for a cleaner look */
   }
+
 
   .filter-input,
   .filter-select {
@@ -111,10 +118,13 @@ const componentStyles = `
   }
 
   .budget-filter-group {
-      display: flex;
-      align-items: center;
-      gap: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    /* If using 3 columns, this will take 1/3rd. If it needs more space: */
+    /* grid-column: span 2; /* Example: make budget group take 2 columns */
   }
+
   .budget-filter-group input { flex: 1; min-width: 70px; }
   .budget-filter-group span { padding: 0 5px; color: #555; }
 
@@ -136,20 +146,18 @@ const componentStyles = `
   /* --- Job Listing Styles (Key Area for Fix) --- */
   .job-listing {
     display: grid;
-    /* This defines 2 columns. If the message spans both, the grid still has these tracks. */
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, 1fr); /* Explicitly 2 columns */
     gap: 25px;
-    max-height: 75vh; /* Max height for scrolling */
-    overflow-y: auto; /* Enable scroll for content overflow */
+    max-height: 75vh;
+    overflow-y: auto;
     padding: 25px;
-    flex-grow: 1;      /* If .job-feed-container is flex, this allows .job-listing to take space */
-    min-height: 400px; /* <<< IMPORTANT: Maintains vertical space when empty */
-    width: 100%;       /* <<< IMPORTANT: Ensures it takes full width of its parent */
+    flex-grow: 1;
+    min-height: 400px; /* Adjust to be similar to 2 rows of cards */
+    width: 100%;
     box-sizing: border-box;
-    border: 1px solid #e0e0e0; /* var(--border-color-light) */
+    border: 1px solid #e0e0e0;
     border-radius: 8px;
-    background-color: #fdfdfd; /* var(--bg-page) or var(--bg-container-light) */
-    position: relative; /* For potential absolute positioning of children if needed */
+    background-color: #fdfdfd;
   }
 
   /* --- Job Card Styles --- */
@@ -183,20 +191,20 @@ const componentStyles = `
   .job-listing .loading-message,
   .job-listing .error-message,
   .job-listing .no-jobs-message {
-    grid-column: 1 / -1;   /* <<< KEY: Ensures the message spans all grid columns */
-    display: flex;         /* For centering content within the message box */
+    grid-column: 1 / -1;   /* Span both conceptual columns */
+    display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     text-align: center;
     padding: 40px 20px;
-    color: #6c757d;       /* var(--text-light) */
+    color: #6c757d;
     font-style: italic;
     font-size: 1.1em;
-    width: 100%;           /* Make the message element itself take full width of its grid cell */
-    box-sizing: border-box;
-    /* min-height: 200px; */ /* Message itself can have a min-height, ensuring it also pushes content if needed */
-                             /* This will be centered within the .job-listing's min-height due to parent's align-content */
+    /* Ensure the message itself tries to occupy the space available */
+    /* This will be centered in the min-height of .job-listing */
+    /* No specific height or width needed here as grid-column handles width,
+       and flex properties handle centering within that span. */
   }
 
   .job-listing.is-empty { /* OPTIONAL: Add this class to .job-listing via JS when no jobs */
