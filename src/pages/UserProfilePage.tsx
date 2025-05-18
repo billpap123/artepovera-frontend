@@ -4,6 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom'; // Added useNavigate
 import axios from 'axios';
 import Navbar from '../components/Navbar';
 import '../styles/UserProfilePage.css'; // Ensure this file exists and has styles
+import { FaFilePdf } from 'react-icons/fa'; // Example PDF icon
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:50001";
 
@@ -67,11 +68,13 @@ interface JobPosting {
   title: string;
   description?: string;
 }
-interface ArtistProfileData { // Renamed to avoid conflict
+interface ArtistProfileData {
   artist_id: number;
   bio?: string;
   profile_picture?: string;
   is_student?: boolean;
+  cv_url?: string | null;       // <<< ADD cv_url
+  cv_public_id?: string | null; // <<< ADD cv_public_id (optional, mainly for owner's management)
 }
 interface EmployerProfileData { // Renamed to avoid conflict
   employer_id: number;
@@ -226,6 +229,7 @@ const UserProfilePage: React.FC = () => {
   const bio = isArtistProfile ? userProfile.artistProfile?.bio : userProfile.employerProfile?.bio;
   const profilePic = isArtistProfile ? userProfile.artistProfile?.profile_picture : userProfile.employerProfile?.profile_picture;
   const isStudent = isArtistProfile && userProfile.artistProfile?.is_student === true;
+  const cvUrl = isArtistProfile ? userProfile.artistProfile?.cv_url : null;
 
   return (
     <>
@@ -271,6 +275,22 @@ const UserProfilePage: React.FC = () => {
               <h4>Bio</h4>
               <p className="user-bio">{bio || 'No bio available.'}</p>
             </div>
+             {/* --- ADD CV Display Section (only for Artist profiles) --- */}
+             {isArtistProfile && (
+              <div className="profile-section-public cv-section">
+                <h4>Curriculum Vitae (CV)</h4>
+                {cvUrl ? (
+                  <div className="cv-display">
+                    <FaFilePdf className="pdf-icon" /> {/* react-icons PDF icon */}
+                    <a href={cvUrl} target="_blank" rel="noopener noreferrer" className="cv-link">
+                      View CV
+                    </a>
+                  </div>
+                ) : (
+                  <p className="no-cv-message">No CV available.</p>
+                )}
+              </div>
+            )}
 
             {/* --- ADD Reviews Section --- */}
             <div className="reviews-section profile-section-public">
