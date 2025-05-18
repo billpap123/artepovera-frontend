@@ -44,16 +44,16 @@ const formatCategoryName = (category: string | undefined): string => {
 
 // --- Embedded CSS Styles ---
 const componentStyles = `
-  .job-feed-container {
+   .job-feed-container {
     display: flex;
     flex-direction: column;
     padding: 20px;
-    font-family: Arial, sans-serif;
+    font-family: Arial, sans-serif; /* Consider 'Nunito' for consistency */
     max-width: 1200px;
     margin: 0 auto;
-    /* Removed border/background from container to apply to specific sections if needed */
-    /* height: calc(100vh - 80px); /* Example: viewport height minus navbar */
+    width: 100%; /* Ensure it tries to use available width */
   }
+
 
   .job-feed-container h2 {
     text-align: center;
@@ -132,28 +132,25 @@ const componentStyles = `
 
   /* --- Job Listing Styles --- */
   .job-listing {
-    display: grid; /* Keep as grid if you want columns when there ARE jobs */
-    /* If there are no jobs, we want the container to still feel substantial */
-    /* and center the "no jobs" message. */
-    /* We can add specific styles when it's empty via a class or make it flex for centering */
-    grid-template-columns: repeat(2, 1fr); /* 2 columns when jobs are present */
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* More responsive column sizing */
+    /* If you strictly want 2 columns, use: grid-template-columns: repeat(2, 1fr); */
+    /* For 1 column on smaller screens, you have a media query later */
     gap: 20px;
     max-height: 75vh;
     overflow-y: auto;
-    padding: 15px; /* More consistent padding */
+    padding: 20px; /* Consistent padding */
     flex-grow: 1;
-    min-height: 400px; /* <<< INCREASED MINIMUM HEIGHT (Adjust as needed) */
+    min-height: 300px; /* ADJUST THIS - This maintains a minimum area */
+    width: 100%;       /* <<< ENSURE IT TAKES FULL WIDTH OF ITS PARENT */
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
     border: 1px solid #e0e0e0;
     border-radius: 8px;
     background-color: #fdfdfd;
-    /* Added for centering the .no-jobs-message when it's the only child */
-    /* These will apply if the grid has only one child spanning all columns */
-    /* or if you change display to flex when empty */
-    align-content: center; /* Vertically center grid content if less than container height */
-    justify-content: center; /* Horizontally center if items don't fill */
+    /* These help when content is sparse, like the 'no jobs' message */
+    align-content: flex-start; /* Align grid tracks to the start */
   }
 
-  /* --- Job Card Styles --- */
   .job-card {
     padding: 20px;
     border: 1px solid #ddd;
@@ -162,8 +159,10 @@ const componentStyles = `
     box-shadow: 0 2px 5px rgba(0,0,0,0.08);
     display: flex;
     flex-direction: column;
-    min-height: 280px; /* ADJUST AS NEEDED */
+    min-height: 280px; /* Ensure cards have a decent height */
   }
+
+
 
   .job-card h3 {
     color: #774402;
@@ -228,27 +227,29 @@ const componentStyles = `
     background-color: #b0563f;
   }
 
-   .error-message, .loading-message, .no-jobs-message {
-    color: #555;
-    text-align: center;
-    padding: 40px 20px;
-    grid-column: 1 / -1; /* Spans all grid columns */
-    font-style: italic;
-    font-size: 1.1em; /* Slightly larger message text */
-    /* Added to help center within the min-height of .job-listing */
+    /* --- Styling for Loading/Error/No Jobs Messages --- */
+  .job-listing .loading-message,
+  .job-listing .error-message,
+  .job-listing .no-jobs-message {
+    grid-column: 1 / -1; /* Make the message span all columns of the grid */
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100%; /* Try to make it fill the parent if it's the only item */
-    min-height: 150px; /* Give the message itself some presence */
+    justify-content: center; /* Center vertically */
+    align-items: center;   /* Center horizontally */
+    text-align: center;
+    padding: 40px 20px;
+    color: #555;
+    font-style: italic;
+    font-size: 1.1em;
+    width: 100%; /* Ensure it tries to use the full spanned width */
+    min-height: 150px; /* Give the message box itself some height */
+    box-sizing: border-box;
   }
-  .error-message {
+  .job-listing .error-message {
       color: red;
       font-style: normal;
       font-weight: bold;
   }
-
 
   /* --- Autocomplete Styles --- */
   .city-filter-container {
