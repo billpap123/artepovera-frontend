@@ -48,16 +48,16 @@ const componentStyles = `
     display: flex;
     flex-direction: column;
     padding: 20px;
-    font-family: 'Nunito', Arial, sans-serif; /* Added Nunito */
-    max-width: 1200px; /* Overall page constraint */
-    margin: 30px auto; /* Centering page content */
+    font-family: 'Nunito', Arial, sans-serif;
+    max-width: 1200px;
+    margin: 30px auto;
     width: 100%;
   }
 
   .job-feed-container h2 {
     text-align: center;
     margin-bottom: 30px;
-    color: #333; /* Consider using your CSS variables */
+    color: #333;
     font-weight: 700;
     font-size: 2rem;
     flex-shrink: 0;
@@ -65,44 +65,44 @@ const componentStyles = `
 
   /* --- Filter Styles --- */
   .job-filters {
-    background: #f9f9f9; /* Consider var(--bg-container-light) */
-    padding: 25px; /* More padding */
+    background: #f9f9f9;
+    padding: 25px;
     border-radius: 8px;
-    margin-bottom: 30px; /* More space */
-    box-shadow: 0 3px 8px rgba(0,0,0,0.07); /* Softer shadow */
-    border: 1px solid #e0e0e0; /* Softer border */
+    margin-bottom: 30px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.07);
+    border: 1px solid #e0e0e0;
     flex-shrink: 0;
   }
 
   .job-filters h3 {
       margin-top: 0;
-      margin-bottom: 20px; /* More space */
-      color: #444; /* Consider var(--text-medium) */
-      border-bottom: 1px solid #ddd; /* Softer separator */
+      margin-bottom: 20px;
+      color: #444;
+      border-bottom: 1px solid #ddd;
       padding-bottom: 12px;
       font-size: 1.3rem;
   }
 
   .filter-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Adjusted minmax */
-    gap: 18px; /* Adjusted gap */
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 18px;
     align-items: center;
   }
 
   .filter-input,
   .filter-select {
     padding: 10px 12px;
-    border: 1px solid #ccc; /* Consider var(--border-color) */
-    border-radius: 6px; /* Softer radius */
+    border: 1px solid #ccc;
+    border-radius: 6px;
     width: 100%;
     box-sizing: border-box;
     font-size: 0.95rem;
-    background-color: #fff; /* Ensure background for select */
+    background-color: #fff;
   }
   .filter-input:focus,
   .filter-select:focus {
-    border-color: #C96A50; /* var(--terracotta-red) or your accent */
+    border-color: #C96A50; /* Your accent color */
     box-shadow: 0 0 0 2px rgba(201, 106, 80, 0.2);
     outline: none;
   }
@@ -117,7 +117,7 @@ const componentStyles = `
 
   .clear-filters-button {
     padding: 10px 15px;
-    background-color: #E57373; /* Softer Red/Orange for clear */
+    background-color: #E57373;
     color: white;
     border: none;
     border-radius: 6px;
@@ -127,84 +127,70 @@ const componentStyles = `
     font-size: 0.95rem;
   }
   .clear-filters-button:hover {
-      background-color: #EF5350; /* Darker shade */
+      background-color: #EF5350;
   }
 
   /* --- Job Listing Styles --- */
   .job-listing {
     display: grid;
-    /* Forcing 2 columns explicitly. Media query handles 1 column. */
-    grid-template-columns: repeat(2, 1fr);
-    gap: 25px; /* Slightly more gap */
-    max-height: 75vh; /* Keep if you want a scrollable fixed height area */
+    grid-template-columns: repeat(2, 1fr); /* Explicitly 2 columns */
+    gap: 25px;
+    max-height: 75vh;
     overflow-y: auto;
-    padding: 25px; /* More padding */
+    padding: 25px;
     flex-grow: 1;
-    min-height: 450px; /* <<< KEY: Keep this to maintain height when empty */
-    width: 100%;       /* <<< KEY: Keep this to maintain width */
+    min-height: 400px; /* Maintain a minimum height */
+    width: 100%;       /* Crucial for taking parent's width */
     box-sizing: border-box;
     border: 1px solid #e0e0e0;
     border-radius: 8px;
-    background-color: #fdfdfd; /* Light background for the listing area */
-    position: relative; /* Needed if you ever want to absolutely position something inside */
+    background-color: #fdfdfd;
+    /* align-content: flex-start; /* Default is stretch, flex-start can be good if content is shorter than min-height */
   }
 
   /* --- Job Card Styles --- */
   .job-card {
     padding: 20px;
-    border: 1px solid #e0e0e0; /* Softer border for cards */
+    border: 1px solid #e0e0e0;
     border-radius: 8px;
     background-color: #fff;
     box-shadow: 0 2px 6px rgba(0,0,0,0.06);
     display: flex;
     flex-direction: column;
-    min-height: 280px; /* Or adjust as needed */
+    min-height: 280px;
     transition: box-shadow 0.2s ease-in-out, transform 0.2s ease-in-out;
   }
-  .job-card:hover {
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    transform: translateY(-3px);
-  }
+  .job-card:hover { /* ... (keep hover styles) ... */ }
+  .job-card h3 { /* ... keep ... */ }
+  .job-card p { /* ... keep ... */ }
+  .employer-name { /* ... keep ... */ }
+  .job-description { /* ... keep ... */ }
+  .job-details-grid { /* ... keep ... */ }
+  .job-card .posted-date { /* ... keep ... */ }
+  .apply-button { /* ... keep ... */ }
 
-  .job-card h3 {
-    color: #774402; /* Consider var(--terracotta-red) or var(--text-medium) */
-    margin: 0 0 10px 0;
-    font-size: 1.3em;
-  }
-   .job-card p { margin: 0; font-size: 0.9rem; color: #555; line-height: 1.5; }
-  .employer-name { font-size: 0.85em; color: #7f8c8d; margin-bottom: 15px; } /* Consider var(--text-light) */
-  .job-description { color: #34495e; margin-bottom: 15px; flex-grow: 1; } /* Consider var(--text-dark) */
-  .job-details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px 15px; font-size: 0.85em; color: #555; margin-bottom: 15px; }
-   .job-details-grid p { margin-bottom: 5px; font-size: 1em; } /* Make text slightly larger relative to parent */
-   .job-card .posted-date { font-size: 0.75em; color: #999; margin-top: 10px; text-align: right; }
-
-  .apply-button {
-    margin-top: auto; padding: 10px 15px; background-color: #C96A50; /* var(--terracotta-red) */
-    color: white; border: none; border-radius: 4px; cursor: pointer; text-align: center;
-    font-weight: bold; transition: background-color 0.2s ease; align-self: flex-start;
-  }
-  .apply-button:hover { background-color: #b0563f; /* var(--dark-red) or darker terracotta */ }
 
   /* --- Styling for Loading/Error/No Jobs Messages --- */
   .job-listing .loading-message,
   .job-listing .error-message,
   .job-listing .no-jobs-message {
-    grid-column: 1 / -1; /* Crucial: Make the message span all columns */
+    grid-column: 1 / -1; /* This makes the P tag span both conceptual columns */
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     text-align: center;
     padding: 40px 20px;
-    color: #6c757d; /* var(--text-light) */
+    color: #6c757d;
     font-style: italic;
     font-size: 1.1em;
-    /* The message will now be centered within the full width of the grid */
-    /* and the .job-listing min-height will be respected */
-    /* No specific height needed here, let parent control it */
+    /* If the .job-listing has min-height, this message will be centered within that space */
+    /* Optionally, give the message itself a min-height if desired for more vertical presence */
+    /* min-height: 200px; */
   }
+
   .job-listing .error-message {
-      color: #dc3545; /* var(--danger-red) or similar */
+      color: #dc3545;
       font-style: normal;
       font-weight: bold;
   }
