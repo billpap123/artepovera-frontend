@@ -44,256 +44,194 @@ const formatCategoryName = (category: string | undefined): string => {
 
 // --- Embedded CSS Styles ---
 const componentStyles = `
-   .job-feed-container {
+  .job-feed-container {
     display: flex;
     flex-direction: column;
     padding: 20px;
-    font-family: Arial, sans-serif; /* Consider 'Nunito' for consistency */
-    max-width: 1200px;
-    margin: 0 auto;
-    width: 100%; /* Ensure it tries to use available width */
+    font-family: 'Nunito', Arial, sans-serif; /* Added Nunito */
+    max-width: 1200px; /* Overall page constraint */
+    margin: 30px auto; /* Centering page content */
+    width: 100%;
   }
-
 
   .job-feed-container h2 {
     text-align: center;
     margin-bottom: 30px;
-    color: #333;
+    color: #333; /* Consider using your CSS variables */
+    font-weight: 700;
+    font-size: 2rem;
     flex-shrink: 0;
   }
 
   /* --- Filter Styles --- */
   .job-filters {
-    background: #f9f9f9;
-    padding: 20px;
+    background: #f9f9f9; /* Consider var(--bg-container-light) */
+    padding: 25px; /* More padding */
     border-radius: 8px;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    border: 1px solid #eee;
+    margin-bottom: 30px; /* More space */
+    box-shadow: 0 3px 8px rgba(0,0,0,0.07); /* Softer shadow */
+    border: 1px solid #e0e0e0; /* Softer border */
     flex-shrink: 0;
   }
 
   .job-filters h3 {
       margin-top: 0;
-      margin-bottom: 15px;
-      color: #444;
-      border-bottom: 1px solid #eee;
-      padding-bottom: 10px;
+      margin-bottom: 20px; /* More space */
+      color: #444; /* Consider var(--text-medium) */
+      border-bottom: 1px solid #ddd; /* Softer separator */
+      padding-bottom: 12px;
+      font-size: 1.3rem;
   }
 
   .filter-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 15px;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Adjusted minmax */
+    gap: 18px; /* Adjusted gap */
     align-items: center;
   }
 
   .filter-input,
   .filter-select {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    padding: 10px 12px;
+    border: 1px solid #ccc; /* Consider var(--border-color) */
+    border-radius: 6px; /* Softer radius */
     width: 100%;
     box-sizing: border-box;
+    font-size: 0.95rem;
+    background-color: #fff; /* Ensure background for select */
   }
-
-  .filter-select {
-     background: white;
+  .filter-input:focus,
+  .filter-select:focus {
+    border-color: #C96A50; /* var(--terracotta-red) or your accent */
+    box-shadow: 0 0 0 2px rgba(201, 106, 80, 0.2);
+    outline: none;
   }
 
   .budget-filter-group {
       display: flex;
       align-items: center;
-      gap: 5px;
+      gap: 8px;
   }
-
-  .budget-filter-group input {
-    flex: 1;
-    min-width: 80px;
-  }
-
-  .budget-filter-group span {
-      padding: 0 5px;
-  }
+  .budget-filter-group input { flex: 1; min-width: 70px; }
+  .budget-filter-group span { padding: 0 5px; color: #555; }
 
   .clear-filters-button {
     padding: 10px 15px;
-    background-color: #e59f09;
+    background-color: #E57373; /* Softer Red/Orange for clear */
     color: white;
     border: none;
-    border-radius: 4px;
+    border-radius: 6px;
     cursor: pointer;
     transition: background-color 0.2s ease;
-    font-weight: bold;
+    font-weight: 600;
+    font-size: 0.95rem;
   }
   .clear-filters-button:hover {
-      background-color: #c88a07;
+      background-color: #EF5350; /* Darker shade */
   }
 
   /* --- Job Listing Styles --- */
   .job-listing {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* More responsive column sizing */
-    /* If you strictly want 2 columns, use: grid-template-columns: repeat(2, 1fr); */
-    /* For 1 column on smaller screens, you have a media query later */
-    gap: 20px;
-    max-height: 75vh;
+    /* Forcing 2 columns explicitly. Media query handles 1 column. */
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px; /* Slightly more gap */
+    max-height: 75vh; /* Keep if you want a scrollable fixed height area */
     overflow-y: auto;
-    padding: 20px; /* Consistent padding */
+    padding: 25px; /* More padding */
     flex-grow: 1;
-    min-height: 300px; /* ADJUST THIS - This maintains a minimum area */
-    width: 100%;       /* <<< ENSURE IT TAKES FULL WIDTH OF ITS PARENT */
-    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+    min-height: 450px; /* <<< KEY: Keep this to maintain height when empty */
+    width: 100%;       /* <<< KEY: Keep this to maintain width */
+    box-sizing: border-box;
     border: 1px solid #e0e0e0;
     border-radius: 8px;
-    background-color: #fdfdfd;
-    /* These help when content is sparse, like the 'no jobs' message */
-    align-content: flex-start; /* Align grid tracks to the start */
+    background-color: #fdfdfd; /* Light background for the listing area */
+    position: relative; /* Needed if you ever want to absolutely position something inside */
   }
 
+  /* --- Job Card Styles --- */
   .job-card {
     padding: 20px;
-    border: 1px solid #ddd;
+    border: 1px solid #e0e0e0; /* Softer border for cards */
     border-radius: 8px;
     background-color: #fff;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
     display: flex;
     flex-direction: column;
-    min-height: 280px; /* Ensure cards have a decent height */
+    min-height: 280px; /* Or adjust as needed */
+    transition: box-shadow 0.2s ease-in-out, transform 0.2s ease-in-out;
+  }
+  .job-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transform: translateY(-3px);
   }
 
-
-
   .job-card h3 {
-    color: #774402;
+    color: #774402; /* Consider var(--terracotta-red) or var(--text-medium) */
     margin: 0 0 10px 0;
     font-size: 1.3em;
   }
-
-   .job-card p {
-      margin: 0;
-      font-size: 0.9rem;
-      color: #555;
-      line-height: 1.5;
-   }
-
-  .employer-name {
-    font-size: 0.9em;
-    color: #7f8c8d;
-    margin-bottom: 15px;
-  }
-
-  .job-description {
-    color: #34495e;
-    margin-bottom: 15px;
-    flex-grow: 1;
-  }
-
-  .job-details-grid {
-     display: grid;
-     grid-template-columns: 1fr 1fr;
-     gap: 5px 15px;
-     font-size: 0.9em;
-     color: #555;
-     margin-bottom: 10px;
-  }
-
-   .job-details-grid p {
-       margin-bottom: 5px;
-       font-size: 0.9em;
-   }
-
-   .job-card .posted-date {
-    font-size: 0.8em;
-    color: #999;
-    margin-top: 10px;
-    text-align: right;
-  }
+   .job-card p { margin: 0; font-size: 0.9rem; color: #555; line-height: 1.5; }
+  .employer-name { font-size: 0.85em; color: #7f8c8d; margin-bottom: 15px; } /* Consider var(--text-light) */
+  .job-description { color: #34495e; margin-bottom: 15px; flex-grow: 1; } /* Consider var(--text-dark) */
+  .job-details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px 15px; font-size: 0.85em; color: #555; margin-bottom: 15px; }
+   .job-details-grid p { margin-bottom: 5px; font-size: 1em; } /* Make text slightly larger relative to parent */
+   .job-card .posted-date { font-size: 0.75em; color: #999; margin-top: 10px; text-align: right; }
 
   .apply-button {
-    margin-top: auto;
-    padding: 10px 15px;
-    background-color: #C96A50;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    text-align: center;
-    font-weight: bold;
-    transition: background-color 0.2s ease;
-    align-self: flex-start;
+    margin-top: auto; padding: 10px 15px; background-color: #C96A50; /* var(--terracotta-red) */
+    color: white; border: none; border-radius: 4px; cursor: pointer; text-align: center;
+    font-weight: bold; transition: background-color 0.2s ease; align-self: flex-start;
   }
-  .apply-button:hover {
-    background-color: #b0563f;
-  }
+  .apply-button:hover { background-color: #b0563f; /* var(--dark-red) or darker terracotta */ }
 
-    /* --- Styling for Loading/Error/No Jobs Messages --- */
+  /* --- Styling for Loading/Error/No Jobs Messages --- */
   .job-listing .loading-message,
   .job-listing .error-message,
   .job-listing .no-jobs-message {
-    grid-column: 1 / -1; /* Make the message span all columns of the grid */
+    grid-column: 1 / -1; /* Crucial: Make the message span all columns */
     display: flex;
     flex-direction: column;
-    justify-content: center; /* Center vertically */
-    align-items: center;   /* Center horizontally */
+    justify-content: center;
+    align-items: center;
     text-align: center;
     padding: 40px 20px;
-    color: #555;
+    color: #6c757d; /* var(--text-light) */
     font-style: italic;
     font-size: 1.1em;
-    width: 100%; /* Ensure it tries to use the full spanned width */
-    min-height: 150px; /* Give the message box itself some height */
-    box-sizing: border-box;
+    /* The message will now be centered within the full width of the grid */
+    /* and the .job-listing min-height will be respected */
+    /* No specific height needed here, let parent control it */
   }
   .job-listing .error-message {
-      color: red;
+      color: #dc3545; /* var(--danger-red) or similar */
       font-style: normal;
       font-weight: bold;
   }
 
   /* --- Autocomplete Styles --- */
-  .city-filter-container {
-    position: relative;
-  }
-  .city-suggestions {
-    position: absolute;
-    background-color: white;
-    border: 1px solid #ccc;
-    border-top: none;
-    border-radius: 0 0 4px 4px;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    max-height: 150px;
-    overflow-y: auto;
-    z-index: 10;
-    width: 100%;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    box-sizing: border-box;
-  }
-  .city-suggestions li {
-    padding: 8px 12px;
-    cursor: pointer;
-  }
-  .city-suggestions li:hover {
-    background-color: #f0f0f0;
-  }
+  .city-filter-container { position: relative; }
+  .city-suggestions { position: absolute; background-color: white; border: 1px solid #ccc; border-top: none; border-radius: 0 0 4px 4px; list-style: none; margin: 0; padding: 0; max-height: 150px; overflow-y: auto; z-index: 100; /* Higher z-index */ width: 100%; box-shadow: 0 4px 6px rgba(0,0,0,0.1); box-sizing: border-box; }
+  .city-suggestions li { padding: 8px 12px; cursor: pointer; }
+  .city-suggestions li:hover { background-color: #f0f0f0; }
+  .filter-grid > div { position: relative; /* For suggestions dropdown positioning */ }
 
-  .filter-grid > div, .filter-grid > input, .filter-grid > select {
-      position: relative;
-  }
 
   /* --- Media Query for smaller screens --- */
   @media (max-width: 768px) {
     .job-listing {
       grid-template-columns: 1fr; /* Switch to 1 column */
+      min-height: 300px; /* Adjust min-height for single column view if needed */
     }
-     .filter-grid {
-       grid-template-columns: 1fr; /* Stack filters */
-     }
-     .job-details-grid {
-        grid-template-columns: 1fr; /* Stack job details */
-     }
+    .filter-grid {
+      grid-template-columns: 1fr; /* Stack filters */
+    }
+    .job-details-grid {
+       grid-template-columns: 1fr; /* Stack job details */
+    }
+    .job-card {
+        min-height: auto; /* Allow cards to be shorter in single column */
+    }
   }
 `;
 // --- End Embedded CSS ---
