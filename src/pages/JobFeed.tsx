@@ -264,6 +264,11 @@ const JobFeed: React.FC = () => {
   const [showCitySuggestions, setShowCitySuggestions] = useState(false);
   const cityInputRef = useRef<HTMLDivElement>(null);
 
+  // --- ADDED STATE FOR APPLICATION TRACKING ---
+  const [appliedJobIds, setAppliedJobIds] = useState<Set<number>>(new Set());
+  const [applyingToJobId, setApplyingToJobId] = useState<number | null>(null);
+  // --- END ADDED STATE ---
+
   // --- Memos and Effects ---
   const storedUser = useMemo(() => JSON.parse(localStorage.getItem("user") || "{}"), []);
   const isArtist = useMemo(() => storedUser?.user_type === "Artist", [storedUser]);
@@ -333,22 +338,44 @@ const JobFeed: React.FC = () => {
   }, []);
 
   // --- Handlers ---
+   // --- UPDATED handleApply Function ---
    const handleApply = async (jobId: number) => {
     const token = localStorage.getItem("token");
     if (!token || !isArtist) {
       alert("You must be logged in as an Artist to apply for jobs.");
       return;
     }
+    if (appliedJobIds.has(jobId)) { // Optional: client-side pre-check
+        alert("You have already applied to this job.");
+        return;
+    }
+
+    setApplyingToJobId(jobId); // Set loading state for THIS button
+    setError(null);
+
     try {
+      // Ensure your backend route is /api/job-postings/:jobId/apply
       const response = await axios.post(`${API_URL}/api/job-postings/${jobId}/apply`, {}, {
         headers: { Authorization: `Bearer ${token}` },
       });
       alert(response.data.message || "Application successful!");
+      // If successful (201 Created from backend, and application object is in response)
+      if ((response.status === 201 || response.status === 200) && response.data.application) {
+        setAppliedJobIds(prev => new Set(prev).add(jobId));
+      }
     } catch (error: any) {
       console.error(`Error applying to job ${jobId}:`, error);
-      alert(error.response?.data?.message || "Failed to apply. See console for details.");
+      const errorMessage = error.response?.data?.message || "Failed to apply. Please try again.";
+      alert(errorMessage);
+      // If backend confirms "already applied" (e.g., with a 409 status)
+      if (error.response?.status === 409) {
+        setAppliedJobIds(prev => new Set(prev).add(jobId));
+      }
+    } finally {
+      setApplyingToJobId(null); // Clear loading state for THIS button
     }
   };
+  // --- END UPDATED handleApply ---
 
   const clearFilters = () => {
     setFilterCity('');
@@ -448,8 +475,19 @@ const JobFeed: React.FC = () => {
                       {typeof job.insurance === 'boolean' && <p><strong>Insurance:</strong> {job.insurance ? "Yes" : "No"}</p>}
                     </div>
                     {job.created_at && ( <p className="posted-date"> Posted on: {new Date(job.created_at).toLocaleString()} </p> )}
-                    {isArtist && ( <button onClick={() => handleApply(job.id)} className="apply-button"> Apply now </button> )}
-                  </div>
+                    {isArtist && (
+                      <button
+                        onClick={() => handleApply(job.id)}
+                        className="apply-button"
+                        disabled={appliedJobIds.has(job.id) || applyingToJobId === job.id}
+                      >
+                        {applyingToJobId === job.id
+                          ? "Applying..."
+                          : appliedJobIds.has(job.id)
+                          ? 'Applied'
+                          : 'Apply Now'}
+                      </button>
+                    )}                  </div>
                 ))
               ) : ( <p className="no-jobs-message">No jobs match your current filters. Try adjusting them or check back later!</p> )
           }
