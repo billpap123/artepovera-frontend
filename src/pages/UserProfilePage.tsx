@@ -365,23 +365,59 @@ const UserProfilePage: React.FC = () => {
               </div>
               
               <div className="profile-actions">
+                {/* --- Like Button --- */}
+                {/* Shows if user is logged in and not viewing their own profile */}
                 {canLoggedInUserInteract && (
-                  <>
-                    <button onClick={handleLike} disabled={liked} className={`like-button ${liked ? 'liked' : ''}`}>
-                      {liked ? <FaHeart /> : <FaRegHeart />} {liked ? 'Liked' : 'Like'}
-                    </button>
-                    <button onClick={handleOpenRatingForm} disabled={alreadyReviewed || isLoadingReviewStatus} className={`rate-user-button ${alreadyReviewed ? 'reviewed' : ''}`}>
-                      {isLoadingReviewStatus ? "..." : alreadyReviewed ? "Reviewed" : "Rate User"}
-                    </button>
-                  </>
+                  <button 
+                    onClick={handleLike} 
+                    disabled={liked} 
+                    className={`like-button ${liked ? 'liked' : ''}`}
+                  >
+                    {liked ? <FaHeart /> : <FaRegHeart />} {liked ? 'Liked' : 'Like'}
+                  </button>
                 )}
+
+                {/* --- Rate User Button (General Review) --- */}
+                {/* Shows if: 
+                  1. User is logged in (canLoggedInUserInteract)
+                  2. It's NOT their own profile (canLoggedInUserInteract)
+                  3. AND it's NOT the case that an Artist is viewing another Artist's profile
+                */}
+                {canLoggedInUserInteract && !(loggedInUser?.user_type === 'Artist' && isArtistProfile) && (
+                  <button
+                    onClick={handleOpenRatingForm}
+                    disabled={alreadyReviewed || isLoadingReviewStatus}
+                    className={`rate-user-button ${alreadyReviewed ? 'reviewed' : ''}`}
+                  >
+                    {isLoadingReviewStatus
+                      ? "..." // Loading state for review status check
+                      : alreadyReviewed
+                      ? "Reviewed"
+                      : "Rate User"}
+                  </button>
+                )}
+
+                {/* --- Login to Interact Button --- */}
+                {/* Shows if user is NOT logged in and viewing someone else's profile */}
                 {!loggedInUser && !isOwnProfile && (
-                    <button className="interaction-button" onClick={() => navigate(`/login?redirect=/user-profile/${userIdFromParams}`)}>Login to Interact</button>
+                    <button 
+                      className="interaction-button" 
+                      onClick={() => navigate(`/login?redirect=/user-profile/${userIdFromParams}`)}
+                    >
+                      Login to Interact
+                    </button>
                 )}
-                {/* Artist Support Button */}
+
+                {/* --- Artist Support Button --- */}
+                {/* Shows if logged-in user is Artist, profile is Artist, and not own profile */}
                 {canLoggedInArtistInteractWithArtistProfile && (
-                  <button onClick={handleToggleSupport} disabled={isTogglingSupport || isLoadingSupportStatus} className={`support-button ${hasSupported ? 'supported' : ''}`}>
-                    {isLoadingSupportStatus ? "..." : isTogglingSupport ? "..." : hasSupported ? <FaHeart color="deeppink"/> : <FaRegHeart />} {hasSupported ? "Supported" : "Support Artist"}
+                  <button 
+                    onClick={handleToggleSupport} 
+                    disabled={isTogglingSupport || isLoadingSupportStatus} 
+                    className={`support-button ${hasSupported ? 'supported' : ''}`}
+                  >
+                    {isLoadingSupportStatus ? "..." : isTogglingSupport ? "..." : hasSupported ? <FaHeart color="deeppink"/> : <FaRegHeart />} 
+                    {hasSupported ? "Supported" : "Support Artist"}
                     {!isLoadingSupportStatus && <span className="support-count">({supportCount})</span>}
                   </button>
                 )}

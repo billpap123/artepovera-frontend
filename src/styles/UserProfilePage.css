@@ -67,7 +67,144 @@ body {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+/* src/styles/UserProfilePage.css or your main stylesheet */
 
+/* --- Artistic Viewpoints / Comments Section --- */
+.artist-comments-section {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #eee; /* Separator from content above */
+}
+
+.artist-comments-section h4 {
+  margin-bottom: 20px;
+  font-size: 1.3em;
+  color: #333;
+  display: flex;
+  align-items: center;
+}
+
+.artist-comments-section h4 svg { /* For the FaCommentDots icon */
+  margin-right: 8px;
+  color: #C96A50; /* Your theme color */
+}
+
+/* --- Comment Submission Form --- */
+.comment-form {
+  margin-bottom: 30px;
+  padding: 15px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+}
+
+.comment-form textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 1em;
+  min-height: 80px;
+  resize: vertical; /* Allow vertical resize, disable horizontal */
+  margin-bottom: 10px;
+  box-sizing: border-box; /* Important for width 100% */
+}
+
+.comment-form textarea:focus {
+  border-color: #C96A50; /* Your theme accent color */
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(201, 106, 80, 0.2);
+}
+
+.comment-form button[type="submit"] {
+  background-color: #C96A50; /* Your theme primary button color */
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.comment-form button[type="submit"]:hover:not(:disabled) {
+  background-color: #b0563f; /* Darker shade for hover */
+}
+
+.comment-form button[type="submit"]:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+/* --- List of Displayed Comments --- */
+.comments-list {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* Space between comment items */
+}
+
+.comment-item, .artist-comment-item { /* Shared styling */
+  background-color: #fff;
+  border: 1px solid #e7e7e7;
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.comment-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.commenter-pic {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 12px;
+  object-fit: cover; /* Ensures the image covers the area without distortion */
+  border: 1px solid #ddd;
+}
+
+.commenter-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Align items to the start */
+  flex-grow: 1;
+}
+
+.commenter-info strong {
+  font-weight: 600;
+  color: #333;
+  font-size: 0.95em;
+}
+
+.comment-date {
+  font-size: 0.8em;
+  color: #777;
+  margin-top: 2px;
+}
+
+.comment-text {
+  font-size: 0.95em;
+  line-height: 1.6;
+  color: #555;
+  white-space: pre-wrap; /* Preserve line breaks and spaces */
+  word-wrap: break-word; /* Ensure long words break */
+  margin-top: 8px;
+}
+
+.no-reviews, .no-viewpoints { /* For messages like "No artistic viewpoints..." */
+    color: #777;
+    font-style: italic;
+    padding: 15px;
+    text-align: center;
+    background-color: #f9f9f9;
+    border-radius: 4px;
+    margin-top: 10px;
+}
 /* The card that holds the user’s profile info */
 .profile-card {
   position: relative;
