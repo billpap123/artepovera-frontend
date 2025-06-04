@@ -4,12 +4,13 @@ import axios from 'axios';
 import '../styles/RatingForm.css'; // Make sure you create this CSS file!
 
 interface RatingFormProps {
-    chatId: number;
     reviewerId: number;
     reviewedUserId: number;
     reviewedUserName: string;
-    onClose: (submitted?: boolean) => void;
-}
+    onClose: (submittedSuccessfully?: boolean) => void; // Matches UserProfilePage's handleCloseRatingForm
+    chatId?: number | null; // <<< CHANGED: Made optional and nullable
+    // ... any other props
+  }
 
 // Star Rating Sub-Component
 const StarRatingInput = ({
