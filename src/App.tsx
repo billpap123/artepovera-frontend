@@ -1,60 +1,104 @@
-import React from "react";
+// src/App.tsx
+import React from "react"; // useEffect might be needed if you add context loading check
 import { Routes, Route, Navigate } from "react-router-dom";
-import { UserProvider } from "./context/UserContext";
+import { UserProvider, useUserContext } from "./context/UserContext"; // Correct import
 
+// Page imports
 import LandingPage from "./pages/LandingPage";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
-import ArtistProfile from "./pages/ArtistProfile";
-import EmployerProfile from "./pages/EmployerProfile";
+import ArtistProfile from "./pages/ArtistProfile"; // This might be a self-profile editing page
+import EmployerProfile from "./pages/EmployerProfile"; // This might be a self-profile editing page
 import MainPage from "./pages/MainPage";
 import ProtectedRoute from "./components/ProtectedRoute";
-import Portfolio from "./pages/Portfolio";
-import UserProfilePage from "./pages/UserProfilePage";
+import Portfolio from "./pages/Portfolio"; // Component for viewing/editing a portfolio
+import UserProfilePage from "./pages/UserProfilePage"; // Component for viewing any user's profile
 import JobListings from "./pages/JobListings";
 import ChatPage from "./pages/ChatPage";
 import PostJobPage from "./pages/PostJobPage";
+import MapView from "./pages/MapView";
 
-const App = () => {
-  const token = localStorage.getItem("token");
-  const user = token ? JSON.parse(localStorage.getItem("user") || "{}") : null;
+const AppContent = () => {
+  const token = localStorage.getItem("token"); // Keep for initial navigation guard
+
+  // --- Use the context to get user details ---
+  const { 
+    userId: contextLoggedInUserId,
+    userType: contextLoggedInUserType,
+    // isLoading: isUserContextLoading // Uncomment if your UserContext provides this
+  } = useUserContext();
+  // --- End using context ---
+
+  // Example: Show a global loader while context initializes (if it has isLoading state)
+  // if (isUserContextLoading) {
+  //   return <div className="app-loading-spinner">Loading session...</div>;
+  // }
+
+  const loggedInUserTypeForRoutes = contextLoggedInUserType;
+  const loggedInUserIdForRoutes = contextLoggedInUserId; // Type: number | null
 
   return (
-    <UserProvider>
-      <Routes>
-        {/* If logged in, go to /main, else show LandingPage */}
+    <Routes>
+      {/* Initial navigation based on token presence */}
+      <Route
+        path="/"
+        element={token ? <Navigate to="/main" replace /> : <LandingPage />}
+      />
+
+      {/* Public routes */}
+      <Route path="/register" element={<Register />} />
+      <Route path="/login" element={<Login />} />
+
+      {/* Protected routes (user must be logged in) */}
+      <Route element={<ProtectedRoute />}>
+        <Route path="/main" element={<MainPage />} />
+        
+        {/* Routes for users to edit their own specific profiles if these are distinct components */}
+        {/* These might need more specific logic based on userType from context if they are for "my profile" */}
+        <Route path="/artist-profile/edit" element={<ArtistProfile />} /> 
+        <Route path="/employer-profile/edit" element={<EmployerProfile />} />
+        
+        <Route path="/chat" element={<ChatPage />} />
         <Route
-          path="/"
-          element={token ? <Navigate to="/main" replace /> : <LandingPage />}
+          path="/portfolio" // Assumed to be "my portfolio" for logged-in artist
+          element={
+            <Portfolio 
+              artistId={
+                loggedInUserTypeForRoutes === 'Artist' 
+                  ? (loggedInUserIdForRoutes === null ? 0 : loggedInUserIdForRoutes) // If Artist & ID is null, pass 0 (or undefined)
+                  : 0 // If not an Artist, pass 0 (Portfolio needs to handle artistId=0 if it means "no specific artist" or "not applicable")
+              } 
+            />
+          }
         />
-
-        {/* Public routes */}
-        <Route path="/register" element={<Register />} />
-        <Route path="/login" element={<Login />} />
-
-        {/* Protected routes (must be logged in) */}
-        <Route element={<ProtectedRoute />}>
-          <Route path="/main" element={<MainPage />} />
-          <Route path="/artist-profile" element={<ArtistProfile />} />
-          <Route path="/employer-profile" element={<EmployerProfile />} />
-          <Route path="/chat" element={<ChatPage />} />
-          <Route
-            path="/portfolio"
-            element={<Portfolio artistId={user?.user_id || 0} />}
-          />
-          <Route path="/user-profile/:userId" element={<UserProfilePage />} />
-          <Route path="/job-listings" element={<JobListings />} />
-        </Route>
-
-        {/* “Post Job” can be public or protected, your call */}
-        <Route path="/post-job" element={<PostJobPage />} />
-
-        {/* Catch-all route */}
+        {/* Route to view any user's profile by their ID */}
+        <Route path="/user-profile/:userId" element={<UserProfilePage />} />
+        <Route path="/job-listings" element={<JobListings />} />
         <Route
-          path="*"
-          element={<Navigate to={token ? "/main" : "/login"} replace />}
+          path="/map"
+          element={
+            <MapView
+              userType={loggedInUserTypeForRoutes}
+              loggedInUserId={loggedInUserIdForRoutes}
+            />
+          }
         />
-      </Routes>
+        <Route path="/post-job" element={<PostJobPage />} /> {/* Moved PostJobPage to protected as it often requires login */}
+      </Route>
+
+      {/* Catch-all route */}
+      <Route
+        path="*"
+        element={<Navigate to={token ? "/main" : "/"} replace />} // Navigate to landing if no token, else to main
+      />
+    </Routes>
+  );
+};
+
+const App = () => {
+  return (
+    <UserProvider> {/* UserProvider wraps AppContent, so useUserContext works inside */}
+      <AppContent />
     </UserProvider>
   );
 };
