@@ -329,6 +329,8 @@ const UserProfilePage: React.FC = () => {
   if (!userProfile && loading) return <><Navbar /><div className="container loading-message">Loading user profile...</div></>;
   if (error) return <><Navbar /><div className="container error-message">{error}</div></>;
   if (!userProfile) return <><Navbar /><div className="container loading-message">No user profile data found.</div></>;
+  console.log("Reviews state:", reviews);
+  console.log("Profile Comments state:", profileComments);
 
   const profile = userProfile; // Alias for convenience
   
