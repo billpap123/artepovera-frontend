@@ -4,19 +4,20 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { useUserContext } from '../context/UserContext';
-import "../styles/Register.css"; // Make sure this file includes styles for .auth-page-container etc.
-import '../styles/Global.css'; // Keep if you have global styles
+import "../styles/Register.css";
+import '../styles/Global.css';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:50001";
 
 const Register = () => {
-  const { setUserId, setArtistId, setEmployerId } = useUserContext();
+  // Get all the necessary setters from your context
+  const { setUserId, setArtistId, setEmployerId, setUserType, setFullname } = useUserContext();
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [fullname, setFullname] = useState('');
+  const [fullnameState, setFullnameState] = useState(''); // Use a different name from context value
   const [phone_number, setPhoneNumber] = useState('');
-  const [user_type, setUserType] = useState('Artist'); // Default user type
+  const [user_type, setUserTypeState] = useState('Artist'); // Use a different name from context value
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
@@ -36,7 +37,6 @@ const Register = () => {
           (geoError) => {
             console.error("Geolocation error:", geoError);
             setEnableLocation(false); // Uncheck if error
-            // Provide more informative alert
             alert(`Could not get location: ${geoError.message}. Location sharing has been disabled.`);
           }
         );
@@ -54,61 +54,67 @@ const Register = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(''); // Clear previous errors
-    console.log("[REGISTER SUBMIT - 1] Form submitted. User type:", user_type, "isStudent:", isStudent, "enableLocation:", enableLocation);
+
+    if (!username || !email || !password || !fullnameState) {
+        setError("Please fill in all required fields.");
+        return;
+    }
 
     try {
       const requestBody: any = {
-        username, email, password, fullname, phone_number, user_type
+        username,
+        email,
+        password,
+        fullname: fullnameState,
+        phone_number,
+        user_type,
       };
 
       if (coords) {
-        requestBody.location = { coordinates: coords };
-        console.log("[REGISTER SUBMIT - 2] Location included in requestBody:", requestBody.location);
-      } else {
-        console.log("[REGISTER SUBMIT - 2] No location coordinates to include.");
+        requestBody.location = { type: 'Point', coordinates: coords }; // Ensure GeoJSON format
       }
 
       if (user_type === 'Artist' && isStudent) {
         requestBody.isStudent = true;
-        console.log("[REGISTER SUBMIT - 3] isStudent flag included for Artist.");
       }
 
-      console.log("[REGISTER SUBMIT - 4] Sending registration data to backend:", requestBody);
       const response = await axios.post(`${API_BASE_URL}/api/users/register`, requestBody);
 
-      console.log('[REGISTER SUBMIT - 5] Backend response.data:', JSON.stringify(response.data, null, 2));
       const { token, user } = response.data;
 
+      // Set items in local storage for session persistence
       localStorage.setItem('token', token);
       localStorage.setItem('user', JSON.stringify(user));
 
-      console.log('[REGISTER SUBMIT - 6] User object for navigation & context:', JSON.stringify(user, null, 2));
-
+      // Update the global context with all the new user's details
       if (user && user.user_id) {
         setUserId(user.user_id);
-        console.log("[REGISTER SUBMIT - 7] Context userId set to:", user.user_id);
+        setUserType(user.user_type);
+        setFullname(user.fullname); // Set fullname in context
 
-        if (user.user_type === 'Artist' && user.artist_id) {
-          console.log("[REGISTER SUBMIT - 8a] Navigating to /artist-profile with artist_id:", user.artist_id);
-          setArtistId(user.artist_id);
-          navigate('/artist-profile');
-        } else if (user.user_type === 'Employer' && user.employer_id) {
-          console.log("[REGISTER SUBMIT - 8b] Navigating to /employer-profile with employer_id:", user.employer_id);
-          setEmployerId(user.employer_id);
-          navigate('/employer-profile');
+        // --- CORRECTED NAVIGATION LOGIC ---
+        if (user.user_type === 'Artist') {
+          console.log("[REGISTER] Navigating to Artist Profile Edit page.");
+          setArtistId(user.artist_id || null); // Set artistId in context
+          navigate('/artist-profile/edit'); // Navigate to the correct edit page
+        } else if (user.user_type === 'Employer') {
+          console.log("[REGISTER] Navigating to Employer Profile Edit page.");
+          setEmployerId(user.employer_id || null); // Set employerId in context
+          navigate('/employer-profile/edit'); // Navigate to the correct edit page
         } else {
-          console.log("[REGISTER SUBMIT - 8c] Fallback navigation to /main. User details:", user);
+          // Fallback just in case, though should not be reached with current form options
           navigate('/main');
         }
+        // --- END CORRECTION ---
+
       } else {
-        console.error("[REGISTER SUBMIT - 9] Registration response missing user or user_id:", user);
-        setError("Registration successful, but essential user data missing in response. Please try logging in.");
+        console.error("[REGISTER] Registration response missing user or user_id:", user);
+        setError("Registration successful, but essential user data missing. Please try logging in.");
         navigate('/login');
       }
     } catch (err: any) {
-      console.error('[REGISTER SUBMIT - E1] Error in handleSubmit catch block:', err);
+      console.error('[REGISTER] Error in handleSubmit:', err);
       if (axios.isAxiosError(err) && err.response) {
-        console.error('[REGISTER SUBMIT - E2] Axios error response data:', err.response.data);
         setError(err.response.data.message || 'Registration failed. Please check your details.');
       } else {
         setError('An unexpected error occurred during registration.');
@@ -119,11 +125,11 @@ const Register = () => {
   return (
     <div className="auth-page-container">
         <div className="auth-logo-container">
-  <Link to="/">
-    <img src="/images/logo2.png" alt="Artepovera Home" className="auth-logo" />
-    <span style={{ marginLeft: '8px' }}>Back to main page</span> {/* Added span for spacing if logo first */}
-  </Link>
-</div>
+          <Link to="/">
+            <img src="/images/logo2.png" alt="Artepovera Home" className="auth-logo" />
+            <span style={{ marginLeft: '8px' }}>Back to main page</span>
+          </Link>
+        </div>
 
         <div className="register-container auth-form-container">
           <form onSubmit={handleSubmit} className="register-form auth-form">
@@ -159,6 +165,7 @@ const Register = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                minLength={6} // Added for better security practice
               />
             </div>
 
@@ -167,8 +174,8 @@ const Register = () => {
               <input
                 id="fullname"
                 type="text"
-                value={fullname}
-                onChange={(e) => setFullname(e.target.value)}
+                value={fullnameState}
+                onChange={(e) => setFullnameState(e.target.value)}
                 required
               />
             </div>
@@ -185,7 +192,7 @@ const Register = () => {
 
             <div>
               <label htmlFor="user_type">Register as:</label>
-              <select id="user_type" value={user_type} onChange={(e) => setUserType(e.target.value)}>
+              <select id="user_type" value={user_type} onChange={(e) => setUserTypeState(e.target.value)}>
                 <option value="Artist">Artist</option>
                 <option value="Employer">Employer</option>
               </select>

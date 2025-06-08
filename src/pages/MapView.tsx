@@ -144,7 +144,7 @@ const MapView: React.FC<MapViewProps> = ({ userType: loggedInUserType, loggedInU
       <Navbar />
       <div className="map-page-container">
         <div className="map-controls">
-          <h2 className="map-title">Explore the Community</h2>
+          <h2 className="map-title">Explore the community</h2>
         </div>
 
         <div className="map-content-wrapper">
