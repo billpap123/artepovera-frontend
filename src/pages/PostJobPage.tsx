@@ -298,18 +298,18 @@ const PostJobPage: React.FC = () => {
       <style>{postJobStyles}</style>
       <Navbar />
       <div className="post-job-container">
-        <h2>Post a New Job Opportunity</h2>
+        <h2>Post a new job opportunity</h2>
         <form onSubmit={handleSubmit} className="post-job-form">
 
             {/* Title */}
             <div className="form-field-group">
-              <label htmlFor="jobTitle">Job Title</label>
+              <label htmlFor="jobTitle">Job title</label>
               <input id="jobTitle" className="form-input" type="text" value={title} onChange={(e) => setTitle(e.target.value)} required placeholder="e.g., Mural Artist Needed for Cafe Wall"/>
             </div>
 
             {/* Description */}
             <div className="form-field-group">
-              <label htmlFor="jobDesc">Job Description</label>
+              <label htmlFor="jobDesc">Job description</label>
               <textarea id="jobDesc" className="form-textarea" value={description} onChange={(e) => setDescription(e.target.value)} required placeholder="Describe the project, required skills, deliverables, etc."/>
             </div>
 
@@ -354,7 +354,7 @@ const PostJobPage: React.FC = () => {
              {/* Details Row */}
              <div className="form-row">
                 <div className="form-field-group">
-                  <label htmlFor="jobDifficulty">Difficulty Level</label>
+                  <label htmlFor="jobDifficulty">Difficulty level</label>
                   <select id="jobDifficulty" className="form-select" value={difficulty} onChange={(e) => setDifficulty(e.target.value)} required>
                     <option value="" disabled>Select...</option>
                     <option value="Beginner">Beginner</option>
@@ -370,7 +370,7 @@ const PostJobPage: React.FC = () => {
 
             {/* Category */}
             <div className="form-field-group">
-              <label htmlFor="jobCategory">Artist Category Needed</label>
+              <label htmlFor="jobCategory">Artist category needed</label>
               <select id="jobCategory" className="form-select" value={artistCategory} onChange={(e) => setArtistCategory(e.target.value)} required>
                 <option value="" disabled>Select category...</option>
                 {artistCategories.map((cat) => (<option key={cat} value={cat}>{formatCategoryName(cat)}</option>))}
@@ -380,11 +380,11 @@ const PostJobPage: React.FC = () => {
             {/* Insurance */}
             <div className="form-checkbox-group">
               <input id="jobInsurance" type="checkbox" checked={insurance} onChange={(e) => setInsurance(e.target.checked)}/>
-              <label htmlFor="jobInsurance">Insurance Provided by Employer?</label>
+              <label htmlFor="jobInsurance">Insurance provided by employer?</label>
             </div>
 
             {/* Submit Button */}
-            <button type="submit" className="submit-button">Post Job Posting</button>
+            <button type="submit" className="submit-button">Create job posting</button>
 
         </form>
       </div>
