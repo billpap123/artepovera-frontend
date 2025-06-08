@@ -83,7 +83,6 @@ const AdminDashboard = () => {
                                         <th>Full Name</th>
                                         <th>Email</th>
                                         <th>User Type</th>
-                                        <th>Registered On</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
