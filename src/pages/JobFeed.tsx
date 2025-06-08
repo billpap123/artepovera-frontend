@@ -1,7 +1,6 @@
 // src/pages/JobFeed.tsx
 import React, { useEffect, useState, useMemo, useRef, useCallback } from 'react';
 import axios from 'axios';
-import Navbar from '../components/Navbar';
 
 // --- Constants and Interfaces ---
 const artistCategories = [
@@ -421,7 +420,6 @@ const JobFeed: React.FC = () => {
     <>
       {/* Styles are embedded here */}
       <style>{componentStyles}</style>
-      <Navbar />
       <div className="job-feed-container">
 
         {/* --- Filter Section --- */}

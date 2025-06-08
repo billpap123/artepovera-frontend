@@ -5,26 +5,23 @@ import { useUserContext } from '../context/UserContext';
 import Navbar from '../components/Navbar';
 import JobFeed from './JobFeed';
 import '../styles/MainPage.css';
-import { FaEye, FaBriefcase, FaPenSquare, FaMapMarkedAlt, FaPlusCircle, FaCommentDots } from 'react-icons/fa'; // <<< ADD FaCommentDots
+import { FaEye, FaBriefcase, FaPenSquare, FaMapMarkedAlt, FaPlusCircle, FaCommentDots } from 'react-icons/fa';
 
 const MainPage = () => {
   const navigate = useNavigate();
-  const { userType, userId, fullname } = useUserContext(); // <<< 'fullname' is now available
+  const { userType, userId, fullname } = useUserContext();
 
   useEffect(() => {
-    // This check ensures that if context is still loading (userId is null)
-    // and there's no token, we redirect. Your ProtectedRoute likely handles this too.
     if (!userId) {
       const timer = setTimeout(() => {
         if (!localStorage.getItem('token')) {
             navigate('/login');
         }
-      }, 500); // A small delay gives context time to load
+      }, 500);
       return () => clearTimeout(timer);
     }
   }, [userId, navigate]);
 
-  // Use the fullname from context for the welcome message
   const welcomeName = fullname ? `, ${fullname.split(' ')[0]}` : '';
 
   return (
@@ -39,7 +36,7 @@ const MainPage = () => {
         <div className="dashboard-grid">
           {userType === 'Artist' ? (
             <>
-              {/* Artist Cards */}
+              {/* --- Artist Cards --- */}
               <Link to={`/user-profile/${userId}`} className="dashboard-card stat-card">
                 <FaEye size={24} className="stat-icon" />
                 <div className="stat-text">
@@ -54,17 +51,20 @@ const MainPage = () => {
                   <p>Update your bio, CV, and photo</p>
                 </div>
               </Link>
-              <Link to="/portfolio" className="dashboard-card stat-card">
-                <FaPenSquare size={24} className="stat-icon" />
+              
+              {/* --- ADDED "My Messages" Card for Artists --- */}
+              <Link to="/chat" className="dashboard-card stat-card">
+                <FaCommentDots size={24} className="stat-icon" />
                 <div className="stat-text">
-                  <h3>Edit My Portfolio</h3>
-                  <p>Showcase your best work</p>
+                  <h3>My Messages</h3>
+                  <p>Check your conversations</p>
                 </div>
               </Link>
+              {/* --- END ADDED CARD --- */}
             </>
           ) : (
             <>
-              {/* Employer Cards */}
+              {/* --- Employer Cards --- */}
               <Link to={`/user-profile/${userId}`} className="dashboard-card stat-card">
                 <FaEye size={24} className="stat-icon" />
                 <div className="stat-text">
@@ -79,23 +79,26 @@ const MainPage = () => {
                   <p>Find the perfect artist</p>
                 </div>
               </Link>
+              
+              {/* --- ADDED "My Messages" Card for Employers --- */}
               <Link to="/chat" className="dashboard-card stat-card">
-                <FaBriefcase size={24} className="stat-icon" />
+                <FaCommentDots size={24} className="stat-icon" />
                 <div className="stat-text">
-                  <h3>My Job Postings</h3>
-                  <p>Manage your active jobs</p>
+                  <h3>My Messages</h3>
+                  <p>Check applicant conversations</p>
                 </div>
               </Link>
+              {/* --- END ADDED CARD --- */}
             </>
           )}
 
-          {/* Job Feed Card */}
+          {/* --- Job Feed Card --- */}
           <div className="dashboard-card job-feed-card">
             <h2>Job Feed</h2>
             <JobFeed />
           </div>
 
-          {/* Map Card */}
+          {/* --- Map Card --- */}
           <div className="dashboard-card map-card">
             <h3>Discover the Community</h3>
             <p>Find artists and employers near you.</p>
