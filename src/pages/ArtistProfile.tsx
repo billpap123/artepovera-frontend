@@ -267,7 +267,6 @@ const ArtistProfile: React.FC = () => {
               {isEditing && ( <div className="edit-picture-options"> <label htmlFor="profilePicUpload" className="upload-pic-btn">Change Photo</label> <input id="profilePicUpload" type="file" accept="image/png, image/jpeg" onChange={handleProfilePictureChange} style={{display: 'none'}} /> {profilePicture && (<button type="button" className="delete-btn small" onClick={handleDeletePicture} disabled={deleting || saving || cvProcessing}> {deleting ? "..." : "Remove"} </button> )} </div> )}
             </div>
             <div className="profile-summary">
-                 <h3 className="profile-name">{profileUserName || 'Artist Name'}</h3>
                  {isStudent && (<span className="student-badge">STUDENT ARTIST</span>)}
                  <div className="average-rating-display"> {reviewsLoading ? ( <span>Loading...</span> ) : reviewCount > 0 ? ( <> <DisplayStars rating={averageRating} /> <span className="rating-value">{averageRating?.toFixed(1)}</span> <span className="review-count">({reviewCount} review{reviewCount !== 1 ? 's' : ''})</span> </> ) : ( <span className="no-rating">No reviews yet</span> )} </div>
                  {!isEditing && ( <button className="edit-btn" onClick={handleEditToggle}> Edit Profile </button> )}
