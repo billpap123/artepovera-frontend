@@ -156,7 +156,7 @@ const RatingForm: React.FC<RatingFormProps> = ({
                             <StarRatingInput rating={professionalismRating} setRating={setProfessionalismRating} labelId="prof-label" />
                         </div>
                         <div className="form-group">
-                            <label id="qual-label">Quality of Work / Brief *</label>
+                            <label id="qual-label">Quality of work / brief *</label>
                             <StarRatingInput rating={qualityRating} setRating={setQualityRating} labelId="qual-label"/>
                         </div>
                          <div className="form-group">
@@ -164,7 +164,7 @@ const RatingForm: React.FC<RatingFormProps> = ({
                             <StarRatingInput rating={communicationRating} setRating={setCommunicationRating} labelId="comm-label"/>
                         </div>
                          <div className="form-group">
-                             <label id="overall-label">Overall Collaboration Rating *</label>
+                             <label id="overall-label">Overall collaboration rating *</label>
                              <StarRatingInput rating={overallRating} setRating={setOverallRating} labelId="overall-label"/>
                          </div>
                     </div>
@@ -173,7 +173,7 @@ const RatingForm: React.FC<RatingFormProps> = ({
                  {/* General Comment (Shown after selection) */}
                  {dealMade !== null && (
                      <div className="form-group fade-in">
-                         <label htmlFor={`comment-${chatId}`}>Additional Comments (Optional):</label>
+                         <label htmlFor={`comment-${chatId}`}>Additional comments (Optional):</label>
                          <textarea id={`comment-${chatId}`} value={comment} onChange={(e) => setComment(e.target.value)} rows={4} placeholder={dealMade === 'yes' ? "Any other feedback about the collaboration?" : "Any other comments?"} />
                      </div>
                  )}
