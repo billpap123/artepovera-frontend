@@ -506,7 +506,7 @@ const handleCommentSubmit = async (e: React.FormEvent) => {
             {/* Artist Comments Section */}
             {isArtistProfile && (
               <div className="artist-comments-section profile-section-public">
-                <h4>Artistic Viewpoints <FaCommentDots /> ({profileComments.length})</h4>
+                <h4>Artistic viewpoints <FaCommentDots /> ({profileComments.length})</h4>
                 
                 {/* --- MODIFIED: Conditional Rendering for Comment Form --- */}
                 {/* This block now handles all cases for the form's visibility */}
