@@ -129,3 +129,25 @@
   background-color: #f1f1f1;
   transform: scale(1.05);
 }
+
+/* Add this to your MainPage.css */
+
+.admin-card {
+  background-color: #f8d7da; /* A distinct background color for admin cards */
+  border: 1px solid #f5c6cb;
+}
+
+.admin-card .stat-icon {
+  color: #721c24; /* A color that contrasts with the background */
+}
+
+.admin-card:hover {
+  background-color: #f1c6c9;
+}
+
+.admin-overview-card {
+  grid-column: 1 / -1; /* Make it span the full width */
+  text-align: center;
+  font-size: 1.1rem;
+  color: #444;
+}
