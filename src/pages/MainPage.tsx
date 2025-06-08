@@ -56,11 +56,7 @@ const MainPage = () => {
         </div>
       </div>
 
-      {/* Map is completely separate, below the layout */}
-      <div className="map-section">
-        <h2>Artepovera members around the world</h2>
-        <MapView userType={user?.user_type} />
-      </div>
+     
     </>
   );
 };
