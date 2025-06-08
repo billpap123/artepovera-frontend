@@ -19,6 +19,7 @@ import PostJobPage from "./pages/PostJobPage";
 import MapView from "./pages/MapView";
 import AdminRoute from './components/AdminRoute';       // <<< 1. IMPORT your new AdminRoute
 import AdminDashboard from "./pages/AdminDashboard";   // <<< 2. IMPORT the new AdminDashboard page (we will create this next)
+import AdminModerateContent from './pages/AdminModerateContent'; // <<< IMPORT NEW PAGE
 
 const AppContent = () => {
   const token = localStorage.getItem("token"); // Keep for initial navigation guard
@@ -92,6 +93,12 @@ const AppContent = () => {
         <Route path="/admin" element={<AdminDashboard />} />
         {/* You can add more admin-only pages here later, e.g., /admin/users, /admin/jobs */}
       </Route>
+
+// --- ADMIN PROTECTED ROUTE ---
+<Route element={<AdminRoute />}>
+    <Route path="/admin" element={<AdminDashboard />} />
+    <Route path="/admin/content" element={<AdminModerateContent />} /> {/* <<< ADD THIS ROUTE */}
+</Route>
       {/* Catch-all route */}
       <Route
         path="*"
