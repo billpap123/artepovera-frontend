@@ -13,7 +13,6 @@ interface UserData {
     fullname: string;
     email: string;
     user_type: string;
-    createdAt: string; // The backend controller sends this as ISO string now
 }
 
 const AdminDashboard = () => {
@@ -99,7 +98,6 @@ const AdminDashboard = () => {
                                                     {user.user_type}
                                                 </span>
                                             </td>
-                                            <td>{formatDate(user.createdAt)}</td>
                                             <td>
                                                 <button 
                                                     className="delete-button" 
