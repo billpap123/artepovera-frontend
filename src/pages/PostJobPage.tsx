@@ -30,6 +30,7 @@ const postJobStyles = `
 
   .post-job-container {
     max-width: 750px;
+    padding-top:200px;
     margin: 40px auto;
     padding: 35px 40px;
     border: none;

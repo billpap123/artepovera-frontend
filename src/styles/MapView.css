@@ -9,6 +9,7 @@
   gap: 20px; /* Space between controls and map */
   background-color: var(--bg-page, #fdfbf7); /* Fallback if var not set */
   font-family: 'Nunito', sans-serif; /* Assuming Nunito from landing page */
+  padding-top:200px;
 }
 
 /* Area for filter controls */

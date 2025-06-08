@@ -4,6 +4,8 @@
   padding: 20px 40px;
   background-color: #f4f7f6; /* A very light, neutral background */
   min-height: calc(100vh - 60px); /* Full height minus navbar */
+  padding-top: 200px;
+  background-color: #a06b2d;
 }
 
 .main-page-header {

@@ -110,7 +110,7 @@ const ChatList: React.FC = () => { // Removed unused generic for FC
         {activeChatId === null && selectedChat === null ? (
           // Chat List View
           <div className="chat-list-container">
-            <h2>Your Chats</h2>
+            <h2>Your chats</h2>
             {chats.length > 0 ? (
               <ul className="chat-list">
                 {chats.map((chat) => (
