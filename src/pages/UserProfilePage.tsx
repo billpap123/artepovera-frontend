@@ -124,7 +124,10 @@ const UserProfilePage: React.FC = () => {
   const [isLoadingComments, setIsLoadingComments] = useState<boolean>(true); // Start true
   const [isSubmittingComment, setIsSubmittingComment] = useState<boolean>(false);
   // --- End State Declarations ---
-
+// --- ADD THESE NEW STATE VARIABLES ---
+const [hasCommented, setHasCommented] = useState<boolean>(false);
+const [isLoadingCommentStatus, setIsLoadingCommentStatus] = useState<boolean>(true);
+// --- END ADD ---
   // --- Handlers for Rating Form (General Reviews) ---
   const handleOpenRatingForm = () => {
     if (!loggedInUser) { alert("Please log in to leave a review."); navigate(`/login?redirect=/user-profile/${userIdFromParams}`); return; }
@@ -166,31 +169,38 @@ const UserProfilePage: React.FC = () => {
   };
 
   // --- Handlers for Artist Comments ---
-  const handleCommentSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newComment.trim() || !loggedInUser || loggedInUser.user_type !== 'Artist' || !userProfile || userProfile.user_type !== 'Artist' || loggedInUser.user_id === userProfile.user_id) {
-      alert("Only artists can comment on other artists' profiles (not their own), and the comment cannot be empty.");
-      return;
+// src/pages/UserProfilePage.tsx
+
+const handleCommentSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  if (!userProfile) {
+    console.error("Cannot submit comment, user profile data not loaded yet.");
+    return; // Exit the function early if profile data is missing
+}
+
+  // ... (your validation)
+  if (isSubmittingComment) return;
+  setIsSubmittingComment(true);
+  try {
+    const token = localStorage.getItem('token');
+    const response = await axios.post(
+      `${API_BASE_URL}/api/users/${userProfile.user_id}/comments`,
+      { comment_text: newComment.trim() },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    setProfileComments(prevComments => [response.data.comment, ...prevComments]);
+    setNewComment("");
+    setHasCommented(true); // <<< ADD THIS LINE to update UI immediately
+  } catch (err: any) {
+    console.error("Error submitting comment:", err);
+    if (err.response?.status === 409) {
+        setHasCommented(true); // Also sync state if backend says already commented
     }
-    if (isSubmittingComment) return;
-    setIsSubmittingComment(true);
-    try {
-      const token = localStorage.getItem('token');
-      const response = await axios.post(
-        `${API_BASE_URL}/api/users/${userProfile.user_id}/comments`,
-        { comment_text: newComment.trim() },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      // Add new comment to the beginning of the list for immediate UI update
-      setProfileComments(prevComments => [response.data.comment, ...prevComments]);
-      setNewComment("");
-    } catch (err: any) {
-      console.error("Error submitting comment:", err);
-      alert(err.response?.data?.message || "Failed to submit comment.");
-    } finally {
-      setIsSubmittingComment(false);
-    }
-  };
+    alert(err.response?.data?.message || "Failed to submit comment.");
+  } finally {
+    setIsSubmittingComment(false);
+  }
+};
 
   const getImageUrl = (path?: string | null): string => {
     if (!path) return '/default-profile.png';
@@ -239,9 +249,12 @@ const UserProfilePage: React.FC = () => {
     }
   }, []);
 
+  // src/pages/UserProfilePage.tsx
+
   useEffect(() => {
     if (!userIdFromParams) {
       setError("Invalid user ID."); setLoading(false); setReviewsLoading(false); setIsLoadingComments(false); setIsLoadingReviewStatus(false); setIsLoadingSupportStatus(false);
+      setIsLoadingCommentStatus(false); // Reset all loading states
       return;
     }
     // Wait until loggedInUser state is determined (null or object)
@@ -251,18 +264,21 @@ const UserProfilePage: React.FC = () => {
 
     let isMounted = true;
     const fetchAllData = async () => {
+      // Initialize all loading states at the beginning of a fetch cycle
       setLoading(true); setReviewsLoading(true); setIsLoadingComments(true);
-      setIsLoadingReviewStatus(true); setIsLoadingSupportStatus(true); // Initialize all loading states
+      setIsLoadingReviewStatus(true); setIsLoadingSupportStatus(true); 
+      setIsLoadingCommentStatus(true); 
       setError(null);
 
       const token = localStorage.getItem('token');
       const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
       try {
+        // These can run in parallel
         const profilePromise = axios.get<UserProfile>(`${API_BASE_URL}/api/users/profile/${userIdFromParams}`, { headers });
         const ratingPromise = axios.get<{ averageRating: number | null, reviewCount: number }>(`${API_BASE_URL}/api/users/${userIdFromParams}/average-rating`, { headers });
         const reviewsPromise = axios.get<{ reviews: ReviewData[] }>(`${API_BASE_URL}/api/users/${userIdFromParams}/reviews`, { headers });
-        const commentsPromise = axios.get<{ comments: ArtistComment[] }>(`${API_BASE_URL}/api/users/${userIdFromParams}/comments`, { headers }); // Assuming this endpoint exists
+        const commentsPromise = axios.get<{ comments: ArtistComment[] }>(`${API_BASE_URL}/api/users/${userIdFromParams}/comments`, { headers });
 
         const [profileResponse, ratingResponse, reviewsResponse, commentsResponse] = await Promise.all([
             profilePromise, ratingPromise, reviewsPromise, commentsPromise
@@ -282,48 +298,72 @@ const UserProfilePage: React.FC = () => {
             if (token) fetchLikeStatus(userIdFromParams, token);
 
             const isOwnProfile = loggedInUser.user_id === fetchedUserProfile.user_id;
+
             if (!isOwnProfile) {
-                // Check "already reviewed" status
+                // --- Check "already reviewed" status (for general reviews) ---
                 axios.get<{ hasReviewed: boolean }>(`${API_BASE_URL}/api/reviews/check?reviewerId=${loggedInUser.user_id}&reviewedUserId=${fetchedUserProfile.user_id}`, { headers })
                     .then(res => { if (isMounted) setAlreadyReviewed(res.data.hasReviewed); })
                     .catch(err => { console.error('Error checking review status:', err); if (isMounted) setAlreadyReviewed(false); })
                     .finally(() => { if (isMounted) setIsLoadingReviewStatus(false); });
 
-                // Check "artist support" status (if profile is an artist and logged-in user is an artist)
+                // --- Checks applicable only when an artist views another artist's profile ---
                 if (fetchedUserProfile.user_type === 'Artist' && loggedInUser.user_type === 'Artist') {
+                    // Check "artist support" status
                     axios.get<{ hasSupported: boolean, supportCount: number }>(`${API_BASE_URL}/api/users/${fetchedUserProfile.user_id}/support-status`, { headers })
                         .then(res => { if (isMounted) { setHasSupported(res.data.hasSupported); setSupportCount(res.data.supportCount); }})
                         .catch(err => { console.error('Error fetching support status:', err); })
                         .finally(() => { if (isMounted) setIsLoadingSupportStatus(false); });
+
+                    // --- ADDED: Check "has commented" status ---
+                    axios.get<{ hasCommented: boolean }>(`${API_BASE_URL}/api/users/${fetchedUserProfile.user_id}/comments/check`, { headers })
+                        .then(res => { if (isMounted) setHasCommented(res.data.hasCommented); })
+                        .catch(err => { console.error('Error checking comment status:', err); if (isMounted) setHasCommented(false); }) // Default to false on error
+                        .finally(() => { if (isMounted) setIsLoadingCommentStatus(false); });
+
                 } else {
-                    setIsLoadingSupportStatus(false); // Not applicable
+                    // If not artist-on-artist view, these aren't loading
+                    setIsLoadingSupportStatus(false);
+                    setIsLoadingCommentStatus(false);
                 }
-            } else { // Own profile
+            } else { // This is the user's own profile
                 setAlreadyReviewed(true); // Can't review self
+                setHasCommented(true);    // Can't comment on self
                 setIsLoadingReviewStatus(false);
-                if (fetchedUserProfile.user_type === 'Artist') setHasSupported(false); // Can't support self
                 setIsLoadingSupportStatus(false);
+                setIsLoadingCommentStatus(false);
             }
-        } else { // Not logged in or profile not fetched yet
+        } else { // Not logged in
             setIsLoadingReviewStatus(false);
             setIsLoadingSupportStatus(false);
+            setIsLoadingCommentStatus(false);
         }
 
         // Fetch Portfolio or Job Postings (can be parallel or after profile if IDs are needed)
-        if (fetchedUserProfile) { /* ... your existing portfolio/job fetching logic ... */ }
+        if (fetchedUserProfile.user_type === 'Artist' && fetchedUserProfile.artistProfile?.artist_id) {
+          axios.get(`${API_BASE_URL}/api/portfolios/${fetchedUserProfile.artistProfile.artist_id}`, { headers })
+            .then(res => { if (isMounted) setPortfolio(res.data || []); })
+            .catch(err => console.error('Error fetching portfolio:', err));
+        } else if (fetchedUserProfile.user_type === 'Employer' && fetchedUserProfile.employerProfile?.employer_id) {
+          axios.get(`${API_BASE_URL}/api/job-postings/employer?employer_id=${fetchedUserProfile.employerProfile.employer_id}`, { headers })
+            .then(res => { if (isMounted) setJobPostings(res.data || []); })
+            .catch(err => console.error('Error fetching job postings:', err));
+        }
 
       } catch (err: any) {
         console.error('Error fetching user page data:', err);
         if (isMounted) setError(err.response?.data?.message || 'Error fetching user profile.');
       } finally {
-        if (isMounted) { setLoading(false); setReviewsLoading(false); setIsLoadingComments(false); }
+        if (isMounted) { 
+            setLoading(false); 
+            setReviewsLoading(false); 
+            setIsLoadingComments(false); // For the list of comments
+        }
       }
     };
     
     fetchAllData();
     return () => { isMounted = false; };
-  }, [userIdFromParams, API_BASE_URL, loggedInUser]); // Removed fetchLikeStatus, handled inside if loggedInUser exists
-
+  }, [userIdFromParams, API_BASE_URL, loggedInUser, fetchLikeStatus]); // Keep fetchLikeStatus in deps if it's memoized with useCallback
 
   // --- Loading and Error States ---
   if (!userProfile && loading) return <><Navbar /><div className="container loading-message">Loading user profile...</div></>;
@@ -463,23 +503,45 @@ const UserProfilePage: React.FC = () => {
             </div>
 
             {/* Artist Comments Section */}
+            {/* Artist Comments Section */}
             {isArtistProfile && (
               <div className="artist-comments-section profile-section-public">
                 <h4>Artistic Viewpoints <FaCommentDots /> ({profileComments.length})</h4>
+                
+                {/* --- MODIFIED: Conditional Rendering for Comment Form --- */}
+                {/* This block now handles all cases for the form's visibility */}
                 {canLoggedInArtistInteractWithArtistProfile && (
-                  <form onSubmit={handleCommentSubmit} className="comment-form">
-                    <textarea
-                      placeholder={`Share your artistic viewpoint on ${profile.fullname}'s work...`}
-                      value={newComment}
-                      onChange={(e) => setNewComment(e.target.value)}
-                      rows={3}
-                      disabled={isSubmittingComment}
-                    />
-                    <button type="submit" disabled={isSubmittingComment || !newComment.trim()}>
-                      {isSubmittingComment ? "Posting..." : "Post Viewpoint"}
-                    </button>
-                  </form>
+                  <>
+                    {isLoadingCommentStatus ? (
+                      // 1. Show a loading state while we check
+                      <div className="comment-form-placeholder">
+                        <p>Loading...</p>
+                      </div>
+                    ) : hasCommented ? (
+                      // 2. If check is done and they have commented, show a message
+                      <div className="comment-form-placeholder">
+                        <p>You have already shared your viewpoint on this artist.</p>
+                      </div>
+                    ) : (
+                      // 3. If check is done and they have NOT commented, show the form
+                      <form onSubmit={handleCommentSubmit} className="comment-form">
+                        <textarea
+                          placeholder={`Share your artistic viewpoint on ${profile.fullname}'s work...`}
+                          value={newComment}
+                          onChange={(e) => setNewComment(e.target.value)}
+                          rows={3}
+                          disabled={isSubmittingComment}
+                        />
+                        <button type="submit" disabled={isSubmittingComment || !newComment.trim()}>
+                          {isSubmittingComment ? "Posting..." : "Post Viewpoint"}
+                        </button>
+                      </form>
+                    )}
+                  </>
                 )}
+                {/* --- END MODIFICATION --- */}
+
+                {/* The logic for displaying the list of comments remains the same */}
                 {isLoadingComments ? (<p>Loading viewpoints...</p>) :
                  profileComments.length > 0 ? (
                   <div className="comments-list">
