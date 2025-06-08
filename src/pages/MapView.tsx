@@ -1,5 +1,5 @@
 // src/pages/MapView.tsx
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   MapContainer,
   TileLayer,
@@ -18,6 +18,7 @@ import Navbar from '../components/Navbar';
 // --- IMPORT ASSETS USING ES MODULE SYNTAX ---
 import artistIconPath from '../assets/icons/artist-icon.png';
 import employerIconPath from '../assets/icons/employer-icon.png';
+import selfIconPath from '../assets/icons/self-icon.png'; // <<< ADD: Path to your new "self" icon
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
@@ -40,7 +41,7 @@ const artistIcon = new L.Icon({
   iconSize: [28, 41],
   iconAnchor: [14, 41],
   popupAnchor: [1, -34],
-  shadowUrl: markerShadow, // Use the imported shadow asset
+  shadowUrl: markerShadow,
   shadowSize: [41, 41],
 });
 
@@ -49,12 +50,24 @@ const employerIcon = new L.Icon({
   iconSize: [28, 41],
   iconAnchor: [14, 41],
   popupAnchor: [1, -34],
-  shadowUrl: markerShadow, // Use the imported shadow asset
+  shadowUrl: markerShadow,
   shadowSize: [41, 41],
 });
 
+// --- ADD: New Icon for the Logged-in User ---
+const selfIcon = new L.Icon({
+  iconUrl: selfIconPath, // Make sure you create this image file in src/assets/icons/
+  iconSize: [35, 51], // Make it slightly larger to stand out
+  iconAnchor: [17, 51],
+  popupAnchor: [1, -44],
+  shadowUrl: markerShadow,
+  shadowSize: [51, 51],
+});
+// --- END ADD ---
+
+
 // --- Interfaces and other components remain the same ---
-interface LocationData { /* ... */ user_id: number; fullname: string; user_type: 'Artist' | 'Employer' | string; location: { latitude: number; longitude: number; }; profile?: any; }
+interface LocationData { user_id: number; fullname: string; user_type: 'Artist' | 'Employer' | string; location: { latitude: number; longitude: number; }; }
 interface MapViewProps { userType: string | null; loggedInUserId: number | null; }
 
 const RecenterAutomatically = ({ locations }: { locations: LocationData[] }) => {
@@ -69,7 +82,6 @@ const RecenterAutomatically = ({ locations }: { locations: LocationData[] }) => 
     }, [locations, map]);
     return null;
 };
-
 
 const MapView: React.FC<MapViewProps> = ({ userType: loggedInUserType, loggedInUserId }) => {
   const [allLocations, setAllLocations] = useState<LocationData[]>([]);
@@ -88,19 +100,16 @@ const MapView: React.FC<MapViewProps> = ({ userType: loggedInUserType, loggedInU
       try {
         const token = localStorage.getItem('token');
         if (!token) {
-          if (isMounted) setError("Authentication required to view the map.");
-          if (isMounted) setLoading(false);
+          if (isMounted) { setError("Authentication required to view the map."); setLoading(false); }
           return;
         }
 
         let apiUrl = `${API_BASE_URL}/api/locations`;
         
         if (loggedInUserType === 'Employer') {
-          console.log(`[MapView] Logged in as Employer. Fetching Artists.`);
           apiUrl += '?userType=Artist';
         } else {
-          console.log(`[MapView] Logged in as Artist (or other). Fetching all users.`);
-          // No userType param, so backend should return all
+          // For Artists or others, fetch all users (backend will handle this)
         }
 
         const response = await axios.get(apiUrl, {
@@ -109,12 +118,9 @@ const MapView: React.FC<MapViewProps> = ({ userType: loggedInUserType, loggedInU
 
         if (!isMounted) return;
 
-        let fetchedLocations: LocationData[] = response.data.locations || response.data || [];
+        const fetchedLocations: LocationData[] = response.data.locations || response.data || [];
         
-        if (loggedInUserId) {
-            fetchedLocations = fetchedLocations.filter(loc => loc.user_id !== loggedInUserId);
-        }
-
+        // --- NO LONGER FILTERING OUT THE LOGGED-IN USER ---
         setAllLocations(fetchedLocations);
 
       } catch (error: any) {
@@ -129,13 +135,7 @@ const MapView: React.FC<MapViewProps> = ({ userType: loggedInUserType, loggedInU
     return () => { isMounted = false; };
   }, [loggedInUserType, loggedInUserId, API_BASE_URL]);
 
-  const getImageUrl = (path?: string | null): string => {
-    if (!path) return '/default-profile.png';
-    if (path.startsWith('http')) return path;
-    return `${API_BASE_URL}/${path.replace(/^uploads\/uploads\//, 'uploads/')}`;
-  };
-
-  // The rest of the component (loading/error/render logic) remains the same
+  // Loading and Error JSX...
   if (loading) return (<><Navbar /><div className="map-overlay-message"><p>Loading Map...</p></div></>);
   if (error) return (<><Navbar /><div className="map-overlay-message error"><p>{error}</p></div></>);
   
@@ -163,17 +163,28 @@ const MapView: React.FC<MapViewProps> = ({ userType: loggedInUserType, loggedInU
             />
             
             {allLocations.map((loc) => {
-              // The logic inside this map is unchanged from the previous "complete" version
               if (!loc.location?.latitude || !loc.location?.longitude) return null;
-              const pinIcon = loc.user_type === 'Artist' ? artistIcon : employerIcon;
+
+              // --- MODIFIED ICON AND MARKER LOGIC ---
+              const isSelf = loc.user_id === loggedInUserId;
+              
+              let pinIcon;
+              if (isSelf) {
+                pinIcon = selfIcon; // Use the special icon for the logged-in user
+              } else {
+                pinIcon = loc.user_type === 'Artist' ? artistIcon : employerIcon;
+              }
+
               return (
                 <Marker
                   key={loc.user_id}
                   position={[loc.location.latitude, loc.location.longitude]}
                   icon={pinIcon}
+                  zIndexOffset={isSelf ? 1000 : 0} // Make the "self" pin appear on top
                 >
                   <Popup>
                     <div className="map-popup-content">
+                        {isSelf && <div className="popup-self-indicator">📍 This is you!</div>}
                         <div className="popup-header">
                             <strong className="popup-name">{loc.fullname}</strong>
                             <span className={`popup-user-type ${loc.user_type?.toLowerCase()}`}>{loc.user_type}</span>
@@ -185,6 +196,7 @@ const MapView: React.FC<MapViewProps> = ({ userType: loggedInUserType, loggedInU
                   </Popup>
                 </Marker>
               );
+              // --- END MODIFICATION ---
             })}
             <RecenterAutomatically locations={allLocations} />
           </MapContainer>
