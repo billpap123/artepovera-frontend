@@ -23,7 +23,6 @@ export interface PortfolioProps {
   artistId?: number; // For viewing someone else's portfolio
   viewedArtistName?: string; // Name of the artist being viewed
 }
-const [modalImage, setModalImage] = useState<string | null>(null); // State to hold the URL of the image to show in the modal
 
 const getItemTypeFromUrl = (url: string): 'image' | 'pdf' | 'video' | 'other' => {
     if (!url) return 'other';
@@ -43,6 +42,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewed
   const [items, setItems] = useState<PortfolioItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [modalImage, setModalImage] = useState<string | null>(null);
 
   // State for adding new items
   const [showAddForm, setShowAddForm] = useState(false);
