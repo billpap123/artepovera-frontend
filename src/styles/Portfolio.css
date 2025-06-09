@@ -249,7 +249,7 @@
   transition: all 0.2s ease;
 }
 .action-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-.action-btn:hover:not(:disabled) { background-color: #e9ecef; }
+.action-btn:hover:not(:disabled) { background-color: #94ed28; }
 .action-btn.save { border-color: #28a745; color: #28a745; }
 .action-btn.save:hover:not(:disabled) { background-color: #28a745; color: white; }
 .action-btn.delete { border-color: #dc3545; color: #dc3545; }
