@@ -38,8 +38,10 @@ interface JobPosting {
   location?: string | null;
   presence: 'Physical' | 'Online' | 'Both';
   payment_total: number;
-  createdAt: string; // The backend sends createdAt
-}interface ArtistProfileData { artist_id: number; bio?: string; profile_picture?: string; is_student?: boolean; cv_url?: string | null; cv_public_id?: string | null;}
+  createdAt: string; // The backend now sends createdAt
+}
+
+interface ArtistProfileData { artist_id: number; bio?: string; profile_picture?: string; is_student?: boolean; cv_url?: string | null; cv_public_id?: string | null;}
 interface EmployerProfileData { employer_id: number; bio?: string; profile_picture?: string;}
 
 interface UserProfile {
@@ -614,12 +616,13 @@ const handleCommentSubmit = async (e: React.FormEvent) => {
                           {job.location && <span className="tag-item compact"><FaMapMarkerAlt /> {job.location}</span>}
                           {job.presence === 'Online' && <span className="tag-item compact"><FaGlobe /> Online</span>}
                           {job.presence === 'Physical' && <span className="tag-item compact"><FaBuilding /> On-site</span>}
-                          {job.presence === 'Both' && <span className="tag-item compact"><FaGlobe />/<FaBuilding /> Hybrid</span>}
+                          {job.presence === 'Both' && <span className="tag-item compact"><FaGlobe /> / <FaBuilding /> Hybrid</span>}
                       </div>
                       <div className="profile-job-item-footer">
                         <span className="post-date">Posted {formatDate(job.createdAt)}</span>
-                        {/* This link should go to a detailed job page in the future */}
-                        <Link to={`/jobs/${job.job_id}`} className="view-job-link">View Details</Link>
+                        {/* This link should ideally go to a detailed job page like /jobs/:job_id */}
+                        {/* For now, it can link to the main job feed for context */}
+                        <Link to={`/job-listings`} className="view-job-link">View Details</Link>
                       </div>
                     </div>
                   ))}
