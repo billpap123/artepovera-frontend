@@ -608,8 +608,9 @@ const handleCommentSubmit = async (e: React.FormEvent) => {
                       <div className="profile-job-item-header">
                         <h5 className="profile-job-item-title">{job.title}</h5>
                         <span className="profile-job-item-payment">
-                          €{job.payment_total.toFixed(2)}
-                        </span>
+    €{job.payment_total != null ? Number(job.payment_total).toFixed(2) : 'N/A'}
+  </span>
+
                       </div>
                       <p className="profile-job-item-category">{job.category}</p>
                       <div className="profile-job-item-tags">

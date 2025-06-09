@@ -133,8 +133,8 @@ const JobFeed: React.FC<JobFeedProps> = ({ jobs, isLoading, error }) => {
             <div className="job-card-details-grid">
                 <div className="detail-item">
                     <strong>Total Payment:</strong>
-                    <span><FaEuroSign /> {job.payment_total.toFixed(2)} {job.payment_is_monthly && `(€${job.payment_monthly_amount?.toFixed(2)}/month)`}</span>
-                </div>
+                    <span><FaEuroSign /> {job.payment_total != null ? Number(job.payment_total).toFixed(2) : 'N/A'} {job.payment_is_monthly && `(€${job.payment_monthly_amount != null ? Number(job.payment_monthly_amount).toFixed(2) : 'N/A'}/month)`}</span>
+                    </div>
                 <div className="detail-item">
                     <strong>Duration:</strong>
                     <span>{formatDate(job.start_date)} to {formatDate(job.end_date)}</span>
