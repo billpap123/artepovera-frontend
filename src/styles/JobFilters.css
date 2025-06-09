@@ -45,10 +45,6 @@
   outline: none;
 }
 
-.filter-input.keyword-filter {
-    /* If you want the keyword filter to be wider */
-    /* grid-column: span 2; */
-}
 
 .budget-filter-group {
   display: flex;
