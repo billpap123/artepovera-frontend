@@ -279,7 +279,7 @@ const ArtistProfile: React.FC = () => {
                 <div className="profile-section"> <h4>Bio</h4> <p className="bio-text">{bio || "No bio provided."}</p> </div>
                 <div className="profile-section cv-section">
                   <h4>Curriculum Vitae (CV)</h4>
-                  {cvUrl ? ( <div className="cv-display"> <FaFilePdf className="pdf-icon" /> <a href={cvUrl} target="_blank" rel="noopener noreferrer" className="cv-link"> View CV </a> </div> )
+                  {cvUrl ? ( <div className="cv-display"> <FaFilePdf className="pdf-icon" /> <a href={cvUrl} target="_blank" rel="noopener noreferrer" className="cv-link"> Download CV </a> </div> )
                    : ( <p className="no-cv-message">No CV uploaded yet.</p> )}
                 </div>
                 <div className="reviews-section profile-section">

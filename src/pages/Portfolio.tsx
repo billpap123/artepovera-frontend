@@ -23,6 +23,7 @@ export interface PortfolioProps {
   artistId?: number; // For viewing someone else's portfolio
   viewedArtistName?: string; // Name of the artist being viewed
 }
+const [modalImage, setModalImage] = useState<string | null>(null); // State to hold the URL of the image to show in the modal
 
 const getItemTypeFromUrl = (url: string): 'image' | 'pdf' | 'video' | 'other' => {
     if (!url) return 'other';
@@ -49,6 +50,13 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewed
   const [description, setDescription] = useState('');
   const [uploading, setUploading] = useState(false); // For all CUD operations
 
+  const handleOpenModal = (imageUrl: string) => {
+    setModalImage(imageUrl);
+  };
+  
+  const handleCloseModal = () => {
+    setModalImage(null);
+  };
   // State for editing descriptions
   const [editItemId, setEditItemId] = useState<number | null>(null);
   const [editDescription, setEditDescription] = useState('');
@@ -255,10 +263,10 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewed
 
             return (
               <div key={item.portfolio_id} className={`portfolio-item card-style item-type-${itemType} ${isEditingThis ? 'editing' : ''}`}>
-                {itemType === 'image' && (
-                  <a href={item.image_url} target="_blank" rel="noopener noreferrer" title="View full image">
+                 {itemType === 'image' && (
+                  <button onClick={() => handleOpenModal(item.image_url)} className="portfolio-image-button">
                     <img src={item.image_url} alt={item.description || 'Portfolio Image'} className="portfolio-media portfolio-image" loading="lazy"/>
-                  </a>
+                  </button>
                 )}
                 {itemType === 'pdf' && (
                   <div className="portfolio-media portfolio-pdf-item">
@@ -312,6 +320,15 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewed
               </div>
             );
           })}
+           {/* --- ADD THIS JSX FOR THE IMAGE MODAL --- */}
+        {modalImage && (
+            <div className="portfolio-modal-overlay" onClick={handleCloseModal}>
+                <div className="portfolio-modal-content" onClick={(e) => e.stopPropagation()}>
+                    <img src={modalImage} alt="Enlarged portfolio view" />
+                    <button onClick={handleCloseModal} className="close-modal-button">×</button>
+                </div>
+            </div>
+        )}
         </div>
       </div>
     </>

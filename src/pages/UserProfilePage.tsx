@@ -490,7 +490,7 @@ const handleCommentSubmit = async (e: React.FormEvent) => {
                 <h4>Curriculum Vitae (CV)</h4>
                 <div className="cv-display">
                   <FaFilePdf className="pdf-icon" />
-                  <a href={cvUrl} target="_blank" rel="noopener noreferrer" className="cv-link">View CV</a>
+                  <a href={cvUrl} target="_blank" rel="noopener noreferrer" className="cv-link">Download CV</a>
                 </div>
               </div>
             )}
@@ -623,7 +623,7 @@ const handleCommentSubmit = async (e: React.FormEvent) => {
                         <span className="post-date">Posted {formatDate(job.createdAt)}</span>
                         {/* This link should ideally go to a detailed job page like /jobs/:job_id */}
                         {/* For now, it can link to the main job feed for context */}
-                        <Link to={`/jobs/${job.job_id}`} className="view-job-link">View Details</Link>
+                          <Link to={`/jobs/${job.job_id}`} className="view-job-link">View Details</Link>
                         </div>
                     </div>
                   ))}
