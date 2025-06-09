@@ -1,0 +1,32 @@
+/* src/styles/JobDetailPage.css */
+
+.job-detail-page-container {
+    max-width: 900px; /* A comfortable width for reading a single job post */
+    margin: 40px auto; /* Centers the container on the page with space from top/bottom */
+    padding: 0 20px; /* Adds some side padding on smaller screens */
+    font-family: 'Nunito', sans-serif;
+  }
+  
+  /* The .job-card-detailed styling will be inherited from your 
+    existing JobPostings.css or JobFeed.css, so we don't need to repeat it here.
+    This new container simply provides a nice centered layout for it.
+  */
+  
+  /* We can add styles for the loading/error states specific to this page layout */
+  .page-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 50vh;
+      font-size: 1.2rem;
+      color: #6c757d;
+  }
+  
+  .page-container .loading-message {
+      font-style: italic;
+  }
+  
+  .page-container .error-message {
+      color: #dc3545;
+      font-weight: 500;
+  }
