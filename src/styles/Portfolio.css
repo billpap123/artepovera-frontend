@@ -1,391 +1,307 @@
 /* src/styles/Portfolio.css */
 
+/* --- Page Layout --- */
 .portfolio-page {
-    width: 100%;
-    max-width: 1200px; /* Allow more width for grid */
-    margin: 30px auto;
-    padding: 20px;
-    font-family: 'Nunito', sans-serif;
-  }
-  
-  .portfolio-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 30px;
-    padding-bottom: 15px;
-    border-bottom: 2px solid var(--border-color, #dcd3c7);
-  }
-  
-  .portfolio-header h2 {
-    font-size: 2rem;
-    color: var(--text-medium, #654321);
-    margin: 0;
-  }
-  
-  .add-item-button,
-  .portfolio-upload-form .submit-btn,
-  .portfolio-upload-form .cancel-btn {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 6px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.2s ease, transform 0.1s ease;
-    font-size: 0.95rem;
-  }
-  
-  .add-item-button,
-  .portfolio-upload-form .submit-btn {
-    background-color: var(--accent-primary, #A0522D);
-    color: var(--white, #fff);
-  }
-  .add-item-button:hover,
-  .portfolio-upload-form .submit-btn:hover:not(:disabled) {
-    background-color: var(--accent-primary-dark, #804123);
-    transform: translateY(-1px);
-  }
-  
-  .portfolio-upload-form .cancel-btn {
-    background-color: #e9ecef;
-    color: var(--text-dark, #4d4033);
-    border: 1px solid var(--border-color, #dcd3c7);
-  }
-  .portfolio-upload-form .cancel-btn:hover:not(:disabled) {
-    background-color: #dee2e6;
-  }
-  .portfolio-upload-form button:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
-  
-  /* Card style for upload form and portfolio items */
-  .card-style {
-    background-color: var(--white, #fff);
-    border-radius: 10px;
-    box-shadow: 0 4px 12px var(--shadow-light, rgba(0,0,0,0.08));
-    padding: 25px;
-    margin-bottom: 30px; /* Space below upload form */
-  }
-  
-  .portfolio-upload-form h3 {
-    text-align: center;
-    margin-top: 0;
-    margin-bottom: 20px;
-    color: var(--accent-primary, #A0522D);
-  }
-  
-  .portfolio-upload-form .form-group {
-    margin-bottom: 15px;
-  }
-  .portfolio-upload-form label {
-    display: block;
-    font-weight: 600;
-    margin-bottom: 6px;
-    color: var(--text-dark, #4d4033);
-  }
-  .portfolio-upload-form input[type="file"],
-  .portfolio-upload-form textarea {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid var(--border-color, #dcd3c7);
-    border-radius: 6px;
-    font-size: 0.95rem;
-    background-color: var(--bg-light, #fdfbf7);
-  }
-  .portfolio-upload-form input[type="file"] {
-    padding: 8px; /* File inputs often need different padding */
-  }
-  .portfolio-upload-form textarea {
-    min-height: 80px;
-    resize: vertical;
-  }
-  .portfolio-upload-form .form-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-    margin-top: 15px;
-  }
-  
-  .portfolio-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 25px;
-  }
-  
-  .portfolio-item {
-    /* card-style already applied */
-    padding: 0; /* Override card-style padding if image/video is flush */
-    overflow: hidden; /* Clip contents to border-radius */
-    display: flex;
-    flex-direction: column;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-  .portfolio-item:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 20px var(--shadow-medium, rgba(0,0,0,0.12));
-  }
-  .portfolio-item.editing {
-      border: 2px solid var(--accent-secondary, #CC7722); /* Highlight when editing */
-  }
-  
-  .portfolio-media { /* Common container for image, pdf, video */
-    width: 100%;
-    height: 220px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background-color: var(--bg-medium, #f5f0e8);
-    position: relative; /* For potential overlays or icons */
-  }
-  
-  .portfolio-image { /* Specifically for img tag inside portfolio-media */
-    width: 100%;
-    height: 100%; /* Make image fill the .portfolio-media container */
-    object-fit: cover;
-    display: block;
-  }
-  
-  .portfolio-pdf-item .file-icon,
-  .portfolio-other-item .file-icon {
-    font-size: 3.5rem; /* For emoji icon */
-    margin-bottom: 10px;
-    color: var(--accent-primary, #A0522D);
-  }
-  .portfolio-pdf-item .file-name,
-  .portfolio-other-item .file-name {
-    font-weight: 600;
-    color: var(--text-dark, #4d4033);
-    margin-bottom: 15px;
-    font-size: 0.9rem;
-    word-break: break-all;
-    padding: 0 10px;
-  }
-  .portfolio-pdf-item .view-file-link,
-  .portfolio-other-item .view-file-link {
-    display: inline-block;
-    padding: 6px 15px;
-    background-color: var(--accent-primary, #A0522D);
-    color: var(--white, #fff);
-    border-radius: 4px;
-    text-decoration: none;
-    font-size: 0.85rem;
-    transition: background-color 0.2s ease;
-  }
-  .portfolio-pdf-item .view-file-link:hover,
-  .portfolio-other-item .view-file-link:hover {
-    background-color: var(--accent-primary-dark, #804123);
-  }
-  
-  .portfolio-video-item video {
-    max-width: 100%;
-    max-height: 100%;
-    display: block;
-  }
-  
-  .portfolio-item-content {
-    padding: 15px;
-    text-align: left;
-    flex-grow: 1; /* Allow content to push actions down */
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .portfolio-description {
-    font-size: 0.9rem;
-    color: var(--text-light, #7d746b);
-    margin-bottom: 15px;
-    line-height: 1.5;
-    flex-grow: 1; /* Allow description to take space */
-  }
-  
-  .edit-description-input {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid var(--border-color, #dcd3c7);
-    border-radius: 4px;
-    font-family: inherit;
-    font-size: 0.9rem;
-    margin-bottom: 10px;
-    min-height: 70px;
-    resize: vertical;
-    box-sizing: border-box;
-  }
-  .edit-description-input:focus {
-    border-color: var(--accent-primary, #A0522D);
-    outline: none;
-  }
-  
-  .portfolio-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 8px;
-    margin-top: auto; /* Push actions to the bottom of the card */
-    padding-top: 10px;
-    border-top: 1px solid var(--border-color-light, #e9e4dd);
-  }
-  
-  .action-btn {
-    background: none;
-    border: 1px solid transparent;
-    padding: 6px 10px;
-    cursor: pointer;
-    font-size: 0.85rem;
-    font-weight: 600;
-    border-radius: 4px;
-    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
-  }
-  .action-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-  
-  .action-btn.edit { color: var(--accent-secondary, #CC7722); border-color: var(--accent-secondary, #CC7722); }
-  .action-btn.edit:hover:not(:disabled) { background-color: rgba(204, 119, 34, 0.1); }
-  
-  .action-btn.delete { color: var(--danger-red, #dc3545); border-color: var(--danger-red, #dc3545); }
-  .action-btn.delete:hover:not(:disabled) { background-color: rgba(220, 53, 69, 0.1); }
-  
-  .action-btn.save { color: #28a745; border-color: #28a745; } /* Green for save */
-  .action-btn.save:hover:not(:disabled) { background-color: rgba(40, 167, 69, 0.1); }
-  
-  .action-btn.cancel { color: var(--text-light, #7d746b); border-color: var(--text-light, #7d746b); }
-  .action-btn.cancel:hover:not(:disabled) { background-color: #efefef; }
-  
-  .no-items-message {
-    grid-column: 1 / -1; /* Span full width if grid */
-    text-align: center;
-    padding: 40px 20px;
-    color: var(--text-light, #7d746b);
-    font-style: italic;
-    font-size: 1.1rem;
-  }
-  
-  
-
-.portfolio-page {
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto; /* Changed from 30px auto to allow navbar space control */
-    padding: 20px;
-    /* --- ADD PADDING-TOP --- */
-    /* Adjust this value to be a bit more than your navbar's height */
-    padding-top: 200px; /* Example: if navbar is 70px, add some extra space */
-    /* --- END ADD --- */
-    font-family: 'Nunito', sans-serif;
-    min-height: calc(100vh - 70px); /* Example: ensure content area can fill below navbar */
-    display: flex; /* Added to help with alignment if needed later */
-    flex-direction: column; /* Stack header and grid */
-  }
-  
-  /* Keep your existing .portfolio-header styles */
-  .portfolio-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 30px;
-    padding-bottom: 15px;
-    border-bottom: 2px solid var(--border-color, #dcd3c7);
-    width: 100%; /* Ensure header takes full width of .portfolio-page */
-  }
-  
-  .portfolio-header h2 {
-    font-size: 2rem; /* Or your preferred size */
-    color: var(--text-medium, #654321);
-    margin: 0;
-  }
-  
-  .add-item-button {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 6px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.2s ease, transform 0.1s ease;
-    font-size: 0.95rem;
-    background-color: var(--accent-primary, #A0522D); /* Use your theme colors */
-    color: var(--white, #fff);
-  }
-  .add-item-button:hover {
-    background-color: var(--accent-primary-dark, #804123);
-    transform: translateY(-1px);
-  }
-  
-
-
-  /* Add this to src/styles/Portfolio.css */
-
-/* Style the image container to look clickable */
-.portfolio-image-button {
-  border: none;
-  padding: 0;
-  margin: 0;
-  background: none;
-  cursor: zoom-in;
-  width: 100%;
-  display: block; /* Ensures it fills the container correctly */
+  max-width: 1400px;
+  margin: 40px auto;
+  padding: 20px 40px;
+  font-family: 'Nunito', sans-serif;
+  min-height: calc(100vh - 120px); /* Adjust based on your navbar/footer height */
 }
 
-/* --- Image Modal Styles --- */
-.portfolio-modal-overlay {
-  position: fixed; /* Sit on top of everything */
-  top: 0;
-  left: 0;
+/* --- Page Header --- */
+.portfolio-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.portfolio-header h2 {
+  margin: 0;
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #2c3e50;
+}
+
+.add-item-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 12px 22px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.add-item-button:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2);
+}
+
+/* --- Upload Form Styling --- */
+.portfolio-upload-form.card-style {
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 12px;
+  margin-bottom: 40px;
+  padding: 30px;
+  animation: fadeIn 0.5s ease;
+}
+
+.portfolio-upload-form h3 {
+  margin-top: 0;
+  font-weight: 600;
+  text-align: center;
+  color: #495057;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.form-group input[type="file"] {
+  font-size: 0.9rem;
+  color: #495057;
+}
+
+.form-group textarea {
   width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.8); /* Dark, semi-transparent overlay */
+  box-sizing: border-box;
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid #ced4da;
+  font-size: 1rem;
+  min-height: 100px;
+  resize: vertical;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.submit-btn, .cancel-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.submit-btn { background-color: #28a745; color: white; }
+.cancel-btn { background-color: #6c757d; color: white; }
+.submit-btn:disabled { background-color: #ccc; cursor: not-allowed; }
+
+/* --- Portfolio Grid Layout --- */
+.portfolio-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 30px;
+}
+
+.no-items-message {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 50px;
+  font-size: 1.2rem;
+  color: #6c757d;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+}
+
+/* --- Individual Portfolio Item Card --- */
+.portfolio-item.card-style {
+  background-color: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s ease;
+}
+
+.portfolio-item.card-style:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.portfolio-media {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background-color: #e9ecef;
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 2000; /* Ensure it's above the navbar and other content */
-  padding: 20px;
-  box-sizing: border-box;
-}
-
-.portfolio-modal-content {
+  overflow: hidden;
   position: relative;
-  max-width: 90vw; /* Max width is 90% of viewport width */
-  max-height: 90vh; /* Max height is 90% of viewport height */
-  animation: zoomIn 0.3s ease-in-out;
 }
 
-.portfolio-modal-content img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain; /* Ensure the whole image is visible without being cropped */
+.portfolio-image-button {
+  border: none; padding: 0; margin: 0; background: none;
+  cursor: zoom-in; width: 100%; height: 100%; display: block;
+}
+
+.portfolio-image {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.portfolio-image-button:hover .portfolio-image {
+  transform: scale(1.05);
+}
+
+/* Non-Image Item Styles */
+.portfolio-pdf-item, .portfolio-other-item {
+  flex-direction: column;
+  gap: 15px;
+  padding: 20px;
+  text-align: center;
+}
+.file-icon { font-size: 3.5rem; color: #C96A50; }
+.file-name { font-weight: 600; color: #495057; }
+
+.view-file-link {
+  display: inline-block;
+  padding: 8px 18px;
+  background-color: #6c757d;
+  color: white;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+}
+
+.view-file-link:hover {
+  background-color: #5a6268;
+  color: white;
+}
+
+.portfolio-video-player {
+  max-width: 100%;
+  max-height: 100%;
   display: block;
 }
 
-.close-modal-button {
-  position: absolute;
-  top: -15px;
-  right: -15px;
-  background-color: white;
-  color: #333;
-  border: none;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  font-size: 2rem;
-  line-height: 40px;
-  text-align: center;
+.portfolio-item-content {
+  padding: 20px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.portfolio-description {
+  color: #495057;
+  flex-grow: 1;
+  margin: 0 0 15px 0;
+  line-height: 1.6;
+}
+
+.edit-description-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  margin-bottom: 10px;
+  min-height: 70px;
+  resize: vertical;
+}
+.edit-description-input:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+.portfolio-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: auto;
+  padding-top: 15px;
+  border-top: 1px solid #f1f3f5;
+}
+
+.action-btn { /* Style for Edit, Delete, Save, Cancel buttons */
+  background-color: transparent;
+  border: 1px solid #ced4da;
+  padding: 6px 12px;
   cursor: pointer;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-  font-weight: 300;
-  transition: transform 0.2s ease, background-color 0.2s ease;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+.action-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.action-btn:hover:not(:disabled) { background-color: #e9ecef; }
+.action-btn.save { border-color: #28a745; color: #28a745; }
+.action-btn.save:hover:not(:disabled) { background-color: #28a745; color: white; }
+.action-btn.delete { border-color: #dc3545; color: #dc3545; }
+.action-btn.delete:hover:not(:disabled) { background-color: #dc3545; color: white; }
+
+/* --- Image Modal Styles --- */
+.portfolio-modal-overlay {
+position: fixed; top: 0; left: 0;
+width: 100%; height: 100%;
+background-color: rgba(33, 37, 41, 0.9);
+display: flex; justify-content: center; align-items: center;
+z-index: 2000;
+padding: 20px;
+box-sizing: border-box;
+animation: fadeIn 0.3s ease;
+}
+
+.portfolio-modal-content {
+position: relative;
+max-width: 90vw;
+max-height: 90vh;
+animation: zoomIn 0.3s ease;
+}
+
+.portfolio-modal-content img {
+width: 100%; height: 100%;
+object-fit: contain;
+display: block;
+border-radius: 8px;
+}
+
+.close-modal-button {
+position: absolute;
+top: -20px;
+right: -20px;
+background-color: white;
+color: #333;
+border: none;
+border-radius: 50%;
+width: 40px;
+height: 40px;
+font-size: 2rem;
+line-height: 38px;
+text-align: center;
+cursor: pointer;
+box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+font-weight: 300;
+transition: transform 0.2s ease, background-color 0.2s ease;
 }
 
 .close-modal-button:hover {
-  transform: scale(1.1);
-  background-color: #f0f0f0;
+transform: rotate(90deg);
 }
 
-/* Simple zoom-in animation */
-@keyframes zoomIn {
-  from {
-    transform: scale(0.8);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes zoomIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
