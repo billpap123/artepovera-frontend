@@ -4,6 +4,8 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { UserProvider, useUserContext } from "./context/UserContext"; // Correct import
 
 // Page imports
+import JobDetailPage from './pages/JobDetailPage'; // Make sure this page is imported
+
 import LandingPage from "./pages/LandingPage";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
@@ -76,6 +78,8 @@ const AppContent = () => {
         />
         {/* Route to view any user's profile by their ID */}
         <Route path="/user-profile/:userId" element={<UserProfilePage />} />
+        <Route path="/jobs/:jobId" element={<JobDetailPage />} /> {/* <<< ENSURE THIS ROUTE EXISTS */}
+
         <Route path="/job-listings" element={<JobListings />} />
         <Route
           path="/map"
@@ -99,6 +103,7 @@ const AppContent = () => {
     <Route path="/admin" element={<AdminDashboard />} />
     <Route path="/admin/content" element={<AdminModerateContent />} /> {/* <<< ADD THIS ROUTE */}
 </Route>
+
       {/* Catch-all route */}
       <Route
         path="*"
