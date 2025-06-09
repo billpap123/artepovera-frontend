@@ -1,5 +1,6 @@
 /* src/styles/ChatPage.css */
 .chat-page-layout {
+  padding-top: 200px;
   display: flex;
   height: calc(100vh - 60px); /* Full height minus navbar */
   width: 100%;
