@@ -6,6 +6,7 @@
   margin: 40px auto;
   padding: 20px 40px;
   font-family: 'Nunito', sans-serif;
+  padding-top:200px;
   min-height: calc(100vh - 120px); /* Adjust based on your navbar/footer height */
 }
 
@@ -238,7 +239,7 @@
 }
 
 .action-btn { /* Style for Edit, Delete, Save, Cancel buttons */
-  background-color: transparent;
+  background-color: rgba(255, 95, 31, 0.848);
   border: 1px solid #ced4da;
   padding: 6px 12px;
   cursor: pointer;
@@ -281,8 +282,8 @@
 }
 .portfolio-modal-content img {
   /* Let the image fill the container up to its limits, but no more */
-  max-width: 100%;
-  max-height: 100%;
+  max-width: 70%;
+  max-height: 70%;
   
   /* These are no longer needed, as max-width/max-height handle it better */
   /* width: 100%; */
@@ -294,25 +295,36 @@
 }
 .close-modal-button {
   position: absolute;
-  top: -15px;      /* Adjust position relative to the image container */
-  right: -15px;     /* Adjust position relative to the image container */
+  top: -20px; /* Gives a bit more space from the corner */
+  right: -20px;
   background-color: white;
   color: #333;
   border: none;
   border-radius: 50%;
   width: 40px;
   height: 40px;
-  font-size: 2rem;
-  line-height: 38px;
-  text-align: center;
   cursor: pointer;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-  transition: transform 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  transition: transform 0.2s ease, background-color 0.2s ease;
+  
+  /* --- ADD THESE 3 LINES FOR PERFECT CENTERING --- */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* --- END ADD --- */
+
+  /* These can now be adjusted or removed if flexbox handles it all */
+  font-size: 1.5rem; /* Adjusted font size for better fit */
+  font-weight: 600; /* Bolder X */
+  padding: 0; /* Remove any default padding */
+  line-height: 1; /* Reset line-height, as flexbox is handling alignment */
 }
 
 .close-modal-button:hover {
-transform: rotate(90deg);
+  transform: rotate(90deg) scale(1.1); /* Added scale for more pop */
+  background-color: #f1f1f1;
 }
+
 
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes zoomIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
