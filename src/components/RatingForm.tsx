@@ -1,191 +1,149 @@
 // src/components/RatingForm.tsx
 import React, { useState } from 'react';
 import axios from 'axios';
-import '../styles/RatingForm.css'; // Make sure you create this CSS file!
+import '../styles/RatingForm.css'; // You'll need to create this CSS file
+
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:50001";
+
+// Define the shape of a Review object returned from the backend
+// This should match the interfaces in your other files for consistency
+interface Review {
+    review_id: number;
+    overall_rating: number;
+    specific_answers?: { comment?: string };
+    created_at: string;
+    reviewer?: { user_id: number; fullname: string; profile_picture: string | null; };
+}
 
 interface RatingFormProps {
-    reviewerId: number;
-    reviewedUserId: number;
-    reviewedUserName: string;
-    onClose: (submittedSuccessfully?: boolean) => void; // Matches UserProfilePage's handleCloseRatingForm
-    chatId?: number | null; // <<< CHANGED: Made optional and nullable
-    // ... any other props
-  }
+  reviewerId: number;
+  reviewedUserId: number;
+  reviewedUserName: string;
+  // This prop now expects the new review object on success
+  onClose: (submittedSuccessfully: boolean, newReview?: Review) => void;
+}
 
-// Star Rating Sub-Component
-const StarRatingInput = ({
-    rating,
-    setRating,
-    labelId
-}: {
-    rating: number,
-    setRating: (r: number) => void,
-    labelId: string
-}) => {
-    const [hoverRating, setHoverRating] = useState(0);
+const StarRatingInput = ({ rating, setRating }: { rating: number; setRating: (r: number) => void; }) => {
+    const [hover, setHover] = useState(0);
     return (
-        <div className="star-rating" role="radiogroup" aria-labelledby={labelId}>
-            {[1, 2, 3, 4, 5].map((star) => (
-                <span
-                    key={star}
-                    className={star <= (hoverRating || rating) ? 'star active' : 'star'}
-                    onClick={() => setRating(star)}
-                    onMouseEnter={() => setHoverRating(star)}
-                    onMouseLeave={() => setHoverRating(0)}
-                    role="radio"
-                    aria-checked={star === rating}
-                    aria-label={`${star} out of 5 stars`}
-                    tabIndex={0}
-                    onKeyDown={(e) => { if (e.key === ' ' || e.key === 'Enter') setRating(star);}}
-                    style={{ cursor: 'pointer', fontSize: '2.2rem', color: star <= (hoverRating || rating) ? '#ffc107' : '#e0e0e0', marginRight: '4px' }}
-                >
-                    ★
-                </span>
-            ))}
+        <div className="star-rating-input">
+            {[...Array(5)].map((_, index) => {
+                const ratingValue = index + 1;
+                return (
+                    <button
+                        type="button"
+                        key={ratingValue}
+                        className={ratingValue <= (hover || rating) ? "star on" : "star off"}
+                        onClick={() => setRating(ratingValue)}
+                        onMouseEnter={() => setHover(ratingValue)}
+                        onMouseLeave={() => setHover(0)}
+                    >
+                        &#9733;
+                    </button>
+                );
+            })}
         </div>
     );
 };
 
 
-const RatingForm: React.FC<RatingFormProps> = ({
-    chatId,
-    reviewerId,
-    reviewedUserId,
-    reviewedUserName,
-    onClose
-}) => {
-    const [dealMade, setDealMade] = useState<'yes' | 'no' | null>(null);
-    const [noDealReason, setNoDealReason] = useState("");
-    const [professionalismRating, setProfessionalismRating] = useState<number>(0);
-    const [qualityRating, setQualityRating] = useState<number>(0);
-    const [communicationRating, setCommunicationRating] = useState<number>(0);
-    const [overallRating, setOverallRating] = useState<number>(0);
-    const [comment, setComment] = useState("");
+const RatingForm: React.FC<RatingFormProps> = ({ reviewerId, reviewedUserId, reviewedUserName, onClose }) => {
+    const [ratings, setRatings] = useState({
+        overall: 0,
+        professionalism: 0,
+        quality: 0,
+        communication: 0,
+    });
+    const [comment, setComment] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+    const [error, setError] = useState('');
 
-    const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:50001";
+    const handleRatingChange = (field: keyof typeof ratings, value: number) => {
+        setRatings(prev => ({...prev, [field]: value}));
+    }
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setError(null);
+        setError('');
 
-        if (dealMade === null) { setError("Please indicate if you ended up working together."); return; }
-        // Optional: Make reason mandatory if no deal
-        // if (dealMade === 'no' && !noDealReason.trim()) { setError("Please provide a brief reason why you didn't work together."); return; }
-        if (dealMade === 'yes') {
-             if (professionalismRating === 0 || qualityRating === 0 || communicationRating === 0) { setError("Please provide star ratings for Professionalism, Quality, and Communication."); return; }
-             if (overallRating === 0) { setError("Please provide an overall star rating for the collaboration."); return; }
+        if (ratings.overall === 0) {
+            setError("Please provide an overall star rating.");
+            return;
         }
-        // If dealMade is 'no', overallRating is not strictly required by this validation
 
-        if (isSubmitting) return;
         setIsSubmitting(true);
 
-        const token = localStorage.getItem("token");
-        if (!token) { setError("Authentication error. Please log in."); setIsSubmitting(false); return; }
-
-        const specificAnswers = {
-            dealMade: dealMade,
-            // Only include keys if they have values or are relevant
-            ...(dealMade === 'no' && noDealReason.trim() && { noDealReason: noDealReason.trim() }),
-            ...(dealMade === 'yes' && { professionalism: professionalismRating }),
-            ...(dealMade === 'yes' && { quality: qualityRating }),
-            ...(dealMade === 'yes' && { communication: communicationRating }),
-            ...(comment.trim() && { comment: comment.trim() })
-        };
-
-        const payload = {
-            chatId: chatId,
-            reviewedUserId: reviewedUserId,
-            overallRating: dealMade === 'yes' ? overallRating : 0, // Send 0 if no deal? Or handle null in backend
-            specificAnswers: specificAnswers
-        };
-
         try {
-            await axios.post(`${API_BASE_URL}/api/reviews`, payload, {
-                headers: { Authorization: `Bearer ${token}` },
+            const token = localStorage.getItem('token');
+            const payload = {
+                reviewedUserId: reviewedUserId,
+                overallRating: ratings.overall,
+                specificAnswers: { 
+                    comment: comment.trim(),
+                    professionalism: ratings.professionalism,
+                    quality: ratings.quality,
+                    communication: ratings.communication,
+                }
+            };
+
+            const response = await axios.post(`${API_BASE_URL}/api/reviews`, payload, {
+                headers: { Authorization: `Bearer ${token}` }
             });
-            alert("Review submitted successfully!");
-            onClose(true); // Close the form, indicating success
+
+            // --- On success, call onClose with true AND the new review data ---
+            onClose(true, response.data.review);
 
         } catch (err: any) {
+            const errorMessage = err.response?.data?.message || "Failed to submit review.";
+            setError(errorMessage);
             console.error("Error submitting review:", err);
-            const message = err.response?.data?.message || "Failed to submit review.";
-            setError(message);
         } finally {
             setIsSubmitting(false);
         }
     };
 
     return (
-        // This component is rendered inside the modal overlay div in ChatWindow.tsx
-        <div className="rating-form">
-            <h3>Rate your collaboration with {reviewedUserName}</h3>
-            <p className="rating-form-subtext">Your feedback helps the community.</p>
-            <form onSubmit={handleSubmit}>
-
-                {/* Question 1: Deal Made? */}
-                <div className="form-group form-group-radio">
-                    <label id="deal-made-label">Did you end up working together / making a deal? *</label>
-                    <div role="radiogroup" aria-labelledby="deal-made-label" className="radio-options">
-                       <label>
-                            <input type="radio" name="dealMade" value="yes" checked={dealMade === 'yes'} onChange={() => setDealMade('yes')} required /> Yes
-                        </label>
-                        <label>
-                            <input type="radio" name="dealMade" value="no" checked={dealMade === 'no'} onChange={() => setDealMade('no')} required /> No
-                        </label>
-                    </div>
+        <div className="rating-form-modal">
+            <div className="rating-form-header">
+                <h3>Rate your collaboration with {reviewedUserName}</h3>
+                <button onClick={() => onClose(false)} className="close-btn">×</button>
+            </div>
+            <form onSubmit={handleSubmit} className="rating-form-content">
+                <div className="form-group">
+                    <label>Overall Rating *</label>
+                    <StarRatingInput rating={ratings.overall} setRating={(r) => handleRatingChange('overall', r)} />
                 </div>
-
-                {/* Conditional: Reason if NO deal */}
-                {dealMade === 'no' && (
-                    <div className="form-group fade-in">
-                        <label htmlFor={`no-deal-reason-${chatId}`}>Why didn't you work together? (Optional)</label>
-                        <textarea id={`no-deal-reason-${chatId}`} value={noDealReason} onChange={(e) => setNoDealReason(e.target.value)} rows={3} placeholder="e.g., Budget mismatch, different styles..." />
-                    </div>
-                )}
-
-                {/* Conditional: Follow-up questions if YES deal */}
-                {dealMade === 'yes' && (
-                    <div className="follow-up-questions fade-in">
-                         <hr />
-                         <p className="rating-form-subtext">Please rate the following aspects:</p>
-                         <div className="form-group">
-                            <label id="prof-label">Professionalism *</label>
-                            <StarRatingInput rating={professionalismRating} setRating={setProfessionalismRating} labelId="prof-label" />
-                        </div>
-                        <div className="form-group">
-                            <label id="qual-label">Quality of work / brief *</label>
-                            <StarRatingInput rating={qualityRating} setRating={setQualityRating} labelId="qual-label"/>
-                        </div>
-                         <div className="form-group">
-                            <label id="comm-label">Communication *</label>
-                            <StarRatingInput rating={communicationRating} setRating={setCommunicationRating} labelId="comm-label"/>
-                        </div>
-                         <div className="form-group">
-                             <label id="overall-label">Overall collaboration rating *</label>
-                             <StarRatingInput rating={overallRating} setRating={setOverallRating} labelId="overall-label"/>
-                         </div>
-                    </div>
-                )}
-
-                 {/* General Comment (Shown after selection) */}
-                 {dealMade !== null && (
-                     <div className="form-group fade-in">
-                         <label htmlFor={`comment-${chatId}`}>Additional comments (Optional):</label>
-                         <textarea id={`comment-${chatId}`} value={comment} onChange={(e) => setComment(e.target.value)} rows={4} placeholder={dealMade === 'yes' ? "Any other feedback about the collaboration?" : "Any other comments?"} />
-                     </div>
-                 )}
+                <hr />
+                <p className="rating-form-subtext">Optional Detailed Ratings:</p>
+                <div className="form-group">
+                    <label>Professionalism</label>
+                    <StarRatingInput rating={ratings.professionalism} setRating={(r) => handleRatingChange('professionalism', r)} />
+                </div>
+                <div className="form-group">
+                    <label>Quality of Work</label>
+                    <StarRatingInput rating={ratings.quality} setRating={(r) => handleRatingChange('quality', r)} />
+                </div>
+                 <div className="form-group">
+                    <label>Communication</label>
+                    <StarRatingInput rating={ratings.communication} setRating={(r) => handleRatingChange('communication', r)} />
+                </div>
+                
+                 <div className="form-group">
+                     <label htmlFor="comment">Additional comments (optional):</label>
+                     <textarea
+                         id="comment"
+                         rows={4}
+                         value={comment}
+                         onChange={(e) => setComment(e.target.value)}
+                         placeholder="Share details of your experience..."
+                     />
+                 </div>
 
                 {error && <p className="error-message">{error}</p>}
 
                 <div className="form-actions">
-                    <button type="submit" disabled={isSubmitting || dealMade === null} className="submit-btn">
+                    <button type="submit" disabled={isSubmitting} className="submit-btn">
                         {isSubmitting ? "Submitting..." : "Submit Review"}
-                    </button>
-                    <button type="button" onClick={() => onClose()} disabled={isSubmitting} className="cancel-btn">
-                        Cancel
                     </button>
                 </div>
             </form>
@@ -194,5 +152,3 @@ const RatingForm: React.FC<RatingFormProps> = ({
 };
 
 export default RatingForm;
-
-// --- REMOVED THE EXAMPLE CSS BLOCK FROM HERE ---

@@ -149,13 +149,19 @@ const [isLoadingCommentStatus, setIsLoadingCommentStatus] = useState<boolean>(tr
     if (userProfile && loggedInUser.user_id === userProfile.user_id) { return; }
     setIsRatingFormOpen(true);
   };
-  const handleCloseRatingForm = (submittedSuccessfully?: boolean) => {
-    setIsRatingFormOpen(false);
-    if (submittedSuccessfully) {
+  const handleCloseRatingForm = (submittedSuccessfully: boolean, newReview?: ReviewData) => {
+    setIsRatingFormOpen(false); // Always close the modal
+
+    // If a new review was successfully submitted and passed back
+    if (submittedSuccessfully && newReview) {
+      // Add the new review to the top of the existing reviews list
+      setReviews(prevReviews => [newReview, ...prevReviews]);
+      // Increment the review count
+      setReviewCount(prevCount => prevCount + 1);
+      // Mark that this user has now reviewed, to disable the button
       setAlreadyReviewed(true);
-      alert("Thank you for your review!");
-      // Consider re-fetching average rating and reviews list here
-      // Example: fetchReviewAndRatingData(); // You would define this function
+      
+      alert("Thank you! Your review has been posted.");
     }
   };
 
@@ -637,12 +643,13 @@ const handleCommentSubmit = async (e: React.FormEvent) => {
           {/* Rating Form Modal (General Reviews) */}
           {isRatingFormOpen && loggedInUser && profile && (
             <div className="rating-form-modal-overlay">
-              <RatingForm
+                            <RatingForm
                 reviewerId={loggedInUser.user_id}
-                reviewedUserId={profile.user_id}
-                reviewedUserName={profile.fullname}
+                reviewedUserId={userProfile.user_id}
+                reviewedUserName={userProfile.fullname}
                 onClose={handleCloseRatingForm}
               />
+
             </div>
           )}
         </div> {/* End profile-card */}
