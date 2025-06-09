@@ -1,12 +1,12 @@
 // src/components/RatingForm.tsx
 import React, { useState } from 'react';
 import axios from 'axios';
-import '../styles/RatingForm.css'; // We will provide the CSS for this
+import '../styles/RatingForm.css'; // Make sure you have created this CSS file
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:50001";
 
-// Define the shape of a Review object returned from the backend
-interface Review {
+// This should match the interface used in your other components
+export interface Review {
     review_id: number;
     overall_rating: number;
     specific_answers?: { comment?: string };
@@ -15,30 +15,32 @@ interface Review {
 }
 
 interface RatingFormProps {
-  reviewerId: number;
-  reviewedUserId: number;
-  reviewedUserName: string;
-  onClose: (submittedSuccessfully: boolean, newReview?: Review) => void;
-  chatId?: number | null; // Keep as optional for flexibility
+    reviewerId: number;
+    reviewedUserId: number;
+    reviewedUserName: string;
+    // Updated onClose to pass the new review back to the parent component
+    onClose: (submittedSuccessfully: boolean, newReview?: Review) => void;
+    chatId?: number | null;
 }
 
-// A reusable Star Rating input component
-const StarRatingInput = ({ rating, setRating, labelId }: { rating: number; setRating: (r: number) => void; labelId: string }) => {
+// Star Rating Sub-Component - Corrected
+const StarRatingInput = ({ rating, onRatingChange, labelId }: { rating: number; onRatingChange: (r: number) => void; labelId: string; }) => {
     const [hover, setHover] = useState(0);
     return (
-        <div className="star-rating" role="radiogroup" aria-labelledby={labelId}>
+        <div className="star-rating-input" role="radiogroup" aria-labelledby={labelId}>
             {[1, 2, 3, 4, 5].map((starValue) => (
                 <span
                     key={starValue}
                     className={starValue <= (hover || rating) ? 'star active' : 'star'}
-                    onClick={() => setRating(starValue)}
+                    onClick={() => onRatingChange(starValue)} // Use the passed-in handler
                     onMouseEnter={() => setHover(starValue)}
                     onMouseLeave={() => setHover(0)}
                     role="radio"
                     aria-checked={starValue === rating}
                     aria-label={`${starValue} out of 5 stars`}
                     tabIndex={0}
-                    onKeyDown={(e) => { if (e.key === ' ' || e.key === 'Enter') setRating(starValue); }}
+                    onKeyDown={(e) => { if (e.key === ' ' || e.key === 'Enter') onRatingChange(starValue);}}
+                    style={{ cursor: 'pointer', fontSize: '2.2rem', color: starValue <= (hover || rating) ? '#ffc107' : '#e0e0e0', marginRight: '4px' }}
                 >
                     ★
                 </span>
@@ -47,14 +49,19 @@ const StarRatingInput = ({ rating, setRating, labelId }: { rating: number; setRa
     );
 };
 
-
-const RatingForm: React.FC<RatingFormProps> = ({ chatId, reviewerId, reviewedUserId, reviewedUserName, onClose }) => {
+const RatingForm: React.FC<RatingFormProps> = ({
+    chatId,
+    reviewerId, // reviewerId is passed but wasn't used in the old payload, it comes from the token on the backend.
+    reviewedUserId,
+    reviewedUserName,
+    onClose
+}) => {
     const [dealMade, setDealMade] = useState<'yes' | 'no' | null>(null);
     const [noDealReason, setNoDealReason] = useState("");
-    const [professionalism, setProfessionalism] = useState(0);
-    const [quality, setQuality] = useState(0);
-    const [communication, setCommunication] = useState(0);
-    const [overall, setOverall] = useState(0);
+    const [professionalismRating, setProfessionalismRating] = useState<number>(0);
+    const [qualityRating, setQualityRating] = useState<number>(0);
+    const [communicationRating, setCommunicationRating] = useState<number>(0);
+    const [overallRating, setOverallRating] = useState<number>(0);
     const [comment, setComment] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -62,28 +69,28 @@ const RatingForm: React.FC<RatingFormProps> = ({ chatId, reviewerId, reviewedUse
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError(null);
-        if (dealMade === null) { setError("Please indicate if you worked together."); return; }
-        if (dealMade === 'yes' && overall === 0) { setError("Please provide an overall star rating."); return; }
-
+        if (dealMade === null) { setError("Please indicate if you ended up working together."); return; }
+        if (dealMade === 'yes' && overallRating === 0) { setError("Please provide an overall star rating for the collaboration."); return; }
+        
         setIsSubmitting(true);
-
         const token = localStorage.getItem("token");
-        if (!token) { setError("Authentication error."); setIsSubmitting(false); return; }
+        if (!token) { setError("Authentication error. Please log in."); setIsSubmitting(false); return; }
 
+        // Construct the detailed answers object
         const specificAnswers = {
             dealMade,
             noDealReason: dealMade === 'no' ? noDealReason.trim() : undefined,
-            professionalism: dealMade === 'yes' ? professionalism : undefined,
-            quality: dealMade === 'yes' ? quality : undefined,
-            communication: dealMade === 'yes' ? communication : undefined,
-            comment: comment.trim() || undefined,
+            professionalism: dealMade === 'yes' ? professionalismRating : undefined,
+            quality: dealMade === 'yes' ? qualityRating : undefined,
+            communication: dealMade === 'yes' ? communicationRating : undefined,
+            comment: comment.trim() || undefined
         };
 
         const payload = {
             chatId: chatId || null,
-            reviewedUserId,
-            overallRating: dealMade === 'yes' ? overall : 0, // Send 0 if no deal, backend can handle
-            specificAnswers,
+            reviewedUserId: reviewedUserId,
+            overallRating: dealMade === 'yes' ? overallRating : 0,
+            specificAnswers: specificAnswers
         };
 
         try {
@@ -91,8 +98,11 @@ const RatingForm: React.FC<RatingFormProps> = ({ chatId, reviewerId, reviewedUse
                 headers: { Authorization: `Bearer ${token}` },
             });
             alert("Review submitted successfully!");
-            onClose(true, response.data.review); // Pass success and the new review back
+            // Pass success and the new review data back to the parent
+            onClose(true, response.data.review);
+
         } catch (err: any) {
+            console.error("Error submitting review:", err);
             const message = err.response?.data?.message || "Failed to submit review.";
             setError(message);
         } finally {
@@ -101,15 +111,17 @@ const RatingForm: React.FC<RatingFormProps> = ({ chatId, reviewerId, reviewedUse
     };
 
     return (
-        <div className="rating-form-container">
-            <h3>Rate your collaboration with {reviewedUserName}</h3>
-            <p className="rating-form-subtext">Your feedback helps the community.</p>
-            <form onSubmit={handleSubmit}>
+        <div className="rating-form-container"> {/* Use a container class for better styling control */}
+            <div className="rating-form-header">
+                <h3>Rate your collaboration with {reviewedUserName}</h3>
+                <button onClick={() => onClose(false)} className="close-btn">×</button>
+            </div>
+            <form onSubmit={handleSubmit} className="rating-form-content">
                 <div className="form-group form-group-radio">
                     <label id="deal-made-label">Did you end up working together? *</label>
                     <div className="radio-options">
-                       <label><input type="radio" name="dealMade" value="yes" checked={dealMade === 'yes'} onChange={() => setDealMade('yes')} /> Yes</label>
-                       <label><input type="radio" name="dealMade" value="no" checked={dealMade === 'no'} onChange={() => setDealMade('no')} /> No</label>
+                       <label><input type="radio" name="dealMade" value="yes" checked={dealMade === 'yes'} onChange={() => setDealMade('yes')} required /> Yes</label>
+                       <label><input type="radio" name="dealMade" value="no" checked={dealMade === 'no'} onChange={() => setDealMade('no')} required /> No</label>
                     </div>
                 </div>
 
@@ -124,10 +136,10 @@ const RatingForm: React.FC<RatingFormProps> = ({ chatId, reviewerId, reviewedUse
                     <div className="follow-up-questions fade-in">
                          <hr />
                          <p className="rating-form-subtext">Please rate the following aspects:</p>
-                         <div className="form-group"><label id="prof-label">Professionalism *</label><StarRatingInput rating={professionalism} setRating={setProfessionalism} labelId="prof-label" /></div>
-                         <div className="form-group"><label id="qual-label">Quality of work / brief *</label><StarRatingInput rating={quality} setRating={setQuality} labelId="qual-label"/></div>
-                         <div className="form-group"><label id="comm-label">Communication *</label><StarRatingInput rating={communication} setRating={setCommunication} labelId="comm-label"/></div>
-                         <div className="form-group"><label id="overall-label">Overall collaboration rating *</label><StarRatingInput rating={overall} setRating={setOverall} labelId="overall-label"/></div>
+                         <div className="form-group"><label id="prof-label">Professionalism *</label><StarRatingInput rating={professionalismRating} onRatingChange={setProfessionalismRating} labelId="prof-label" /></div>
+                         <div className="form-group"><label id="qual-label">Quality of work / brief *</label><StarRatingInput rating={qualityRating} onRatingChange={setQualityRating} labelId="qual-label"/></div>
+                         <div className="form-group"><label id="comm-label">Communication *</label><StarRatingInput rating={communicationRating} onRatingChange={setCommunicationRating} labelId="comm-label"/></div>
+                         <div className="form-group"><label id="overall-label">Overall collaboration rating *</label><StarRatingInput rating={overallRating} onRatingChange={setOverallRating} labelId="overall-label"/></div>
                     </div>
                 )}
 
