@@ -1,10 +1,11 @@
 // src/pages/JobPostings.tsx
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
-import '../styles/JobPostings.css'; // We'll create this new CSS file
-import { FaMapMarkerAlt, FaGlobe, FaBuilding, FaEuroSign, FaFileContract, FaCalendarAlt, FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
+import { Link, useNavigate } from 'react-router-dom';
+import '../styles/JobPostings.css'; // Make sure this CSS file exists
+import { FaMapMarkerAlt, FaGlobe, FaBuilding, FaEuroSign, FaCalendarAlt, FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
 import { formatDate } from '../utils/formatDate'; // Assuming you have this utility
+import { useUserContext } from '../context/UserContext'; // To check user type
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:50001";
 
@@ -46,29 +47,33 @@ interface JobPosting {
 }
 
 interface JobPostingsProps {
-  employerId?: number; // To show jobs for a specific employer, e.g., on their profile
+  employerId?: number; // This prop determines which employer's jobs to show
 }
 
 const JobPostings: React.FC<JobPostingsProps> = ({ employerId }) => {
   const [jobPostings, setJobPostings] = useState<JobPosting[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
-  const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
-  const isArtist = storedUser?.user_type === 'Artist';
+  const { userType: loggedInUserType } = useUserContext();
+  const isArtist = loggedInUserType === 'Artist';
 
   useEffect(() => {
+    // No need to fetch if an employerId isn't provided to the component
+    if (!employerId) {
+        setLoading(false);
+        setJobPostings([]);
+        return;
+    }
+
     const fetchJobPostings = async () => {
       setLoading(true);
       setError(null);
       try {
         const token = localStorage.getItem('token');
-        let url = `${API_URL}/api/job-postings`;
-
-        if (employerId) {
-          // Assuming your backend can filter by employer_id
-          url += `?employer_id=${employerId}`;
-        }
+        // Your backend endpoint to get jobs by a specific employer
+        const url = `${API_URL}/api/job-postings/employer?employer_id=${employerId}`;
 
         const response = await axios.get(url, {
           headers: token ? { Authorization: `Bearer ${token}` } : {},
@@ -76,14 +81,15 @@ const JobPostings: React.FC<JobPostingsProps> = ({ employerId }) => {
 
         setJobPostings(response.data || []);
       } catch (err) {
-        console.error('Error fetching job postings:', err);
+        console.error('Error fetching job postings for employer:', err);
         setError('Failed to load job postings.');
       } finally {
         setLoading(false);
       }
     };
+
     fetchJobPostings();
-  }, [employerId]);
+  }, [employerId]); // Effect runs when employerId changes
 
   const handleApply = async (jobId: number) => {
     try {
@@ -93,9 +99,8 @@ const JobPostings: React.FC<JobPostingsProps> = ({ employerId }) => {
         return;
       }
 
-      // --- CORRECTED API PATH ---
       const response = await axios.post(
-        `${API_URL}/api/job-postings/${jobId}/apply`, // The route is /job-postings/:jobId/apply
+        `${API_URL}/api/job-postings/${jobId}/apply`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -112,14 +117,15 @@ const JobPostings: React.FC<JobPostingsProps> = ({ employerId }) => {
 
   return (
     <div className="job-postings-container">
+      {/* The H4 title is now managed by the parent page (e.g., UserProfilePage) */}
+      {/* <h4>Job Postings</h4> */}
       {jobPostings.length > 0 ? (
         jobPostings.map((job) => (
+          // We reuse the same detailed card style for consistency
           <div key={job.job_id} className="job-card-detailed">
             <div className="job-card-header">
               <h3>{job.title}</h3>
-              <p className="employer-name">
-                Posted by: <Link to={`/user-profile/${job.employer?.user?.user_id}`}>{job.employer?.user?.fullname || 'N/A'}</Link>
-              </p>
+              {/* No need to show "Posted by" since we are on their profile, but date is useful */}
               <span className="post-date">Posted on {formatDate(job.createdAt)}</span>
             </div>
 
@@ -127,7 +133,7 @@ const JobPostings: React.FC<JobPostingsProps> = ({ employerId }) => {
                 <span className="tag-item category-tag">{job.category}</span>
                 {job.location && <span className="tag-item"><FaMapMarkerAlt /> {job.location}</span>}
                 {job.presence === 'Online' && <span className="tag-item"><FaGlobe /> Online</span>}
-                {job.presence === 'Physical' && <span className="tag-item"><FaBuilding /> On-Site</span>}
+                {job.presence === 'Physical' && <span className="tag-item"><FaBuilding /> On-site</span>}
                 {job.presence === 'Both' && <span className="tag-item"><FaGlobe />/<FaBuilding /> Hybrid</span>}
             </div>
 
@@ -152,22 +158,7 @@ const JobPostings: React.FC<JobPostingsProps> = ({ employerId }) => {
                 </div>}
             </div>
             
-            {job.requirements && <div className="job-card-requirements">
-                <h4>Requirements</h4>
-                <ul>
-                    {job.requirements.experience_years && <li>Experience: <strong>{job.requirements.experience_years} years</strong></li>}
-                    {job.requirements.university_degree?.required && <li>Degree: <strong>{job.requirements.university_degree.details || 'Required'}</strong></li>}
-                    {job.requirements.military_service && job.requirements.military_service !== 'Not Applicable' && <li>Military Service: <strong>{job.requirements.military_service}</strong></li>}
-                    {job.requirements.foreign_languages && job.requirements.foreign_languages.length > 0 && (
-                        <li>Languages: {job.requirements.foreign_languages.map(l => `${l.language} (${l.certificate})`).join(', ')}</li>
-                    )}
-                </ul>
-            </div>}
-
-            {job.desired_keywords && <div className="job-card-keywords">
-                <h4>Desired Keywords</h4>
-                <p>{job.desired_keywords}</p>
-            </div>}
+            {/* You can optionally show requirements or a "View Details" button */}
             
             {isArtist && (
               <div className="job-card-actions">
@@ -179,7 +170,7 @@ const JobPostings: React.FC<JobPostingsProps> = ({ employerId }) => {
           </div>
         ))
       ) : (
-        <p>No job postings available matching your criteria.</p>
+        <p>This user has no active job postings.</p>
       )}
     </div>
   );

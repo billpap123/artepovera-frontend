@@ -2,6 +2,7 @@
 
 .post-job-page-container {
     padding: 40px 20px;
+    padding-top: 200px;
     background-color: #f4f7f6; /* Light neutral background for the whole page */
     font-family: 'Nunito', sans-serif;
 }
@@ -80,7 +81,7 @@
 .post-job-form input:focus,
 .post-job-form select:focus,
 .post-job-form textarea:focus {
-    border-color: #007bff; /* A nice blue for focus state */
+    border-color: #f59133; /* A nice blue for focus state */
     background-color: #fff;
     box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
     outline: none;

@@ -1,11 +1,15 @@
 // src/pages/UserProfilePage.tsx
 import React, { useEffect, useState, useCallback } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import Navbar from '../components/Navbar';
 import RatingForm from '../components/RatingForm';
 import '../styles/UserProfilePage.css';
-import { FaFilePdf, FaHeart, FaRegHeart, FaCommentDots } from 'react-icons/fa'; // Added icons
+import { 
+  FaFilePdf, FaHeart, FaRegHeart, FaCommentDots, 
+  FaMapMarkerAlt, FaGlobe, FaBuilding 
+} from 'react-icons/fa';
+
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:50001";
 
@@ -25,8 +29,17 @@ interface ReviewData {
 }
 
 interface PortfolioItem { portfolio_id: number; image_url?: string; description?: string;}
-interface JobPosting { job_id: number; title: string; description?: string;}
-interface ArtistProfileData { artist_id: number; bio?: string; profile_picture?: string; is_student?: boolean; cv_url?: string | null; cv_public_id?: string | null;}
+// --- THIS IS THE UPDATED JobPosting INTERFACE ---
+interface JobPosting {
+  job_id: number;
+  title: string;
+  description?: string | null;
+  category: string;
+  location?: string | null;
+  presence: 'Physical' | 'Online' | 'Both';
+  payment_total: number;
+  createdAt: string; // The backend sends createdAt
+}interface ArtistProfileData { artist_id: number; bio?: string; profile_picture?: string; is_student?: boolean; cv_url?: string | null; cv_public_id?: string | null;}
 interface EmployerProfileData { employer_id: number; bio?: string; profile_picture?: string;}
 
 interface UserProfile {
@@ -581,19 +594,39 @@ const handleCommentSubmit = async (e: React.FormEvent) => {
               </div>
             ) : (
               <div className="job-postings-section profile-section-public">
-                <h4>Job Postings</h4>
-                 {loading && jobPostings.length === 0 ? <p>Loading job postings...</p> :
-                  jobPostings.length === 0 ? ( <p>No job postings.</p> ) : (
-                  <div className="job-postings-list">
-                    {jobPostings.map((job) => (
-                      <div key={job.job_id} className="job-posting-item-card">
-                        <h5>{job.title}</h5>
-                        <p>{job.description || 'No description'}</p>
+              <h4>Active Job Postings</h4>
+              {loading && jobPostings.length === 0 ? (
+                <p>Loading job postings...</p>
+              ) : jobPostings.length === 0 ? (
+                <p>This employer has no active job postings.</p>
+              ) : (
+                <div className="profile-job-postings-list">
+                  {jobPostings.map((job) => (
+                    <div key={job.job_id} className="profile-job-item-card">
+                      <div className="profile-job-item-header">
+                        <h5 className="profile-job-item-title">{job.title}</h5>
+                        <span className="profile-job-item-payment">
+                          €{job.payment_total.toFixed(2)}
+                        </span>
                       </div>
-                    ))}
-                  </div>
-                )}
-              </div>
+                      <p className="profile-job-item-category">{job.category}</p>
+                      <div className="profile-job-item-tags">
+                          {job.location && <span className="tag-item compact"><FaMapMarkerAlt /> {job.location}</span>}
+                          {job.presence === 'Online' && <span className="tag-item compact"><FaGlobe /> Online</span>}
+                          {job.presence === 'Physical' && <span className="tag-item compact"><FaBuilding /> On-site</span>}
+                          {job.presence === 'Both' && <span className="tag-item compact"><FaGlobe />/<FaBuilding /> Hybrid</span>}
+                      </div>
+                      <div className="profile-job-item-footer">
+                        <span className="post-date">Posted {formatDate(job.createdAt)}</span>
+                        {/* This link should go to a detailed job page in the future */}
+                        <Link to={`/jobs/${job.job_id}`} className="view-job-link">View Details</Link>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
             )}
           </div> {/* End profile-content-public */}
 
