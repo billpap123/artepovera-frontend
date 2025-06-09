@@ -2,7 +2,7 @@
 
 /* --- Page Layout & Main Card --- */
 .user-profile-page {
-  padding-top:200px;
+  padding-top:200px !important;
   max-width: 900px;
   margin: 40px auto;
   padding: 30px 40px;

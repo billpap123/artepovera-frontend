@@ -169,6 +169,8 @@ body {
  * BIO TEXT & EDIT FORM
  ****************************************/
 .bio-text {
+  white-space: pre-wrap; /* This tells CSS to respect newlines and wrap text normally */
+
   font-size: 1rem;
   color: var(--dark-gray);
   margin-bottom: 15px;

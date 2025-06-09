@@ -4,6 +4,9 @@ import axios from "axios";
 import { useUserContext } from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import ReactMarkdown from 'react-markdown'; // <<< Import the library
+import remarkGfm from 'remark-gfm'; // <<< Import the plugin for tables, links, etc.
+
 import "../styles/EmployerProfile.css"; // Ensure this file exists and has styles
 
 // --- Review Interface ---
@@ -317,7 +320,12 @@ const EmployerProfile: React.FC = () => {
               <> {/* <<< Opening Fragment */}
                 <div className="profile-section">
                     <h4>Bio</h4>
-                    <p className="bio-text">{bio || "No bio provided yet."}</p>
+                    {/* --- THIS IS THE UPDATED PART --- */}
+                  <div className="bio-text markdown-content">
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                        {bio || "*No bio provided yet.*"}
+                    </ReactMarkdown>
+                  </div>
                 </div>
                 <div className="reviews-section profile-section">
                      <h4>Reviews Received ({reviewCount})</h4>

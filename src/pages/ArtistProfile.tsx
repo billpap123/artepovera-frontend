@@ -6,6 +6,9 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import "../styles/ArtistProfile.css";
 import { FaFilePdf } from 'react-icons/fa'; // Assuming you want to use this for PDF icons
+import ReactMarkdown from 'react-markdown'; // <<< Import the library
+import remarkGfm from 'remark-gfm'; // <<< Import the plugin for tables, links, etc.
+
 
 // --- Review Interface ---
 interface Reviewer {
@@ -276,7 +279,11 @@ const ArtistProfile: React.FC = () => {
         <div className="profile-content">
             {!isEditing ? (
               <>
-                <div className="profile-section"> <h4>Bio</h4> <p className="bio-text">{bio || "No bio provided."}</p> </div>
+                <div className="profile-section"> <h4>Bio</h4>  <div className="bio-text markdown-content">
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                        {bio || "*No bio provided yet.*"}
+                    </ReactMarkdown>
+                  </div></div>
                 <div className="profile-section cv-section">
                   <h4>Curriculum Vitae (CV)</h4>
                   {cvUrl ? ( <div className="cv-display"> <FaFilePdf className="pdf-icon" /> <a href={cvUrl} target="_blank" rel="noopener noreferrer" className="cv-link"> Download CV </a> </div> )
