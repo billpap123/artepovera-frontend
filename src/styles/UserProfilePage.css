@@ -345,3 +345,15 @@ box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 
 .portfolio-item-card p { margin: 0; color: var(--dark-gray); font-size: 0.9rem; line-height: 1.4; }
 
+
+
+/* Give the message button its own color */
+.message-button {
+  background-color: #17a2b8; /* A nice info/cyan color */
+  color: #fff;
+  border-color: #17a2b8;
+}
+
+.message-button:hover:not(:disabled) {
+  background-color: #138496;
+}
