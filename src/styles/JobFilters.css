@@ -1,0 +1,91 @@
+/* src/styles/JobFilters.css */
+
+.job-filters {
+    background: #f8f9fa; /* Lighter, cleaner background */
+    padding: 25px;
+    border-radius: 12px;
+    margin-bottom: 30px;
+    border: 1px solid #dee2e6;
+}
+
+.job-filters h3 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: #343a40;
+    border-bottom: 1px solid #e9ecef;
+    padding-bottom: 12px;
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+
+.filter-grid {
+  display: grid;
+  /* Responsive grid: 1 column on small screens, up to 4 on larger screens */
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  align-items: end; /* Aligns items to the bottom of their cell for a clean look */
+}
+
+.filter-input,
+.filter-select {
+  padding: 10px 12px;
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 0.95rem;
+  background-color: #fff;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.filter-input:focus,
+.filter-select:focus {
+  border-color: #007bff; /* A standard blue for focus */
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+  outline: none;
+}
+
+.filter-input.keyword-filter {
+    /* If you want the keyword filter to be wider */
+    /* grid-column: span 2; */
+}
+
+.budget-filter-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.budget-filter-group input {
+  flex: 1;
+  min-width: 70px;
+}
+
+.budget-filter-group span {
+  padding: 0 5px;
+  color: #6c757d;
+}
+
+.clear-filters-button {
+  padding: 10px 15px;
+  background-color: #6c757d; /* A neutral grey for clear */
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  font-weight: 600;
+  font-size: 0.95rem;
+  height: 43px; /* Match height of other inputs */
+}
+
+.clear-filters-button:hover {
+    background-color: #5a6268;
+}
+
+/* Divider line used in MainPage.tsx */
+hr.filter-divider {
+    border: none;
+    border-top: 1px solid #e9ecef;
+    margin: 0 0 30px 0;
+}
