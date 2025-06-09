@@ -623,7 +623,7 @@ const handleCommentSubmit = async (e: React.FormEvent) => {
                         <span className="post-date">Posted {formatDate(job.createdAt)}</span>
                         {/* This link should ideally go to a detailed job page like /jobs/:job_id */}
                         {/* For now, it can link to the main job feed for context */}
-                        <Link to={`/job-listings`} className="view-job-link">View Details</Link>
+                        <Link to={`/jobs/${job.job_id}`} className="view-job-link">View Details</Link>
                         </div>
                     </div>
                   ))}
