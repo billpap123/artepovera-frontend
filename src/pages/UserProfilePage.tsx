@@ -164,35 +164,7 @@ const [isLoadingCommentStatus, setIsLoadingCommentStatus] = useState<boolean>(tr
       alert("Thank you! Your review has been posted.");
     }
   };
-  const handleInitiateChat = async () => {
-    if (!loggedInUser || !userProfile) {
-        alert("You must be logged in to start a chat.");
-        return;
-    }
 
-    try {
-        const token = localStorage.getItem('token');
-        // Your backend createChat endpoint should handle finding an existing chat
-        // or creating a new one between the two users.
-        const response = await axios.post(`${API_BASE_URL}/api/chats`, 
-            {
-                // Send the ID of the other user. The backend gets your ID from the token.
-                receiverId: userProfile.user_id 
-            }, 
-            { headers: { Authorization: `Bearer ${token}` } }
-        );
-        
-        // After the chat is found/created, navigate to the chat page.
-        // The backend should return the chat object, including its ID.
-        const chatId = response.data.chat.chat_id;
-        console.log(`Navigating to chat with ID: ${chatId}`);
-        navigate(`/chat`); // Or navigate(`/chat?open=${chatId}`);
-        
-    } catch (err: any) {
-        console.error("Error initiating chat:", err);
-        alert(err.response?.data?.message || "Could not start a conversation.");
-    }
-  };
   // --- Handlers for Artist Support ---
   const handleToggleSupport = async () => {
     if (!loggedInUser || loggedInUser.user_type !== 'Artist' || !userProfile || userProfile.user_type !== 'Artist' || loggedInUser.user_id === userProfile.user_id) {
@@ -456,11 +428,6 @@ const handleCommentSubmit = async (e: React.FormEvent) => {
               </div>
               
               <div className="profile-actions">
-                 {/* --- ADD THE NEW MESSAGE BUTTON --- */}
-      <button onClick={handleInitiateChat} className="interaction-button message-button">
-          Message
-      </button>
-      {/* --- END ADD --- */}
                 {/* --- Like Button --- */}
                 {/* Shows if user is logged in and not viewing their own profile */}
                 {canLoggedInUserInteract && (
