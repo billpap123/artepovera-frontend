@@ -434,6 +434,17 @@ const UserProfilePage: React.FC = () => {
     fetchAllData();
     return () => { isMounted = false; };
   }, [userIdFromParams, API_BASE_URL, loggedInUser, fetchLikeStatus]); // Keep fetchLikeStatus in deps if it's memoized with useCallback
+  useEffect(() => {
+    // Check if the form was just opened and if the ref is attached to the element
+    if (isRatingFormOpen && ratingFormRef.current) {
+      // Scroll the element into the middle of the view with a smooth animation
+      ratingFormRef.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      });
+    }
+  }, [isRatingFormOpen]); // This effect runs whenever isRatingFormOpen changes
+
 
   // --- Loading and Error States ---
   if (!userProfile && loading) return <><Navbar /><div className="container loading-message">Loading user profile...</div></>;
@@ -453,17 +464,6 @@ const UserProfilePage: React.FC = () => {
   const profilePic = isArtistProfile ? profile.artistProfile?.profile_picture : profile.employerProfile?.profile_picture;
   const isStudent = isArtistProfile && profile.artistProfile?.is_student === true;
   const cvUrl = isArtistProfile ? profile.artistProfile?.cv_url : null;
-  useEffect(() => {
-    // Check if the form was just opened and if the ref is attached to the element
-    if (isRatingFormOpen && ratingFormRef.current) {
-      // Scroll the element into the middle of the view with a smooth animation
-      ratingFormRef.current.scrollIntoView({
-        behavior: 'smooth',
-        block: 'center',
-      });
-    }
-  }, [isRatingFormOpen]); // This effect runs whenever isRatingFormOpen changes
-
   return (
     <>
       <Navbar />
