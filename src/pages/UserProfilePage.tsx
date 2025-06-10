@@ -187,34 +187,32 @@ const [isLoadingCommentStatus, setIsLoadingCommentStatus] = useState<boolean>(tr
 const handleCommentSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
   if (!userProfile) {
-    console.error("Cannot submit comment, user profile data not loaded yet.");
-    return; // Exit the function early if profile data is missing
-}
-
-  // ... (your validation)
+      console.error("Cannot submit comment, user profile data not loaded yet.");
+      return;
+  }
+  if (!newComment.trim() || !loggedInUser || loggedInUser.user_type !== 'Artist' || userProfile.user_type !== 'Artist' || loggedInUser.user_id === userProfile.user_id) {
+    alert("Only artists can comment on other artists' profiles (not their own), and the comment cannot be empty.");
+    return;
+  }
   if (isSubmittingComment) return;
   setIsSubmittingComment(true);
   try {
     const token = localStorage.getItem('token');
-    const response = await axios.post(
-      `${API_BASE_URL}/api/users/${userProfile.user_id}/comments`,
+    const response = await axios.post(`${API_BASE_URL}/api/users/${userProfile.user_id}/comments`,
       { comment_text: newComment.trim() },
       { headers: { Authorization: `Bearer ${token}` } }
     );
-    setProfileComments(prevComments => [response.data.comment, ...prevComments]);
+    const newCommentData = response.data.comment;
+    setProfileComments(prevComments => [newCommentData, ...prevComments]);
     setNewComment("");
-    setHasCommented(true); // <<< ADD THIS LINE to update UI immediately
+    setHasCommented(true);
   } catch (err: any) {
-    console.error("Error submitting comment:", err);
-    if (err.response?.status === 409) {
-        setHasCommented(true); // Also sync state if backend says already commented
-    }
+    if (err.response?.status === 409) { setHasCommented(true); }
     alert(err.response?.data?.message || "Failed to submit comment.");
   } finally {
     setIsSubmittingComment(false);
   }
 };
-
   const getImageUrl = (path?: string | null): string => {
     if (!path) return '/default-profile.png';
     if (path.startsWith('http')) return path;
