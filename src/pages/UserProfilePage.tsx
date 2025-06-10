@@ -1,5 +1,5 @@
 // src/pages/UserProfilePage.tsx
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import Navbar from '../components/Navbar';
@@ -123,6 +123,7 @@ const UserProfilePage: React.FC = () => {
   const [jobPostings, setJobPostings] = useState<JobPosting[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const ratingFormRef = useRef<HTMLDivElement>(null);
 
   const [averageRating, setAverageRating] = useState<number | null>(null);
   const [reviewCount, setReviewCount] = useState<number>(0);
@@ -187,7 +188,7 @@ const UserProfilePage: React.FC = () => {
 
 
   // --- Handlers for Artist Support ---
-  const handleToggleSupport = async () => {
+  const handleSupportArtist = async () => {
     if (!loggedInUser || loggedInUser.user_type !== 'Artist' || !userProfile || userProfile.user_type !== 'Artist' || loggedInUser.user_id === userProfile.user_id) {
       alert("Only artists can support other artists, and not themselves.");
       return;
@@ -452,6 +453,16 @@ const UserProfilePage: React.FC = () => {
   const profilePic = isArtistProfile ? profile.artistProfile?.profile_picture : profile.employerProfile?.profile_picture;
   const isStudent = isArtistProfile && profile.artistProfile?.is_student === true;
   const cvUrl = isArtistProfile ? profile.artistProfile?.cv_url : null;
+  useEffect(() => {
+    // Check if the form was just opened and if the ref is attached to the element
+    if (isRatingFormOpen && ratingFormRef.current) {
+      // Scroll the element into the middle of the view with a smooth animation
+      ratingFormRef.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      });
+    }
+  }, [isRatingFormOpen]); // This effect runs whenever isRatingFormOpen changes
 
   return (
     <>
@@ -522,15 +533,16 @@ const UserProfilePage: React.FC = () => {
                 {/* --- Artist Support Button --- */}
                 {/* Shows if logged-in user is Artist, profile is Artist, and not own profile */}
                 {canLoggedInArtistInteractWithArtistProfile && (
-                  <button
-                    onClick={handleToggleSupport}
-                    disabled={isTogglingSupport || isLoadingSupportStatus}
-                    className={`support-button ${hasSupported ? 'supported' : ''}`}
-                  >
-                    {isLoadingSupportStatus ? "..." : isTogglingSupport ? "..." : hasSupported ? <FaHeart color="deeppink" /> : <FaRegHeart />}
-                    {hasSupported ? "Supported" : "Support Artist"}
-                    {!isLoadingSupportStatus && <span className="support-count">({supportCount})</span>}
-                  </button>
+                  <button 
+                  onClick={handleSupportArtist} // Use the new function name
+                  // Add 'hasSupported' to the disabled condition. This is the lock.
+                  disabled={isTogglingSupport || isLoadingSupportStatus || hasSupported} 
+                  className={`support-button ${hasSupported ? 'supported' : ''}`}
+              >
+                  {isLoadingSupportStatus ? "..." : isTogglingSupport ? "..." : hasSupported ? <FaHeart color="deeppink"/> : <FaRegHeart />} 
+                  {hasSupported ? "Supported" : "Support Artist"}
+                  {!isLoadingSupportStatus && <span className="support-count">({supportCount})</span>}
+              </button>
                 )}
               </div>
             </div>
@@ -706,7 +718,7 @@ const UserProfilePage: React.FC = () => {
 
           {/* Rating Form Modal (General Reviews) */}
           {isRatingFormOpen && loggedInUser && profile && (
-            <div className="rating-form-modal-overlay">
+    <div ref={ratingFormRef} className="rating-form-modal-overlay">
               <RatingForm
                 reviewerId={loggedInUser.user_id}
                 reviewedUserId={profile.user_id}
