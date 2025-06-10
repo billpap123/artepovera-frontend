@@ -606,7 +606,7 @@ const UserProfilePage: React.FC = () => {
 
                 {interactionReviews.length > 0 && (
     <div className="interaction-feedback-section profile-section-public">
-        <h4>Interaction Feedback ({interactionReviews.length})</h4>
+        <h4>Interaction feedback ({interactionReviews.length})</h4>
         <p className="section-subtext">
             Feedback from users who communicated but did not start a project.
         </p>
@@ -718,7 +718,7 @@ const UserProfilePage: React.FC = () => {
               </div>
             ) : (
               <div className="job-postings-section profile-section-public">
-                <h4>Active Job Postings</h4>
+                <h4>Active job postings</h4>
                 {loading && jobPostings.length === 0 ? (
                   <p>Loading job postings...</p>
                 ) : jobPostings.length === 0 ? (

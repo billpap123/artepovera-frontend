@@ -2,8 +2,9 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
-import '../styles/Global.css'; // Keep if you have global styles
-import '../styles/Login.css';   // Ensure this file exists and has styles
+import { useUserContext } from '../context/UserContext'; // <-- 1. IMPORT THE HOOK
+import '../styles/Global.css';
+import '../styles/Login.css';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:50001';
 
@@ -12,39 +13,40 @@ const Login = () => {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const navigate = useNavigate();
-    // const { setUserId, setArtistId, setEmployerId } = useUserContext(); // Import if needed for context update
+    
+    // <-- 2. GET THE SETTER FUNCTIONS FROM YOUR CONTEXT
+    const { setUserId, setUserType, setArtistId, setEmployerId } = useUserContext();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setError(''); // Clear previous errors
+        setError('');
         try {
             const response = await axios.post(`${API_BASE_URL}/api/users/login`, {
                 email,
                 password,
             });
 
-            const { token, user } = response.data; // Assuming backend sends user object
+            const { token, user } = response.data;
 
+            // Your existing logic to save to storage
             localStorage.setItem('token', token);
-            if (user) {
-                localStorage.setItem('user', JSON.stringify(user));
-                // --- Optional: Update UserContext if you use it after login ---
-                // if (setUserId) setUserId(user.user_id);
-                // if (user.user_type === 'Artist' && user.artist_id && setArtistId) {
-                //     setArtistId(user.artist_id);
-                // } else if (user.user_type === 'Employer' && user.employer_id && setEmployerId) {
-                //     setEmployerId(user.employer_id);
-                // }
-                // --- End Optional ---
-            } else {
-                // This case should ideally not happen if login is successful
-                console.error("User data not found in login response");
-                setError("Login successful, but failed to retrieve user details.");
-                return;
-            }
+            localStorage.setItem('user', JSON.stringify(user));
+            
+            // <-- 3. UPDATE THE GLOBAL CONTEXT STATE
+            // This is the crucial step that makes the Navbar update instantly.
+            setUserId(user.user_id);
+            setUserType(user.user_type);
 
+            // Check for nested profile objects to set the correct ID
+            if (user.user_type === 'Artist' && user.artistProfile) {
+                setArtistId(user.artistProfile.artist_id);
+            } else if (user.user_type === 'Employer' && user.employerProfile) {
+                setEmployerId(user.employerProfile.employer_id);
+            }
+            
             navigate('/main'); // Redirect to the main page
-        } catch (err: any) { // Typed err
+
+        } catch (err: any) {
             console.error('Login error:', err);
             if (axios.isAxiosError(err) && err.response) {
                 setError(err.response.data.message || 'Invalid email or password.');
@@ -55,19 +57,18 @@ const Login = () => {
     };
 
     return (
-        <div className="auth-page-container"> {/* Main page wrapper */}
+        <div className="auth-page-container">
             <div className="auth-logo-container">
                 <Link to="/">
                     <img src="/images/logo2.png" alt="Artepovera Home" className="auth-logo" />
-                    <span style={{ marginLeft: '8px' }}>Back to main page</span> {/* Added span for spacing if logo first */}
+                    <span style={{ marginLeft: '8px' }}>Back to main page</span>
                 </Link>
             </div>
 
-            <div className="login-container auth-form-container"> {/* Container for the form */}
-                {/* Keep login-container if it has unique styles, auth-form-container for shared styles */}
+            <div className="login-container auth-form-container">
                 <form onSubmit={handleSubmit} className="login-form auth-form">
-                    <h2 className="login-title">Login to Your Account</h2> {/* Specific title */}
-                    <div className="form-group"> {/* Consistent class for styling */}
+                    <h2 className="login-title">Login to Your Account</h2>
+                    <div className="form-group">
                         <label htmlFor="login-email">Email:</label>
                         <input
                             id="login-email"
@@ -75,7 +76,7 @@ const Login = () => {
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
-                            className="login-input" // Can also use a shared .auth-input class
+                            className="login-input"
                         />
                     </div>
                     <div className="form-group">
@@ -86,14 +87,14 @@ const Login = () => {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
-                            className="login-input" // Can also use a shared .auth-input class
+                            className="login-input"
                         />
                     </div>
-                    <button type="submit" className="login-button auth-button">Login</button> {/* Shared auth-button class */}
-                    {error && <p className="login-error error-message">{error}</p>} {/* Shared error-message class */}
+                    <button type="submit" className="login-button auth-button">Login</button>
+                    {error && <p className="login-error error-message">{error}</p>}
                 </form>
 
-                <p className="register-link auth-switch-link"> {/* Shared auth-switch-link class */}
+                <p className="register-link auth-switch-link">
                     Don't have an account?{' '}
                     <Link to="/register">
                         Register now
