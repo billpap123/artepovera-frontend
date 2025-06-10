@@ -157,30 +157,26 @@ const UserProfilePage: React.FC = () => {
   const handleCloseRatingForm = (submittedSuccessfully: boolean, newReviewFromForm?: RatingFormReview) => {
     setIsRatingFormOpen(false);
 
-    // Ensure we have the form data AND the logged-in user's info
     if (submittedSuccessfully && newReviewFromForm && loggedInUser) {
       
-      // Manually construct a complete ReviewData object that matches the structure
-      // of reviews fetched from the server.
       const newReviewForState: ReviewData = {
-        // Spread all properties from the object returned by the form (like review_id, overall_rating, etc.)
         ...newReviewFromForm,
         
-        // This line specifically fixes the TypeScript error you are seeing.
-        // We use the 'created_at' property that exists on newReviewFromForm.
-        created_at: newReviewFromForm.created_at,
+        // --- THIS IS THE FIX ---
+        // If newReviewFromForm.created_at is missing (undefined),
+        // we use the current time as a fallback.
+        // .toISOString() creates a string that our formatDate function can read.
+        created_at: newReviewFromForm.created_at || new Date().toISOString(),
         
-        // Now, we manually build the nested 'reviewer' object, which is missing
-        // from the form's response but required by our render logic.
+        // Manually build the nested 'reviewer' object
         reviewer: {
           user_id: loggedInUser.user_id,
           fullname: loggedInUser.fullname,
           user_type: loggedInUser.user_type,
-          profile_picture: loggedInUser.profile_picture, // Assumes you've added this to LoggedInUser
+          profile_picture: loggedInUser.profile_picture,
         }
       };
       
-      // Add the newly constructed, complete object to the state
       setReviews(prevReviews => [newReviewForState, ...prevReviews]);
       
       setReviewCount(prevCount => prevCount + 1);
@@ -220,8 +216,8 @@ const UserProfilePage: React.FC = () => {
   const handleCommentSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!userProfile) {
-      console.error("Cannot submit comment, user profile data not loaded yet.");
-      return;
+        console.error("Cannot submit comment, user profile data not loaded yet.");
+        return;
     }
     if (!newComment.trim() || !loggedInUser || loggedInUser.user_type !== 'Artist' || userProfile.user_type !== 'Artist' || loggedInUser.user_id === userProfile.user_id) {
       alert("Only artists can comment on other artists' profiles (not their own), and the comment cannot be empty.");
@@ -229,16 +225,41 @@ const UserProfilePage: React.FC = () => {
     }
     if (isSubmittingComment) return;
     setIsSubmittingComment(true);
+  
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.post(`${API_BASE_URL}/api/users/${userProfile.user_id}/comments`,
+      const response = await axios.post(
+        `${API_BASE_URL}/api/users/${userProfile.user_id}/comments`,
         { comment_text: newComment.trim() },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      const newCommentData = response.data.comment;
-      setProfileComments(prevComments => [newCommentData, ...prevComments]);
+      
+      // This is the basic comment object from the server, likely missing nested data.
+      const newCommentFromServer = response.data.comment;
+  
+      // --- THIS IS THE FIX ---
+      // We now manually construct a complete object for our state.
+      const newCommentForState: ArtistComment = {
+        ...newCommentFromServer, // Get comment_id, comment_text, etc.
+  
+        // Provide a fallback for the date, in case the server response doesn't include it.
+        created_at: newCommentFromServer.created_at || new Date().toISOString(),
+  
+        // Manually build the 'commenter' object that our render logic needs.
+        commenter: {
+          user_id: loggedInUser.user_id,
+          fullname: loggedInUser.fullname,
+          user_type: loggedInUser.user_type,
+          profile_picture: loggedInUser.profile_picture, // From our LoggedInUser state
+        },
+      };
+  
+      // Add the new, complete comment object to the state so it renders correctly.
+      setProfileComments(prevComments => [newCommentForState, ...prevComments]);
+      
       setNewComment("");
       setHasCommented(true);
+  
     } catch (err: any) {
       if (err.response?.status === 409) { setHasCommented(true); }
       alert(err.response?.data?.message || "Failed to submit comment.");
@@ -246,7 +267,7 @@ const UserProfilePage: React.FC = () => {
       setIsSubmittingComment(false);
     }
   };
-  const getImageUrl = (path?: string | null): string => {
+    const getImageUrl = (path?: string | null): string => {
     if (!path) return '/default-profile.png';
     if (path.startsWith('http')) return path;
     return `${API_BASE_URL}/${path.replace(/^uploads\/uploads\//, 'uploads/')}`;
