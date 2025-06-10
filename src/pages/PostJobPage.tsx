@@ -19,6 +19,8 @@ const PostJobPage: React.FC = () => {
     // --- State for all new form fields ---
     const [title, setTitle] = useState('');
     const [category, setCategory] = useState('');
+    const [customCategory, setCustomCategory] = useState(''); // <-- ADD THIS NEW STATE
+
     const [description, setDescription] = useState('');
     const [location, setLocation] = useState('');
     const [presence, setPresence] = useState<'Physical' | 'Online' | 'Both'>('Physical');
@@ -62,16 +64,17 @@ const PostJobPage: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
-        
-        if (!title || !category || totalPayment === '') {
-            setError("Please fill out all required fields: Title, Category, and Total Payment.");
-            return;
-        }
+        const finalCategory = category === 'Other' ? customCategory.trim() : category;
 
+        if (!title || !finalCategory || totalPayment === '') {
+          setError("Please fill out all required fields: Title, Category, and Total Payment.");
+          return;
+      }
+  
         setIsSubmitting(true);
 
         const jobData = {
-            title, category, description, location, presence,
+            title, category: finalCategory, description, location, presence,
             start_date: startDate || null,
             end_date: endDate || null,
             application_deadline: deadline || null,
@@ -131,11 +134,27 @@ const PostJobPage: React.FC = () => {
                         <legend>Core details</legend>
                         <label>Job title*<input type="text" value={title} onChange={e => setTitle(e.target.value)} required placeholder="e.g., Mural Artist for Downtown Cafe"/></label>
                         <label>Category*
-                            <select value={category} onChange={e => setCategory(e.target.value)} required>
-                                <option value="" disabled>Select a category...</option>
-                                {artistCategories.map(cat => (<option key={cat} value={cat}>{cat}</option>))}
-                            </select>
-                        </label>
+    <select value={category} onChange={e => setCategory(e.target.value)} required>
+        <option value="" disabled>Select a category...</option>
+        {artistCategories.map(cat => (<option key={cat} value={cat}>{cat}</option>))}
+        {/* Add this new option */}
+        <option value="Other">Other (Please specify)</option>
+    </select>
+</label>
+
+{/* This input will only appear when "Other" is selected from the dropdown */}
+{category === 'Other' && (
+    <div className="form-group fade-in">
+        <label>Please specify category*</label>
+        <input
+            type="text"
+            value={customCategory}
+            onChange={e => setCustomCategory(e.target.value)}
+            placeholder="e.g., VFX Artist, Puppet Master"
+            required
+        />
+    </div>
+)}
                         <label>Short Description<textarea value={description} onChange={e => setDescription(e.target.value)} rows={4} placeholder="Briefly describe the project, the artist's role, and key deliverables."/></label>
                     </fieldset>
 
