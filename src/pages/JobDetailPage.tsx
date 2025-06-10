@@ -5,6 +5,8 @@ import axios from 'axios';
 import Navbar from '../components/Navbar';
 import { formatDate } from '../utils/formatDate';
 import { useUserContext } from '../context/UserContext';
+import { getImageUrl } from '../utils/getImageUrl'; // <-- ADD THIS IMPORT
+
 import { 
     FaMapMarkerAlt, FaGlobe, FaBuilding, FaEuroSign, FaCalendarAlt, 
     FaCheckCircle, FaTimesCircle, FaTools, FaUserGraduate, FaLanguage, 
@@ -101,8 +103,8 @@ const JobDetailPage = () => {
     return (
         <>
             <Navbar />
-            <div className="job-detail-page">
-                {/* --- Main Content Column --- */}
+            <div className="job-detail-page-container">
+            {/* --- Main Content Column --- */}
                 <main className="job-detail-main">
                     <div className="job-detail-header">
                         <span className="job-detail-category">{job.category}</span>
@@ -148,8 +150,8 @@ const JobDetailPage = () => {
                     <div className="sidebar-card employer-card">
                         <h4>Posted by</h4>
                         <Link to={`/user-profile/${job.employer?.user?.user_id}`} className="employer-link">
-                            <img src={job.employer?.user?.profile_picture || '/default-profile.png'} alt={job.employer?.user?.fullname} />
-                            <span>{job.employer?.user?.fullname || 'N/A'}</span>
+                        <img src={getImageUrl(job.employer?.user?.profile_picture)} alt={job.employer?.user?.fullname} />
+                        <span>{job.employer?.user?.fullname || 'N/A'}</span>
                         </Link>
                     </div>
 

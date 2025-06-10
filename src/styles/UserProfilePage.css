@@ -210,7 +210,39 @@
 .reviewer-info strong, .commenter-info strong { font-weight: 600; }
 .review-date, .comment-date { font-size: 0.8em; color: #6c757d; }
 .review-stars { margin-left: auto; font-size: 0.9rem; }
+/* This is the main container for the name and date */
+.commenter-info {
+  display: flex; /* 1. Turn on Flexbox layout */
+  justify-content: space-between; /* 2. Pushes the name to the left and date to the right */
+  align-items: baseline; /* 3. Aligns the text nicely along their baseline */
+  flex-wrap: wrap; /* 4. Allows the date to drop to a new line on small screens */
+  gap: 1rem; /* 5. Ensures there's always a minimum space between them */
+  
+  flex-grow: 1; /* Allows this container to take up available space */
+  margin-left: 12px; /* Adds a little space next to the profile picture */
+}
 
+/* Optional: Target the name specifically if needed */
+.commenter-info strong {
+  /* This prevents the name from shrinking if space is tight */
+  flex-shrink: 0; 
+  margin-right: auto; /* Pushes the date away */
+}
+
+/* Optional: Target the date specifically */
+.commenter-info .comment-date {
+  font-size: 0.85rem;
+  color: #6c757d; /* A slightly muted color for the date */
+  white-space: nowrap; /* Prevents the date itself from breaking into two lines */
+  flex-shrink: 0;
+}
+
+/* We should also make the parent container a flexbox to align the image and the info block */
+.comment-header {
+    display: flex;
+    align-items: flex-start; /* Aligns pic to the top of the text block */
+    width: 100%;
+}
 .no-reviews, .no-viewpoints {
   color: #6c757d;
   font-style: italic;
