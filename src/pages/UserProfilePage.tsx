@@ -3,7 +3,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import Navbar from '../components/Navbar';
-import RatingForm from '../components/RatingForm';
+import RatingForm, { Review as RatingFormReview } from '../components/RatingForm'; // Import the specific Review type from RatingForm
 import '../styles/UserProfilePage.css';
 import { 
   FaFilePdf, FaHeart, FaRegHeart, FaCommentDots, 
@@ -17,19 +17,28 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:50001";
 interface Reviewer {
   user_id: number;
   fullname: string;
-  profile_picture: string | null;
+  user_type?: string;
+  // This matches the nested structure from your backend response
+  artistProfile?: { profile_picture: string | null; };
+  employerProfile?: { profile_picture: string | null; };
+  profile_picture?: string | null; // Adding this for simplicity if backend sends it directly
 }
 
 interface ReviewData {
   review_id: number;
   overall_rating: number;
   specific_answers?: { comment?: string; };
-  created_at: string;
+  createdAt: string; // Standardized to camelCase
   reviewer?: Reviewer;
 }
 
-interface PortfolioItem { portfolio_id: number; image_url?: string; description?: string;}
-// --- THIS IS THE UPDATED JobPosting INTERFACE ---
+interface ArtistComment {
+  comment_id: number;
+  comment_text: string;
+  createdAt: string; // Standardized to camelCase
+  commenter?: Reviewer; // Can reuse the Reviewer type here
+}
+
 interface JobPosting {
   job_id: number;
   title: string;
@@ -38,8 +47,11 @@ interface JobPosting {
   location?: string | null;
   presence: 'Physical' | 'Online' | 'Both';
   payment_total: number;
-  createdAt: string; // The backend now sends createdAt
+  createdAt: string;
 }
+interface PortfolioItem { portfolio_id: number; image_url?: string; description?: string;}
+// --- THIS IS THE UPDATED JobPosting INTERFACE ---
+
 
 interface ArtistProfileData { artist_id: number; bio?: string; profile_picture?: string; is_student?: boolean; cv_url?: string | null; cv_public_id?: string | null;}
 interface EmployerProfileData { employer_id: number; bio?: string; profile_picture?: string;}
@@ -58,24 +70,9 @@ interface LoggedInUser { // For storing more details of the logged-in user
     user_type: string;
     fullname: string;
 }
+interface CommenterDetails { user_id: number; fullname: string; profile_picture: string | null; user_type?: string; }
 
-// Interface for Artist Comments
-interface CommenterDetails {
-  user_id: number;
-  fullname: string;
-  profile_picture: string | null;
-  user_type?: string;
-}
 
-interface ArtistComment {
-  comment_id: number;
-  profile_user_id: number; // User ID of the profile being commented on
-  commenter_user_id: number; // User ID of the artist who made the comment
-  comment_text: string;
-  created_at: string;
-  updated_at?: string;
-  commenter?: CommenterDetails; // Details of the commenter
-}
 // --- End Interfaces ---
 
 // --- Helper Functions ---
@@ -149,18 +146,13 @@ const [isLoadingCommentStatus, setIsLoadingCommentStatus] = useState<boolean>(tr
     if (userProfile && loggedInUser.user_id === userProfile.user_id) { return; }
     setIsRatingFormOpen(true);
   };
-  const handleCloseRatingForm = (submittedSuccessfully: boolean, newReview?: ReviewData) => {
-    setIsRatingFormOpen(false); // Always close the modal
-
-    // If a new review was successfully submitted and passed back
+  const handleCloseRatingForm = (submittedSuccessfully: boolean, newReview?: RatingFormReview) => {
+    setIsRatingFormOpen(false);
     if (submittedSuccessfully && newReview) {
-      // Add the new review to the top of the existing reviews list
-      setReviews(prevReviews => [newReview, ...prevReviews]);
-      // Increment the review count
+      // Cast the incoming review to our local ReviewData type. They are now compatible.
+      setReviews(prevReviews => [newReview as unknown as ReviewData, ...prevReviews]);
       setReviewCount(prevCount => prevCount + 1);
-      // Mark that this user has now reviewed, to disable the button
       setAlreadyReviewed(true);
-      
       alert("Thank you! Your review has been posted.");
     }
   };
@@ -506,19 +498,27 @@ const handleCommentSubmit = async (e: React.FormEvent) => {
                  {reviewsLoading ? ( <p>Loading reviews...</p> )
                   : reviews.length > 0 ? (
                      <div className="reviews-list">
-                         {reviews.map((review) => (
-                            <div key={review.review_id} className="review-item">
-                                <div className="review-header">
-                                    <img src={getImageUrl(review.reviewer?.profile_picture)} alt={review.reviewer?.fullname || 'Reviewer'} className="reviewer-pic"/>
-                                    <div className="reviewer-info">
-                                        <strong>{review.reviewer?.fullname || 'Anonymous'}</strong>
-                                        <span className="review-date">{formatDate(review.created_at)}</span>
+                         {reviews.map((review) => {
+                            // --- THIS IS THE FIX ---
+                            // Helper to get the picture from the correct nested object
+                            const reviewerProfilePic = review.reviewer?.artistProfile?.profile_picture || review.reviewer?.employerProfile?.profile_picture || null;
+                            
+                            return (
+                                <div key={review.review_id} className="review-item">
+                                    <div className="review-header">
+                                        <img src={getImageUrl(reviewerProfilePic)} alt={review.reviewer?.fullname || 'Reviewer'} className="reviewer-pic"/>
+                                        <div className="reviewer-info">
+                                            <strong>{review.reviewer?.fullname || 'Anonymous'}</strong>
+                                            {/* Use the correct camelCase `createdAt` property */}
+                                            <span className="review-date">{formatDate(review.createdAt)}</span>
+                                        </div>
+                                        <div className="review-stars"><DisplayStars rating={review.overall_rating} /></div>
                                     </div>
-                                    <div className="review-stars"><DisplayStars rating={review.overall_rating} /></div>
+                                    {review.specific_answers?.comment && <p className="review-comment">"{review.specific_answers.comment}"</p>}
                                 </div>
-                                {review.specific_answers?.comment && <p className="review-comment">"{review.specific_answers.comment}"</p>}
-                            </div>
-                         ))}
+                            );
+                            // --- END FIX ---
+                         })}
                      </div>
                  ) : ( <p className="no-reviews">This user hasn't received any reviews yet.</p> )}
             </div>
@@ -572,7 +572,7 @@ const handleCommentSubmit = async (e: React.FormEvent) => {
                           <img src={getImageUrl(comment.commenter?.profile_picture)} alt={comment.commenter?.fullname || "Commenter"} className="commenter-pic"/>
                           <div className="commenter-info">
                             <strong>{comment.commenter?.fullname || "An Artist"}</strong>
-                            <span className="comment-date">{formatDate(comment.created_at)}</span>
+                            <span className="comment-date">{formatDate(comment.createdAt)}</span>
                           </div>
                         </div>
                         <p className="comment-text">{comment.comment_text}</p>
@@ -642,15 +642,14 @@ const handleCommentSubmit = async (e: React.FormEvent) => {
 
           {/* Rating Form Modal (General Reviews) */}
           {isRatingFormOpen && loggedInUser && profile && (
-            <div className="rating-form-modal-overlay">
-                            <RatingForm
-                reviewerId={loggedInUser.user_id}
-                reviewedUserId={userProfile.user_id}
-                reviewedUserName={userProfile.fullname}
-                onClose={handleCloseRatingForm}
-              />
-
-            </div>
+           <div className="rating-form-modal-overlay">
+           <RatingForm
+             reviewerId={loggedInUser.user_id}
+             reviewedUserId={profile.user_id}
+             reviewedUserName={profile.fullname}
+             onClose={handleCloseRatingForm}
+           />
+         </div>
           )}
         </div> {/* End profile-card */}
       </div> {/* End user-profile-page */}
