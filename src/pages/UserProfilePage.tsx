@@ -14,6 +14,13 @@ import {
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:50001";
 
 // --- Interfaces ---
+interface LoggedInUser {
+  user_id: number;
+  user_type: string;
+  fullname: string;
+  profile_picture?: string | null; // <-- ADD THIS
+}
+
 interface Reviewer {
   user_id: number;
   fullname: string;
@@ -147,16 +154,41 @@ const UserProfilePage: React.FC = () => {
     if (userProfile && loggedInUser.user_id === userProfile.user_id) { return; }
     setIsRatingFormOpen(true);
   };
-  const handleCloseRatingForm = (submittedSuccessfully: boolean, newReview?: RatingFormReview) => {
+  const handleCloseRatingForm = (submittedSuccessfully: boolean, newReviewFromForm?: RatingFormReview) => {
     setIsRatingFormOpen(false);
-    if (submittedSuccessfully && newReview) {
-      // Cast the incoming review to our local ReviewData type. They are now compatible.
-      setReviews(prevReviews => [newReview as unknown as ReviewData, ...prevReviews]);
+
+    // Ensure we have the form data AND the logged-in user's info
+    if (submittedSuccessfully && newReviewFromForm && loggedInUser) {
+      
+      // Manually construct a complete ReviewData object that matches the structure
+      // of reviews fetched from the server.
+      const newReviewForState: ReviewData = {
+        // Spread all properties from the object returned by the form (like review_id, overall_rating, etc.)
+        ...newReviewFromForm,
+        
+        // This line specifically fixes the TypeScript error you are seeing.
+        // We use the 'created_at' property that exists on newReviewFromForm.
+        created_at: newReviewFromForm.created_at,
+        
+        // Now, we manually build the nested 'reviewer' object, which is missing
+        // from the form's response but required by our render logic.
+        reviewer: {
+          user_id: loggedInUser.user_id,
+          fullname: loggedInUser.fullname,
+          user_type: loggedInUser.user_type,
+          profile_picture: loggedInUser.profile_picture, // Assumes you've added this to LoggedInUser
+        }
+      };
+      
+      // Add the newly constructed, complete object to the state
+      setReviews(prevReviews => [newReviewForState, ...prevReviews]);
+      
       setReviewCount(prevCount => prevCount + 1);
       setAlreadyReviewed(true);
       alert("Thank you! Your review has been posted.");
     }
   };
+
 
   // --- Handlers for Artist Support ---
   const handleToggleSupport = async () => {
@@ -248,11 +280,11 @@ const UserProfilePage: React.FC = () => {
         const parsedUser = JSON.parse(storedUserString);
         if (parsedUser && parsedUser.user_id && parsedUser.user_type && parsedUser.fullname) {
           setLoggedInUser({
-            user_id: parsedUser.user_id,
-            user_type: parsedUser.user_type,
-            fullname: parsedUser.fullname
-          });
-        } else {
+              user_id: parsedUser.user_id,
+              user_type: parsedUser.user_type,
+              fullname: parsedUser.fullname,
+              profile_picture: parsedUser.profile_picture || null // <-- ADD THIS
+          });        } else {
           setLoggedInUser(null);
         }
       } catch (e) { console.error("Failed to parse stored user", e); setLoggedInUser(null); }
