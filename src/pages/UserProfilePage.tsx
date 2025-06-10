@@ -33,9 +33,18 @@ interface Reviewer {
 
 interface ReviewData {
   review_id: number;
-  overall_rating: number;
-  specific_answers?: { comment?: string; };
-  created_at: string; // <-- FIX: Change from createdAt to created_at
+  overall_rating: number; // This can be 0 for "no" reviews now
+  specific_answers?: {
+    dealMade?: 'yes' | 'no';
+    noDealPrimaryReason?: string;
+    communicationRating_noDeal?: number;
+    comment?: string;
+    // You can also add the "yes" path questions if you need them
+    professionalism?: number;
+    quality?: number;
+    communication?: number;
+  };
+  created_at: string;
   reviewer?: Reviewer;
 }
 
@@ -73,11 +82,7 @@ interface UserProfile {
   city?: string;
 }
 
-interface LoggedInUser { // For storing more details of the logged-in user
-  user_id: number;
-  user_type: string;
-  fullname: string;
-}
+
 interface CommenterDetails { user_id: number; fullname: string; profile_picture: string | null; user_type?: string; }
 
 
@@ -464,6 +469,9 @@ const UserProfilePage: React.FC = () => {
   const profilePic = isArtistProfile ? profile.artistProfile?.profile_picture : profile.employerProfile?.profile_picture;
   const isStudent = isArtistProfile && profile.artistProfile?.is_student === true;
   const cvUrl = isArtistProfile ? profile.artistProfile?.cv_url : null;
+  const completedReviews = reviews.filter(review => review.specific_answers?.dealMade !== 'no');
+  const interactionReviews = reviews.filter(review => review.specific_answers?.dealMade === 'no');
+
   return (
     <>
       <Navbar />
@@ -505,19 +513,20 @@ const UserProfilePage: React.FC = () => {
                   2. It's NOT their own profile (canLoggedInUserInteract)
                   3. AND it's NOT the case that an Artist is viewing another Artist's profile
                 */}
-                {canLoggedInUserInteract && !(loggedInUser?.user_type === 'Artist' && isArtistProfile) && (
-                  <button
-                    onClick={handleOpenRatingForm}
-                    disabled={alreadyReviewed || isLoadingReviewStatus}
-                    className={`rate-user-button ${alreadyReviewed ? 'reviewed' : ''}`}
-                  >
-                    {isLoadingReviewStatus
-                      ? "..." // Loading state for review status check
-                      : alreadyReviewed
-                        ? "Reviewed"
-                        : "Rate User"}
-                  </button>
-                )}
+                {canLoggedInUserInteract && !(loggedInUser?.user_type === profile.user_type) && (
+  <button
+    onClick={handleOpenRatingForm}
+    disabled={alreadyReviewed || isLoadingReviewStatus}
+    className={`rate-user-button ${alreadyReviewed ? 'reviewed' : ''}`}
+  >
+    {isLoadingReviewStatus
+      ? "..."
+      : alreadyReviewed
+        ? "Reviewed"
+        : "Rate User"}
+  </button>
+)}
+
 
                 {/* --- Login to Interact Button --- */}
                 {/* Shows if user is NOT logged in and viewing someone else's profile */}
@@ -561,41 +570,72 @@ const UserProfilePage: React.FC = () => {
               </div>
             )}
 
-            <div className="reviews-section profile-section-public">
-              <h4>Reviews received ({reviewCount})</h4>
-              {reviewsLoading ? (<p>Loading reviews...</p>)
-                : reviews.length > 0 ? (
-                  <div className="reviews-list">
-                    {reviews.map((review) => {
-                      // --- THIS IS THE FIX ---
-                      // The old logic was looking inside non-existent nested objects.
-                      // The new logic correctly looks for the profile_picture at the top level of the reviewer object.
-                      const reviewerProfilePic = review.reviewer?.profile_picture || null;
-
-                      return (
-                        <div key={review.review_id} className="review-item">
-                          <div className="review-header">
+<div className="reviews-section profile-section-public">
+    <h4>Reviews received ({completedReviews.length})</h4>
+    {reviewsLoading ? (
+        <p>Loading reviews...</p>
+    ) : completedReviews.length > 0 ? (
+        <div className="reviews-list">
+            {completedReviews.map((review) => {
+                const reviewerProfilePic = review.reviewer?.profile_picture || null;
+                return (
+                    <div key={review.review_id} className="review-item">
+                        <div className="review-header">
                             <img
-                              src={getImageUrl(reviewerProfilePic)}
-                              alt={review.reviewer?.fullname || 'Reviewer'}
-                              className="reviewer-pic"
+                                src={getImageUrl(reviewerProfilePic)}
+                                alt={review.reviewer?.fullname || 'Reviewer'}
+                                className="reviewer-pic"
                             />
                             <div className="reviewer-info">
-                              <strong>{review.reviewer?.fullname || 'Anonymous'}</strong>
-                              {/* FIX: Use the correct 'created_at' property from the review object */}
-                              <span className="review-date">{formatDate(review.created_at)}</span>
+                                <strong>{review.reviewer?.fullname || 'Anonymous'}</strong>
+                                <span className="review-date">{formatDate(review.created_at)}</span>
                             </div>
                             <div className="review-stars"><DisplayStars rating={review.overall_rating} /></div>
-                          </div>
-                          {review.specific_answers?.comment && <p className="review-comment">"{review.specific_answers.comment}"</p>}
                         </div>
-                      );
-                      // --- END FIX ---
-                    })}
-                  </div>
+                        {review.specific_answers?.comment && <p className="review-comment">"{review.specific_answers.comment}"</p>}
+                    </div>
+                );
+            })}
+        </div>
+    ) : (
+        <p className="no-reviews">This user hasn't received any project reviews yet.</p>
+    )}
+</div> {/* This closing div is for "reviews-section" */}
+                
+                  
 
-                ) : (<p className="no-reviews">This user hasn't received any reviews yet.</p>)}
-            </div>
+                {interactionReviews.length > 0 && (
+    <div className="interaction-feedback-section profile-section-public">
+        <h4>Interaction Feedback ({interactionReviews.length})</h4>
+        <p className="section-subtext">
+            Feedback from users who communicated but did not start a project.
+        </p>
+        <div className="reviews-list">
+            {interactionReviews.map(review => {
+                const communicationRating = review.specific_answers?.communicationRating_noDeal || 0;
+                const primaryReason = review.specific_answers?.noDealPrimaryReason;
+                const comment = review.specific_answers?.comment;
+
+                return (
+                    <div key={review.review_id} className="review-item interaction-review-item">
+                        <div className="review-header">
+                            <DisplayStars rating={communicationRating} />
+                            <span className="review-date">{formatDate(review.created_at)}</span>
+                        </div>
+                        {primaryReason && (
+                            <p className="interaction-reason">
+                                <strong>Reason:</strong> {primaryReason}
+                            </p>
+                        )}
+                        {comment && (
+                            <p className="review-comment">"{comment}"</p>
+                        )}
+                    </div>
+                );
+            })}
+        </div>
+    </div>
+)}
 
             {/* Artist Comments Section */}
             {/* Artist Comments Section */}

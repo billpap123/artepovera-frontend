@@ -58,6 +58,10 @@ const RatingForm: React.FC<RatingFormProps> = ({
 }) => {
     const [dealMade, setDealMade] = useState<'yes' | 'no' | null>(null);
     const [noDealReason, setNoDealReason] = useState("");
+        // --- ADD THIS NEW STATE ---
+        const [noDealPrimaryReason, setNoDealPrimaryReason] = useState<string>("");
+        // --- END NEW STATE ---
+    
     const [professionalismRating, setProfessionalismRating] = useState<number>(0);
     const [qualityRating, setQualityRating] = useState<number>(0);
     const [communicationRating, setCommunicationRating] = useState<number>(0);
@@ -79,20 +83,27 @@ const RatingForm: React.FC<RatingFormProps> = ({
         // Construct the detailed answers object
         const specificAnswers = {
             dealMade,
-            noDealReason: dealMade === 'no' ? noDealReason.trim() : undefined,
+            // YES path
             professionalism: dealMade === 'yes' ? professionalismRating : undefined,
             quality: dealMade === 'yes' ? qualityRating : undefined,
-            communication: dealMade === 'yes' ? communicationRating : undefined,
-            comment: comment.trim() || undefined
+            communication: dealMade === 'yes' ? communicationRating : undefined, // Note: you now have two communication states.
+            // NO path
+            noDealPrimaryReason: dealMade === 'no' ? noDealPrimaryReason : undefined,
+            communicationRating_noDeal: dealMade === 'no' ? communicationRating : undefined,
+        
+            // General comment
+            comment: comment.trim() || noDealReason.trim() || undefined
         };
+        
 
         const payload = {
             chatId: chatId || null,
             reviewedUserId: reviewedUserId,
-            overallRating: dealMade === 'yes' ? overallRating : 0,
+            // This logic is still correct: send the overall rating for 'yes', omit for 'no'
+            overallRating: dealMade === 'yes' ? overallRating : undefined,
             specificAnswers: specificAnswers
         };
-
+            
         try {
             const response = await axios.post(`${API_BASE_URL}/api/reviews`, payload, {
                 headers: { Authorization: `Bearer ${token}` },
@@ -126,11 +137,54 @@ const RatingForm: React.FC<RatingFormProps> = ({
                 </div>
 
                 {dealMade === 'no' && (
-                    <div className="form-group fade-in">
-                        <label htmlFor="no-deal-reason">Why didn't you work together? (Optional)</label>
-                        <textarea id="no-deal-reason" value={noDealReason} onChange={(e) => setNoDealReason(e.target.value)} rows={3} placeholder="e.g., Budget mismatch, different styles..." />
-                    </div>
-                )}
+    <div className="follow-up-questions fade-in">
+        <hr />
+        <p className="rating-form-subtext">
+            Please provide feedback on your interaction.
+        </p>
+        
+        {/* New Star Rating for Communication */}
+        <div className="form-group">
+            <label id="comm-no-deal-label">Communication Quality *</label>
+            <StarRatingInput 
+                rating={communicationRating} 
+                onRatingChange={setCommunicationRating} 
+                labelId="comm-no-deal-label" 
+            />
+        </div>
+
+        {/* New Dropdown for Primary Reason */}
+        <div className="form-group">
+            <label htmlFor="no-deal-primary-reason">Primary reason for not working together? *</label>
+            <select
+                id="no-deal-primary-reason"
+                value={noDealPrimaryReason}
+                onChange={(e) => setNoDealPrimaryReason(e.target.value)}
+                required
+            >
+                <option value="" disabled>-- Please select a reason --</option>
+                <option value="Budget Mismatch">Budget mismatch</option>
+                <option value="Scheduling Conflict">Scheduling/timeline conflict</option>
+                <option value="Creative Differences">Creative differences</option>
+                <option value="Poor Communication">Unresponsive / poor communication</option>
+                <option value="Chose Another Option">Decided to go another direction</option>
+                <option value="Other">Other (please specify below)</option>
+            </select>
+        </div>
+        
+        {/* The existing text area, now for additional context */}
+        <div className="form-group">
+            <label htmlFor="no-deal-reason">Additional comments (Optional)</label>
+            <textarea 
+                id="no-deal-reason" 
+                value={noDealReason} 
+                onChange={(e) => setNoDealReason(e.target.value)} 
+                rows={3} 
+                placeholder="Provide more details here..." 
+            />
+        </div>
+    </div>
+)}
 
                 {dealMade === 'yes' && (
                     <div className="follow-up-questions fade-in">
