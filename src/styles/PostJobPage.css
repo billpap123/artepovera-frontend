@@ -6,6 +6,7 @@
     background-color: #f8f9fa; /* Lighter, cleaner background */
     font-family: 'Nunito', sans-serif;
     min-height: 100vh;
+    padding-top: 200px;
 }
 
 .post-job-form {
@@ -13,8 +14,9 @@
     margin: 0 auto;
     background-color: #ffffff;
     border-radius: 12px;
-    box-shadow: 0 4px 25px rgba(0, 0, 0, 0.1);
     overflow: hidden; /* To contain the header color */
+    padding-top: 200px;
+    padding: 40px 20px;
 }
 
 /* --- Form Header --- */
