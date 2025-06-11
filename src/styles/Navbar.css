@@ -112,6 +112,7 @@
   gap: 5px;
   cursor: pointer;
   transition: all 0.3s ease;
+  z-index: 1001; /* Ensure it's above the menu */
 }
 .hamburger span {
   display: block;
@@ -127,21 +128,40 @@
   .hamburger {
     display: flex; /* Show hamburger on smaller screens */
   }
+
+  /* --- THIS IS THE FIX --- */
+  /* When the menu is open, we fix the position of the hamburger (now an 'x') */
+  /* to the top-right corner of the screen, acting as a close button. */
+  .hamburger.open {
+    position: fixed;
+    top: 23px; /* Adjust to vertically align with your logo */
+    right: 20px;
+  }
+  /* --- END FIX --- */
+
   .nav-links {
-    position: absolute;
-    top: 60px;
+    position: fixed; /* Changed to fixed to cover the whole screen */
+    top: 0;
     left: 0;
     width: 100%;
+    height: 100vh; /* Cover the full viewport height */
     background-color: #1c1f26;
     flex-direction: column;
     align-items: center;
+    justify-content: center; /* Center links vertically */
     display: none; /* Hidden by default */
-    gap: 15px;
+    gap: 25px; /* Increase gap for better touch targets */
     padding: 20px 0;
     box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.3);
+    transition: opacity 0.3s ease; /* Add a fade effect */
   }
+
   .nav-links.open {
     display: flex; /* Show menu when toggled */
+  }
+
+  .nav-links li a, .notifications-button {
+    font-size: 1.2rem; /* Make mobile links larger */
   }
 }
 
