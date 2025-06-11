@@ -139,9 +139,15 @@
     font-size: 1.5rem; /* Make mobile links much larger */
   }
   
-  /* --- FIX FOR MOBILE NOTIFICATIONS DROPDOWN --- */
+  /* FIX FOR MOBILE NOTIFICATIONS DROPDOWN */
+  .notifications {
+    /* On mobile, make the notification container a column */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
   .notifications-dropdown {
-    /* On mobile, don't position it absolutely to the side */
+    /* On mobile, it's not absolutely positioned. It appears in the normal flow. */
     position: static; 
     width: 100%;
     max-width: 300px;
@@ -149,13 +155,6 @@
     box-shadow: none;
     border: 1px solid #444;
     background: #2a2d34;
-    opacity: 0;
-    transform: translateY(-10px);
-    transition: opacity 0.3s ease, transform 0.3s ease;
-  }
-  .notifications.open .notifications-dropdown {
-    opacity: 1;
-    transform: translateY(0);
   }
   /* Hide the desktop arrow on mobile */
   .notifications-dropdown::before {
@@ -164,16 +163,17 @@
   /* --- END FIX --- */
 }
 
-/* Hamburger Animations */
+/* --- CORRECTED Hamburger Animations --- */
 .hamburger.open span:nth-child(1) {
-  transform: rotate(45deg) translate(5px, 5px);
+  transform: rotate(45deg) translate(6px, 6px);
 }
 .hamburger.open span:nth-child(2) {
   opacity: 0;
 }
 .hamburger.open span:nth-child(3) {
-  transform: rotate(-45deg) translate(5px, -5px);
+  transform: rotate(-45deg) translate(6px, -6px);
 }
+/* --- END CORRECTION --- */
 
 /* ICONS */
 .nav-icon, .bell-icon {
