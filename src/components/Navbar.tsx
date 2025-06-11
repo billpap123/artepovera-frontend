@@ -127,11 +127,11 @@ const Navbar = () => {
         <img src="/images/logo2.png" alt="Artepovera Home" className="logo-image" />
       </Link>
       
-      <div className="hamburger" onClick={toggleMenu}>
-        <span></span>
-        <span></span>
-        <span></span>
-      </div>
+      <div className={`hamburger ${isMenuOpen ? "open" : ""}`} onClick={toggleMenu}>
+  <span></span>
+  <span></span>
+  <span></span>
+</div>
 
       <ul className={`nav-links ${isMenuOpen ? "open" : ""}`}>
         {isLoggedIn ? (
