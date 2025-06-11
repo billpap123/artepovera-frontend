@@ -46,7 +46,7 @@
 }
 .job-detail-header .job-detail-category {
     font-weight: bold;
-    color: #5a67d8;
+    color: #754106;
     margin-bottom: 1rem;
     display: inline-block;
 }
@@ -71,7 +71,7 @@
 
 .requirements-list { list-style: none; padding-left: 0; }
 .requirements-list li { display: flex; align-items: center; gap: 12px; margin-bottom: 1rem; font-size: 1rem; }
-.requirements-list svg { color: #5a67d8; font-size: 1.2rem; }
+.requirements-list svg { color: #754106; font-size: 1.2rem; }
 
 .keywords-container { display: flex; flex-wrap: wrap; gap: 8px; }
 .keyword-tag { background-color: #e9ecef; color: #495057; padding: 6px 14px; border-radius: 20px; font-size: 0.9rem; }
@@ -103,7 +103,7 @@
     margin-bottom: 2rem;
 }
 .employer-link { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; }
-.employer-link:hover .employer-name { color: #5a67d8; }
+.employer-link:hover .employer-name { color: #754106; }
 .employer-link img { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; }
 .posted-by-label { display: block; font-size: 0.9rem; color: #6c757d; }
 .employer-name { font-size: 1.1rem; font-weight: 600; transition: color 0.2s; }
