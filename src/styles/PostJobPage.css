@@ -1,50 +1,62 @@
 /* src/styles/PostJobPage.css */
 
 .post-job-page-container {
-    max-width: 800px;
-    margin: 40px auto;
-    padding: 20px;
+    padding: 40px 20px;
+    background-color: #f4f7f6; /* Light neutral background for the whole page */
     font-family: 'Nunito', sans-serif;
 }
 
+.post-job-form {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 30px 40px;
+    background-color: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.07);
+}
+
 .post-job-form h1 {
-    font-size: 2.2rem;
     text-align: center;
-    margin-bottom: 10px;
-    color: #333;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin: 0 0 10px 0;
 }
 
 .post-job-form .form-subtitle {
     text-align: center;
-    color: #6c757d;
-    margin-bottom: 40px;
     font-size: 1.1rem;
+    color: #7f8c8d;
+    margin-bottom: 35px;
 }
 
 .post-job-form fieldset {
-    border: 1px solid #dee2e6;
-    border-radius: 8px;
-    padding: 25px;
-    margin-bottom: 30px;
-    background-color: #fff;
+    border: none;
+    padding: 0;
+    margin: 0 0 30px 0;
+    border-top: 1px solid #e9ecef;
+    padding-top: 30px;
+}
+
+.post-job-form fieldset:first-of-type {
+    border-top: none;
+    padding-top: 0;
 }
 
 .post-job-form legend {
     font-size: 1.3rem;
-    font-weight: 700;
-    padding: 0 10px;
-    color: #495057;
-}
-
-.form-group {
+    font-weight: 600;
+    color: #C96A50; /* Your theme color */
+    padding-right: 15px;
     margin-bottom: 20px;
 }
 
-.form-group > label {
+.post-job-form label {
     display: block;
+    margin-bottom: 15px; /* Space between form fields */
     font-weight: 600;
-    margin-bottom: 8px;
     color: #495057;
+    font-size: 1rem;
 }
 
 .post-job-form input[type="text"],
@@ -53,131 +65,133 @@
 .post-job-form select,
 .post-job-form textarea {
     width: 100%;
-    padding: 12px;
-    border: 1px solid #ced4da;
-    border-radius: 5px;
+    padding: 12px 16px;
+    margin-top: 8px;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    box-sizing: border-box;
     font-size: 1rem;
     font-family: inherit;
-    transition: border-color 0.2s, box-shadow 0.2s;
+    background-color: #f8f9fa;
+    color: #495057;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .post-job-form input:focus,
 .post-job-form select:focus,
 .post-job-form textarea:focus {
+    border-color: #f59133; /* A nice blue for focus state */
+    background-color: #fff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
     outline: none;
-    border-color: #5a67d8;
-    box-shadow: 0 0 0 3px rgba(90, 103, 216, 0.2);
 }
 
 .form-row {
     display: flex;
     gap: 20px;
 }
-.form-row .form-group {
+
+.form-row > label {
     flex: 1;
 }
 
-.form-checkbox-group, .radio-group {
+/* --- THIS IS THE FIX --- */
+.form-checkbox-group {
     display: flex;
     align-items: center;
-    gap: 15px;
-    margin-top: 10px;
-}
-.form-checkbox-group input, .radio-group input {
-    margin-right: -10px;
+    gap: 8px; /* Reduced the gap from 12px to 8px */
+    margin-bottom: 15px;
 }
 
-/* Radio button custom styling */
-.radio-group label {
-    display: flex;
-    align-items: center;
-    padding: 10px 15px;
-    border: 2px solid #ced4da;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: all 0.2s ease;
+.form-checkbox-group label {
+    margin: 0;
+    font-weight: normal;
 }
-.radio-group label.active {
-    border-color: #5a67d8;
-    background-color: #eef2ff;
-    font-weight: 600;
-}
-.radio-group input[type="radio"] {
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
+/* --- END FIX --- */
 
-/* Language Section Styling */
+
+/* --- Language Section --- */
 .language-section {
-    margin-top: 25px;
+    margin-top: 20px;
 }
 .language-section h4 {
     margin-bottom: 10px;
-    font-size: 1.1rem;
+    font-size: 1rem;
+    font-weight: 600;
 }
 .language-entry {
     display: flex;
     gap: 10px;
-    margin-bottom: 10px;
     align-items: center;
+    margin-bottom: 10px;
 }
 .language-entry input {
-    flex: 1;
+    margin-top: 0;
 }
-
 .add-btn, .remove-btn {
     padding: 8px 12px;
-    border-radius: 50%;
-    border: 1px solid #ced4da;
-    background-color: #f8f9fa;
+    border: none;
+    border-radius: 6px;
     cursor: pointer;
-    font-weight: bold;
+    font-weight: 600;
+    transition: background-color 0.2s ease;
+}
+.add-btn {
+    background-color: #e9ecef;
+    color: #495057;
+}
+.add-btn:hover {
+    background-color: #ced4da;
+}
+.remove-btn {
+    background-color: #f8d7da;
+    color: #721c24;
     font-size: 1rem;
     line-height: 1;
-    transition: background-color 0.2s;
 }
-.add-btn { color: #28a745; }
-.remove-btn { color: #dc3545; }
-.add-btn:hover { background-color: #c3e6cb; }
-.remove-btn:hover { background-color: #f5c6cb; }
+.remove-btn:hover {
+    background-color: #f1c6c9;
+}
 
+
+/* --- Submit Button --- */
 .submit-job-btn {
-    width: 100%;
-    padding: 15px;
-    font-size: 1.2rem;
-    font-weight: bold;
-    background-color: #5a67d8;
+    padding: 14px 30px;
+    background-color: #007bff;
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
     cursor: pointer;
-    transition: background-color 0.2s;
+    font-size: 1.1rem;
+    font-weight: 600;
     margin-top: 20px;
+    width: 100%;
+    transition: background-color 0.2s ease;
 }
+
 .submit-job-btn:hover:not(:disabled) {
-    background-color: #434190;
+    background-color: #0056b3;
 }
+
 .submit-job-btn:disabled {
     background-color: #6c757d;
-    cursor: not-allowed;
+    cursor: wait;
 }
 
-.error-message {
+/* Error Message */
+.post-job-form .error-message {
+    text-align: center;
     color: #dc3545;
     background-color: #f8d7da;
-    border: 1px solid #f5c6cb;
-    padding: 15px;
-    border-radius: 5px;
-    text-align: center;
-    margin-top: 20px;
+    padding: 10px;
+    border-radius: 6px;
+    margin-top: 15px;
 }
 
-/* Fade-in animation for conditional fields */
-.fade-in {
-    animation: fadeIn 0.5s ease-in-out;
-}
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    .form-row {
+        flex-direction: column;
+        gap: 15px;
+    }
 }
