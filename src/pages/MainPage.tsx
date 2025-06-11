@@ -121,12 +121,46 @@ const MainPage = () => {
           {/* Your existing conditional cards for Artist, Employer, and Admin */}
           {userType === 'Artist' && (
             <>
-              <Link to={`/user-profile/${userId}`} className="dashboard-card stat-card"><FaEye size={24} className="stat-icon" /><div><h3>My public profile</h3><p>View and share your profile</p></div></Link>
-              <Link to="/artist-profile/edit" className="dashboard-card stat-card"><FaUserEdit size={24} className="stat-icon" /><div><h3>Edit my profile</h3><p>Update your bio, CV, and photo</p></div></Link>
-              <Link to="/portfolio" className="dashboard-card stat-card"><FaImages size={24} className="stat-icon" /><div><h3>Edit my portfolio</h3><p>Showcase your best work</p></div></Link>
-              <Link to="/chat" className="dashboard-card stat-card"><FaCommentDots size={24} className="stat-icon" /><div><h3>My messages</h3><p>Check your conversations</p></div></Link>
+              {/* --- Top Row of Cards --- */}
+              <Link to={`/user-profile/${userId}`} className="dashboard-card stat-card">
+                <FaEye size={24} className="stat-icon" />
+                <div><h3>My public profile</h3><p>View and share your profile</p></div>
+              </Link>
+              <Link to="/chat" className="dashboard-card stat-card">
+                <FaCommentDots size={24} className="stat-icon" />
+                <div><h3>My messages</h3><p>Check your conversations</p></div>
+              </Link>
+
+              {/* --- Second Row of Cards --- */}
+              <Link to="/artist-profile/edit" className="dashboard-card stat-card">
+                <FaUserEdit size={24} className="stat-icon" />
+                <div><h3>Edit my profile</h3><p>Update your bio, CV, and photo</p></div>
+              </Link>
+              <Link to="/portfolio" className="dashboard-card stat-card">
+                <FaImages size={24} className="stat-icon" />
+                <div><h3>Edit my portfolio</h3><p>Showcase your best work</p></div>
+              </Link>
+
+              {/* --- Third Row: Large Action Cards --- */}
+              <div className="dashboard-card large-action-card map-card">
+                <h3>Discover the Community</h3>
+                <p>Find artists and employers near you.</p>
+                <Link to="/map" className="action-button">
+                  Explore Map <FaMapMarkedAlt style={{ marginLeft: '8px' }} />
+                </Link>
+              </div>
+
+              <div className="dashboard-card large-action-card applications-card">
+                <h3>My Job Applications</h3>
+                <p>Track the status of all your applications.</p>
+                <Link to="/my-applications" className="action-button">
+                  View Applications <FaThList style={{ marginLeft: '8px' }} />
+                </Link>
+              </div>
             </>
-          )}
+                      )}
+
+
           {userType === 'Employer' && (
             <>
               <Link to={`/user-profile/${userId}`} className="dashboard-card stat-card"><FaEye size={24} className="stat-icon" /><div><h3>My public Profile</h3><p>View your employer profile</p></div></Link>

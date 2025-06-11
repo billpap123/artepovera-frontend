@@ -2,10 +2,9 @@
 
 .main-page-container {
   padding: 20px 40px;
-  background-color: #f4f7f6; /* A very light, neutral background */
+  background-color: #be9c74; /* Using your specified background color */
   min-height: calc(100vh - 60px); /* Full height minus navbar */
   padding-top: 200px;
-  background-color: #be9c74;
 }
 
 .main-page-header {
@@ -15,20 +14,30 @@
 .main-page-header h1 {
   font-size: 2.5rem;
   font-weight: 700;
-  color: #2c3e50; /* A dark, professional blue/grey */
+  color: #2c3e50;
   margin: 0 0 5px 0;
 }
 
 .main-page-header p {
   font-size: 1.1rem;
-  color: #7f8c8d; /* A soft grey */
+  color: #7f8c8d;
 }
 
+/* MODIFIED: Adjusted the grid to better support the new layout */
 .dashboard-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  /* This creates a 2-column layout */
+  grid-template-columns: repeat(2, 1fr); 
   gap: 25px;
 }
+
+@media (max-width: 768px) {
+  .dashboard-grid {
+    /* On smaller screens, stack everything in a single column */
+    grid-template-columns: 1fr;
+  }
+}
+
 
 .dashboard-card {
   background-color: #ffffff;
@@ -36,6 +45,8 @@
   padding: 25px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  text-decoration: none; /* Add this to ensure links don't have underlines */
+  color: inherit; /* Add this so text color is inherited */
 }
 
 .dashboard-card:hover {
@@ -47,70 +58,84 @@
 .stat-card {
   display: flex;
   align-items: center;
-  text-decoration: none;
-  color: inherit;
 }
 
 .stat-icon {
-  color: #C96A50; /* Your theme color */
+  color: #C96A50;
   margin-right: 20px;
   flex-shrink: 0;
 }
 
-.stat-text h3 {
+/* NOTE: Your old CSS was missing this class, let's ensure it's here */
+.stat-card div h3 {
   margin: 0 0 4px 0;
   font-size: 1.2rem;
   color: #34495e;
 }
 
-.stat-text p {
+.stat-card div p {
   margin: 0;
   color: #95a5a6;
   font-size: 0.9rem;
 }
 
-/* Styling for the large job feed card */
-.job-feed-card {
-  grid-column: 1 / -1; /* Make it span the full width */
-  background-color: #fdfdfd; /* Slightly different background if needed */
-}
+/* REMOVED: The old .job-feed-card styles are no longer needed
+  as this card has been removed from the main page.
+*/
 
-@media (min-width: 992px) {
-  .job-feed-card {
-    grid-column: span 2; /* On larger screens, span 2 columns */
-    grid-row: span 2; /* And span 2 rows */
-  }
-}
-
-.job-feed-card h2 {
-  margin-top: 0;
-  padding-bottom: 15px;
-  border-bottom: 1px solid #eee;
-  margin-bottom: 20px;
-}
-
-/* Styling for the Map discovery card */
-.map-card {
+/* --- NEW: Generic style for the large cards (Map & Applications) --- */
+/* This combines the repeated styles from the old .map-card */
+.large-action-card {
+  /* This makes the card span both columns of our grid */
+  grid-column: 1 / -1; 
+  height: 250px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   text-align: center;
-  background: linear-gradient(rgba(44, 62, 80, 0.7), rgba(44, 62, 80, 0.7)), url('/images/map-background.jpg'); /* Add a generic map background image to your /public/images folder */
+  color: white;
+  position: relative;
+  overflow: hidden;
   background-size: cover;
   background-position: center;
-  color: white;
 }
 
-.map-card h3 {
+/* Black overlay for text readability, applied to all large cards */
+.large-action-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(44, 62, 80, 0.7); /* Dark semi-transparent overlay */
+  z-index: 1;
+  transition: background-color 0.3s ease;
+}
+
+.large-action-card:hover::before {
+  background-color: rgba(44, 62, 80, 0.6); /* Overlay lightens slightly on hover */
+}
+
+
+/* Ensure content is above the overlay */
+.large-action-card h3,
+.large-action-card p,
+.large-action-card .action-button {
+  position: relative;
+  z-index: 2;
+}
+
+.large-action-card h3 {
   margin-top: 0;
-  font-size: 1.5rem;
+  font-size: 1.8rem;
 }
 
-.map-card p {
+.large-action-card p {
   font-size: 1rem;
   margin-bottom: 20px;
-  max-width: 250px;
+  max-width: 300px;
 }
 
 .action-button {
@@ -130,15 +155,29 @@
   transform: scale(1.05);
 }
 
-/* Add this to your MainPage.css */
 
+/* --- Specific Background Images for Large Cards --- */
+
+/* The existing map card just needs its background image */
+.map-card {
+  background-image: url('/images/map-background.jpg'); /* Your existing path */
+}
+
+/* NEW: Style for the Applications card to give it a background */
+.applications-card {
+  /* IMPORTANT: Add a background image for the applications card */
+  background-image: url('/images/applications-background.jpg'); 
+}
+
+
+/* Admin card styles (unchanged) */
 .admin-card {
-  background-color: #f8d7da; /* A distinct background color for admin cards */
+  background-color: #f8d7da;
   border: 1px solid #f5c6cb;
 }
 
 .admin-card .stat-icon {
-  color: #721c24; /* A color that contrasts with the background */
+  color: #721c24;
 }
 
 .admin-card:hover {
@@ -146,7 +185,7 @@
 }
 
 .admin-overview-card {
-  grid-column: 1 / -1; /* Make it span the full width */
+  grid-column: 1 / -1;
   text-align: center;
   font-size: 1.1rem;
   color: #444;
