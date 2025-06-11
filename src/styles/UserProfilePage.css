@@ -160,6 +160,15 @@
   margin-top: 20px;
   text-align: left;
 }
+.section-header {
+  display: flex; /* 1. Turn on Flexbox */
+  justify-content: space-between; /* 2. Pushes title to the left and rating to the right */
+  align-items: center; /* 3. Vertically aligns everything in the middle */
+  flex-wrap: wrap; /* Allows items to wrap on very small screens */
+  gap: 1rem; /* Adds space between items if they wrap */
+  margin-bottom: 1.5rem; /* Adds space below the header */
+}
+
 
 .profile-section-public {
   margin-bottom: 40px;
@@ -403,3 +412,68 @@ box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 .message-button:hover:not(:disabled) {
   background-color: #138496;
 }
+
+
+
+/* Style the main title */
+.section-header h4 {
+  margin: 0; /* Remove default margin */
+  font-size: 1.5rem; /* Make it a bit larger */
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.average-support-rating {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Space between hearts and text */
+  background-color: #f8f9fa; /* A very light background */
+  padding: 6px 12px;
+  border-radius: 20px; /* Rounded pill shape */
+  border: 1px solid #dee2e6;
+}
+.average-support-rating {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Space between hearts and text */
+  background-color: #f8f9fa; /* A very light background */
+  padding: 6px 12px;
+  border-radius: 20px; /* Rounded pill shape */
+  border: 1px solid #dee2e6;
+}
+
+/* Style the text next to the average hearts */
+.average-support-rating span {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #495057;
+}
+
+/* --- Improved Comment Header Styling --- */
+.comment-header {
+    display: flex;
+    align-items: flex-start; /* Aligns pic to the top */
+    width: 100%;
+    gap: 12px;
+}
+.commenter-info {
+    flex-grow: 1; /* Allows name/date to take up space */
+}
+.commenter-info strong {
+    font-size: 1rem;
+}
+.commenter-info .comment-date {
+    font-size: 0.85rem;
+    color: #6c757d;
+    display: block; /* Puts date on its own line below the name */
+}
+.comment-rating {
+    margin-left: auto; /* Pushes the rating to the far right */
+    flex-shrink: 0; /* Prevents it from shrinking */
+}
+
+/* --- Improved Heart Icon Styling --- */
+.heart-icon.filled { color: deeppink; }
+.heart-icon.empty { color: #e0e0e0; }
+.heart-icon-input { color: #e0e0e0; cursor: pointer; margin-right: 5px; transition: color 0.2s; }
+.heart-icon-input.active, .heart-icon-input:hover { color: deeppink; }

@@ -5,6 +5,7 @@ import { UserProvider, useUserContext } from "./context/UserContext"; // Correct
 
 // Page imports
 import JobDetailPage from './pages/JobDetailPage'; // Make sure this page is imported
+import MyApplicationsPage from './pages/MyApplicationsPage';
 
 import LandingPage from "./pages/LandingPage";
 import Register from "./pages/Register";
@@ -64,6 +65,8 @@ const AppContent = () => {
         <Route path="/employer-profile/edit" element={<EmployerProfile />} />
 
         <Route path="/chat" element={<ChatPage />} />
+        <Route path="/my-applications" element={<MyApplicationsPage />} />
+
         <Route
           path="/portfolio" // Assumed to be "my portfolio" for logged-in artist
           element={

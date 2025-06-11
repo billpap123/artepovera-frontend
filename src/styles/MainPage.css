@@ -4,38 +4,30 @@
   padding: 20px 40px;
   background-color: #f4f7f6; /* A very light, neutral background */
   min-height: calc(100vh - 60px); /* Full height minus navbar */
+  padding-top: 200px;
+  background-color: #be9c74;
 }
 
 .main-page-header {
   margin-bottom: 30px;
-  padding-top: 100px;
 }
 
 .main-page-header h1 {
   font-size: 2.5rem;
   font-weight: 700;
-  color: #2c3e50;
+  color: #2c3e50; /* A dark, professional blue/grey */
   margin: 0 0 5px 0;
 }
 
 .main-page-header p {
   font-size: 1.1rem;
-  color: #7f8c8d;
+  color: #7f8c8d; /* A soft grey */
 }
 
-/* --- CORRECTED GRID: 2 columns --- */
 .dashboard-grid {
   display: grid;
-  /* This is the key change: it now creates a 2-column layout */
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 25px;
-}
-
-/* On small screens, stack everything in a single column */
-@media (max-width: 768px) {
-  .dashboard-grid {
-    grid-template-columns: 1fr;
-  }
 }
 
 .dashboard-card {
@@ -44,11 +36,6 @@
   padding: 25px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-  text-decoration: none;
-  color: inherit;
-  display: flex; /* Using flexbox for better internal alignment */
-  flex-direction: column;
-  justify-content: space-between;
 }
 
 .dashboard-card:hover {
@@ -56,15 +43,16 @@
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
 }
 
-/* Styling for the small stat cards (Rows 1 & 2) */
+/* Styling for the small stat cards */
 .stat-card {
-  flex-direction: row; /* Align icon and text side-by-side */
+  display: flex;
   align-items: center;
-  min-height: 120px;
+  text-decoration: none;
+  color: inherit;
 }
 
 .stat-icon {
-  color: #C96A50;
+  color: #C96A50; /* Your theme color */
   margin-right: 20px;
   flex-shrink: 0;
 }
@@ -81,68 +69,83 @@
   font-size: 0.9rem;
 }
 
-/* Styling for the larger image cards (Row 3) */
-.image-card {
-  min-height: 220px;
-  position: relative;
-  overflow: hidden;
-  color: white;
+/* Styling for the large job feed card */
+.job-feed-card {
+  grid-column: 1 / -1; /* Make it span the full width */
+  background-color: #fdfdfd; /* Slightly different background if needed */
+}
+
+@media (min-width: 992px) {
+  .job-feed-card {
+    grid-column: span 2; /* On larger screens, span 2 columns */
+    grid-row: span 2; /* And span 2 rows */
+  }
+}
+
+.job-feed-card h2 {
+  margin-top: 0;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 20px;
+}
+
+/* Styling for the Map discovery card */
+.map-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background: linear-gradient(rgba(44, 62, 80, 0.7), rgba(44, 62, 80, 0.7)), url('/images/map-background.jpg'); /* Add a generic map background image to your /public/images folder */
   background-size: cover;
   background-position: center;
+  color: white;
 }
 
-/* Dark overlay for text readability */
-.image-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.4);
-  z-index: 1;
-  transition: background-color 0.3s ease;
-}
-
-.image-card:hover::before {
-  background-color: rgba(0, 0, 0, 0.2);
-}
-
-/* Ensure text and icon are above the overlay */
-.image-card div, .image-card .image-card-icon {
-  position: relative;
-  z-index: 2;
-}
-
-.image-card h3 {
+.map-card h3 {
+  margin-top: 0;
   font-size: 1.5rem;
-  margin-bottom: 5px;
 }
 
-.image-card p {
+.map-card p {
   font-size: 1rem;
-  opacity: 0.9;
+  margin-bottom: 20px;
+  max-width: 250px;
 }
 
-.image-card-icon {
-  font-size: 3rem;
-  align-self: flex-end;
-  opacity: 0.5;
-  margin-top: 1rem; /* Add some space above the icon */
+.action-button {
+  background-color: #fff;
+  color: #C96A50;
+  padding: 12px 25px;
+  border-radius: 50px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.2s ease-in-out;
+  display: inline-flex;
+  align-items: center;
 }
 
-/* Specific background images for the third row */
-.applications-card {
-  background-image: url('/images/applications-background.jpg');
+.action-button:hover {
+  background-color: #f1f1f1;
+  transform: scale(1.05);
 }
 
-.map-card {
-  background-image: url('/images/map-background.jpg');
-}
-
-
-/* Admin card styles (adapted for the 2-column layout) */
 .admin-card {
-  background-color: #f8d7da;
+  background-color: #f8d7da; /* A distinct background color for admin cards */
   border: 1px solid #f5c6cb;
+}
+
+.admin-card .stat-icon {
+  color: #721c24; /* A color that contrasts with the background */
+}
+
+.admin-card:hover {
+  background-color: #f1c6c9;
+}
+
+.admin-overview-card {
+  grid-column: 1 / -1; /* Make it span the full width */
+  text-align: center;
+  font-size: 1.1rem;
+  color: #444;
 }
