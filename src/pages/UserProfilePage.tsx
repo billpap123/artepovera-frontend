@@ -8,12 +8,14 @@ import '../styles/UserProfilePage.css';
 import {
   FaFilePdf, FaHeart, FaRegHeart, FaCommentDots,
   FaMapMarkerAlt, FaGlobe, FaBuilding
-} from 'react-icons/fa';
+} from 'react-icons/fa'; // Make sure FaHeart is imported
+
 
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:50001";
 
 // --- Interfaces ---
+
 interface LoggedInUser {
   user_id: number;
   user_type: string;
@@ -51,7 +53,8 @@ interface ReviewData {
 interface ArtistComment {
   comment_id: number;
   comment_text: string;
-  created_at: string; // <-- FIX: Change from createdAt to created_at
+  created_at: string;
+  support_rating: number; // <-- ADD THIS
   commenter?: Reviewer;
 }
 
@@ -97,6 +100,28 @@ const formatDate = (dateString: string | undefined | null): string => {
     return date.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
   } catch (e) { console.error("Error parsing date:", dateString, e); return 'Invalid Date'; }
 };
+const DisplayHearts = ({ rating }: { rating: number | null }) => {
+  if (rating === null || rating <= 0) return null;
+  return (
+    <div className="heart-display" title={`${rating.toFixed(1)} out of 5`}>
+      {[...Array(Math.round(rating))].map((_, i) => <FaHeart key={`filled-${i}`} className="heart-icon filled" />)}
+      {[...Array(5 - Math.round(rating))].map((_, i) => <FaHeart key={`empty-${i}`} className="heart-icon empty" />)}
+    </div>
+  );
+};
+const HeartRatingInput = ({ rating, setRating }: { rating: number, setRating: (r: number) => void }) => {
+  const [hover, setHover] = useState(0);
+  return (
+    <div className="heart-rating-input">
+      {[1, 2, 3, 4, 5].map((value) => (
+        <span key={value} onClick={() => setRating(value)} onMouseEnter={() => setHover(value)} onMouseLeave={() => setHover(0)}>
+          <FaHeart size={28} className={`heart-icon-input ${value <= (hover || rating) ? 'active' : ''}`} />
+        </span>
+      ))}
+    </div>
+  );
+};
+
 
 const DisplayStars = ({ rating }: { rating: number | null }) => {
   if (rating === null || typeof rating !== 'number' || rating <= 0) {
@@ -153,6 +178,11 @@ const UserProfilePage: React.FC = () => {
   // --- ADD THESE NEW STATE VARIABLES ---
   const [hasCommented, setHasCommented] = useState<boolean>(false);
   const [isLoadingCommentStatus, setIsLoadingCommentStatus] = useState<boolean>(true);
+  // --- ADD NEW STATE FOR THE FORM AND AVERAGE RATING ---
+  const [supportRating, setSupportRating] = useState(0); // For the form input
+  const [avgSupportRating, setAvgSupportRating] = useState<number | null>(null);
+  const [viewpointCount, setViewpointCount] = useState(0);
+
   // --- END ADD ---
   // --- Handlers for Rating Form (General Reviews) ---
   const handleOpenRatingForm = () => {
@@ -164,16 +194,16 @@ const UserProfilePage: React.FC = () => {
     setIsRatingFormOpen(false);
 
     if (submittedSuccessfully && newReviewFromForm && loggedInUser) {
-      
+
       const newReviewForState: ReviewData = {
         ...newReviewFromForm,
-        
+
         // --- THIS IS THE FIX ---
         // If newReviewFromForm.created_at is missing (undefined),
         // we use the current time as a fallback.
         // .toISOString() creates a string that our formatDate function can read.
         created_at: newReviewFromForm.created_at || new Date().toISOString(),
-        
+
         // Manually build the nested 'reviewer' object
         reviewer: {
           user_id: loggedInUser.user_id,
@@ -182,9 +212,9 @@ const UserProfilePage: React.FC = () => {
           profile_picture: loggedInUser.profile_picture,
         }
       };
-      
+
       setReviews(prevReviews => [newReviewForState, ...prevReviews]);
-      
+
       setReviewCount(prevCount => prevCount + 1);
       setAlreadyReviewed(true);
       alert("Thank you! Your review has been posted.");
@@ -221,59 +251,39 @@ const UserProfilePage: React.FC = () => {
 
   const handleCommentSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!userProfile) {
-        console.error("Cannot submit comment, user profile data not loaded yet.");
-        return;
-    }
-    if (!newComment.trim() || !loggedInUser || loggedInUser.user_type !== 'Artist' || userProfile.user_type !== 'Artist' || loggedInUser.user_id === userProfile.user_id) {
-      alert("Only artists can comment on other artists' profiles (not their own), and the comment cannot be empty.");
+    if (!userProfile) { console.error("Cannot submit comment, user profile data not loaded yet."); return; }
+    if (!newComment.trim() || supportRating === 0) {
+      alert("Please provide a rating and a comment for your viewpoint.");
       return;
     }
-    if (isSubmittingComment) return;
+    if (!loggedInUser || loggedInUser.user_type !== 'Artist' || userProfile.user_type !== 'Artist' || loggedInUser.user_id === userProfile.user_id) {
+      alert("Only artists can comment on other artists' profiles.");
+      return;
+    }
+
     setIsSubmittingComment(true);
-  
     try {
       const token = localStorage.getItem('token');
       const response = await axios.post(
         `${API_BASE_URL}/api/users/${userProfile.user_id}/comments`,
-        { comment_text: newComment.trim() },
+        { comment_text: newComment.trim(), support_rating: supportRating },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      
-      // This is the basic comment object from the server, likely missing nested data.
-      const newCommentFromServer = response.data.comment;
-  
-      // --- THIS IS THE FIX ---
-      // We now manually construct a complete object for our state.
-      const newCommentForState: ArtistComment = {
-        ...newCommentFromServer, // Get comment_id, comment_text, etc.
-  
-        // Provide a fallback for the date, in case the server response doesn't include it.
-        created_at: newCommentFromServer.created_at || new Date().toISOString(),
-  
-        // Manually build the 'commenter' object that our render logic needs.
-        commenter: {
-          user_id: loggedInUser.user_id,
-          fullname: loggedInUser.fullname,
-          user_type: loggedInUser.user_type,
-          profile_picture: loggedInUser.profile_picture, // From our LoggedInUser state
-        },
-      };
-  
-      // Add the new, complete comment object to the state so it renders correctly.
-      setProfileComments(prevComments => [newCommentForState, ...prevComments]);
-      
+      const newCommentData = response.data.comment;
+      setProfileComments(prevComments => [newCommentData, ...prevComments]);
+      setViewpointCount(prev => prev + 1); // Increment count locally
       setNewComment("");
+      setSupportRating(0);
       setHasCommented(true);
-  
     } catch (err: any) {
       if (err.response?.status === 409) { setHasCommented(true); }
-      alert(err.response?.data?.message || "Failed to submit comment.");
+      alert(err.response?.data?.message || "Failed to submit viewpoint.");
     } finally {
       setIsSubmittingComment(false);
     }
   };
-    const getImageUrl = (path?: string | null): string => {
+
+  const getImageUrl = (path?: string | null): string => {
     if (!path) return '/default-profile.png';
     if (path.startsWith('http')) return path;
     return `${API_BASE_URL}/${path.replace(/^uploads\/uploads\//, 'uploads/')}`;
@@ -307,11 +317,12 @@ const UserProfilePage: React.FC = () => {
         const parsedUser = JSON.parse(storedUserString);
         if (parsedUser && parsedUser.user_id && parsedUser.user_type && parsedUser.fullname) {
           setLoggedInUser({
-              user_id: parsedUser.user_id,
-              user_type: parsedUser.user_type,
-              fullname: parsedUser.fullname,
-              profile_picture: parsedUser.profile_picture || null // <-- ADD THIS
-          });        } else {
+            user_id: parsedUser.user_id,
+            user_type: parsedUser.user_type,
+            fullname: parsedUser.fullname,
+            profile_picture: parsedUser.profile_picture || null // <-- ADD THIS
+          });
+        } else {
           setLoggedInUser(null);
         }
       } catch (e) { console.error("Failed to parse stored user", e); setLoggedInUser(null); }
@@ -514,18 +525,18 @@ const UserProfilePage: React.FC = () => {
                   3. AND it's NOT the case that an Artist is viewing another Artist's profile
                 */}
                 {canLoggedInUserInteract && !(loggedInUser?.user_type === profile.user_type) && (
-  <button
-    onClick={handleOpenRatingForm}
-    disabled={alreadyReviewed || isLoadingReviewStatus}
-    className={`rate-user-button ${alreadyReviewed ? 'reviewed' : ''}`}
-  >
-    {isLoadingReviewStatus
-      ? "..."
-      : alreadyReviewed
-        ? "Reviewed"
-        : "Rate User"}
-  </button>
-)}
+                  <button
+                    onClick={handleOpenRatingForm}
+                    disabled={alreadyReviewed || isLoadingReviewStatus}
+                    className={`rate-user-button ${alreadyReviewed ? 'reviewed' : ''}`}
+                  >
+                    {isLoadingReviewStatus
+                      ? "..."
+                      : alreadyReviewed
+                        ? "Reviewed"
+                        : "Rate User"}
+                  </button>
+                )}
 
 
                 {/* --- Login to Interact Button --- */}
@@ -542,16 +553,16 @@ const UserProfilePage: React.FC = () => {
                 {/* --- Artist Support Button --- */}
                 {/* Shows if logged-in user is Artist, profile is Artist, and not own profile */}
                 {canLoggedInArtistInteractWithArtistProfile && (
-                  <button 
-                  onClick={handleSupportArtist} // Use the new function name
-                  // Add 'hasSupported' to the disabled condition. This is the lock.
-                  disabled={isTogglingSupport || isLoadingSupportStatus || hasSupported} 
-                  className={`support-button ${hasSupported ? 'supported' : ''}`}
-              >
-                  {isLoadingSupportStatus ? "..." : isTogglingSupport ? "..." : hasSupported ? <FaHeart color="deeppink"/> : <FaRegHeart />} 
-                  {hasSupported ? "Supported" : "Support Artist"}
-                  {!isLoadingSupportStatus && <span className="support-count">({supportCount})</span>}
-              </button>
+                  <button
+                    onClick={handleSupportArtist} // Use the new function name
+                    // Add 'hasSupported' to the disabled condition. This is the lock.
+                    disabled={isTogglingSupport || isLoadingSupportStatus || hasSupported}
+                    className={`support-button ${hasSupported ? 'supported' : ''}`}
+                  >
+                    {isLoadingSupportStatus ? "..." : isTogglingSupport ? "..." : hasSupported ? <FaHeart color="deeppink" /> : <FaRegHeart />}
+                    {hasSupported ? "Supported" : "Support Artist"}
+                    {!isLoadingSupportStatus && <span className="support-count">({supportCount})</span>}
+                  </button>
                 )}
               </div>
             </div>
@@ -570,78 +581,86 @@ const UserProfilePage: React.FC = () => {
               </div>
             )}
 
-<div className="reviews-section profile-section-public">
-    <h4>Reviews received ({completedReviews.length})</h4>
-    {reviewsLoading ? (
-        <p>Loading reviews...</p>
-    ) : completedReviews.length > 0 ? (
-        <div className="reviews-list">
-            {completedReviews.map((review) => {
-                const reviewerProfilePic = review.reviewer?.profile_picture || null;
-                return (
-                    <div key={review.review_id} className="review-item">
+            <div className="reviews-section profile-section-public">
+              <h4>Reviews received ({completedReviews.length})</h4>
+              {reviewsLoading ? (
+                <p>Loading reviews...</p>
+              ) : completedReviews.length > 0 ? (
+                <div className="reviews-list">
+                  {completedReviews.map((review) => {
+                    const reviewerProfilePic = review.reviewer?.profile_picture || null;
+                    return (
+                      <div key={review.review_id} className="review-item">
                         <div className="review-header">
-                            <img
-                                src={getImageUrl(reviewerProfilePic)}
-                                alt={review.reviewer?.fullname || 'Reviewer'}
-                                className="reviewer-pic"
-                            />
-                            <div className="reviewer-info">
-                                <strong>{review.reviewer?.fullname || 'Anonymous'}</strong>
-                                <span className="review-date">{formatDate(review.created_at)}</span>
-                            </div>
-                            <div className="review-stars"><DisplayStars rating={review.overall_rating} /></div>
+                          <img
+                            src={getImageUrl(reviewerProfilePic)}
+                            alt={review.reviewer?.fullname || 'Reviewer'}
+                            className="reviewer-pic"
+                          />
+                          <div className="reviewer-info">
+                            <strong>{review.reviewer?.fullname || 'Anonymous'}</strong>
+                            <span className="review-date">{formatDate(review.created_at)}</span>
+                          </div>
+                          <div className="review-stars"><DisplayStars rating={review.overall_rating} /></div>
                         </div>
                         {review.specific_answers?.comment && <p className="review-comment">"{review.specific_answers.comment}"</p>}
-                    </div>
-                );
-            })}
-        </div>
-    ) : (
-        <p className="no-reviews">This user hasn't received any project reviews yet.</p>
-    )}
-</div> {/* This closing div is for "reviews-section" */}
-                
-                  
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <p className="no-reviews">This user hasn't received any project reviews yet.</p>
+              )}
+            </div> {/* This closing div is for "reviews-section" */}
 
-                {interactionReviews.length > 0 && (
-    <div className="interaction-feedback-section profile-section-public">
-        <h4>Interaction feedback ({interactionReviews.length})</h4>
-        <p className="section-subtext">
-            Feedback from users who communicated but did not start a project.
-        </p>
-        <div className="reviews-list">
-            {interactionReviews.map(review => {
-                const communicationRating = review.specific_answers?.communicationRating_noDeal || 0;
-                const primaryReason = review.specific_answers?.noDealPrimaryReason;
-                const comment = review.specific_answers?.comment;
 
-                return (
-                    <div key={review.review_id} className="review-item interaction-review-item">
+
+            {interactionReviews.length > 0 && (
+              <div className="interaction-feedback-section profile-section-public">
+                <h4>Interaction feedback ({interactionReviews.length})</h4>
+                <p className="section-subtext">
+                  Feedback from users who communicated but did not start a project.
+                </p>
+                <div className="reviews-list">
+                  {interactionReviews.map(review => {
+                    const communicationRating = review.specific_answers?.communicationRating_noDeal || 0;
+                    const primaryReason = review.specific_answers?.noDealPrimaryReason;
+                    const comment = review.specific_answers?.comment;
+
+                    return (
+                      <div key={review.review_id} className="review-item interaction-review-item">
                         <div className="review-header">
-                            <DisplayStars rating={communicationRating} />
-                            <span className="review-date">{formatDate(review.created_at)}</span>
+                          <DisplayStars rating={communicationRating} />
+                          <span className="review-date">{formatDate(review.created_at)}</span>
                         </div>
                         {primaryReason && (
-                            <p className="interaction-reason">
-                                <strong>Reason:</strong> {primaryReason}
-                            </p>
+                          <p className="interaction-reason">
+                            <strong>Reason:</strong> {primaryReason}
+                          </p>
                         )}
                         {comment && (
-                            <p className="review-comment">"{comment}"</p>
+                          <p className="review-comment">"{comment}"</p>
                         )}
-                    </div>
-                );
-            })}
-        </div>
-    </div>
-)}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
 
             {/* Artist Comments Section */}
             {/* Artist Comments Section */}
             {isArtistProfile && (
               <div className="artist-comments-section profile-section-public">
-                <h4>Artistic viewpoints <FaCommentDots /> ({profileComments.length})</h4>
+                <div className="section-header">
+                  <h4>Artistic Viewpoints <FaCommentDots /> ({viewpointCount})</h4>
+                  {avgSupportRating !== null && (
+                    <div className="average-support-rating">
+                      <DisplayHearts rating={avgSupportRating} />
+                      <span>{avgSupportRating.toFixed(1)} avg support</span>
+                    </div>
+                  )}
+                </div>
 
                 {/* --- MODIFIED: Conditional Rendering for Comment Form --- */}
                 {/* This block now handles all cases for the form's visibility */}
@@ -660,6 +679,10 @@ const UserProfilePage: React.FC = () => {
                     ) : (
                       // 3. If check is done and they have NOT commented, show the form
                       <form onSubmit={handleCommentSubmit} className="comment-form">
+                        <div className="form-group">
+                          <label>Rate your support for this artist's work*</label>
+                          <HeartRatingInput rating={supportRating} setRating={setSupportRating} />
+                        </div>
                         <textarea
                           placeholder={`Share your artistic viewpoint on ${profile.fullname}'s work...`}
                           value={newComment}
@@ -667,7 +690,7 @@ const UserProfilePage: React.FC = () => {
                           rows={3}
                           disabled={isSubmittingComment}
                         />
-                        <button type="submit" disabled={isSubmittingComment || !newComment.trim()}>
+                        <button type="submit" disabled={isSubmittingComment || !newComment.trim() || supportRating === 0}>
                           {isSubmittingComment ? "Posting..." : "Post Viewpoint"}
                         </button>
                       </form>
@@ -686,11 +709,14 @@ const UserProfilePage: React.FC = () => {
                             <img src={getImageUrl(comment.commenter?.profile_picture)} alt={comment.commenter?.fullname || "Commenter"} className="commenter-pic" />
                             <div className="commenter-info">
                               <strong>{comment.commenter?.fullname || "An Artist"}</strong>
-                              {/* FIX: Use the correct 'created_at' property from the comment object */}
                               <span className="comment-date">{formatDate(comment.created_at)}</span>
                             </div>
+                            {/* This displays the hearts for the individual comment */}
+                            <div className="comment-rating">
+                              <DisplayHearts rating={comment.support_rating} />
+                            </div>
                           </div>
-                          <p className="comment-text">{comment.comment_text}</p>
+                          <p className="comment-text">"{comment.comment_text}"</p>
                         </div>
                       ))}
                     </div>
@@ -758,7 +784,7 @@ const UserProfilePage: React.FC = () => {
 
           {/* Rating Form Modal (General Reviews) */}
           {isRatingFormOpen && loggedInUser && profile && (
-    <div ref={ratingFormRef} className="rating-form-modal-overlay">
+            <div ref={ratingFormRef} className="rating-form-modal-overlay">
               <RatingForm
                 reviewerId={loggedInUser.user_id}
                 reviewedUserId={profile.user_id}

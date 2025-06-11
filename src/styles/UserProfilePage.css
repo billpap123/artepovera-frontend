@@ -236,7 +236,7 @@
   white-space: nowrap; /* Prevents the date itself from breaking into two lines */
   flex-shrink: 0;
 }
-
+.section-header { display: flex; align-items: center; }
 /* We should also make the parent container a flexbox to align the image and the info block */
 .comment-header {
     display: flex;

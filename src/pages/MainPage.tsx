@@ -125,13 +125,6 @@ const MainPage = () => {
               <Link to="/artist-profile/edit" className="dashboard-card stat-card"><FaUserEdit size={24} className="stat-icon" /><div><h3>Edit My Profile</h3><p>Update your bio, CV, and photo</p></div></Link>
               <Link to="/portfolio" className="dashboard-card stat-card"><FaImages size={24} className="stat-icon" /><div><h3>Edit My Portfolio</h3><p>Showcase your best work</p></div></Link>
               <Link to="/chat" className="dashboard-card stat-card"><FaCommentDots size={24} className="stat-icon" /><div><h3>My Messages</h3><p>Check your conversations</p></div></Link>
-              <div className="dashboard-card map-card">
-                <h3>Discover the Community</h3>
-                <p>Find artists and employers near you.</p>
-                <Link to="/map" className="action-button">
-                  Explore Map <FaMapMarkedAlt style={{ marginLeft: '8px' }} />
-                </Link>
-              </div>
             </>
           )}
           {userType === 'Employer' && (
@@ -160,7 +153,13 @@ const MainPage = () => {
                 <JobFeed jobs={filteredJobs} isLoading={isLoadingJobs} error={jobsError} />
               </div>
 
-             
+              <div className="dashboard-card map-card">
+                <h3>Discover the Community</h3>
+                <p>Find artists and employers near you.</p>
+                <Link to="/map" className="action-button">
+                  Explore Map <FaMapMarkedAlt style={{ marginLeft: '8px' }} />
+                </Link>
+              </div>
             </>
           )}
           
