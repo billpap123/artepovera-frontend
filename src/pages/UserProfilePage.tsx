@@ -194,6 +194,8 @@ const UserProfilePage: React.FC = () => {
   // --- ADD NEW STATE FOR THE FORM AND AVERAGE RATING ---
   const [avgSupportRating, setAvgSupportRating] = useState<number | null>(null);
   const [viewpointCount, setViewpointCount] = useState(0);
+  const [isGalleryOpen, setIsGalleryOpen] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   // --- END ADD ---
   // --- Handlers for Rating Form (General Reviews) ---
@@ -231,6 +233,22 @@ const UserProfilePage: React.FC = () => {
       setAlreadyReviewed(true);
       alert("Thank you! Your review has been posted.");
     }
+  };
+  const openGallery = (index: number) => {
+    setCurrentImageIndex(index);
+    setIsGalleryOpen(true);
+  };
+
+  const closeGallery = () => {
+    setIsGalleryOpen(false);
+  };
+
+  const showNextImage = () => {
+    setCurrentImageIndex((prevIndex) => (prevIndex + 1) % portfolio.length);
+  };
+
+  const showPrevImage = () => {
+    setCurrentImageIndex((prevIndex) => (prevIndex - 1 + portfolio.length) % portfolio.length);
   };
 
 
@@ -362,6 +380,26 @@ const UserProfilePage: React.FC = () => {
   }, []);
 
   // src/pages/UserProfilePage.tsx
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!isGalleryOpen) return;
+      if (e.key === 'Escape') {
+        closeGallery();
+      } else if (e.key === 'ArrowRight') {
+        showNextImage();
+      } else if (e.key === 'ArrowLeft') {
+        showPrevImage();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    // Cleanup function to remove the event listener
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isGalleryOpen, showNextImage, showPrevImage]); // Dependencies ensure functions are up-to-date
+
 
   useEffect(() => {
     if (!userIdFromParams) {
@@ -771,21 +809,29 @@ const UserProfilePage: React.FC = () => {
 
             {isArtistProfile ? (
               <div className="portfolio-section profile-section-public">
-                <h4>Portfolio</h4>
-                {loading && portfolio.length === 0 ? <p>Loading portfolio...</p> :
-                  portfolio.length === 0 ? (<p>No portfolio items.</p>) : (
-                    <div className="portfolio-items">
-                      {portfolio.map((item) => (
-                        <div key={item.portfolio_id} className="portfolio-item-card">
-                          {item.image_url && (
-                            <img className="portfolio-image" src={getImageUrl(item.image_url)} alt="Portfolio item" onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/default-portfolio.png'; }} />
-                          )}
-                          <p>{item.description || 'No description'}</p>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-              </div>
+              <h4>Portfolio</h4>
+              {loading && portfolio.length === 0 ? <p>Loading portfolio...</p> :
+                portfolio.length === 0 ? (<p>No portfolio items.</p>) : (
+                  <div className="portfolio-items">
+                    {/* The index is passed to openGallery */}
+                    {portfolio.map((item, index) => (
+                      <div key={item.portfolio_id} className="portfolio-item-card">
+                        {item.image_url && (
+                          <img 
+                            className="portfolio-image" 
+                            src={getImageUrl(item.image_url)} 
+                            alt="Portfolio item" 
+                            onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/default-portfolio.png'; }}
+                            onClick={() => openGallery(index)} // <-- THIS IS THE TRIGGER
+                          />
+                        )}
+                        <p>{item.description || 'No description'}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+            </div>
+  
             ) : (
               <div className="job-postings-section profile-section-public">
                 <h4>Active job postings</h4>
