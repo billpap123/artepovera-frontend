@@ -6,7 +6,7 @@ import { UserProvider, useUserContext } from "./context/UserContext"; // Correct
 // Page imports
 import JobDetailPage from './pages/JobDetailPage'; // Make sure this page is imported
 import MyApplicationsPage from './pages/MyApplicationsPage';
-
+import MyJobPostingsPage from './pages/MyJobPostingsPage';
 import LandingPage from "./pages/LandingPage";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
@@ -95,6 +95,8 @@ const AppContent = () => {
         />
         <Route path="/post-job" element={<PostJobPage />} /> {/* Moved PostJobPage to protected as it often requires login */}
       </Route>
+      <Route path="/my-jobs" element={<MyJobPostingsPage />} />
+
       {/* --- 3. ADD ADMIN PROTECTED ROUTE --- */}
       <Route element={<AdminRoute />}>
         <Route path="/admin" element={<AdminDashboard />} />
