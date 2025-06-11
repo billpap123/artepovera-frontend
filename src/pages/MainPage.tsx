@@ -127,15 +127,21 @@ const MainPage = () => {
               <Link to="/chat" className="dashboard-card stat-card"><FaCommentDots size={24} className="stat-icon" /><div><h3>My messages</h3><p>Check your conversations</p></div></Link>
               
               {/* --- THIS IS THE ONLY ADDITION --- */}
-              <Link to="/my-applications" className="dashboard-card stat-card">
-                <FaClipboardList size={24} className="stat-icon" />
-                <div><h3>My applications</h3><p>Track your job applications</p></div>
+              <Link to="/my-applications" className="dashboard-card image-link-card">
+                <div>
+                  <h3>My Applications</h3>
+                  <p>Track your job applications</p>
+                </div>
               </Link>
-                {/* --- ADD THIS NEW CARD --- */}
-                <Link to="/map" className="dashboard-card stat-card">
-                <FaMapMarkedAlt size={24} className="stat-icon" />
-                <div><h3>Community map</h3><p>Discover artists & employers</p></div>
+
+              {/* --- CARD 2: UPDATED CLASSNAME AND REMOVED ICON --- */}
+              <Link to="/map" className="dashboard-card image-link-card">
+                <div>
+                  <h3>Community Map</h3>
+                  <p>Discover artists & employers</p>
+                </div>
               </Link>
+
               {/* --- END OF ADDITION --- */}
             </>
           )}
@@ -165,13 +171,7 @@ const MainPage = () => {
                 <JobFeed jobs={filteredJobs} isLoading={isLoadingJobs} error={jobsError} />
               </div>
 
-              <div className="dashboard-card map-card">
-                <h3>Discover the community</h3>
-                <p>Find artists and employers near you.</p>
-                <Link to="/map" className="action-button">
-                  Explore Map <FaMapMarkedAlt style={{ marginLeft: '8px' }} />
-                </Link>
-              </div>
+              
             </>
           )}
           
