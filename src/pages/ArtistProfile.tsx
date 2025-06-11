@@ -261,13 +261,13 @@ const ArtistProfile: React.FC = () => {
     <>
       <Navbar />
       <div className="profile-container artist-profile-container">
-        <h2 className="profile-title">{isEditing ? "Edit Your Profile" : (profileUserName || "My Artist Profile")}</h2>
+        <h2 className="profile-title">{isEditing ? "Edit Your Profile" : (profileUserName || "My artist profile")}</h2>
         {error && isEditing && <p className="error-message inline-error">{error}</p>}
 
         <div className="profile-header">
             <div className="profile-picture-wrapper">
-              <img src={profilePicture ? profilePicture : "/default-profile.png"} alt="Artist Profile" className="profile-picture" />
-              {isEditing && ( <div className="edit-picture-options"> <label htmlFor="profilePicUpload" className="upload-pic-btn">Change Photo</label> <input id="profilePicUpload" type="file" accept="image/png, image/jpeg" onChange={handleProfilePictureChange} style={{display: 'none'}} /> {profilePicture && (<button type="button" className="delete-btn small" onClick={handleDeletePicture} disabled={deleting || saving || cvProcessing}> {deleting ? "..." : "Remove"} </button> )} </div> )}
+              <img src={profilePicture ? profilePicture : "/default-profile.png"} alt="Artist profile" className="profile-picture" />
+              {isEditing && ( <div className="edit-picture-options"> <label htmlFor="profilePicUpload" className="upload-pic-btn">Change photo</label> <input id="profilePicUpload" type="file" accept="image/png, image/jpeg" onChange={handleProfilePictureChange} style={{display: 'none'}} /> {profilePicture && (<button type="button" className="delete-btn small" onClick={handleDeletePicture} disabled={deleting || saving || cvProcessing}> {deleting ? "..." : "Remove"} </button> )} </div> )}
             </div>
             <div className="profile-summary">
                  {isStudent && (<span className="student-badge">STUDENT ARTIST</span>)}
@@ -279,7 +279,7 @@ const ArtistProfile: React.FC = () => {
         <div className="profile-content">
             {!isEditing ? (
               <>
-                <div className="profile-section"> <h4>Bio</h4>  <div className="bio-text markdown-content">
+                <div className="profile-section"> <h4>Short Description:</h4>  <div className="bio-text markdown-content">
                     <ReactMarkdown remarkPlugins={[remarkGfm]}>
                         {bio || "*No bio provided yet.*"}
                     </ReactMarkdown>

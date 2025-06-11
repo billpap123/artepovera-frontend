@@ -236,8 +236,22 @@
   white-space: nowrap; /* Prevents the date itself from breaking into two lines */
   flex-shrink: 0;
 }
-.section-header { display: flex; align-items: center; }
-/* We should also make the parent container a flexbox to align the image and the info block */
+/* In src/styles/UserProfilePage.css */
+
+.heart-rating-input .heart-icon-input {
+  color: #e0e0e0; /* Default color is grey */
+  cursor: pointer;
+  margin-right: 5px;
+  transition: color 0.2s;
+}
+
+.heart-rating-input .heart-icon-input.active {
+  color: deeppink; /* Active color is pink */
+}
+
+.heart-rating-input .heart-icon-input:hover {
+    color: #ff85b3; /* Hover color */
+}/* We should also make the parent container a flexbox to align the image and the info block */
 .comment-header {
     display: flex;
     align-items: flex-start; /* Aligns pic to the top of the text block */

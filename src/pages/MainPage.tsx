@@ -121,24 +121,24 @@ const MainPage = () => {
           {/* Your existing conditional cards for Artist, Employer, and Admin */}
           {userType === 'Artist' && (
             <>
-              <Link to={`/user-profile/${userId}`} className="dashboard-card stat-card"><FaEye size={24} className="stat-icon" /><div><h3>My Public Profile</h3><p>View and share your profile</p></div></Link>
-              <Link to="/artist-profile/edit" className="dashboard-card stat-card"><FaUserEdit size={24} className="stat-icon" /><div><h3>Edit My Profile</h3><p>Update your bio, CV, and photo</p></div></Link>
-              <Link to="/portfolio" className="dashboard-card stat-card"><FaImages size={24} className="stat-icon" /><div><h3>Edit My Portfolio</h3><p>Showcase your best work</p></div></Link>
-              <Link to="/chat" className="dashboard-card stat-card"><FaCommentDots size={24} className="stat-icon" /><div><h3>My Messages</h3><p>Check your conversations</p></div></Link>
+              <Link to={`/user-profile/${userId}`} className="dashboard-card stat-card"><FaEye size={24} className="stat-icon" /><div><h3>My public profile</h3><p>View and share your profile</p></div></Link>
+              <Link to="/artist-profile/edit" className="dashboard-card stat-card"><FaUserEdit size={24} className="stat-icon" /><div><h3>Edit my profile</h3><p>Update your bio, CV, and photo</p></div></Link>
+              <Link to="/portfolio" className="dashboard-card stat-card"><FaImages size={24} className="stat-icon" /><div><h3>Edit my portfolio</h3><p>Showcase your best work</p></div></Link>
+              <Link to="/chat" className="dashboard-card stat-card"><FaCommentDots size={24} className="stat-icon" /><div><h3>My messages</h3><p>Check your conversations</p></div></Link>
             </>
           )}
           {userType === 'Employer' && (
             <>
-              <Link to={`/user-profile/${userId}`} className="dashboard-card stat-card"><FaEye size={24} className="stat-icon" /><div><h3>My Public Profile</h3><p>View your employer profile</p></div></Link>
-              <Link to="/employer-profile/edit" className="dashboard-card stat-card"><FaUserEdit size={24} className="stat-icon" /><div><h3>Edit My Profile</h3><p>Update your bio and photo</p></div></Link>
-              <Link to="/post-job" className="dashboard-card stat-card"><FaPlusCircle size={24} className="stat-icon" /><div><h3>Post a New Job</h3><p>Find the perfect artist</p></div></Link>
-              <Link to="/chat" className="dashboard-card stat-card"><FaCommentDots size={24} className="stat-icon" /><div><h3>My Messages</h3><p>Check applicant conversations</p></div></Link>
+              <Link to={`/user-profile/${userId}`} className="dashboard-card stat-card"><FaEye size={24} className="stat-icon" /><div><h3>My public Profile</h3><p>View your employer profile</p></div></Link>
+              <Link to="/employer-profile/edit" className="dashboard-card stat-card"><FaUserEdit size={24} className="stat-icon" /><div><h3>Edit my profile</h3><p>Update your bio and photo</p></div></Link>
+              <Link to="/post-job" className="dashboard-card stat-card"><FaPlusCircle size={24} className="stat-icon" /><div><h3>Post a new job</h3><p>Find the perfect artist</p></div></Link>
+              <Link to="/chat" className="dashboard-card stat-card"><FaCommentDots size={24} className="stat-icon" /><div><h3>My messages</h3><p>Check applicant conversations</p></div></Link>
             </>
           )}
           {userType === 'Admin' && (
             <>
-              <Link to="/admin" className="dashboard-card stat-card admin-card"><FaUsersCog size={24} className="stat-icon" /><div><h3>Manage Users</h3><p>View, edit, or delete users</p></div></Link>
-              <Link to="/admin/content" className="dashboard-card stat-card admin-card"><FaThList size={24} className="stat-icon" /><div><h3>Moderate Content</h3><p>Manage reviews and comments</p></div></Link>
+              <Link to="/admin" className="dashboard-card stat-card admin-card"><FaUsersCog size={24} className="stat-icon" /><div><h3>Manage users</h3><p>View, edit, or delete users</p></div></Link>
+              <Link to="/admin/content" className="dashboard-card stat-card admin-card"><FaThList size={24} className="stat-icon" /><div><h3>Moderate content</h3><p>Manage reviews and comments</p></div></Link>
             </>
           )}
 
@@ -154,7 +154,7 @@ const MainPage = () => {
               </div>
 
               <div className="dashboard-card map-card">
-                <h3>Discover the Community</h3>
+                <h3>Discover the community</h3>
                 <p>Find artists and employers near you.</p>
                 <Link to="/map" className="action-button">
                   Explore Map <FaMapMarkedAlt style={{ marginLeft: '8px' }} />
@@ -166,7 +166,7 @@ const MainPage = () => {
           {/* Admin Overview card */}
           {userType === 'Admin' && (
             <div className="dashboard-card admin-overview-card">
-              <h2>Application Overview</h2>
+              <h2>Application overview</h2>
               <p>This is your central hub for managing the application.</p>
             </div>
           )}

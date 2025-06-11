@@ -319,7 +319,7 @@ const EmployerProfile: React.FC = () => {
               // --- Display Mode ---
               <> {/* <<< Opening Fragment */}
                 <div className="profile-section">
-                    <h4>Bio</h4>
+                    <h4>Short Description</h4>
                     {/* --- THIS IS THE UPDATED PART --- */}
                   <div className="bio-text markdown-content">
                     <ReactMarkdown remarkPlugins={[remarkGfm]}>

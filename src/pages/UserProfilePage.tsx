@@ -112,13 +112,22 @@ const DisplayHearts = ({ rating }: { rating: number | null }) => {
 const HeartRatingInput = ({ rating, setRating }: { rating: number, setRating: (r: number) => void }) => {
   const [hover, setHover] = useState(0);
   return (
-    <div className="heart-rating-input">
-      {[1, 2, 3, 4, 5].map((value) => (
-        <span key={value} onClick={() => setRating(value)} onMouseEnter={() => setHover(value)} onMouseLeave={() => setHover(0)}>
-          <FaHeart size={28} className={`heart-icon-input ${value <= (hover || rating) ? 'active' : ''}`} />
-        </span>
-      ))}
-    </div>
+      <div className="heart-rating-input">
+          {[1, 2, 3, 4, 5].map((value) => (
+              <span 
+                  key={value} 
+                  // --- MODIFY THIS LINE ---
+                  onClick={() => {
+                      console.log('Heart clicked! Value:', value); // Add this log
+                      setRating(value);
+                  }} 
+                  onMouseEnter={() => setHover(value)} 
+                  onMouseLeave={() => setHover(0)}
+              >
+                  <FaHeart size={28} className={`heart-icon-input ${value <= (hover || rating) ? 'active' : ''}`} />
+              </span>
+          ))}
+      </div>
   );
 };
 
@@ -143,8 +152,12 @@ const DisplayStars = ({ rating }: { rating: number | null }) => {
 // --- End Helper Functions ---
 
 const UserProfilePage: React.FC = () => {
+
   const { userId: userIdFromParams } = useParams<{ userId: string }>();
   const navigate = useNavigate();
+  const [supportRating, setSupportRating] = useState(0);
+  
+  console.log('Current supportRating state is:', supportRating); // <-- ADD THIS LOG
 
   // --- State Declarations ---
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
@@ -179,7 +192,6 @@ const UserProfilePage: React.FC = () => {
   const [hasCommented, setHasCommented] = useState<boolean>(false);
   const [isLoadingCommentStatus, setIsLoadingCommentStatus] = useState<boolean>(true);
   // --- ADD NEW STATE FOR THE FORM AND AVERAGE RATING ---
-  const [supportRating, setSupportRating] = useState(0); // For the form input
   const [avgSupportRating, setAvgSupportRating] = useState<number | null>(null);
   const [viewpointCount, setViewpointCount] = useState(0);
 
@@ -653,7 +665,7 @@ const UserProfilePage: React.FC = () => {
             {isArtistProfile && (
               <div className="artist-comments-section profile-section-public">
                 <div className="section-header">
-                  <h4>Artistic Viewpoints <FaCommentDots /> ({viewpointCount})</h4>
+                  <h4>Artistic viewpoints <FaCommentDots /> ({viewpointCount})</h4>
                   {avgSupportRating !== null && (
                     <div className="average-support-rating">
                       <DisplayHearts rating={avgSupportRating} />
@@ -721,7 +733,7 @@ const UserProfilePage: React.FC = () => {
                       ))}
                     </div>
 
-                  ) : (<p>No artistic viewpoints have been shared yet for {profile.fullname}.</p>)}
+                  ) : (<p>No artistic viewpoints yet for {profile.fullname}.</p>)}
               </div>
             )}
 
