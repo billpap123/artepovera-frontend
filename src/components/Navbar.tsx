@@ -6,7 +6,7 @@ import { FaHome, FaUserAlt, FaBell, FaMapMarkerAlt } from "react-icons/fa";
 import { useUserContext } from '../context/UserContext'; // Import your custom context hook
 import '../styles/Navbar.css'; // Make sure you have this CSS file
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:50001";
+const API_BASE_URL = import.meta.env.VITE_API_URL || "https://artepovera2.vercel.app";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
