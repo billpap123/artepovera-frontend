@@ -283,7 +283,7 @@ const EmployerProfile: React.FC = () => {
     <>
       <Navbar />
       <div className="profile-container employer-profile-container">
-        <h2 className="profile-title">{isEditing ? "Edit Profile" : (profileUserName || "My Employer Profile")}</h2>
+        <h2 className="profile-title">{isEditing ? "Edit profile" : (profileUserName || "My Employer Profile")}</h2>
 
         {/* Profile Header */}
         <div className="profile-header">
@@ -309,7 +309,7 @@ const EmployerProfile: React.FC = () => {
                      : reviewCount > 0 ? ( <> <DisplayStars rating={averageRating} /> <span className="rating-value">{averageRating?.toFixed(1)}</span> <span className="review-count">({reviewCount} review{reviewCount !== 1 ? 's' : ''})</span> </> )
                      : ( <span className="no-rating">No reviews yet</span> )}
                  </div>
-                 {!isEditing && ( <button className="edit-btn" onClick={handleEditToggle}> Edit Profile </button> )}
+                 {!isEditing && ( <button className="edit-btn" onClick={handleEditToggle}> Edit profile </button> )}
             </div>
         </div>
 
@@ -319,7 +319,7 @@ const EmployerProfile: React.FC = () => {
               // --- Display Mode ---
               <> {/* <<< Opening Fragment */}
                 <div className="profile-section">
-                    <h4>Short Description</h4>
+                    <h4>Short description</h4>
                     {/* --- THIS IS THE UPDATED PART --- */}
                   <div className="bio-text markdown-content">
                     <ReactMarkdown remarkPlugins={[remarkGfm]}>

@@ -158,7 +158,7 @@ const Navbar = () => {
                 onClick={() => setIsMenuOpen(false)}
               >
                 <FaUserAlt className="nav-icon" />
-                <span className="nav-text">My Profile</span>
+                <span className="nav-text">My profile</span>
               </NavLink>
             </li>
 

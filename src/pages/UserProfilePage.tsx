@@ -263,37 +263,55 @@ const UserProfilePage: React.FC = () => {
 
   const handleCommentSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!userProfile) { console.error("Cannot submit comment, user profile data not loaded yet."); return; }
+    if (!userProfile) {
+        console.error("Cannot submit comment, user profile data not loaded yet.");
+        return;
+    }
+    // Validation now correctly checks the rating state and comment text
     if (!newComment.trim() || supportRating === 0) {
-      alert("Please provide a rating and a comment for your viewpoint.");
-      return;
+        alert("Please provide a rating and a comment for your viewpoint.");
+        return;
     }
     if (!loggedInUser || loggedInUser.user_type !== 'Artist' || userProfile.user_type !== 'Artist' || loggedInUser.user_id === userProfile.user_id) {
-      alert("Only artists can comment on other artists' profiles.");
-      return;
+        alert("Only artists can comment on other artists' profiles.");
+        return;
     }
 
     setIsSubmittingComment(true);
     try {
-      const token = localStorage.getItem('token');
-      const response = await axios.post(
-        `${API_BASE_URL}/api/users/${userProfile.user_id}/comments`,
-        { comment_text: newComment.trim(), support_rating: supportRating },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      const newCommentData = response.data.comment;
-      setProfileComments(prevComments => [newCommentData, ...prevComments]);
-      setViewpointCount(prev => prev + 1); // Increment count locally
-      setNewComment("");
-      setSupportRating(0);
-      setHasCommented(true);
+        const token = localStorage.getItem('token');
+        const response = await axios.post(
+            `${API_BASE_URL}/api/users/${userProfile.user_id}/comments`,
+            {
+                comment_text: newComment.trim(),
+                support_rating: supportRating // Send the rating
+            },
+            { headers: { Authorization: `Bearer ${token}` } }
+        );
+
+        // --- THIS IS THE FIX ---
+        // The backend now returns the complete, perfect comment object with all details.
+        // We can use it directly. No more manual object creation is needed!
+        const newCommentData = response.data.comment;
+
+        // Add the object from the server directly to our state
+        setProfileComments(prevComments => [newCommentData, ...prevComments]);
+        
+        // Also update the count locally for an instant UI change
+        setViewpointCount(prev => prev + 1);
+
+        // Reset the form
+        setNewComment("");
+        setSupportRating(0); 
+        setHasCommented(true);
+
     } catch (err: any) {
-      if (err.response?.status === 409) { setHasCommented(true); }
-      alert(err.response?.data?.message || "Failed to submit viewpoint.");
+        if (err.response?.status === 409) { setHasCommented(true); }
+        alert(err.response?.data?.message || "Failed to submit viewpoint.");
     } finally {
-      setIsSubmittingComment(false);
+        setIsSubmittingComment(false);
     }
-  };
+};
 
   const getImageUrl = (path?: string | null): string => {
     if (!path) return '/default-profile.png';
@@ -703,7 +721,7 @@ const UserProfilePage: React.FC = () => {
                           disabled={isSubmittingComment}
                         />
                         <button type="submit" disabled={isSubmittingComment || !newComment.trim() || supportRating === 0}>
-                          {isSubmittingComment ? "Posting..." : "Post Viewpoint"}
+                          {isSubmittingComment ? "Posting..." : "Post viewpoint"}
                         </button>
                       </form>
                     )}

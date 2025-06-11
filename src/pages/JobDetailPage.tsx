@@ -114,7 +114,7 @@ const JobDetailPage = () => {
 
                     {job.description && (
                         <section className="job-detail-section">
-                            <h2>Project Description</h2>
+                            <h2>Project description</h2>
                             <p>{job.description}</p>
                         </section>
                     )}
@@ -125,7 +125,7 @@ const JobDetailPage = () => {
                             <ul className="requirements-list">
                                 {job.requirements.experience_years && <li><FaTools /><span><strong>Experience:</strong> {job.requirements.experience_years} years</span></li>}
                                 {job.requirements.university_degree?.required && <li><FaUserGraduate /><span><strong>Degree:</strong> {job.requirements.university_degree.details || 'Required'}</span></li>}
-                                {job.requirements.military_service && job.requirements.military_service !== 'Not Applicable' && <li><span><strong>Military Service:</strong> {job.requirements.military_service}</span></li>}
+                                {job.requirements.military_service && job.requirements.military_service !== 'Not Applicable' && <li><span><strong>Military service:</strong> {job.requirements.military_service}</span></li>}
                                 {job.requirements.foreign_languages && job.requirements.foreign_languages.length > 0 && (
                                     <li><FaLanguage /><span><strong>Languages:</strong> {job.requirements.foreign_languages.map(l => `${l.language} (${l.certificate})`).join(', ')}</span></li>
                                 )}
@@ -135,7 +135,7 @@ const JobDetailPage = () => {
 
                     {job.desired_keywords && (
                         <section className="job-detail-section">
-                            <h2>Desired Skills & Keywords</h2>
+                            <h2>Desired skills & keywords</h2>
                             <div className="keywords-container">
                                 {job.desired_keywords.split(',').map((keyword, index) => (
                                     <span key={index} className="keyword-tag">{keyword.trim()}</span>
@@ -156,20 +156,20 @@ const JobDetailPage = () => {
                     </div>
 
                     <div className="sidebar-card details-card">
-                        <h4>Job Details</h4>
+                        <h4>Job details</h4>
                         <ul>
-                            <li><strong><FaEuroSign /> Total Payment:</strong><span>€{Number(job.payment_total).toFixed(2)}</span></li>
+                            <li><strong><FaEuroSign /> Total payment:</strong><span>€{Number(job.payment_total).toFixed(2)}</span></li>
                             {job.payment_is_monthly && <li><strong><FaEuroSign /> Monthly:</strong><span>€{Number(job.payment_monthly_amount).toFixed(2)}</span></li>}
                             <li><strong><FaCalendarAlt /> Duration:</strong><span>{formatDate(job.start_date)} to {formatDate(job.end_date)}</span></li>
                             <li><strong><FaGlobe /> Presence:</strong><span>{job.presence}</span></li>
-                            {job.location && <li><strong><FaMapMarkerAlt /> Location:</strong><span>{job.location}</span></li>}
+                            {job.location && <li><strong><FaMapMarkerAlt /> Employer's location:</strong><span>{job.location}</span></li>}
                             <li><strong><FaFileContract /> Insurance:</strong><span>{job.insurance ? 'Provided' : 'Not Provided'}</span></li>
                         </ul>
                     </div>
 
                     {isArtist && (
                         <div className="sidebar-card apply-card">
-                            <h4>Ready to Apply?</h4>
+                            <h4>Ready to apply?</h4>
                             {job.application_deadline && <p>Deadline: {formatDate(job.application_deadline)}</p>}
                             <button onClick={handleApply} disabled={isApplied || isApplying} className="apply-button-large">
                                 {isApplying ? 'Submitting...' : isApplied ? 'Applied' : 'Apply Now'}

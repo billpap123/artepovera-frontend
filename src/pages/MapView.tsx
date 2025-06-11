@@ -160,7 +160,7 @@ const MapView: React.FC<MapViewProps> = ({ userType: loggedInUserType, loggedInU
       <Navbar />
       <div className="map-page-container">
         <div className="map-controls">
-          <h2 className="map-title">Explore the Community</h2>
+          <h2 className="map-title">Explore the community</h2>
         </div>
 
         <div className="map-content-wrapper">
@@ -210,7 +210,7 @@ const MapView: React.FC<MapViewProps> = ({ userType: loggedInUserType, loggedInU
                             <span className={`popup-user-type ${loc.user_type?.toLowerCase()}`}>{loc.user_type}</span>
                         </div>
                         <button className="popup-button" onClick={() => navigate(`/user-profile/${loc.user_id}`)}>
-                          View Profile
+                          View profile
                         </button>
                     </div>
                   </Popup>

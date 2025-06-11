@@ -141,7 +141,7 @@ const JobPostings: React.FC<JobPostingsProps> = ({ employerId }) => {
 
             <div className="job-card-details-grid">
                 <div className="detail-item">
-                    <strong>Total Payment:</strong>
+                    <strong>Total payment:</strong>
                     <span><FaEuroSign /> {job.payment_total.toFixed(2)} {job.payment_is_monthly && `(€${job.payment_monthly_amount?.toFixed(2)}/month)`}</span>
                 </div>
                 <div className="detail-item">
@@ -150,7 +150,7 @@ const JobPostings: React.FC<JobPostingsProps> = ({ employerId }) => {
                 </div>
                 <div className="detail-item">
                     <strong>Insurance:</strong>
-                    <span>{job.insurance ? <><FaCheckCircle color="green" /> Included</> : <><FaTimesCircle color="gray" /> Not Included</>}</span>
+                    <span>{job.insurance ? <><FaCheckCircle color="green" /> Included</> : <><FaTimesCircle color="gray" /> Not included</>}</span>
                 </div>
                 {job.application_deadline && <div className="detail-item">
                     <strong>Apply by:</strong>
@@ -163,7 +163,7 @@ const JobPostings: React.FC<JobPostingsProps> = ({ employerId }) => {
             {isArtist && (
               <div className="job-card-actions">
                 <button onClick={() => handleApply(job.job_id)} className="apply-button-detailed">
-                  Apply Now
+                  Apply now
                 </button>
               </div>
             )}

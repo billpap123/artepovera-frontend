@@ -272,14 +272,14 @@ const ArtistProfile: React.FC = () => {
             <div className="profile-summary">
                  {isStudent && (<span className="student-badge">STUDENT ARTIST</span>)}
                  <div className="average-rating-display"> {reviewsLoading ? ( <span>Loading...</span> ) : reviewCount > 0 ? ( <> <DisplayStars rating={averageRating} /> <span className="rating-value">{averageRating?.toFixed(1)}</span> <span className="review-count">({reviewCount} review{reviewCount !== 1 ? 's' : ''})</span> </> ) : ( <span className="no-rating">No reviews yet</span> )} </div>
-                 {!isEditing && ( <button className="edit-btn" onClick={handleEditToggle}> Edit Profile </button> )}
+                 {!isEditing && ( <button className="edit-btn" onClick={handleEditToggle}> Edit profile </button> )}
             </div>
         </div>
 
         <div className="profile-content">
             {!isEditing ? (
               <>
-                <div className="profile-section"> <h4>Short Description:</h4>  <div className="bio-text markdown-content">
+                <div className="profile-section"> <h4>Short description:</h4>  <div className="bio-text markdown-content">
                     <ReactMarkdown remarkPlugins={[remarkGfm]}>
                         {bio || "*No bio provided yet.*"}
                     </ReactMarkdown>

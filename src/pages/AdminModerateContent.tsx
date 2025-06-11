@@ -263,14 +263,14 @@ const AdminModerateContent = () => {
 
                         {/* Artistic Viewpoints Table */}
                         <section className="admin-section">
-                            <h2>All Artistic Viewpoints ({comments.length})</h2>
+                            <h2>All Artistic viewpoints ({comments.length})</h2>
                             <div className="admin-table-container">
                                 <table>
                                     <thead>
                                         <tr>
                                             <th>ID</th>
                                             <th>Commenter</th>
-                                            <th>On Profile of</th>
+                                            <th>On profile of</th>
                                             <th style={{minWidth: '200px'}}>Viewpoint</th>
                                             <th>Date</th>
                                             <th>Actions</th>
