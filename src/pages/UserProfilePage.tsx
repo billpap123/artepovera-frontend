@@ -391,11 +391,21 @@ const UserProfilePage: React.FC = () => {
         const ratingPromise = axios.get<{ averageRating: number | null, reviewCount: number }>(`${API_BASE_URL}/api/users/${userIdFromParams}/average-rating`, { headers });
         const reviewsPromise = axios.get<{ reviews: ReviewData[] }>(`${API_BASE_URL}/api/users/${userIdFromParams}/reviews`, { headers });
         const commentsPromise = axios.get<{ comments: ArtistComment[] }>(`${API_BASE_URL}/api/users/${userIdFromParams}/comments`, { headers });
+        const avgSupportPromise = axios.get(`${API_BASE_URL}/api/users/${userIdFromParams}/average-support`, { headers }); // <-- THIS LINE WAS MISSING
 
         const [profileResponse, ratingResponse, reviewsResponse, commentsResponse] = await Promise.all([
           profilePromise, ratingPromise, reviewsPromise, commentsPromise
+          
         ]);
-
+        const [
+          profileRes, 
+          ratingRes, 
+          reviewsRes, 
+          commentsRes, 
+          avgSupportRes // <-- And get its result here
+      ] = await Promise.all([
+        profilePromise, ratingPromise, reviewsPromise, commentsPromise, avgSupportPromise
+      ]);
         if (!isMounted) return;
 
         const fetchedUserProfile = profileResponse.data;
@@ -404,6 +414,10 @@ const UserProfilePage: React.FC = () => {
         setReviewCount(ratingResponse.data.reviewCount);
         setReviews(reviewsResponse.data.reviews || []);
         setProfileComments(commentsResponse.data.comments || []);
+        
+        // And finally, set the state with the new data
+        setAvgSupportRating(avgSupportRes.data.averageRating);
+        setViewpointCount(avgSupportRes.data.viewpointCount);
 
         // --- Fetches dependent on loggedInUser and fetchedUserProfile ---
         if (loggedInUser && fetchedUserProfile) {
