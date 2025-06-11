@@ -121,15 +121,20 @@ const MainPage = () => {
           {/* Your existing conditional cards for Artist, Employer, and Admin */}
           {userType === 'Artist' && (
             <>
-              <Link to={`/user-profile/${userId}`} className="dashboard-card stat-card"><FaEye size={24} className="stat-icon" /><div><h3>My Public Profile</h3><p>View and share your profile</p></div></Link>
-              <Link to="/artist-profile/edit" className="dashboard-card stat-card"><FaUserEdit size={24} className="stat-icon" /><div><h3>Edit My Profile</h3><p>Update your bio, CV, and photo</p></div></Link>
-              <Link to="/portfolio" className="dashboard-card stat-card"><FaImages size={24} className="stat-icon" /><div><h3>Edit My Portfolio</h3><p>Showcase your best work</p></div></Link>
-              <Link to="/chat" className="dashboard-card stat-card"><FaCommentDots size={24} className="stat-icon" /><div><h3>My Messages</h3><p>Check your conversations</p></div></Link>
+              <Link to={`/user-profile/${userId}`} className="dashboard-card stat-card"><FaEye size={24} className="stat-icon" /><div><h3>My public profile</h3><p>View and share your profile</p></div></Link>
+              <Link to="/artist-profile/edit" className="dashboard-card stat-card"><FaUserEdit size={24} className="stat-icon" /><div><h3>Edit my profile</h3><p>Update your bio, CV, and photo</p></div></Link>
+              <Link to="/portfolio" className="dashboard-card stat-card"><FaImages size={24} className="stat-icon" /><div><h3>Edit my portfolio</h3><p>Showcase your best work</p></div></Link>
+              <Link to="/chat" className="dashboard-card stat-card"><FaCommentDots size={24} className="stat-icon" /><div><h3>My messages</h3><p>Check your conversations</p></div></Link>
               
               {/* --- THIS IS THE ONLY ADDITION --- */}
               <Link to="/my-applications" className="dashboard-card stat-card">
                 <FaClipboardList size={24} className="stat-icon" />
-                <div><h3>My Applications</h3><p>Track your job applications</p></div>
+                <div><h3>My applications</h3><p>Track your job applications</p></div>
+              </Link>
+                {/* --- ADD THIS NEW CARD --- */}
+                <Link to="/map" className="dashboard-card stat-card">
+                <FaMapMarkedAlt size={24} className="stat-icon" />
+                <div><h3>Community map</h3><p>Discover artists & employers</p></div>
               </Link>
               {/* --- END OF ADDITION --- */}
             </>
@@ -137,10 +142,10 @@ const MainPage = () => {
 
           {userType === 'Employer' && (
             <>
-              <Link to={`/user-profile/${userId}`} className="dashboard-card stat-card"><FaEye size={24} className="stat-icon" /><div><h3>My Public Profile</h3><p>View your employer profile</p></div></Link>
-              <Link to="/employer-profile/edit" className="dashboard-card stat-card"><FaUserEdit size={24} className="stat-icon" /><div><h3>Edit My Profile</h3><p>Update your bio and photo</p></div></Link>
-              <Link to="/post-job" className="dashboard-card stat-card"><FaPlusCircle size={24} className="stat-icon" /><div><h3>Post a New Job</h3><p>Find the perfect artist</p></div></Link>
-              <Link to="/chat" className="dashboard-card stat-card"><FaCommentDots size={24} className="stat-icon" /><div><h3>My Messages</h3><p>Check applicant conversations</p></div></Link>
+              <Link to={`/user-profile/${userId}`} className="dashboard-card stat-card"><FaEye size={24} className="stat-icon" /><div><h3>My public profile</h3><p>View your employer profile</p></div></Link>
+              <Link to="/employer-profile/edit" className="dashboard-card stat-card"><FaUserEdit size={24} className="stat-icon" /><div><h3>Edit my profile</h3><p>Update your bio and photo</p></div></Link>
+              <Link to="/post-job" className="dashboard-card stat-card"><FaPlusCircle size={24} className="stat-icon" /><div><h3>Post a new job</h3><p>Find the perfect artist</p></div></Link>
+              <Link to="/chat" className="dashboard-card stat-card"><FaCommentDots size={24} className="stat-icon" /><div><h3>My messages</h3><p>Check applicant conversations</p></div></Link>
             </>
           )}
 
