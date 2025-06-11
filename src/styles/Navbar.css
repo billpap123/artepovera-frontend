@@ -115,23 +115,30 @@
     top: 35px; /* Adjust to vertically align with your logo */
     right: 20px;
   }
-
   .nav-links {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100vh;
-    background-color: rgba(28, 31, 38, 0.98); /* Slightly transparent background */
+    background-color: rgba(28, 31, 38, 0.98);
     backdrop-filter: blur(5px);
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    display: none;
-    gap: 30px; /* Increase gap for better touch targets */
-    padding: 20px 0;
-    transition: opacity 0.3s ease;
+    
+    /* CHANGE THIS: Align items to the top, not the center */
+    justify-content: flex-start; 
+  
+    /* ADD THIS: Allow the entire menu to scroll if needed */
+    overflow-y: auto;
+  
+    /* ADD THIS: Give some space at the top so it's not flush with the screen edge */
+    padding-top: 120px; /* Adjust this value to look right with your logo/header */
+    
+    display: none; /* Keep this */
+    gap: 30px; /* Keep this */
+    transition: opacity 0.3s ease; /* Keep this */
   }
+  
   .nav-links.open {
     display: flex;
   }
@@ -202,21 +209,26 @@
 
 /* Desktop Notifications Dropdown */
 @media screen and (min-width: 769px) {
-  .notifications-dropdown {
-    position: absolute;
-    top: 40px;
-    right: 0;
-    width: 340px;
-    max-height: 400px;
-    overflow-y: auto;
-    background: #1b1b1b;
-    border: 1px solid #333;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-    z-index: 9999;
-    padding: 8px 0;
-  }
-  .notifications-dropdown::before {
+/* In Navbar.css, inside @media screen and (max-width: 768px) */
+
+.notifications-dropdown {
+  position: static;
+  width: 90%;
+  max-width: 320px;
+  
+  /* ADD THIS: Unset the height limit from the desktop styles */
+  max-height: none; 
+  
+  /* ADD THIS: Ensure the content is visible and not scrolling independently */
+  overflow-y: visible; 
+
+  /* FIX THIS: Added a value to the margin */
+  margin-top: 15px; 
+
+  box-shadow: none;
+  border: 1px solid #444;
+  background: #2a2d34;
+}  .notifications-dropdown::before {
     content: "";
     position: absolute;
     top: -10px;

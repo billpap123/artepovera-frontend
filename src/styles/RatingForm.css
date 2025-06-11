@@ -6,28 +6,55 @@
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
   max-width: 550px;
   width: 100%;
-  text-align: center;
+  position: relative; /* Added for positioning context of the close button */
   max-height: 90vh;
   overflow-y: auto;
   font-family: 'Nunito', sans-serif;
 }
 
-.rating-form-container h3 {
-  margin-top: 0;
-  margin-bottom: 10px;
+/* --- NEW: Style for the header container --- */
+.rating-form-header {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.rating-form-header h3 {
+  margin: 0;
   color: #343a40;
   font-weight: 700;
   font-size: 1.6rem;
 }
 
+/* --- NEW / MODIFIED: This moves the button to the top right --- */
+.close-btn {
+  position: absolute;
+  top: 15px; /* Adjust vertical position */
+  right: 20px; /* Adjust horizontal position */
+  background: none;
+  border: none;
+  font-size: 2rem; /* Make the 'x' larger */
+  line-height: 1;
+  color: #aaa;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.2s ease;
+}
+
+.close-btn:hover {
+  color: #333;
+}
+/* --- END OF NEW STYLES --- */
+
+
 .rating-form-subtext {
   font-size: 1rem;
   color: #6c757d;
-  margin-top: 0;
+  margin-top: 10px;
   margin-bottom: 25px;
+  text-align: center;
 }
 
-.rating-form-container form {
+.rating-form-content {
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -69,10 +96,14 @@
   transform: scale(1.2);
 }
 
-.form-group textarea {
+.form-group textarea, .form-group select {
   width: 100%; box-sizing: border-box; padding: 12px 15px;
   border: 1px solid #ced4da; border-radius: 8px;
-  font-family: inherit; font-size: 1rem; min-height: 80px; resize: vertical;
+  font-family: inherit; font-size: 1rem;
+  background-color: #fff;
+}
+.form-group textarea {
+  min-height: 80px; resize: vertical;
 }
 
 .star-rating-input .star {
