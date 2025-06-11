@@ -164,7 +164,7 @@
   color: white;
   
   /* --- IMPORTANT: Use the same map background image --- */
-  background-image: url('/images/map-background.jpg'); /* <-- Make sure this path is correct */
+  background-image: url('/images/jobs.png'); /* <-- Make sure this path is correct */
   background-size: cover;
   background-position: center;
 }
