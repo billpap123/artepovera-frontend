@@ -2,13 +2,13 @@
 
 .main-page-container {
   padding: 20px 40px;
-  background-color: #be9c74; /* Using your specified background color */
+  background-color: #f4f7f6; /* A very light, neutral background */
   min-height: calc(100vh - 60px); /* Full height minus navbar */
-  padding-top: 200px;
 }
 
 .main-page-header {
   margin-bottom: 30px;
+  padding-top: 100px;
 }
 
 .main-page-header h1 {
@@ -23,21 +23,20 @@
   color: #7f8c8d;
 }
 
-/* MODIFIED: Adjusted the grid to better support the new layout */
+/* --- CORRECTED GRID: 2 columns --- */
 .dashboard-grid {
   display: grid;
-  /* This creates a 2-column layout */
-  grid-template-columns: repeat(2, 1fr); 
+  /* This is the key change: it now creates a 2-column layout */
+  grid-template-columns: repeat(2, 1fr);
   gap: 25px;
 }
 
+/* On small screens, stack everything in a single column */
 @media (max-width: 768px) {
   .dashboard-grid {
-    /* On smaller screens, stack everything in a single column */
     grid-template-columns: 1fr;
   }
 }
-
 
 .dashboard-card {
   background-color: #ffffff;
@@ -45,8 +44,11 @@
   padding: 25px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-  text-decoration: none; /* Add this to ensure links don't have underlines */
-  color: inherit; /* Add this so text color is inherited */
+  text-decoration: none;
+  color: inherit;
+  display: flex; /* Using flexbox for better internal alignment */
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .dashboard-card:hover {
@@ -54,10 +56,11 @@
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
 }
 
-/* Styling for the small stat cards */
+/* Styling for the small stat cards (Rows 1 & 2) */
 .stat-card {
-  display: flex;
+  flex-direction: row; /* Align icon and text side-by-side */
   align-items: center;
+  min-height: 120px;
 }
 
 .stat-icon {
@@ -66,7 +69,6 @@
   flex-shrink: 0;
 }
 
-/* NOTE: Your old CSS was missing this class, let's ensure it's here */
 .stat-card div h3 {
   margin: 0 0 4px 0;
   font-size: 1.2rem;
@@ -79,114 +81,68 @@
   font-size: 0.9rem;
 }
 
-/* REMOVED: The old .job-feed-card styles are no longer needed
-  as this card has been removed from the main page.
-*/
-
-/* --- NEW: Generic style for the large cards (Map & Applications) --- */
-/* This combines the repeated styles from the old .map-card */
-.large-action-card {
-  /* This makes the card span both columns of our grid */
-  grid-column: 1 / -1; 
-  height: 250px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  color: white;
+/* Styling for the larger image cards (Row 3) */
+.image-card {
+  min-height: 220px;
   position: relative;
   overflow: hidden;
+  color: white;
   background-size: cover;
   background-position: center;
 }
 
-/* Black overlay for text readability, applied to all large cards */
-.large-action-card::before {
+/* Dark overlay for text readability */
+.image-card::before {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(44, 62, 80, 0.7); /* Dark semi-transparent overlay */
+  background-color: rgba(0, 0, 0, 0.4);
   z-index: 1;
   transition: background-color 0.3s ease;
 }
 
-.large-action-card:hover::before {
-  background-color: rgba(44, 62, 80, 0.6); /* Overlay lightens slightly on hover */
+.image-card:hover::before {
+  background-color: rgba(0, 0, 0, 0.2);
 }
 
-
-/* Ensure content is above the overlay */
-.large-action-card h3,
-.large-action-card p,
-.large-action-card .action-button {
+/* Ensure text and icon are above the overlay */
+.image-card div, .image-card .image-card-icon {
   position: relative;
   z-index: 2;
 }
 
-.large-action-card h3 {
-  margin-top: 0;
-  font-size: 1.8rem;
+.image-card h3 {
+  font-size: 1.5rem;
+  margin-bottom: 5px;
 }
 
-.large-action-card p {
+.image-card p {
   font-size: 1rem;
-  margin-bottom: 20px;
-  max-width: 300px;
+  opacity: 0.9;
 }
 
-.action-button {
-  background-color: #fff;
-  color: #C96A50;
-  padding: 12px 25px;
-  border-radius: 50px;
-  text-decoration: none;
-  font-weight: 600;
-  transition: all 0.2s ease-in-out;
-  display: inline-flex;
-  align-items: center;
+.image-card-icon {
+  font-size: 3rem;
+  align-self: flex-end;
+  opacity: 0.5;
+  margin-top: 1rem; /* Add some space above the icon */
 }
 
-.action-button:hover {
-  background-color: #f1f1f1;
-  transform: scale(1.05);
-}
-
-
-/* --- Specific Background Images for Large Cards --- */
-
-/* The existing map card just needs its background image */
-.map-card {
-  background-image: url('/images/map-background.jpg'); /* Your existing path */
-}
-
-/* NEW: Style for the Applications card to give it a background */
+/* Specific background images for the third row */
 .applications-card {
-  /* IMPORTANT: Add a background image for the applications card */
-  background-image: url('/images/applications-background.jpg'); 
+  background-image: url('/images/applications-background.jpg');
+}
+
+.map-card {
+  background-image: url('/images/map-background.jpg');
 }
 
 
-/* Admin card styles (unchanged) */
+/* Admin card styles (adapted for the 2-column layout) */
 .admin-card {
   background-color: #f8d7da;
   border: 1px solid #f5c6cb;
-}
-
-.admin-card .stat-icon {
-  color: #721c24;
-}
-
-.admin-card:hover {
-  background-color: #f1c6c9;
-}
-
-.admin-overview-card {
-  grid-column: 1 / -1;
-  text-align: center;
-  font-size: 1.1rem;
-  color: #444;
 }
