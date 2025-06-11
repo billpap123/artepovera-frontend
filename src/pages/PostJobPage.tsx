@@ -183,13 +183,13 @@ const PostJobPage: React.FC = () => {
             <Navbar />
             <div className="post-job-page-container">
                 <form onSubmit={handleSubmit} className="post-job-form">
-                    <h1>{isEditMode ? 'Edit Job Posting' : 'Create a New Job Posting'}</h1>
+                    <h1>{isEditMode ? 'Edit Job Posting' : 'Create a new job posting'}</h1>
                     <p className="form-subtitle">{isEditMode ? 'Update the details for your job listing.' : 'Provide details about the opportunity to attract the right artists.'}</p>
 
                     <fieldset>
                         <legend>Core Details</legend>
                         <div className="form-group">
-                            <label htmlFor="job-title">Job Title*</label>
+                            <label htmlFor="job-title">Job title*</label>
                             <input id="job-title" type="text" value={title} onChange={e => setTitle(e.target.value)} required placeholder="e.g., Mural Artist for Downtown Cafe"/>
                         </div>
                         <div className="form-group">
@@ -219,7 +219,7 @@ const PostJobPage: React.FC = () => {
                             <input id="job-location" type="text" value={location} onChange={e => setLocation(e.target.value)} placeholder="e.g., Athens, Greece" />
                         </div>
                         <div className="form-group">
-                            <label htmlFor="job-presence">Work Presence*</label>
+                            <label htmlFor="job-presence">Work presence*</label>
                             <select id="job-presence" value={presence} onChange={e => setPresence(e.target.value as any)}>
                                 <option value="Physical">Physical / On-site</option>
                                 <option value="Online">Online / Remote</option>
@@ -228,16 +228,16 @@ const PostJobPage: React.FC = () => {
                         </div>
                         <div className="form-row">
                             <div className="form-group">
-                                <label htmlFor="start-date">Approx. Start Date</label>
+                                <label htmlFor="start-date">Approx. start date</label>
                                 <input id="start-date" type="date" value={startDate} onChange={e => setStartDate(e.target.value)} />
                             </div>
                             <div className="form-group">
-                                <label htmlFor="end-date">Approx. End Date</label>
+                                <label htmlFor="end-date">Approx. end date</label>
                                 <input id="end-date" type="date" value={endDate} onChange={e => setEndDate(e.target.value)} />
                             </div>
                         </div>
                         <div className="form-group">
-                            <label htmlFor="deadline">Application Deadline</label>
+                            <label htmlFor="deadline">Application deadline</label>
                             <input id="deadline" type="date" value={deadline} onChange={e => setDeadline(e.target.value)} />
                         </div>
                     </fieldset>
@@ -245,32 +245,32 @@ const PostJobPage: React.FC = () => {
                     <fieldset>
                         <legend>Compensation</legend>
                         <div className="form-group">
-                            <label>Payment Structure*</label>
+                            <label>Payment structure*</label>
                             <div className="radio-group">
                                 <label className={paymentType === 'total' ? 'active' : ''}>
                                     <input type="radio" value="total" name="paymentType" checked={paymentType === 'total'} onChange={() => setPaymentType('total')} />
-                                    Total Project Amount
+                                    Total project compensation
                                 </label>
                                 <label className={paymentType === 'monthly' ? 'active' : ''}>
                                     <input type="radio" value="monthly" name="paymentType" checked={paymentType === 'monthly'} onChange={() => setPaymentType('monthly')} />
-                                    Monthly Salary
+                                    Monthly salary
                                 </label>
                             </div>
                         </div>
                         {paymentType === 'total' && (
                             <div className="form-group fade-in">
-                                <label htmlFor="total-payment">Total Payment (EUR)*</label>
+                                <label htmlFor="total-payment">Total payment (EUR)*</label>
                                 <input id="total-payment" type="number" value={totalPayment} onChange={e => setTotalPayment(Number(e.target.value))} required min="0" placeholder="e.g., 1500" />
                             </div>
                         )}
                         {paymentType === 'monthly' && (
                             <div className="form-row fade-in">
                                 <div className="form-group">
-                                    <label htmlFor="monthly-payment">Monthly Wage (EUR)*</label>
+                                    <label htmlFor="monthly-payment">Monthly wage (EUR)*</label>
                                     <input id="monthly-payment" type="number" value={monthlyPayment} onChange={e => setMonthlyPayment(Number(e.target.value))} required min="0" placeholder="e.g., 500" />
                                 </div>
                                 <div className="form-group">
-                                    <label htmlFor="num-months">Number of Months*</label>
+                                    <label htmlFor="num-months">Number of months*</label>
                                     <input id="num-months" type="number" value={numberOfMonths} onChange={e => setNumberOfMonths(Number(e.target.value))} required min="1" placeholder="e.g., 3" />
                                 </div>
                             </div>
@@ -282,25 +282,25 @@ const PostJobPage: React.FC = () => {
                     </fieldset>
 
                     <fieldset>
-                        <legend>Requirements & Desired Skills</legend>
+                        <legend>Requirements & desired skills</legend>
                         <div className="form-group">
-                            <label htmlFor="experience">Years of Experience Required</label>
+                            <label htmlFor="experience">Years of experience required</label>
                             <select id="experience" value={experience} onChange={e => setExperience(e.target.value as any)}>
                                 {experienceLevels.map(level => (<option key={level} value={level}>{level} years</option>))}
                             </select>
                         </div>
                         <div className="form-checkbox-group">
                             <input type="checkbox" id="degreeRequired" checked={degreeRequired} onChange={e => setDegreeRequired(e.target.checked)} />
-                            <label htmlFor="degreeRequired">University Degree is a Requirement</label>
+                            <label htmlFor="degreeRequired">University degree is a requirement</label>
                         </div>
                         {degreeRequired && 
                             <div className="form-group fade-in">
-                                <label htmlFor="degree-details">Specify Degree</label>
+                                <label htmlFor="degree-details">Specify degree</label>
                                 <input id="degree-details" type="text" value={degreeDetails} onChange={e => setDegreeDetails(e.target.value)} placeholder="e.g., Bachelor's in Fine Arts" />
                             </div>
                         }
                         <div className="form-group">
-                            <label htmlFor="military-service">Military Service Status</label>
+                            <label htmlFor="military-service">Military service status</label>
                             <select id="military-service" value={militaryService} onChange={e => setMilitaryService(e.target.value as any)}>
                                 <option value="Not Applicable">Not applicable</option>
                                 <option value="Completed">Completed</option>
@@ -319,14 +319,14 @@ const PostJobPage: React.FC = () => {
                             <button type="button" onClick={handleAddLanguage} className="add-btn">+ Add language</button>
                         </div>
                         <div className="form-group">
-                            <label htmlFor="keywords">Desired Keywords</label>
+                            <label htmlFor="keywords">Desired keywords</label>
                             <textarea id="keywords" value={desiredKeywords} onChange={e => setDesiredKeywords(e.target.value)} rows={2} placeholder="e.g., vibrant, abstract, digital illustration, large-scale" />
                         </div>
                     </fieldset>
 
                     {error && <p className="error-message">{error}</p>}
                     <button type="submit" disabled={isSubmitting} className="submit-job-btn">
-                        {isSubmitting ? 'Saving...' : isEditMode ? 'Save Changes' : 'Post This Job'}
+                        {isSubmitting ? 'Saving...' : isEditMode ? 'Save changes' : 'Post this job'}
                     </button>
                 </form>
             </div>
