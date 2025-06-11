@@ -1,5 +1,5 @@
 /****************************************
- * COLOR VARIABLES (same color scheme)
+ * COLOR VARIABLES (keep your color scheme)
  ****************************************/
  :root {
   --sand-beige: #f7f0c9;
@@ -28,8 +28,8 @@ body {
   align-items: center;
   justify-content: flex-start;
   min-height: 100vh;
-  background-color: var(--sand-beige);
-  color: var(--charcoal-gray);
+  background-color: var(--sand-beige); /* Soft beige background */
+  color: var(--charcoal-gray);         /* Charcoal gray for general text */
 }
 
 #root {
@@ -38,7 +38,7 @@ body {
   align-items: center;
   justify-content: center;
   width: 100%;
-  max-width: 1200px;
+  max-width: 1200px; /* Prevents stretching on large screens */
   margin: 0 auto;
   padding: 20px;
 }
@@ -54,7 +54,7 @@ body {
   top: 0;
   left: 0;
   width: 100%;
-  background-color: var(--charcoal-gray);
+  background-color: var(--charcoal-gray); /* Charcoal gray */
   color: var(--pure-white);
   padding: 15px 40px;
   z-index: 1000;
@@ -64,7 +64,7 @@ body {
 .navbar .logo {
   font-size: 1.8rem;
   font-weight: bold;
-  color: var(--terracotta-red);
+  color: var(--terracotta-red); /* Terracotta red logo */
 }
 
 .navbar a {
@@ -103,14 +103,14 @@ body {
   justify-content: center;
   align-items: center;
   flex-grow: 1;
-  margin-top: 100px;
+  margin-top: 100px; /* Push below the navbar */
   width: 100%;
 }
 
 /****************************************
- * EMPLOYER PROFILE CONTAINER
+ * ARTIST PROFILE CONTAINER
  ****************************************/
-.employer-profile-container {
+.artist-profile-container {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -128,6 +128,25 @@ body {
   color: var(--charcoal-gray);
   margin-bottom: 15px;
   text-align: center;
+}
+
+/* Optional badge for “STUDENT ARTIST” */
+/* Add or replace this in your ArtistProfile.css or global CSS */
+.student-badge {
+  display: inline-block; /* Ensures it flows with text but can have padding/margin */
+  background-color: var(--light-beige, #E0D7C6); /* Use your light-beige variable */
+  color: var(--dark-gray, #444444);          /* Use a darker text color for readability */
+  padding: 6px 12px;                       /* Slightly more padding */
+  border-radius: 15px;                     /* More rounded, pill-shape */
+  margin-bottom: 15px;                     /* Keep or adjust as needed for layout */
+  font-weight: 600;                        /* Slightly less bold for a softer look */
+  font-size: 0.75rem;                      /* Smaller font size for a badge */
+  text-transform: uppercase;               /* Makes it feel more like a badge */
+  letter-spacing: 0.5px;                   /* A bit of letter spacing */
+  border: 1px solid var(--terracotta-red, #C96A50); /* Subtle border with accent color */
+  white-space: nowrap;                     /* <<< THIS KEEPS "STUDENT ARTIST" ON ONE LINE */
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);   /* Optional: subtle shadow for depth */
+  text-align: center;                      /* Ensure text is centered if badge width varies */
 }
 
 /****************************************
@@ -150,6 +169,8 @@ body {
  * BIO TEXT & EDIT FORM
  ****************************************/
 .bio-text {
+  white-space: pre-wrap; /* This tells CSS to respect newlines and wrap text normally */
+
   font-size: 1rem;
   color: var(--dark-gray);
   margin-bottom: 15px;
@@ -259,7 +280,7 @@ button {
 }
 
 button:hover {
-  background-color: #0056b3; /* Or a deeper shade of terracotta if you like */
+  background-color: #0056b3; /* Adjust if you want a deeper terracotta or a different color */
 }
 
 /* Error Alert Styling */
@@ -292,7 +313,6 @@ button:hover {
   text-align: center;
   margin-top: 50px;
 }
-
 .delete-btn {
   background-color: #dc3545; 
   color: white;
@@ -312,7 +332,6 @@ button:hover {
   background-color: #e08a93;
   cursor: not-allowed;
 }
-
 /**********************************************
  * NEW STYLES for Rating & Review Display
  **********************************************/
@@ -475,3 +494,137 @@ button:hover {
     justify-content: flex-end; /* Align save/cancel right */
     margin-top: 15px;
 }
+/* src/styles/ArtistProfile.css or your main profile styles */
+
+/* ... your existing .profile-container, .edit-form, .form-field-group ... */
+
+.cv-edit-section {
+  margin-top: 25px;
+  padding-top: 25px;
+  border-top: 1px solid var(--light-beige, #e0e0e0); /* Separator */
+  background-color: #fcfaf6; /* Slightly different background to stand out */
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color-light, #e9e4dd);
+}
+
+.cv-edit-section .cv-section-title { /* Using this class for the main label of the section */
+  display: block;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-medium, #654321);
+  margin-bottom: 15px;
+}
+
+/* Styling the label to look like a button for file input */
+.cv-upload-label {
+  display: inline-block; /* Important for button-like appearance */
+  padding: 10px 20px;
+  background-color: var(--accent-secondary, #CC7722); /* Example: Ochre or your secondary accent */
+  color: var(--pure-white, #fff);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-align: center;
+  transition: background-color 0.2s ease;
+  margin-bottom: 10px; /* Space below the "Choose File" button */
+}
+
+.cv-upload-label:hover {
+  background-color: #b86b1e; /* Darker shade of secondary accent */
+}
+
+/* The actual upload button that appears after selecting a file */
+.upload-cv-btn {
+  /* Uses .action-btn base style if defined, then override/add */
+  background-color: var(--accent-primary, #A0522D) !important; /* Sienna - use important if needed */
+  color: var(--pure-white, #fff) !important;
+  display: block; /* Make it take full width or inline-block as needed */
+  margin-top: 10px;
+}
+.upload-cv-btn:hover:not(:disabled) {
+  background-color: var(--accent-primary-dark, #804123) !important;
+}
+
+
+.current-cv-display {
+  margin-top: 15px;
+  padding: 10px;
+  background-color: var(--bg-container-light, #f5f0e8);
+  border-radius: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+}
+
+.current-cv-display p { /* If you keep the <p> tag wrapping the text and link */
+  margin: 0;
+  display: flex;
+  align-items: center;
+  color: var(--text-dark, #4d4033);
+}
+.current-cv-display span { /* If you use span directly as in updated JSX */
+  display: flex;
+  align-items: center;
+  color: var(--text-dark, #4d4033);
+}
+
+
+.pdf-icon-inline { /* For the FaFilePdf icon next to current CV link */
+  margin-right: 8px;
+  color: var(--terracotta-red, #C96A50); /* Or another distinct color */
+  font-size: 1.2em;
+}
+
+.cv-link-inline {
+  color: var(--accent-primary, #A0522D);
+  font-weight: 600;
+  text-decoration: none;
+  margin-left: 5px;
+}
+.cv-link-inline:hover {
+  text-decoration: underline;
+}
+
+.delete-cv-btn {
+  /* Uses .action-btn.danger base if defined, or style specifically */
+  /* background-color: var(--danger-red, #dc3545) !important; */
+  /* color: var(--pure-white, #fff) !important; */
+  margin-left: 10px; /* Space it from the "View" link */
+}
+
+.no-cv-message-edit {
+    font-style: italic;
+    color: var(--text-light, #7d746b);
+    font-size: 0.9rem;
+    margin-top: 10px;
+}
+
+/* Ensure action-btn styles are defined well (you might have these globally or in profile.css) */
+/*
+.action-btn {
+  padding: 8px 15px;
+  border-radius: 5px;
+  border: 1px solid transparent;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s;
+  font-size: 0.9rem;
+}
+.action-btn.danger {
+  background-color: var(--danger-red, #e74c3c);
+  color: var(--pure-white, #fff);
+  border-color: var(--danger-red, #e74c3c);
+}
+.action-btn.danger:hover:not(:disabled) {
+  background-color: #c0392b;
+  border-color: #c0392b;
+}
+.action-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+*/
