@@ -163,7 +163,7 @@ const Navbar = () => {
             </li>
 
             <li className="notifications">
-              <button className="notifications-button" onClick={() => {toggleDropdown(); setIsMenuOpen(false);}}>
+  <button className="notifications-button" onClick={toggleDropdown}>
                 <FaBell className="bell-icon" />
                 {notifications.filter(n => !n.read_status).length > 0 && (
                   <span className="notification-badge">{notifications.filter(n => !n.read_status).length}</span>

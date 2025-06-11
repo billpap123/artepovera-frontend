@@ -6,8 +6,8 @@ import Navbar from '../components/Navbar';
 import RatingForm, { Review as RatingFormReview } from '../components/RatingForm'; // Import the specific Review type from RatingForm
 import '../styles/UserProfilePage.css';
 import {
-  FaFilePdf, FaHeart, FaRegHeart, FaCommentDots,
-  FaMapMarkerAlt, FaGlobe, FaBuilding
+  FaFilePdf, FaChevronLeft, FaChevronRight, FaHeart, FaRegHeart, FaCommentDots,
+  FaMapMarkerAlt, FaGlobe, FaTimes, FaBuilding
 } from 'react-icons/fa'; // Make sure FaHeart is imported
 
 
@@ -869,8 +869,45 @@ const UserProfilePage: React.FC = () => {
                 )}
               </div>
 
+              
+
             )}
           </div> {/* End profile-content-public */}
+      {/* The Gallery Modal is now placed here, at the top level, outside the page layout */}
+      {isGalleryOpen && portfolio.length > 0 && (
+        <div className="gallery-overlay" onClick={closeGallery}>
+          <button className="gallery-close-btn" onClick={closeGallery} aria-label="Close gallery">
+            <FaTimes size={30} />
+          </button>
+          
+          <button 
+            className="gallery-nav-btn prev" 
+            onClick={(e) => { e.stopPropagation(); showPrevImage(); }}
+            aria-label="Previous image"
+          >
+            <FaChevronLeft size={40} />
+          </button>
+          
+          <div className="gallery-content" onClick={(e) => e.stopPropagation()}>
+            <img 
+              src={getImageUrl(portfolio[currentImageIndex].image_url)} 
+              alt={portfolio[currentImageIndex].description || 'Portfolio image'} 
+            />
+            <div className="gallery-info">
+              <p className="gallery-description">{portfolio[currentImageIndex].description}</p>
+              <p className="gallery-counter">{currentImageIndex + 1} / {portfolio.length}</p>
+            </div>
+          </div>
+          
+          <button 
+            className="gallery-nav-btn next" 
+            onClick={(e) => { e.stopPropagation(); showNextImage(); }}
+            aria-label="Next image"
+          >
+            <FaChevronRight size={40} />
+          </button>
+        </div>
+      )}
 
           {/* Rating Form Modal (General Reviews) */}
           {isRatingFormOpen && loggedInUser && profile && (
@@ -886,6 +923,7 @@ const UserProfilePage: React.FC = () => {
         </div> {/* End profile-card */}
       </div> {/* End user-profile-page */}
     </>
+    
   );
 };
 
