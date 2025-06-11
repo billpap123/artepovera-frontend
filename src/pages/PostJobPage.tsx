@@ -8,6 +8,7 @@ import '../styles/PostJobPage.css';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:50001";
 
+// In a real app, this would be fetched from your /api/categories endpoint
 const artistCategories = [ "Dancer", "Painter", "Digital Artist", "Graphic Designer", "Musician", "Sculptor", "Photographer", "Actress", "Actor", "Comedian", "Poet", "Writer", "Illustrator", "Calligrapher", "Filmmaker", "Animator", "Fashion Designer", "Architect", "Interior Designer", "Jewelry Designer", "Industrial Designer", "Ceramicist", "Woodworker" ];
 const experienceLevels = ["0-3", "4-7", "7-10", ">10"];
 
@@ -17,7 +18,7 @@ const PostJobPage: React.FC = () => {
     const { job_id } = useParams<{ job_id: string }>();
     const isEditMode = Boolean(job_id);
 
-    // --- State for all form fields ---
+    // --- Form State ---
     const [title, setTitle] = useState('');
     const [category, setCategory] = useState('');
     const [customCategory, setCustomCategory] = useState('');
@@ -27,13 +28,10 @@ const PostJobPage: React.FC = () => {
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
     const [deadline, setDeadline] = useState('');
-    
-    // --- NEW: State for the updated payment logic ---
     const [paymentType, setPaymentType] = useState<'total' | 'monthly'>('total');
     const [totalPayment, setTotalPayment] = useState<number | ''>('');
     const [monthlyPayment, setMonthlyPayment] = useState<number | ''>('');
     const [numberOfMonths, setNumberOfMonths] = useState<number | ''>(1);
-
     const [insurance, setInsurance] = useState(false);
     const [desiredKeywords, setDesiredKeywords] = useState('');
     const [militaryService, setMilitaryService] = useState<'Not Applicable' | 'Completed' | 'Not Required'>('Not Applicable');
@@ -47,7 +45,7 @@ const PostJobPage: React.FC = () => {
     const [error, setError] = useState('');
     const [pageLoading, setPageLoading] = useState(isEditMode);
 
-    // --- Data Fetching and Authorization Effect ---
+    // --- Data Fetching for Edit Mode & Auth Check ---
     useEffect(() => {
         if (userType === null) return;
         if (userType !== 'Employer') { navigate('/main'); return; }
@@ -64,7 +62,6 @@ const PostJobPage: React.FC = () => {
                 });
                 const job = response.data;
                 
-                // Populate all form fields with the fetched data
                 setTitle(job.title || '');
                 setDescription(job.description || '');
                 setLocation(job.location || '');
@@ -75,13 +72,11 @@ const PostJobPage: React.FC = () => {
                 setInsurance(job.insurance || false);
                 setDesiredKeywords(job.desired_keywords || '');
 
-                // Set payment details
                 setPaymentType(job.payment_is_monthly ? 'monthly' : 'total');
                 setTotalPayment(job.payment_total || '');
                 setMonthlyPayment(job.payment_monthly_amount || '');
                 setNumberOfMonths(job.number_of_months || 1);
                 
-                // Set category
                 if (artistCategories.includes(job.category)) {
                     setCategory(job.category);
                 } else {
@@ -89,7 +84,6 @@ const PostJobPage: React.FC = () => {
                     setCustomCategory(job.category);
                 }
 
-                // Set requirements
                 if (job.requirements) {
                     setMilitaryService(job.requirements.military_service || 'Not Applicable');
                     setDegreeRequired(job.requirements.university_degree?.required || false);
@@ -109,7 +103,6 @@ const PostJobPage: React.FC = () => {
         fetchJobDataForEdit();
     }, [job_id, isEditMode, userType, navigate]);
 
-    // --- Form Handlers ---
     const handleAddLanguage = () => setLanguages([...languages, { language: '', certificate: '' }]);
     const handleLanguageChange = (index: number, field: 'language' | 'certificate', value: string) => {
         const newLangs = [...languages];
@@ -182,7 +175,7 @@ const PostJobPage: React.FC = () => {
     };
 
     if (pageLoading) {
-        return <><Navbar /><div className="post-job-container"><p>Loading...</p></div></>;
+        return <><Navbar /><div className="post-job-container"><p>Loading job details...</p></div></>;
     }
     
     return (
@@ -193,10 +186,62 @@ const PostJobPage: React.FC = () => {
                     <h1>{isEditMode ? 'Edit Job Posting' : 'Create a New Job Posting'}</h1>
                     <p className="form-subtitle">{isEditMode ? 'Update the details for your job listing.' : 'Provide details about the opportunity to attract the right artists.'}</p>
 
-                    <fieldset>{/* Core Details */}</fieldset>
-                    <fieldset>{/* Logistics */}</fieldset>
+                    <fieldset>
+                        <legend>Core Details</legend>
+                        <div className="form-group">
+                            <label htmlFor="job-title">Job Title*</label>
+                            <input id="job-title" type="text" value={title} onChange={e => setTitle(e.target.value)} required placeholder="e.g., Mural Artist for Downtown Cafe"/>
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="job-category">Category*</label>
+                            <select id="job-category" value={category} onChange={e => setCategory(e.target.value)} required>
+                                <option value="" disabled>Select a category...</option>
+                                {artistCategories.map(cat => (<option key={cat} value={cat}>{cat}</option>))}
+                                <option value="Other">Other (Please specify)</option>
+                            </select>
+                        </div>
+                        {category === 'Other' && (
+                            <div className="form-group fade-in">
+                                <label htmlFor="custom-category">Please specify category*</label>
+                                <input id="custom-category" type="text" value={customCategory} onChange={e => setCustomCategory(e.target.value)} placeholder="e.g., VFX Artist, Puppet Master" required />
+                            </div>
+                        )}
+                        <div className="form-group">
+                            <label htmlFor="job-description">Description</label>
+                            <textarea id="job-description" value={description} onChange={e => setDescription(e.target.value)} rows={4} placeholder="Briefly describe the project, the artist's role, and key deliverables."/>
+                        </div>
+                    </fieldset>
+
+                    <fieldset>
+                        <legend>Logistics</legend>
+                        <div className="form-group">
+                            <label htmlFor="job-location">Location</label>
+                            <input id="job-location" type="text" value={location} onChange={e => setLocation(e.target.value)} placeholder="e.g., Athens, Greece" />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="job-presence">Work Presence*</label>
+                            <select id="job-presence" value={presence} onChange={e => setPresence(e.target.value as any)}>
+                                <option value="Physical">Physical / On-site</option>
+                                <option value="Online">Online / Remote</option>
+                                <option value="Both">Both / Hybrid</option>
+                            </select>
+                        </div>
+                        <div className="form-row">
+                            <div className="form-group">
+                                <label htmlFor="start-date">Approx. Start Date</label>
+                                <input id="start-date" type="date" value={startDate} onChange={e => setStartDate(e.target.value)} />
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="end-date">Approx. End Date</label>
+                                <input id="end-date" type="date" value={endDate} onChange={e => setEndDate(e.target.value)} />
+                            </div>
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="deadline">Application Deadline</label>
+                            <input id="deadline" type="date" value={deadline} onChange={e => setDeadline(e.target.value)} />
+                        </div>
+                    </fieldset>
                     
-                    {/* --- UPDATED COMPENSATION FIELDSET --- */}
                     <fieldset>
                         <legend>Compensation</legend>
                         <div className="form-group">
@@ -212,29 +257,72 @@ const PostJobPage: React.FC = () => {
                                 </label>
                             </div>
                         </div>
-
                         {paymentType === 'total' && (
                             <div className="form-group fade-in">
-                                <label>Total Payment (EUR)*
-                                    <input type="number" value={totalPayment} onChange={e => setTotalPayment(Number(e.target.value))} required min="0" placeholder="e.g., 1500" />
-                                </label>
+                                <label htmlFor="total-payment">Total Payment (EUR)*</label>
+                                <input id="total-payment" type="number" value={totalPayment} onChange={e => setTotalPayment(Number(e.target.value))} required min="0" placeholder="e.g., 1500" />
                             </div>
                         )}
-
                         {paymentType === 'monthly' && (
                             <div className="form-row fade-in">
-                                <label>Monthly Wage (EUR)*
-                                    <input type="number" value={monthlyPayment} onChange={e => setMonthlyPayment(Number(e.target.value))} required min="0" placeholder="e.g., 500" />
-                                </label>
-                                <label>Number of Months*
-                                    <input type="number" value={numberOfMonths} onChange={e => setNumberOfMonths(Number(e.target.value))} required min="1" placeholder="e.g., 3" />
-                                </label>
+                                <div className="form-group">
+                                    <label htmlFor="monthly-payment">Monthly Wage (EUR)*</label>
+                                    <input id="monthly-payment" type="number" value={monthlyPayment} onChange={e => setMonthlyPayment(Number(e.target.value))} required min="0" placeholder="e.g., 500" />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="num-months">Number of Months*</label>
+                                    <input id="num-months" type="number" value={numberOfMonths} onChange={e => setNumberOfMonths(Number(e.target.value))} required min="1" placeholder="e.g., 3" />
+                                </div>
                             </div>
                         )}
-                        <div className="form-checkbox-group"><input type="checkbox" id="insurance" checked={insurance} onChange={e => setInsurance(e.target.checked)} /><label htmlFor="insurance">Insurance is included</label></div>
+                        <div className="form-checkbox-group">
+                            <input type="checkbox" id="insurance" checked={insurance} onChange={e => setInsurance(e.target.checked)} />
+                            <label htmlFor="insurance">Insurance is included</label>
+                        </div>
                     </fieldset>
 
-                    <fieldset>{/* Requirements */}</fieldset>
+                    <fieldset>
+                        <legend>Requirements & Desired Skills</legend>
+                        <div className="form-group">
+                            <label htmlFor="experience">Years of Experience Required</label>
+                            <select id="experience" value={experience} onChange={e => setExperience(e.target.value as any)}>
+                                {experienceLevels.map(level => (<option key={level} value={level}>{level} years</option>))}
+                            </select>
+                        </div>
+                        <div className="form-checkbox-group">
+                            <input type="checkbox" id="degreeRequired" checked={degreeRequired} onChange={e => setDegreeRequired(e.target.checked)} />
+                            <label htmlFor="degreeRequired">University Degree is a Requirement</label>
+                        </div>
+                        {degreeRequired && 
+                            <div className="form-group fade-in">
+                                <label htmlFor="degree-details">Specify Degree</label>
+                                <input id="degree-details" type="text" value={degreeDetails} onChange={e => setDegreeDetails(e.target.value)} placeholder="e.g., Bachelor's in Fine Arts" />
+                            </div>
+                        }
+                        <div className="form-group">
+                            <label htmlFor="military-service">Military Service Status</label>
+                            <select id="military-service" value={militaryService} onChange={e => setMilitaryService(e.target.value as any)}>
+                                <option value="Not Applicable">Not applicable</option>
+                                <option value="Completed">Completed</option>
+                                <option value="Not Required">Not required</option>
+                            </select>
+                        </div>
+                        <div className="language-section">
+                            <h4>Language Certificates</h4>
+                            {languages.map((lang, index) => (
+                                <div key={index} className="language-entry">
+                                    <input type="text" placeholder="Language (e.g., English)" value={lang.language} onChange={e => handleLanguageChange(index, 'language', e.target.value)} />
+                                    <input type="text" placeholder="Certificate (e.g., C2 Proficiency)" value={lang.certificate} onChange={e => handleLanguageChange(index, 'certificate', e.target.value)} />
+                                    {languages.length > 1 && <button type="button" onClick={() => handleRemoveLanguage(index)} className="remove-btn">-</button>}
+                                </div>
+                            ))}
+                            <button type="button" onClick={handleAddLanguage} className="add-btn">+ Add language</button>
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="keywords">Desired Keywords</label>
+                            <textarea id="keywords" value={desiredKeywords} onChange={e => setDesiredKeywords(e.target.value)} rows={2} placeholder="e.g., vibrant, abstract, digital illustration, large-scale" />
+                        </div>
+                    </fieldset>
 
                     {error && <p className="error-message">{error}</p>}
                     <button type="submit" disabled={isSubmitting} className="submit-job-btn">
