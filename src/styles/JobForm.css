@@ -1,0 +1,186 @@
+/* src/styles/JobForm.css */
+
+/* --- Main Container --- */
+.job-form-container {
+    padding: 80px 20px 40px; /* Add padding to account for fixed navbar */
+    display: flex;
+    justify-content: center;
+    background-color: #f4f7f6;
+    min-height: 100vh;
+}
+
+/* --- Form Styling --- */
+.job-form {
+    width: 100%;
+    max-width: 800px;
+    background-color: #ffffff;
+    padding: 30px 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.job-form h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 10px;
+    font-size: 1.8rem;
+    font-weight: 600;
+}
+
+/* --- Form Groups & Rows --- */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    align-items: center;
+}
+
+/* --- Labels & Inputs --- */
+.job-form label {
+    font-weight: 600;
+    color: #555;
+    font-size: 0.9rem;
+}
+
+.job-form input[type="text"],
+.job-form input[type="number"],
+.job-form input[type="date"],
+.job-form textarea,
+.job-form select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+    color: #333;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.job-form input:focus,
+.job-form textarea:focus,
+.job-form select:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+}
+
+.job-form textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+/* --- Checkboxes --- */
+.form-group-inline {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.form-group-inline input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.form-group-inline label {
+    font-weight: 500;
+    cursor: pointer;
+}
+
+
+/* --- Fieldsets for Grouping --- */
+fieldset {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 10px;
+}
+
+legend {
+    font-weight: 600;
+    color: #333;
+    padding: 0 10px;
+}
+
+/* --- Dynamic Language List --- */
+.language-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+/* --- Buttons --- */
+.submit-btn,
+.add-btn {
+    padding: 12px 20px;
+    border-radius: 8px;
+    border: none;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.submit-btn {
+    background-color: #007bff;
+    color: white;
+    margin-top: 20px;
+}
+
+.submit-btn:hover:not(:disabled) {
+    background-color: #0056b3;
+}
+
+.submit-btn:disabled {
+    background-color: #a0cffc;
+    cursor: not-allowed;
+}
+
+.add-btn {
+    background-color: #e9ecef;
+    color: #495057;
+    border: 1px solid #ced4da;
+    align-self: flex-start; /* Align to the start of the flex container */
+}
+
+.add-btn:hover {
+    background-color: #d1d9e0;
+}
+
+.remove-btn {
+    background: none;
+    border: none;
+    color: #dc3545;
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.3s;
+}
+
+.remove-btn:hover {
+    color: #a71d2a;
+}
+
+/* --- Error Messages --- */
+.form-error {
+    color: #dc3545;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    padding: 10px;
+    border-radius: 8px;
+    text-align: center;
+    margin-top: 10px;
+}
