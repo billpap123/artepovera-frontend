@@ -9,7 +9,7 @@ import '../styles/PostJobPage.css';
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:50001";
 
 // In a real app, this would be fetched from your /api/categories endpoint
-const artistCategories = [ "Dancer", "Painter", "Digital Artist", "Graphic Designer", "Musician", "Sculptor", "Photographer", "Actress", "Actor", "Comedian", "Poet", "Writer", "Illustrator", "Calligrapher", "Filmmaker", "Animator", "Fashion Designer", "Architect", "Interior Designer", "Jewelry Designer", "Industrial Designer", "Ceramicist", "Woodworker" ];
+const artistCategories = [ "Dancer", "Painter", "Digital Artist", "Graphic Designer", "Musician", "Sculptor", "Photographer", "Actress", "Actor", "Comedian", "Poet", "Writer", "Illustrator", "Calligrapher", "Filmmaker", "Animator", "Fashion Designer", "Architect", "Interior Designer", "Jewelry Designer", "Industrial Designer", "Ceramicist", "Woodworker" ].sort();
 const experienceLevels = ["0-3", "4-7", "7-10", ">10"];
 
 const PostJobPage: React.FC = () => {

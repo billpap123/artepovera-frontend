@@ -1,11 +1,11 @@
 // src/pages/Portfolio.tsx
+
 import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import Navbar from "../components/Navbar";
 import { useUserContext } from '../context/UserContext';
 import '../styles/Portfolio.css';
 import '../styles/Global.css';
-// import { FaFilePdf, FaVideo, FaImage } from 'react-icons/fa'; // Example if using react-icons
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:50001';
 
@@ -48,26 +48,14 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewed
   const [showAddForm, setShowAddForm] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [description, setDescription] = useState('');
-  const [uploading, setUploading] = useState(false); // For all CUD operations
+  const [uploading, setUploading] = useState(false);
 
-  const handleOpenModal = (imageUrl: string) => {
-    setModalImage(imageUrl);
-  };
-  
-  const handleCloseModal = () => {
-    setModalImage(null);
-  };
   // State for editing descriptions
   const [editItemId, setEditItemId] = useState<number | null>(null);
   const [editDescription, setEditDescription] = useState('');
 
   const fetchPortfolio = useCallback(async () => {
-    if (!targetArtistId) {
-      setError(isOwner ? "Your artist profile ID isn't available yet." : "Artist ID not specified.");
-      setLoading(false);
-      setItems([]);
-      return;
-    }
+    // No need to check for targetArtistId here anymore, as we'll do it before calling this function
     setLoading(true);
     setError(null);
     try {
@@ -76,7 +64,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewed
       const res = await axios.get(`${API_BASE_URL}/api/portfolios/${targetArtistId}`, { headers });
       const portfolioWithTypes = (res.data || []).map((item: PortfolioItem) => ({
         ...item,
-        item_type: item.item_type || getItemTypeFromUrl(item.image_url) // Assign type if not from backend
+        item_type: item.item_type || getItemTypeFromUrl(item.image_url)
       }));
       setItems(portfolioWithTypes);
     } catch (err: any) {
@@ -86,11 +74,30 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewed
     } finally {
       setLoading(false);
     }
-  }, [targetArtistId, API_BASE_URL, isOwner]);
+  }, [targetArtistId]);
 
+  // --- FIX #1: THE useEffect IS MODIFIED TO PREVENT THE RACE CONDITION ---
+  // It now only fetches data if the artist ID is actually available.
   useEffect(() => {
-    fetchPortfolio();
-  }, [fetchPortfolio]);
+    if (targetArtistId) {
+      fetchPortfolio();
+    } else {
+      // If we are the owner, but the ID isn't ready from context, we just wait.
+      // We are not "loading" data, so we set it to false.
+      if (isOwner) {
+          setLoading(false);
+          setItems([]); // Ensure portfolio is shown as empty while waiting
+      }
+    }
+  }, [targetArtistId, isOwner, fetchPortfolio]);
+
+  const handleOpenModal = (imageUrl: string) => {
+    setModalImage(imageUrl);
+  };
+  
+  const handleCloseModal = () => {
+    setModalImage(null);
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -120,7 +127,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewed
       if (!token) { throw new Error('Authentication token not found.'); }
       const formData = new FormData();
       formData.append("description", description.trim());
-      formData.append("image", selectedFile); // Backend controller expects 'image' field
+      formData.append("image", selectedFile);
 
       const res = await axios.post(`${API_BASE_URL}/api/portfolios`, formData, {
         headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" }
@@ -157,15 +164,14 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewed
   const handleSaveEdit = async (portfolioId: number) => {
     if (!editDescription.trim()) { alert('Description cannot be empty.'); return; }
     const originalItem = items.find(item => item.portfolio_id === portfolioId);
-    if (editDescription.trim() === originalItem?.description?.trim()) { // Compare trimmed
+    if (editDescription.trim() === originalItem?.description?.trim()) {
         cancelEditing();
         return;
     }
-    setUploading(true); // Use 'uploading' state to disable buttons
+    setUploading(true);
     try {
       const token = localStorage.getItem('token');
       if (!token) { throw new Error('Authentication token not found.'); }
-      // Note: This only updates description. File update would be a separate, more complex flow.
       await axios.put(
         `${API_BASE_URL}/api/portfolios/${portfolioId}`,
         { description: editDescription.trim() },
@@ -205,8 +211,36 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewed
     }
   };
 
+  // --- FIX #2: THE RENDER LOGIC IS MODIFIED ---
+  // This new block handles the case where the page is waiting for the owner's ID from the context.
+  if (!targetArtistId && isOwner) {
+      return (
+          <>
+              <Navbar />
+              <div className="portfolio-page loading-portfolio">
+                  <p className="loading-message">Loading your artist profile...</p>
+              </div>
+          </>
+      );
+  }
+
+  // This handles a visitor trying to see a profile without a valid ID.
+  if (!targetArtistId && !isOwner) {
+      return (
+          <>
+              <Navbar />
+              <div className="portfolio-page error-portfolio">
+                  <p className="error-message">Artist ID not specified.</p>
+              </div>
+          </>
+      );
+  }
+  
+  // This now correctly shows a loading message ONLY when a fetch is in progress.
   if (loading) return <><Navbar /><div className="portfolio-page loading-portfolio"><p className="loading-message">Loading portfolio...</p></div></>;
-  if (error && items.length === 0 && !isOwner) return <><Navbar /><div className="portfolio-page error-portfolio"><p className="error-message">{error}</p>{isOwner && <button onClick={fetchPortfolio} className="action-btn">Try Again</button>}</div></>;
+  
+  // This will show any real network or server errors.
+  if (error) return <><Navbar /><div className="portfolio-page error-portfolio"><p className="error-message">{error}</p>{isOwner && <button onClick={fetchPortfolio} className="action-btn">Try Again</button>}</div></>;
 
   return (
     <>
@@ -216,7 +250,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewed
             <h2>{isOwner ? "My portfolio" : (viewedArtistName ? `${viewedArtistName}'s Portfolio` : "Artist Portfolio")}</h2>
             {isOwner && !showAddForm && (
                 <button onClick={() => {setShowAddForm(true); setError(null);}} className="add-item-button">
-                    + Add new ork
+                    + Add new work
                 </button>
             )}
         </div>
@@ -278,7 +312,6 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewed
                 {itemType === 'video' && (
                   <div className="portfolio-media portfolio-video-item">
                     <video controls width="100%" preload="metadata" className="portfolio-video-player">
-                      {/* Try to get type from file if available, else default for common web video */}
                       <source src={item.image_url} type={selectedFile && item.image_url === URL.createObjectURL(selectedFile) ? selectedFile.type : 'video/mp4'} />
                       Your browser does not support the video tag.
                     </video>
@@ -320,7 +353,6 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewed
               </div>
             );
           })}
-           {/* --- ADD THIS JSX FOR THE IMAGE MODAL --- */}
         {modalImage && (
             <div className="portfolio-modal-overlay" onClick={handleCloseModal}>
                 <div className="portfolio-modal-content" onClick={(e) => e.stopPropagation()}>

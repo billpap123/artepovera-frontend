@@ -1,589 +1,1302 @@
 /* src/styles/UserProfilePage.css */
 
+
+
 /* --- Page Layout & Main Card --- */
+
 .user-profile-page {
-  padding-top:200px !important;
+
+  padding-top: 200px !important;
+
   max-width: 900px;
+
   margin: 40px auto;
+
   padding: 30px 40px;
+
   background-color: #ffffff;
+
   border-radius: 16px;
+
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+
   font-family: 'Nunito', sans-serif;
+
 }
+
+
 
 /* --- Profile Header --- */
+
 .profile-header-public {
+
   display: flex;
+
   flex-direction: column;
+
   align-items: center;
+
   gap: 20px;
+
   margin-bottom: 30px;
+
   padding-bottom: 30px;
+
   border-bottom: 1px solid #e9ecef;
+
   text-align: center;
+
 }
 
+
+
 @media (min-width: 768px) {
+
   .profile-header-public {
-      flex-direction: row;
-      text-align: left;
+
+    flex-direction: row;
+
+    text-align: left;
+
   }
+
 }
+
+
 
 .user-profile-img {
+
   width: 150px;
+
   height: 150px;
+
   border-radius: 50%;
+
   object-fit: cover;
+
   border: 4px solid #fff;
+
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  flex-shrink: 0; /* Prevents image from shrinking in flex container */
+
+  flex-shrink: 0;
+  /* Prevents image from shrinking in flex container */
+
 }
+
+
 
 .profile-summary-public {
+
   flex-grow: 1;
+
   display: flex;
+
   flex-direction: column;
+
   align-items: center;
+
 }
 
+
+
 @media (min-width: 768px) {
+
   .profile-summary-public {
-      align-items: flex-start;
+
+    align-items: flex-start;
+
   }
+
 }
+
+
 
 .user-fullname {
+
   margin: 0 0 5px 0;
+
   font-size: 2.2rem;
+
   font-weight: 700;
+
   color: #212529;
+
 }
+
+
 
 .user-type-public {
+
   font-size: 0.9rem;
+
   color: #6c757d;
+
   text-transform: uppercase;
+
   letter-spacing: 0.5px;
+
   margin-bottom: 15px;
+
 }
+
+
 
 /* --- Star Rating Display --- */
-.average-rating-display { display: flex; align-items: center; gap: 8px; margin-bottom: 20px; }
-.star-display { color: #ffc107; font-size: 1.2rem; }
-.rating-value { font-weight: 600; }
-.review-count { color: #6c757d; font-size: 0.9em; }
-.no-rating { font-size: 0.9em; color: #6c757d; font-style: italic; }
 
-/* --- UNIFIED ACTION BUTTONS --- */
-.profile-actions {
+.average-rating-display {
   display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  justify-content: center;
-}
-@media (min-width: 768px) {
-  .profile-actions {
-      justify-content: flex-start;
-  }
-}
-
-/* Base style for all action buttons (Like, Rate, Support) */
-.like-button, .rate-user-button, .support-button, .interaction-button {
-  display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 18px;
-  border-radius: 50px; /* Pill shape */
-  font-weight: 600;
-  font-size: 0.9rem;
-  border: 1px solid #ced4da;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
+  margin-bottom: 20px;
 }
 
-.like-button:hover:not(:disabled), 
-.rate-user-button:hover:not(:disabled), 
-.support-button:hover:not(:disabled),
-.interaction-button:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+.star-display {
+  color: #ffc107;
+  font-size: 1.2rem;
 }
+
+.rating-value {
+  font-weight: 600;
+}
+
+.review-count {
+  color: #6c757d;
+  font-size: 0.9em;
+}
+
+.no-rating {
+  font-size: 0.9em;
+  color: #6c757d;
+  font-style: italic;
+}
+
+
+
+/* --- UNIFIED ACTION BUTTONS --- */
+
+.profile-actions {
+
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 12px;
+
+  justify-content: center;
+
+}
+
+@media (min-width: 768px) {
+
+  .profile-actions {
+
+    justify-content: flex-start;
+
+  }
+
+}
+
+
+
+/* Base style for all action buttons (Like, Rate, Support) */
+
+.like-button,
+.rate-user-button,
+.support-button,
+.interaction-button {
+
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  padding: 8px 18px;
+
+  border-radius: 50px;
+  /* Pill shape */
+
+  font-weight: 600;
+
+  font-size: 0.9rem;
+
+  border: 1px solid #ced4da;
+
+  cursor: pointer;
+
+  transition: all 0.2s ease-in-out;
+
+}
+
+
+
+.like-button:hover:not(:disabled),
+
+.rate-user-button:hover:not(:disabled),
+
+.support-button:hover:not(:disabled),
+
+.interaction-button:hover:not(:disabled) {
+
+  transform: translateY(-2px);
+
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+
+}
+
+
 
 /* Specific colors for each button */
-.like-button, .support-button {
+
+.like-button,
+.support-button {
+
   background-color: #fff;
+
   color: #495057;
+
 }
+
+
 
 .rate-user-button {
+
   background-color: #007bff;
+
   color: #fff;
+
   border-color: #007bff;
+
 }
+
+
 
 .interaction-button {
+
   background-color: #343a40;
+
   color: #fff;
+
   border-color: #343a40;
+
 }
 
-.like-button.liked, .support-button.supported {
-  background-color: #dc3545; /* Red for liked/supported */
+
+
+.like-button.liked,
+.support-button.supported {
+
+  background-color: #dc3545;
+  /* Red for liked/supported */
+
   color: #fff;
+
   border-color: #dc3545;
+
 }
+
+
 
 .rate-user-button.reviewed {
-  background-color: #28a745; /* Green for reviewed */
+
+  background-color: #28a745;
+  /* Green for reviewed */
+
   color: #fff;
+
   border-color: #28a745;
+
 }
 
-.like-button:disabled, .rate-user-button:disabled, .support-button:disabled {
+
+
+.like-button:disabled,
+.rate-user-button:disabled,
+.support-button:disabled {
+
   opacity: 0.7;
+
   cursor: not-allowed;
+
   transform: none;
+
   box-shadow: none;
+
 }
+
+
 
 .support-count {
+
   margin-left: 2px;
+
   font-weight: 400;
+
   opacity: 0.8;
+
 }
 
+
+
 /* --- PROFILE CONTENT (Bio, Reviews, etc.) --- */
+
 .profile-content-public {
+
   width: 100%;
+
   margin-top: 20px;
+
   text-align: left;
+
 }
+
 .section-header {
-  display: flex; /* 1. Turn on Flexbox */
-  justify-content: space-between; /* 2. Pushes title to the left and rating to the right */
-  align-items: center; /* 3. Vertically aligns everything in the middle */
-  flex-wrap: wrap; /* Allows items to wrap on very small screens */
-  gap: 1rem; /* Adds space between items if they wrap */
-  margin-bottom: 1.5rem; /* Adds space below the header */
+
+  display: flex;
+  /* 1. Turn on Flexbox */
+
+  justify-content: space-between;
+  /* 2. Pushes title to the left and rating to the right */
+
+  align-items: center;
+  /* 3. Vertically aligns everything in the middle */
+
+  flex-wrap: wrap;
+  /* Allows items to wrap on very small screens */
+
+  gap: 1rem;
+  /* Adds space between items if they wrap */
+
+  margin-bottom: 1.5rem;
+  /* Adds space below the header */
+
 }
+
+
+
 
 
 .profile-section-public {
+
   margin-bottom: 40px;
+
 }
+
+
 
 .profile-section-public h4 {
+
   font-size: 1.4rem;
+
   color: #343a40;
+
   margin-bottom: 20px;
+
   padding-bottom: 10px;
+
   border-bottom: 1px solid #e9ecef;
+
 }
 
-.user-bio, .review-comment, .comment-text {
+
+
+.user-bio,
+.review-comment,
+.comment-text {
+
   line-height: 1.7;
+
   color: #495057;
+
 }
+
+
 
 /* --- Reviews & Comments List Styling --- */
-.reviews-list, .comments-list {
+
+.reviews-list,
+.comments-list {
+
   display: flex;
+
   flex-direction: column;
+
   gap: 25px;
+
 }
 
-.review-item, .comment-item {
+
+
+.review-item,
+.comment-item {
+
   border-bottom: 1px solid #f1f3f5;
+
   padding-bottom: 25px;
+
 }
-.review-item:last-child, .comment-item:last-child {
+
+.review-item:last-child,
+.comment-item:last-child {
+
   border-bottom: none;
+
   padding-bottom: 0;
+
 }
+
+
 
 .comment-header {
+
   display: flex;
+
   align-items: center;
+
   margin-bottom: 10px;
+
 }
-.reviewer-pic, .commenter-pic {
+
+.reviewer-pic,
+.commenter-pic {
+
   width: 45px;
+
   height: 45px;
+
   border-radius: 50%;
+
   object-fit: cover;
+
   margin-right: 12px;
+
 }
-.reviewer-info, .commenter-info { flex-grow: 1; }
-.reviewer-info strong, .commenter-info strong { font-weight: 600; }
-.review-date, .comment-date { font-size: 0.8em; color: #6c757d; }
-.review-stars { margin-left: auto; font-size: 0.9rem; }
-/* This is the main container for the name and date */
+
+.reviewer-info,
 .commenter-info {
-  display: flex; /* 1. Turn on Flexbox layout */
-  justify-content: space-between; /* 2. Pushes the name to the left and date to the right */
-  align-items: baseline; /* 3. Aligns the text nicely along their baseline */
-  flex-wrap: wrap; /* 4. Allows the date to drop to a new line on small screens */
-  gap: 1rem; /* 5. Ensures there's always a minimum space between them */
-  
-  flex-grow: 1; /* Allows this container to take up available space */
-  margin-left: 12px; /* Adds a little space next to the profile picture */
+  flex-grow: 1;
 }
+
+.reviewer-info strong,
+.commenter-info strong {
+  font-weight: 600;
+}
+
+.review-date,
+.comment-date {
+  font-size: 0.8em;
+  color: #6c757d;
+}
+
+.review-stars {
+  margin-left: auto;
+  font-size: 0.9rem;
+}
+
+/* This is the main container for the name and date */
+
+.commenter-info {
+
+  display: flex;
+  /* 1. Turn on Flexbox layout */
+
+  justify-content: space-between;
+  /* 2. Pushes the name to the left and date to the right */
+
+  align-items: baseline;
+  /* 3. Aligns the text nicely along their baseline */
+
+  flex-wrap: wrap;
+  /* 4. Allows the date to drop to a new line on small screens */
+
+  gap: 1rem;
+  /* 5. Ensures there's always a minimum space between them */
+
+
+  flex-grow: 1;
+  /* Allows this container to take up available space */
+
+  margin-left: 12px;
+  /* Adds a little space next to the profile picture */
+
+}
+
+
 
 /* Optional: Target the name specifically if needed */
+
 .commenter-info strong {
+
   /* This prevents the name from shrinking if space is tight */
-  flex-shrink: 0; 
-  margin-right: auto; /* Pushes the date away */
+
+  flex-shrink: 0;
+
+  margin-right: auto;
+  /* Pushes the date away */
+
 }
+
+
 
 /* Optional: Target the date specifically */
+
 .commenter-info .comment-date {
+
   font-size: 0.85rem;
-  color: #6c757d; /* A slightly muted color for the date */
-  white-space: nowrap; /* Prevents the date itself from breaking into two lines */
+
+  color: #6c757d;
+  /* A slightly muted color for the date */
+
+  white-space: nowrap;
+  /* Prevents the date itself from breaking into two lines */
+
   flex-shrink: 0;
+
 }
+
 /* In src/styles/UserProfilePage.css */
 
+
+
 .heart-rating-input .heart-icon-input {
-  color: #e0e0e0; /* Default color is grey */
+
+  color: #e0e0e0;
+  /* Default color is grey */
+
+  cursor: pointer;
+
+  margin-right: 5px;
+
+  transition: color 0.2s;
+
+}
+
+
+
+.heart-rating-input .heart-icon-input.active {
+
+  color: deeppink;
+  /* Active color is pink */
+
+}
+
+
+
+.heart-rating-input .heart-icon-input:hover {
+
+  color: #ff85b3;
+  /* Hover color */
+
+}
+
+/* We should also make the parent container a flexbox to align the image and the info block */
+
+.comment-header {
+
+  display: flex;
+
+  align-items: flex-start;
+  /* Aligns pic to the top of the text block */
+
+  width: 100%;
+
+}
+
+.no-reviews,
+.no-viewpoints {
+
+  color: #6c757d;
+
+  font-style: italic;
+
+  padding: 20px;
+
+  text-align: center;
+
+  background-color: #f8f9fa;
+
+  border-radius: 8px;
+
+}
+
+
+
+/* --- Comment Form Styling --- */
+
+.comment-form {
+
+  margin-bottom: 30px;
+
+  padding: 15px;
+
+  background-color: #f9f9f9;
+
+  border-radius: 8px;
+
+  border: 1px solid #e0e0e0;
+
+}
+
+.comment-form-placeholder {
+
+  text-align: center;
+
+  padding: 20px;
+
+  background-color: #f8f9fa;
+
+  border: 1px dashed #ced4da;
+
+  border-radius: 8px;
+
+  margin: 20px 0;
+
+  font-style: italic;
+
+  color: #6c757d;
+
+}
+
+
+
+/* --- Job Postings on Profile Page --- */
+
+.profile-job-postings-list {
+
+  display: grid;
+
+  grid-template-columns: 1fr;
+
+  gap: 15px;
+
+}
+
+.profile-job-item-card {
+
+  background-color: #f8f9fa;
+
+  border: 1px solid #e9ecef;
+
+  border-radius: 8px;
+
+  padding: 15px;
+
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+
+}
+
+.profile-job-item-card:hover {
+
+  border-color: #ced4da;
+
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.06);
+
+}
+
+.profile-job-item-header {
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: flex-start;
+
+  gap: 15px;
+
+}
+
+.profile-job-item-title {
+
+  margin: 0;
+
+  font-size: 1.1rem;
+
+  font-weight: 600;
+
+  color: #343a40;
+
+}
+
+.profile-job-item-payment {
+
+  font-size: 1rem;
+
+  font-weight: 700;
+
+  color: #28a745;
+
+  white-space: nowrap;
+
+}
+
+.profile-job-item-category {
+
+  font-size: 0.9rem;
+
+  color: #6c757d;
+
+  margin: 4px 0 10px 0;
+
+}
+
+.profile-job-item-tags {
+
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 8px;
+
+  margin-bottom: 12px;
+
+}
+
+.tag-item.compact {
+
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 5px;
+
+  background-color: #e9ecef;
+
+  color: #495057;
+
+  padding: 3px 8px;
+
+  border-radius: 12px;
+
+  font-size: 0.75rem;
+
+  font-weight: 500;
+
+}
+
+.profile-job-item-footer {
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  margin-top: 15px;
+
+  padding-top: 10px;
+
+  border-top: 1px solid #e9ecef;
+
+}
+
+.profile-job-item-footer .post-date {
+
+  font-size: 0.8rem;
+
+  color: #6c757d;
+
+}
+
+.view-job-link {
+
+  font-size: 0.9rem;
+
+  font-weight: 600;
+
+  color: #007bff;
+
+  text-decoration: none;
+
+}
+
+.view-job-link:hover {
+
+  text-decoration: underline;
+
+}
+
+
+
+
+
+.portfolio-items {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+  margin-top: 10px;
+}
+
+
+
+.portfolio-item-card {
+  /* New class from JSX */
+
+
+
+  background: #f9f9f9;
+  /* Lighter than pure white */
+
+
+
+  border: 1px solid var(--light-beige);
+
+
+
+  border-radius: 8px;
+
+
+
+  padding: 15px;
+
+
+
+  text-align: center;
+
+
+
+  transition: box-shadow 0.3s ease;
+
+
+
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+
+
+}
+
+
+
+.portfolio-item-card:hover {
+  box-shadow: 0 4px 12px var(--shadow-color);
+}
+
+
+
+.portfolio-image {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+}
+
+
+
+.portfolio-item-card p {
+  margin: 0;
+  color: var(--dark-gray);
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+
+
+
+
+
+
+/* Give the message button its own color */
+
+.message-button {
+
+  background-color: #17a2b8;
+  /* A nice info/cyan color */
+
+  color: #fff;
+
+  border-color: #17a2b8;
+
+}
+
+
+
+.message-button:hover:not(:disabled) {
+
+  background-color: #138496;
+
+}
+
+
+
+
+
+
+
+/* Style the main title */
+
+.section-header h4 {
+
+  margin: 0;
+  /* Remove default margin */
+
+  font-size: 1.5rem;
+  /* Make it a bit larger */
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 0.5rem;
+
+}
+
+.average-support-rating {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+  /* Space between hearts and text */
+
+  background-color: #f8f9fa;
+  /* A very light background */
+
+  padding: 6px 12px;
+
+  border-radius: 20px;
+  /* Rounded pill shape */
+
+  border: 1px solid #dee2e6;
+
+}
+
+.average-support-rating {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+  /* Space between hearts and text */
+
+  background-color: #f8f9fa;
+  /* A very light background */
+
+  padding: 6px 12px;
+
+  border-radius: 20px;
+  /* Rounded pill shape */
+
+  border: 1px solid #dee2e6;
+
+}
+
+
+
+/* Style the text next to the average hearts */
+
+.average-support-rating span {
+
+  font-size: 0.9rem;
+
+  font-weight: 600;
+
+  color: #495057;
+
+}
+
+
+
+/* --- Improved Comment Header Styling --- */
+
+.comment-header {
+
+  display: flex;
+
+  align-items: flex-start;
+  /* Aligns pic to the top */
+
+  width: 100%;
+
+  gap: 12px;
+
+}
+
+.commenter-info {
+
+  flex-grow: 1;
+  /* Allows name/date to take up space */
+
+}
+
+.commenter-info strong {
+
+  font-size: 1rem;
+
+}
+
+.commenter-info .comment-date {
+
+  font-size: 0.85rem;
+
+  color: #6c757d;
+
+  display: block;
+  /* Puts date on its own line below the name */
+
+}
+
+.comment-rating {
+
+  margin-left: auto;
+  /* Pushes the rating to the far right */
+
+  flex-shrink: 0;
+  /* Prevents it from shrinking */
+
+}
+
+
+
+/* --- Improved Heart Icon Styling --- */
+
+.heart-icon.filled {
+  color: deeppink;
+}
+
+.heart-icon.empty {
+  color: #e0e0e0;
+}
+
+.heart-icon-input {
+  color: #e0e0e0;
   cursor: pointer;
   margin-right: 5px;
   transition: color 0.2s;
 }
 
-.heart-rating-input .heart-icon-input.active {
-  color: deeppink; /* Active color is pink */
+.heart-icon-input.active,
+.heart-icon-input:hover {
+  color: deeppink;
 }
 
-.heart-rating-input .heart-icon-input:hover {
-    color: #ff85b3; /* Hover color */
-}/* We should also make the parent container a flexbox to align the image and the info block */
-.comment-header {
-    display: flex;
-    align-items: flex-start; /* Aligns pic to the top of the text block */
-    width: 100%;
-}
-.no-reviews, .no-viewpoints {
-  color: #6c757d;
-  font-style: italic;
-  padding: 20px;
-  text-align: center;
-  background-color: #f8f9fa;
-  border-radius: 8px;
-}
-
-/* --- Comment Form Styling --- */
-.comment-form {
-  margin-bottom: 30px;
-  padding: 15px;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  border: 1px solid #e0e0e0;
-}
-.comment-form-placeholder {
-  text-align: center;
-  padding: 20px;
-  background-color: #f8f9fa;
-  border: 1px dashed #ced4da;
-  border-radius: 8px;
-  margin: 20px 0;
-  font-style: italic;
-  color: #6c757d;
-}
-
-/* --- Job Postings on Profile Page --- */
-.profile-job-postings-list {
-display: grid;
-grid-template-columns: 1fr;
-gap: 15px;
-}
-.profile-job-item-card {
-background-color: #f8f9fa;
-border: 1px solid #e9ecef;
-border-radius: 8px;
-padding: 15px;
-transition: box-shadow 0.2s ease, border-color 0.2s ease;
-}
-.profile-job-item-card:hover {
-border-color: #ced4da;
-box-shadow: 0 4px 8px rgba(0,0,0,0.06);
-}
-.profile-job-item-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 15px;
-}
-.profile-job-item-title {
-  margin: 0;
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #343a40;
-}
-.profile-job-item-payment {
-  font-size: 1rem;
-  font-weight: 700;
-  color: #28a745;
-  white-space: nowrap;
-}
-.profile-job-item-category {
-  font-size: 0.9rem;
-  color: #6c757d;
-  margin: 4px 0 10px 0;
-}
-.profile-job-item-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 12px;
-}
-.tag-item.compact {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  background-color: #e9ecef;
-  color: #495057;
-  padding: 3px 8px;
-  border-radius: 12px;
-  font-size: 0.75rem;
-  font-weight: 500;
-}
-.profile-job-item-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 15px;
-  padding-top: 10px;
-  border-top: 1px solid #e9ecef;
-}
-.profile-job-item-footer .post-date {
-  font-size: 0.8rem;
-  color: #6c757d;
-}
-.view-job-link {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #007bff;
-  text-decoration: none;
-}
-.view-job-link:hover {
-  text-decoration: underline;
-}
-
-
-.portfolio-items { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; margin-top: 10px; }
-
-.portfolio-item-card { /* New class from JSX */
-
-background: #f9f9f9; /* Lighter than pure white */
-
-border: 1px solid var(--light-beige);
-
-border-radius: 8px;
-
-padding: 15px;
-
-text-align: center;
-
-transition: box-shadow 0.3s ease;
-
-box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-
-}
-
-.portfolio-item-card:hover { box-shadow: 0 4px 12px var(--shadow-color); }
-
-.portfolio-image { width: 100%; height: 150px; object-fit: cover; border-radius: 4px; margin-bottom: 10px; border: 1px solid #ccc; }
-
-.portfolio-item-card p { margin: 0; color: var(--dark-gray); font-size: 0.9rem; line-height: 1.4; }
-
-
-
-/* Give the message button its own color */
-.message-button {
-  background-color: #17a2b8; /* A nice info/cyan color */
-  color: #fff;
-  border-color: #17a2b8;
-}
-
-.message-button:hover:not(:disabled) {
-  background-color: #138496;
-}
-
-
-
-/* Style the main title */
-.section-header h4 {
-  margin: 0; /* Remove default margin */
-  font-size: 1.5rem; /* Make it a bit larger */
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-.average-support-rating {
-  display: flex;
-  align-items: center;
-  gap: 8px; /* Space between hearts and text */
-  background-color: #f8f9fa; /* A very light background */
-  padding: 6px 12px;
-  border-radius: 20px; /* Rounded pill shape */
-  border: 1px solid #dee2e6;
-}
-.average-support-rating {
-  display: flex;
-  align-items: center;
-  gap: 8px; /* Space between hearts and text */
-  background-color: #f8f9fa; /* A very light background */
-  padding: 6px 12px;
-  border-radius: 20px; /* Rounded pill shape */
-  border: 1px solid #dee2e6;
-}
-
-/* Style the text next to the average hearts */
-.average-support-rating span {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #495057;
-}
-
-/* --- Improved Comment Header Styling --- */
-.comment-header {
-    display: flex;
-    align-items: flex-start; /* Aligns pic to the top */
-    width: 100%;
-    gap: 12px;
-}
-.commenter-info {
-    flex-grow: 1; /* Allows name/date to take up space */
-}
-.commenter-info strong {
-    font-size: 1rem;
-}
-.commenter-info .comment-date {
-    font-size: 0.85rem;
-    color: #6c757d;
-    display: block; /* Puts date on its own line below the name */
-}
-.comment-rating {
-    margin-left: auto; /* Pushes the rating to the far right */
-    flex-shrink: 0; /* Prevents it from shrinking */
-}
-
-/* --- Improved Heart Icon Styling --- */
-.heart-icon.filled { color: deeppink; }
-.heart-icon.empty { color: #e0e0e0; }
-.heart-icon-input { color: #e0e0e0; cursor: pointer; margin-right: 5px; transition: color 0.2s; }
-.heart-icon-input.active, .heart-icon-input:hover { color: deeppink; }
 /* src/styles/UserProfilePage.css */
+
+
 
 /* --- ADD THIS CSS AT THE END OF THE FILE --- */
 
+
+
 /* Make portfolio images clickable */
+
 .portfolio-image {
+
   cursor: pointer;
+
   transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+
 }
+
+
 
 .portfolio-image:hover {
+
   transform: scale(1.05);
+
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+
 }
+
+
 
 /* Gallery Overlay */
+
 .gallery-overlay {
+
   position: fixed;
+
   top: 0;
+
   left: 0;
+
   width: 100vw;
+
   height: 100vh;
+
   background-color: rgba(0, 0, 0, 0.85);
+
   display: flex;
+
   justify-content: center;
+
   align-items: center;
+
   z-index: 1000;
+
   -webkit-backdrop-filter: blur(5px);
+
   backdrop-filter: blur(5px);
+
   animation: fadeIn 0.3s ease;
+
 }
+
+
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+
 }
+
+
 
 /* Gallery Content Area */
+
 .gallery-content {
+
   position: relative;
+
   text-align: center;
+
   animation: zoomIn 0.3s ease;
+
 }
+
+
 
 @keyframes zoomIn {
-  from { transform: scale(0.8); }
-  to { transform: scale(1); }
+
+  from {
+    transform: scale(0.8);
+  }
+
+  to {
+    transform: scale(1);
+  }
+
 }
+
+
 
 .gallery-content img {
+
   max-width: 85vw;
+
   max-height: 80vh;
+
   border-radius: 8px;
+
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-  background-color: #111; /* Fallback for transparent images */
+
+  background-color: #111;
+  /* Fallback for transparent images */
+
 }
+
+
 
 /* Info below the image */
+
 .gallery-info {
+
   color: white;
+
   margin-top: 1rem;
+
   padding: 0 1rem;
+
 }
+
+
 
 .gallery-description {
+
   font-size: 1.1rem;
+
   margin: 0 0 0.5rem 0;
+
 }
+
+
 
 .gallery-counter {
+
   font-size: 0.9rem;
+
   color: #ccc;
+
 }
+
+
 
 /* Navigation & Close Buttons */
-.gallery-nav-btn, .gallery-close-btn {
+
+.gallery-nav-btn,
+.gallery-close-btn {
+
   position: absolute;
+
   background: transparent;
+
   border: none;
+
   color: rgba(255, 255, 255, 0.7);
+
   cursor: pointer;
+
   padding: 1rem;
+
   transition: color 0.2s ease, transform 0.2s ease;
+
   z-index: 1001;
+
 }
 
-.gallery-nav-btn:hover, .gallery-close-btn:hover {
+
+
+.gallery-nav-btn:hover,
+.gallery-close-btn:hover {
+
   color: white;
+
   transform: scale(1.1);
+
 }
+
+
 
 .gallery-close-btn {
+
   top: 15px;
+
   right: 15px;
+
 }
+
+
 
 .gallery-nav-btn.prev {
+
   top: 50%;
+
   left: 15px;
+
   transform: translateY(-50%);
+
 }
 
+
+
 .gallery-nav-btn.next {
+
   top: 50%;
+
   right: 15px;
+
   transform: translateY(-50%);
+
 }
+
 /* Button Color Scheme:
   - GREEN (#28a745): Constructive actions (Add, Post, Update, Save, Submit, Apply, Reviewed).
   - RED (#dc3545): Destructive/State Change actions (Delete, Remove, Cancel, Logout, Clear, Close, Liked, Supported).
@@ -601,8 +1314,10 @@ box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 .apply-button-detailed,
 .action-button.save,
 .add-item-button,
-.rate-user-button.reviewed { /* <-- Added this class */
-  background-color: #28a745 !important; /* GREEN */
+.rate-user-button.reviewed {
+  /* <-- Added this class */
+  background-color: #28a745 !important;
+  /* GREEN */
   color: white !important;
 }
 
@@ -614,8 +1329,10 @@ box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 .apply-button-detailed:hover:not(:disabled),
 .action-button.save:hover:not(:disabled),
 .add-item-button:hover:not(:disabled),
-.rate-user-button.reviewed:hover:not(:disabled) { /* <-- Added this class */
-  background-color: #218838 !important; /* Darker Green */
+.rate-user-button.reviewed:hover:not(:disabled) {
+  /* <-- Added this class */
+  background-color: #218838 !important;
+  /* Darker Green */
 }
 
 
@@ -630,9 +1347,12 @@ box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 .action-button.delete,
 .close-modal-button,
 .close-btn,
-.like-button.liked,     /* <-- Added this class */
-.support-button.supported { /* <-- Added this class */
-  background-color: #dc3545 !important; /* RED */
+.like-button.liked,
+/* <-- Added this class */
+.support-button.supported {
+  /* <-- Added this class */
+  background-color: #dc3545 !important;
+  /* RED */
   color: white !important;
 }
 
@@ -646,9 +1366,12 @@ box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 .action-button.delete:hover:not(:disabled),
 .close-modal-button:hover:not(:disabled),
 .close-btn:hover:not(:disabled),
-.like-button.liked:hover:not(:disabled),      /* <-- Added this class */
-.support-button.supported:hover:not(:disabled) { /* <-- Added this class */
-  background-color: #c82333 !important; /* Darker Red */
+.like-button.liked:hover:not(:disabled),
+/* <-- Added this class */
+.support-button.supported:hover:not(:disabled) {
+  /* <-- Added this class */
+  background-color: #c82333 !important;
+  /* Darker Red */
 }
 
 
@@ -656,14 +1379,16 @@ box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 .edit-btn,
 .cv-upload-label,
 .action-btn {
-  background-color: #fd7e14 !important; /* ORANGE */
+  background-color: #fd7e14 !important;
+  /* ORANGE */
   color: white !important;
 }
 
 .edit-btn:hover:not(:disabled),
 .cv-upload-label:hover:not(:disabled),
 .action-btn:hover:not(:disabled) {
-  background-color: #e67311 !important; /* Darker Orange */
+  background-color: #e67311 !important;
+  /* Darker Orange */
 }
 
 
@@ -671,34 +1396,43 @@ box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 .view-job-button,
 .btn-primary,
 .view-file-link {
-  background-color: #C96A50 !important; /* TERRACOTTA */
+  background-color: #C96A50 !important;
+  /* TERRACOTTA */
   color: white !important;
 }
 
 .view-job-button:hover:not(:disabled),
 .btn-primary:hover:not(:disabled),
 .view-file-link:hover:not(:disabled) {
-  background-color: #b05c46 !important; /* Darker Terracotta */
+  background-color: #b05c46 !important;
+  /* Darker Terracotta */
 }
 
 /* --- COMMUNICATION BUTTONS (BLUE) --- */
 .message-button,
-.rate-user-button { /* Base state for rate button */
-    background-color: #17a2b8 !important; /* INFO/CYAN */
-    color: white !important;
+.rate-user-button {
+  /* Base state for rate button */
+  background-color: #17a2b8 !important;
+  /* INFO/CYAN */
+  color: white !important;
 }
+
 .message-button:hover:not(:disabled),
 .rate-user-button:hover:not(:disabled) {
-    background-color: #138496 !important; /* Darker info/cyan */
+  background-color: #138496 !important;
+  /* Darker info/cyan */
 }
 
 
 /* --- SECONDARY/NEUTRAL BUTTONS (Outlined) --- */
 .add-btn,
-.like-button,    /* Base state for like button */
-.support-button { /* Base state for support button */
+.like-button,
+/* Base state for like button */
+.support-button {
+  /* Base state for support button */
   background-color: white !important;
-  color: #28a745 !important; /* GREEN text */
+  color: #28a745 !important;
+  /* GREEN text */
   border: 1px solid #28a745 !important;
 }
 
@@ -712,10 +1446,13 @@ box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 /* This will apply to any <button> that doesn't have a more specific class. */
 button,
 .interaction-button {
-    background-color: #333333 !important; /* Charcoal Gray */
-    color: white !important;
+  background-color: #333333 !important;
+  /* Charcoal Gray */
+  color: white !important;
 }
+
 button:hover:not(:disabled),
 .interaction-button:hover:not(:disabled) {
-    background-color: #444444 !important; /* Dark Gray */
+  background-color: #444444 !important;
+  /* Dark Gray */
 }
