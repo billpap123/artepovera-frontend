@@ -259,7 +259,7 @@
   .nav-links.open {
     display: flex; /* Show the menu when open */
   }
-  .navbar{    padding-bottom: 100px !important;
+  .navbar{    padding-bottom: 40px !important;
   }
 
   .nav-links a,
