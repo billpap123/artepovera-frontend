@@ -584,7 +584,7 @@ const UserProfilePage: React.FC = () => {
                       <span className="rating-value">{averageRating.toFixed(1)}</span>
                       <span className="review-count">({reviewCount} review{reviewCount !== 1 ? 's' : ''})</span>
                     </>
-                  ) : (<span className="no-rating">No reviews yet</span>)}
+                  ) : (<span className="no-rating">No project reviews yet</span>)}
               </div>
 
               <div className="profile-actions">
@@ -664,7 +664,7 @@ const UserProfilePage: React.FC = () => {
             )}
 
             <div className="reviews-section profile-section-public">
-              <h4>Reviews received ({completedReviews.length})</h4>
+              <h4>Project reviews received ({completedReviews.length})</h4>
               {reviewsLoading ? (
                 <p>Loading reviews...</p>
               ) : completedReviews.length > 0 ? (
