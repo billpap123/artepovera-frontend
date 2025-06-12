@@ -51,28 +51,39 @@ const ChatPage = () => {
     // Effect for initializing and managing the socket connection
     useEffect(() => {
         if (loggedInUserId) {
-            // Establish connection to the server.
-            socketRef.current = io(API_BASE_URL);
-
-            // Listen for the 'new_message' event from the server.
-            socketRef.current.on('new_message', (incomingMessage: Message) => {
-                // IMPORTANT: Only update messages if the incoming message belongs to the currently active chat.
-                // Using a callback form of setActiveChat to get the most recent state.
+            // We only establish the connection once when the user is logged in.
+            if (!socketRef.current) {
+                socketRef.current = io(API_BASE_URL);
+            }
+    
+            // Define the event handler function
+            const handleNewMessage = (incomingMessage: Message) => {
+                // 1. --- THIS IS THE FIX ---
+                // Ignore the event if the logged-in user is the sender.
+                // The UI was already updated by the handleSendMessage function.
+                if (incomingMessage.sender_id === loggedInUserId) {
+                    return; 
+                }
+    
+                // 2. For everyone else, update the UI if the chat is active.
                 setActiveChat(currentActiveChat => {
                     if (currentActiveChat && incomingMessage.chat_id === currentActiveChat.chat_id) {
                         setMessages(prevMessages => [...prevMessages, incomingMessage]);
                     }
                     return currentActiveChat;
                 });
-            });
-
-            // Clean up the connection when the component unmounts.
+            };
+    
+            // Attach the listener
+            socketRef.current.on('new_message', handleNewMessage);
+    
+            // Cleanup: remove the listener when the component unmounts or dependencies change.
             return () => {
-                socketRef.current?.off('new_message');
-                socketRef.current?.disconnect();
+                socketRef.current?.off('new_message', handleNewMessage);
             };
         }
-    }, [loggedInUserId]);
+    }, [loggedInUserId]); // This effect now only depends on the user's login state.
+    
 
     // Effect to fetch initial chat list (no major changes needed)
     useEffect(() => {
