@@ -235,19 +235,19 @@
 
 /* --- Responsive Design --- */
 @media screen and (max-width: 768px) {
-  /* On mobile, hide the list of links that are part of the navbar flow */
+  /* On mobile, the navbar remains a flex row, but we hide the desktop links */
   .navbar .nav-links {
       display: none;
   }
 
-  /* Show the hamburger menu icon */
+  /* The hamburger menu icon is now visible */
   .hamburger {
       display: block;
   }
 
-  /* This styles the full-screen OVERLAY that appears when the menu is open */
+  /* This styles the full-screen OVERLAY that appears ONLY when the menu is open */
   .nav-links.open {
-      display: flex;
+      display: flex; /* This makes the overlay visible */
       position: fixed;
       top: 0;
       left: 0;
@@ -260,7 +260,7 @@
       gap: 1.5rem;
   }
 
-  /* Style the items inside the full-screen overlay */
+  /* Style the links inside the overlay */
   .nav-links.open a,
   .nav-links.open button {
       font-size: 1.2rem;
@@ -268,7 +268,7 @@
       justify-content: center;
   }
 
-  /* Special handling for notifications inside the mobile overlay */
+  /* Special handling for notifications list inside the mobile overlay */
   .notifications {
       display: contents;
   }
@@ -280,6 +280,6 @@
       box-shadow: none;
       border-radius: 8px;
       max-height: none;
-      order: 10;
+      order: 10; /* Ensures it appears at the bottom of the list */
   }
 }
