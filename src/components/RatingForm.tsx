@@ -5,7 +5,6 @@ import '../styles/RatingForm.css'; // Make sure you have created this CSS file
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:50001";
 
-// This should match the interface used in your other components
 export interface Review {
     review_id: number;
     overall_rating: number;
@@ -18,12 +17,10 @@ interface RatingFormProps {
     reviewerId: number;
     reviewedUserId: number;
     reviewedUserName: string;
-    // Updated onClose to pass the new review back to the parent component
     onClose: (submittedSuccessfully: boolean, newReview?: Review) => void;
     chatId?: number | null;
 }
 
-// Star Rating Sub-Component - Corrected
 const StarRatingInput = ({ rating, onRatingChange, labelId }: { rating: number; onRatingChange: (r: number) => void; labelId: string; }) => {
     const [hover, setHover] = useState(0);
     return (
@@ -32,7 +29,7 @@ const StarRatingInput = ({ rating, onRatingChange, labelId }: { rating: number; 
                 <span
                     key={starValue}
                     className={starValue <= (hover || rating) ? 'star active' : 'star'}
-                    onClick={() => onRatingChange(starValue)} // Use the passed-in handler
+                    onClick={() => onRatingChange(starValue)}
                     onMouseEnter={() => setHover(starValue)}
                     onMouseLeave={() => setHover(0)}
                     role="radio"
@@ -51,22 +48,19 @@ const StarRatingInput = ({ rating, onRatingChange, labelId }: { rating: number; 
 
 const RatingForm: React.FC<RatingFormProps> = ({
     chatId,
-    reviewerId, // reviewerId is passed but wasn't used in the old payload, it comes from the token on the backend.
+    reviewerId,
     reviewedUserId,
     reviewedUserName,
     onClose
 }) => {
+    // All state variables from your file are now included
     const [dealMade, setDealMade] = useState<'yes' | 'no' | null>(null);
-    const [noDealReason, setNoDealReason] = useState("");
-        // --- ADD THIS NEW STATE ---
-        const [noDealPrimaryReason, setNoDealPrimaryReason] = useState<string>("");
-        // --- END NEW STATE ---
-    
+    const [noDealPrimaryReason, setNoDealPrimaryReason] = useState<string>("");
     const [professionalismRating, setProfessionalismRating] = useState<number>(0);
     const [qualityRating, setQualityRating] = useState<number>(0);
     const [communicationRating, setCommunicationRating] = useState<number>(0);
     const [overallRating, setOverallRating] = useState<number>(0);
-    const [comment, setComment] = useState("");
+    const [comment, setComment] = useState(""); // This is the single source of truth for comments now
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -83,23 +77,17 @@ const RatingForm: React.FC<RatingFormProps> = ({
         // Construct the detailed answers object
         const specificAnswers = {
             dealMade,
-            // YES path
             professionalism: dealMade === 'yes' ? professionalismRating : undefined,
             quality: dealMade === 'yes' ? qualityRating : undefined,
-            communication: dealMade === 'yes' ? communicationRating : undefined, // Note: you now have two communication states.
-            // NO path
+            communication: dealMade === 'yes' ? communicationRating : undefined,
             noDealPrimaryReason: dealMade === 'no' ? noDealPrimaryReason : undefined,
             communicationRating_noDeal: dealMade === 'no' ? communicationRating : undefined,
-        
-            // General comment
-            comment: comment.trim() || noDealReason.trim() || undefined
+            comment: comment.trim() || undefined, // Simplified to use the single 'comment' state
         };
         
-
         const payload = {
             chatId: chatId || null,
             reviewedUserId: reviewedUserId,
-            // This logic is still correct: send the overall rating for 'yes', omit for 'no'
             overallRating: dealMade === 'yes' ? overallRating : undefined,
             specificAnswers: specificAnswers
         };
@@ -109,11 +97,9 @@ const RatingForm: React.FC<RatingFormProps> = ({
                 headers: { Authorization: `Bearer ${token}` },
             });
             alert("Review submitted successfully!");
-            // Pass success and the new review data back to the parent
             onClose(true, response.data.review);
 
         } catch (err: any) {
-            console.error("Error submitting review:", err);
             const message = err.response?.data?.message || "Failed to submit review.";
             setError(message);
         } finally {
@@ -122,9 +108,9 @@ const RatingForm: React.FC<RatingFormProps> = ({
     };
 
     return (
-        <div className="rating-form-container"> {/* Use a container class for better styling control */}
+        <div className="rating-form-container">
             <div className="rating-form-header">
-                <h3>Rate your collaboration with {reviewedUserName}</h3>
+                <h3>Rate your interaction with {reviewedUserName}</h3>
                 <button onClick={() => onClose(false)} className="close-btn">×</button>
             </div>
             <form onSubmit={handleSubmit} className="rating-form-content">
@@ -137,54 +123,27 @@ const RatingForm: React.FC<RatingFormProps> = ({
                 </div>
 
                 {dealMade === 'no' && (
-    <div className="follow-up-questions fade-in">
-        <hr />
-        <p className="rating-form-subtext">
-            Please provide feedback on your interaction.
-        </p>
-        
-        {/* New Star Rating for Communication */}
-        <div className="form-group">
-            <label id="comm-no-deal-label">Communication Quality *</label>
-            <StarRatingInput 
-                rating={communicationRating} 
-                onRatingChange={setCommunicationRating} 
-                labelId="comm-no-deal-label" 
-            />
-        </div>
-
-        {/* New Dropdown for Primary Reason */}
-        <div className="form-group">
-            <label htmlFor="no-deal-primary-reason">Primary reason for not working together? *</label>
-            <select
-                id="no-deal-primary-reason"
-                value={noDealPrimaryReason}
-                onChange={(e) => setNoDealPrimaryReason(e.target.value)}
-                required
-            >
-                <option value="" disabled>-- Please select a reason --</option>
-                <option value="Budget Mismatch">Budget mismatch</option>
-                <option value="Scheduling Conflict">Scheduling/timeline conflict</option>
-                <option value="Creative Differences">Creative differences</option>
-                <option value="Poor Communication">Unresponsive / poor communication</option>
-                <option value="Chose Another Option">Decided to go another direction</option>
-                <option value="Other">Other (please specify below)</option>
-            </select>
-        </div>
-        
-        {/* The existing text area, now for additional context */}
-        <div className="form-group">
-            <label htmlFor="no-deal-reason">Additional comments (Optional)</label>
-            <textarea 
-                id="no-deal-reason" 
-                value={noDealReason} 
-                onChange={(e) => setNoDealReason(e.target.value)} 
-                rows={3} 
-                placeholder="Provide more details here..." 
-            />
-        </div>
-    </div>
-)}
+                    <div className="follow-up-questions fade-in">
+                        <hr />
+                        <p className="rating-form-subtext">Please provide feedback on why you didn't work together.</p>
+                        <div className="form-group">
+                            <label id="comm-no-deal-label">Communication Quality *</label>
+                            <StarRatingInput rating={communicationRating} onRatingChange={setCommunicationRating} labelId="comm-no-deal-label" />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="no-deal-primary-reason">Primary reason? *</label>
+                            <select id="no-deal-primary-reason" value={noDealPrimaryReason} onChange={(e) => setNoDealPrimaryReason(e.target.value)} required>
+                                <option value="" disabled>-- Please select a reason --</option>
+                                <option value="Budget Mismatch">Budget mismatch</option>
+                                <option value="Scheduling Conflict">Scheduling/timeline conflict</option>
+                                <option value="Creative Differences">Creative differences</option>
+                                <option value="Poor Communication">Unresponsive / poor communication</option>
+                                <option value="Chose Another Option">Decided to go another direction</option>
+                                <option value="Other">Other (please specify in comments)</option>
+                            </select>
+                        </div>
+                    </div>
+                )}
 
                 {dealMade === 'yes' && (
                     <div className="follow-up-questions fade-in">
@@ -197,10 +156,11 @@ const RatingForm: React.FC<RatingFormProps> = ({
                     </div>
                 )}
 
+                 {/* --- THIS IS NOW THE ONLY COMMENT BOX --- */}
                  {dealMade !== null && (
                      <div className="form-group fade-in">
                          <label htmlFor="comment">Additional comments (Optional):</label>
-                         <textarea id="comment" value={comment} onChange={(e) => setComment(e.target.value)} rows={4} placeholder={dealMade === 'yes' ? "Any other feedback about the collaboration?" : "Any other comments?"} />
+                         <textarea id="comment" value={comment} onChange={(e) => setComment(e.target.value)} rows={4} placeholder={dealMade === 'yes' ? "Any other feedback about the collaboration?" : "Any other comments about the interaction?"} />
                      </div>
                  )}
 
