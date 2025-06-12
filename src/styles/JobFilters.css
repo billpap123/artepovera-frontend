@@ -1,96 +1,92 @@
-/* src/styles/JobFilters.css */
+/* src/styles/JobFilters.css (Compact Version) */
 
 .job-filters {
-    background: #f8f9fa; /* Lighter, cleaner background */
-    padding: 25px;
-    border-radius: 12px;
-    margin-bottom: 30px;
-    border: 1px solid #dee2e6;
+  background: #f8f9fa; 
+  padding: 20px; /* Reduced padding */
+  border-radius: 10px; /* Slightly smaller radius */
+  margin-bottom: 25px; /* Reduced margin */
+  border: 1px solid #dee2e6;
 }
 
 .job-filters h3 {
-    margin-top: 0;
-    margin-bottom: 20px;
-    color: #343a40;
-    border-bottom: 1px solid #e9ecef;
-    padding-bottom: 12px;
-    font-size: 1.3rem;
-    font-weight: 600;
+  margin-top: 0;
+  margin-bottom: 15px; /* Reduced margin */
+  color: #343a40;
+  border-bottom: 1px solid #e9ecef;
+  padding-bottom: 10px; /* Reduced padding */
+  font-size: 1.15rem; /* Smaller font size */
+  font-weight: 600;
 }
 
 .filter-grid {
-  display: grid;
-  /* Responsive grid: 1 column on small screens, up to 4 on larger screens */
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 20px;
-  align-items: end; /* Aligns items to the bottom of their cell for a clean look */
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Smaller min-width */
+gap: 15px; /* Reduced gap */
+align-items: end; 
 }
 
 .filter-input,
 .filter-select {
-  padding: 10px 12px;
-  border: 1px solid #ced4da;
-  border-radius: 6px;
-  width: 100%;
-  box-sizing: border-box;
-  font-size: 0.95rem;
-  background-color: #fff;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+padding: 8px 10px; /* Reduced padding */
+border: 1px solid #ced4da;
+border-radius: 5px; /* Slightly smaller radius */
+width: 100%;
+box-sizing: border-box;
+font-size: 0.9rem; /* Smaller font size */
+background-color: #fff;
+transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .filter-input:focus,
 .filter-select:focus {
-  border-color: #007bff; /* A standard blue for focus */
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
-  outline: none;
+border-color: #007bff;
+box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+outline: none;
 }
 
 
 .budget-filter-group {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+display: flex;
+align-items: center;
+gap: 8px;
 }
 
 .budget-filter-group input {
-  flex: 1;
-  min-width: 70px;
+flex: 1;
+min-width: 60px; /* Reduced min-width */
 }
 
 .budget-filter-group span {
-  padding: 0 5px;
-  color: #6c757d;
+padding: 0 5px;
+color: #6c757d;
 }
 
 .clear-filters-button {
-  padding: 10px 15px;
-  background-color: #6c757d; /* A neutral grey for clear */
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  font-weight: 600;
-  font-size: 0.95rem;
-  height: 43px; /* Match height of other inputs */
+padding: 8px 12px; /* Reduced padding */
+background-color: #6c757d; 
+color: white;
+border: none;
+border-radius: 5px; /* Slightly smaller radius */
+cursor: pointer;
+transition: background-color 0.2s ease;
+font-weight: 600;
+font-size: 0.9rem; /* Smaller font size */
+height: 38px; /* Adjusted height to match new input size */
 }
 
 .clear-filters-button:hover {
-    background-color: #5a6268;
+  background-color: #5a6268;
 }
 
 /* Divider line used in MainPage.tsx */
 hr.filter-divider {
-    border: none;
-    border-top: 1px solid #e9ecef;
-    margin: 0 0 30px 0;
+  border: none;
+  border-top: 1px solid #e9ecef;
+  margin: 0 0 25px 0; /* Reduced margin */
 }
 
-/* Button Color Scheme:
-  - GREEN (#28a745): Constructive actions (Add, Post, Update, Save, Submit, Apply).
-  - RED (#dc3545): Destructive actions (Delete, Remove, Cancel, Logout, Clear).
-  - ORANGE (#fd7e14): Modification actions (Edit, Upload).
-*/
+/* --- BUTTON COLOR SCHEME --- */
+/* (The rest of your color scheme rules remain unchanged) */
 
 /* --- GENERIC/PRIMARY BUTTONS (Constructive - GREEN) --- */
 .save-btn,
@@ -99,8 +95,8 @@ hr.filter-divider {
 .submit-job-btn,
 .apply-button-large,
 .apply-button-detailed {
-  background-color: #28a745 !important; /* GREEN */
-  color: white !important;
+background-color: #28a745 !important;
+color: white !important;
 }
 
 .save-btn:hover:not(:disabled),
@@ -109,7 +105,7 @@ hr.filter-divider {
 .submit-job-btn:hover:not(:disabled),
 .apply-button-large:hover:not(:disabled),
 .apply-button-detailed:hover:not(:disabled) {
-  background-color: #218838 !important; /* Darker Green */
+background-color: #218838 !important;
 }
 
 
@@ -119,9 +115,9 @@ hr.filter-divider {
 .delete-btn,
 .remove-btn,
 .delete-cv-btn,
-.clear-filters-button { /* <-- Added this class */
-  background-color: #dc3545 !important; /* RED */
-  color: white !important;
+.clear-filters-button {
+background-color: #dc3545 !important;
+color: white !important;
 }
 
 .logout-button:hover:not(:disabled),
@@ -129,42 +125,40 @@ hr.filter-divider {
 .delete-btn:hover:not(:disabled),
 .remove-btn:hover:not(:disabled),
 .delete-cv-btn:hover:not(:disabled),
-.clear-filters-button:hover:not(:disabled) { /* <-- Added this class */
-  background-color: #c82333 !important; /* Darker Red */
+.clear-filters-button:hover:not(:disabled) {
+background-color: #c82333 !important;
 }
 
 
 /* --- MODIFICATION BUTTONS (ORANGE) --- */
 .edit-btn,
-.cv-upload-label { /* Treating 'upload' as an edit-like action */
-  background-color: #fd7e14 !important; /* ORANGE */
-  color: white !important;
+.cv-upload-label {
+background-color: #fd7e14 !important;
+color: white !important;
 }
 
 .edit-btn:hover:not(:disabled),
 .cv-upload-label:hover:not(:disabled) {
-  background-color: #e67311 !important; /* Darker Orange */
+background-color: #e67311 !important;
 }
 
 
 /* --- SECONDARY/NEUTRAL BUTTONS (Outlined) --- */
 .add-btn {
-  background-color: white !important;
-  color: #28a745 !important; /* GREEN text */
-  border: 1px solid #28a745 !important;
+background-color: white !important;
+color: #28a745 !important; 
+border: 1px solid #28a745 !important;
 }
 
 .add-btn:hover {
-  background-color: #f0fff4 !important;
+background-color: #f0fff4 !important;
 }
 
 /* --- Default 'button' tag --- */
-/* This will apply to any <button> that doesn't have a more specific class. 
-   We'll make it a neutral, secondary action color from your original theme. */
 button {
-    background-color: #333333 !important; /* Charcoal Gray */
-    color: white !important;
+  background-color: #333333 !important; 
+  color: white !important;
 }
 button:hover:not(:disabled) {
-    background-color: #444444 !important; /* Dark Gray */
+  background-color: #444444 !important;
 }

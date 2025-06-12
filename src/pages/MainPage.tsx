@@ -181,6 +181,8 @@ const MainPage = () => {
           {userType !== 'Admin' && (
             <>
               <div className="dashboard-card job-feed-card">
+              <h2>Active Job Postings</h2>
+
                 <JobFilters onFilterChange={handleFilterChange} />
                 <hr className="filter-divider" />
                 <JobFeed jobs={filteredJobs} isLoading={isLoadingJobs} error={jobsError} />

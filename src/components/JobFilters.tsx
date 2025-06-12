@@ -45,7 +45,7 @@ const JobFilters: React.FC<JobFiltersProps> = ({ onFilterChange }) => {
 
     return (
         <div className="job-filters">
-            <h3>Find your next opportunity</h3>
+            <h3>Refine your search</h3>
             <div className="filter-grid">
                 <input className="filter-input keyword-filter" type="text" placeholder="Keywords (e.g., oil painting)" value={filters.keywords} onChange={(e) => handleInputChange('keywords', e.target.value)} />
                 <input className="filter-input" type="text" placeholder="Employers location (e.g., Athens)" value={filters.location} onChange={(e) => handleInputChange('location', e.target.value)} />
