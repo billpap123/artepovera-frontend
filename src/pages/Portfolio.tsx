@@ -35,6 +35,11 @@ const getItemTypeFromUrl = (url: string): 'image' | 'pdf' | 'video' | 'other' =>
 
 const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewedArtistName }) => {
   const { artistId: loggedInUserArtistId } = useUserContext();
+  // --- NEW DEBUGGING BLOCK ---
+  console.log("--- isOwner Calculation ---");
+  console.log("Prop (from router) -> viewingArtistId:", viewingArtistId, "| type:", typeof viewingArtistId);
+  console.log("Context -> loggedInUserArtistId:", loggedInUserArtistId, "| type:", typeof loggedInUserArtistId);
+
 
   const targetArtistId = viewingArtistId || loggedInUserArtistId;
   const isOwner = !!loggedInUserArtistId && (targetArtistId === loggedInUserArtistId);
@@ -82,7 +87,6 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewed
     }
   }, [targetArtistId, fetchPortfolio]);
   
-  // All handler functions (handleOpenModal, handleUpload, etc.) remain the same
   const handleOpenModal = (imageUrl: string) => setModalImage(imageUrl);
   const handleCloseModal = () => setModalImage(null);
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -152,9 +156,6 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewed
     } finally { setUploading(false); }
   };
 
-  // --- THIS IS THE CORRECTED RENDER LOGIC ---
-  // If we are on the main "/portfolio" route but the context is not ready yet, show a loading screen.
-  // This prevents the component from incorrectly thinking you are a visitor.
   if (!viewingArtistId && !loggedInUserArtistId) {
     return (
         <>
@@ -166,10 +167,8 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewed
     );
   }
 
-  // If a data fetch is happening, show loading.
   if (loading) return <><Navbar /><div className="portfolio-page loading-portfolio"><p className="loading-message">Loading portfolio...</p></div></>;
   
-  // If there was a real fetch error, show it.
   if (error) return <><Navbar /><div className="portfolio-page error-portfolio"><p className="error-message">{error}</p>{isOwner && <button onClick={fetchPortfolio} className="action-btn">Try Again</button>}</div></>;
 
   return (
@@ -218,13 +217,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewed
                  {itemType === 'video' && (<div className="portfolio-media portfolio-video-item"><video controls width="100%" preload="metadata" className="portfolio-video-player"><source src={item.image_url} type={selectedFile && item.image_url === URL.createObjectURL(selectedFile) ? selectedFile.type : 'video/mp4'} />Your browser does not support the video tag.</video></div>)}
                  {itemType === 'other' && (<div className="portfolio-media portfolio-other-item"><span className="file-icon" role="img" aria-label="File">📎</span><p className="file-name">{(item.description || 'File').substring(0,25)}{item.description.length > 25 ? '...' : ''}</p><a href={item.image_url} target="_blank" rel="noopener noreferrer" className="view-file-link button-style">Open File</a></div>)}
                 <div className="portfolio-item-content">
-                  {isEditingThis ? (<textarea
-    value={editDescription}
-    onChange={(e) => setEditDescription(e.target.value)} // <-- CORRECT LINE
-    className="edit-description-input"
-    rows={3} autoFocus
-/>
-) : (<p className="portfolio-description">{item.description || "No description."}</p>)}
+                  {isEditingThis ? (<textarea value={editDescription} onChange={(e) => setEditDescription(e.target.value)} className="edit-description-input" rows={3} autoFocus/>) : (<p className="portfolio-description">{item.description || "No description."}</p>)}
                   {isOwner && (
                     <div className="portfolio-actions">
                       {isEditingThis ? (<> <button onClick={() => handleSaveEdit(item.portfolio_id)} className="action-btn save" disabled={uploading}>Save</button> <button onClick={cancelEditing} className="action-btn cancel" disabled={uploading}>Cancel</button> </>) : (<button onClick={() => startEditing(item)} className="action-btn edit" disabled={uploading || showAddForm}>Edit desc</button>)}
