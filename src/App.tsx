@@ -69,17 +69,9 @@ const AppContent = () => {
         <Route path="/my-applications" element={<MyApplicationsPage />} />
 
         <Route
-          path="/portfolio" // Assumed to be "my portfolio" for logged-in artist
-          element={
-            <Portfolio
-              artistId={
-                loggedInUserTypeForRoutes === 'Artist'
-                  ? (loggedInUserIdForRoutes === null ? 0 : loggedInUserIdForRoutes) // If Artist & ID is null, pass 0 (or undefined)
-                  : 0 // If not an Artist, pass 0 (Portfolio needs to handle artistId=0 if it means "no specific artist" or "not applicable")
-              }
-            />
-          }
-        />
+  path="/portfolio"
+  element={<Portfolio />} 
+/>
         {/* Route to view any user's profile by their ID */}
         <Route path="/user-profile/:userId" element={<UserProfilePage />} />
         <Route path="/jobs/:jobId" element={<JobDetailPage />} /> {/* <<< ENSURE THIS ROUTE EXISTS */}
