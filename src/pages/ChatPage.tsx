@@ -1,26 +1,26 @@
 // src/pages/ChatPage.tsx
+
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate, Link, useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
+import io, { Socket } from 'socket.io-client'; // Import socket.io-client
 import Navbar from '../components/Navbar';
 import { useUserContext } from '../context/UserContext';
-import '../styles/ChatPage.css'; // We will provide new CSS for this layout
+import '../styles/ChatPage.css';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:50001";
 
-// --- Interfaces for our data ---
+// --- Interfaces (no changes needed here) ---
 interface OtherUser {
     user_id: number;
     fullname: string;
     profile_picture: string | null;
 }
-
 interface Chat {
     chat_id: number;
     updatedAt: string;
     otherUser: OtherUser | null;
 }
-
 interface Message {
     message_id: number;
     chat_id: number;
@@ -28,10 +28,10 @@ interface Message {
     message: string;
     createdAt: string;
 }
+// ---
 
 const ChatPage = () => {
     const { userId: loggedInUserId } = useUserContext();
-    const navigate = useNavigate();
     const [searchParams] = useSearchParams();
 
     const [chats, setChats] = useState<Chat[]>([]);
@@ -45,27 +45,53 @@ const ChatPage = () => {
     const [error, setError] = useState<string | null>(null);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
-    // Fetch the list of user's chats
+    // Use a ref to hold the socket instance to prevent re-renders from creating new connections
+    const socketRef = useRef<Socket | null>(null);
+
+    // Effect for initializing and managing the socket connection
+    useEffect(() => {
+        if (loggedInUserId) {
+            // Establish connection to the server.
+            socketRef.current = io(API_BASE_URL);
+
+            // Listen for the 'new_message' event from the server.
+            socketRef.current.on('new_message', (incomingMessage: Message) => {
+                // IMPORTANT: Only update messages if the incoming message belongs to the currently active chat.
+                // Using a callback form of setActiveChat to get the most recent state.
+                setActiveChat(currentActiveChat => {
+                    if (currentActiveChat && incomingMessage.chat_id === currentActiveChat.chat_id) {
+                        setMessages(prevMessages => [...prevMessages, incomingMessage]);
+                    }
+                    return currentActiveChat;
+                });
+            });
+
+            // Clean up the connection when the component unmounts.
+            return () => {
+                socketRef.current?.off('new_message');
+                socketRef.current?.disconnect();
+            };
+        }
+    }, [loggedInUserId]);
+
+    // Effect to fetch initial chat list (no major changes needed)
     useEffect(() => {
         const fetchUserChats = async () => {
             setLoadingChats(true);
             setError(null);
             try {
                 const token = localStorage.getItem('token');
-                // Call the new, correct endpoint
                 const response = await axios.get(`${API_BASE_URL}/api/chats/my-chats`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 const fetchedChats = response.data.chats || [];
                 setChats(fetchedChats);
 
-                // Check if URL has a chat to auto-open
                 const openChatId = searchParams.get('open');
                 if (openChatId && fetchedChats.length > 0) {
                     const chatToOpen = fetchedChats.find((c: Chat) => c.chat_id === Number(openChatId));
                     if(chatToOpen) setActiveChat(chatToOpen);
                 }
-
             } catch (err: any) {
                 setError(err.response?.data?.message || "Failed to load conversations.");
             } finally {
@@ -76,12 +102,16 @@ const ChatPage = () => {
         if (loggedInUserId) fetchUserChats();
     }, [loggedInUserId, searchParams]);
 
-    // Fetch messages when a chat becomes active
+    // Effect to fetch messages and JOIN the socket room when a chat becomes active
     useEffect(() => {
         if (!activeChat) {
             setMessages([]);
             return;
         }
+
+        // When a chat is selected, tell the server we want to join this room.
+        socketRef.current?.emit('join_chat', activeChat.chat_id.toString());
+        
         const fetchMessages = async () => {
             setLoadingMessages(true);
             try {
@@ -96,11 +126,10 @@ const ChatPage = () => {
         fetchMessages();
     }, [activeChat]);
 
-    // Scroll to bottom when new messages appear
+    // Effect to scroll to bottom (no changes needed)
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
-
 
     const handleSendMessage = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -108,26 +137,32 @@ const ChatPage = () => {
 
         try {
             const token = localStorage.getItem('token');
+            // This POST request now also triggers the socket emit on the backend for the other user
             const response = await axios.post(`${API_BASE_URL}/api/chats/send`, 
                 { chat_id: activeChat.chat_id, message: newMessage.trim() },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
             
+            // The sender adds their own message to the UI immediately for a snappy feel.
+            // The receiver will get this same message via the socket.
             setMessages(prev => [...prev, response.data.data]);
             setNewMessage('');
         } catch (err) { alert("Failed to send message."); }
     };
     
+    // getImageUrl function (no changes needed)
     const getImageUrl = (path?: string | null): string => {
         if (!path) return '/default-profile.png';
         if (path.startsWith('http')) return path;
         return `${API_BASE_URL}/${path.replace(/^uploads\/uploads\//, 'uploads/')}`;
     };
 
+    // The entire JSX return block is the same as before.
     return (
         <>
             <Navbar />
             <div className="chat-page-layout">
+                {/* Sidebar */}
                 <aside className="chat-sidebar">
                     <div className="sidebar-header"><h2>Conversations</h2></div>
                     <div className="chat-list">
@@ -148,6 +183,7 @@ const ChatPage = () => {
                     </div>
                 </aside>
 
+                {/* Main Chat Window */}
                 <main className="chat-window">
                     {activeChat ? (
                         <>
