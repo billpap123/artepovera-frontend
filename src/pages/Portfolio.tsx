@@ -213,10 +213,10 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewed
       <Navbar />
       <div className="portfolio-page">
         <div className="portfolio-header">
-            <h2>{isOwner ? "Manage My Portfolio" : (viewedArtistName ? `${viewedArtistName}'s Portfolio` : "Artist Portfolio")}</h2>
+            <h2>{isOwner ? "My portfolio" : (viewedArtistName ? `${viewedArtistName}'s Portfolio` : "Artist Portfolio")}</h2>
             {isOwner && !showAddForm && (
                 <button onClick={() => {setShowAddForm(true); setError(null);}} className="add-item-button">
-                    + Add New Work
+                    + Add new ork
                 </button>
             )}
         </div>
@@ -225,9 +225,9 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewed
 
         {isOwner && showAddForm && (
           <form onSubmit={handleUpload} className="portfolio-upload-form card-style">
-            <h3>Upload New Work</h3>
+            <h3>Upload new work</h3>
             <div className="form-group">
-              <label htmlFor="portfolioFile">Select File (Image, PDF, Video)*</label>
+              <label htmlFor="portfolioFile">Select file (Image, PDF, video)*</label>
               <input
                 id="portfolioFile" type="file" name="image"
                 accept="image/png, image/jpeg, image/gif, application/pdf, video/mp4, video/quicktime, video/webm, video/x-matroska, video/x-msvideo"
@@ -255,7 +255,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewed
 
         <div className="portfolio-grid">
           {!loading && items.length === 0 && !showAddForm && (
-            <p className="no-items-message">{isOwner ? "Your portfolio is empty. Click 'Add New Work' to get started!" : "This artist hasn't added any portfolio items yet."}</p>
+            <p className="no-items-message">{isOwner ? "Your portfolio is empty. Click 'Add new work' to get started!" : "This artist hasn't added any portfolio items yet."}</p>
           )}
           {items.map((item) => {
             const itemType = item.item_type || getItemTypeFromUrl(item.image_url);
@@ -265,12 +265,12 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewed
               <div key={item.portfolio_id} className={`portfolio-item card-style item-type-${itemType} ${isEditingThis ? 'editing' : ''}`}>
                  {itemType === 'image' && (
                   <button onClick={() => handleOpenModal(item.image_url)} className="portfolio-image-button">
-                    <img src={item.image_url} alt={item.description || 'Portfolio Image'} className="portfolio-media portfolio-image" loading="lazy"/>
+                    <img src={item.image_url} alt={item.description || 'Portfolio image'} className="portfolio-media portfolio-image" loading="lazy"/>
                   </button>
                 )}
                 {itemType === 'pdf' && (
                   <div className="portfolio-media portfolio-pdf-item">
-                    <span className="file-icon pdf-icon" role="img" aria-label="PDF Document">📄</span>
+                    <span className="file-icon pdf-icon" role="img" aria-label="PDF document">📄</span>
                     <p className="file-name">{(item.description || 'Document').substring(0, 25)}{item.description && item.description.length > 25 ? '...' : ''}</p>
                     <a href={item.image_url} target="_blank" rel="noopener noreferrer" className="view-file-link button-style">View PDF</a>
                   </div>
@@ -311,7 +311,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewed
                           <button onClick={cancelEditing} className="action-btn cancel" disabled={uploading}>Cancel</button>
                         </>
                       ) : (
-                        <button onClick={() => startEditing(item)} className="action-btn edit" disabled={uploading || showAddForm}>Edit Desc</button>
+                        <button onClick={() => startEditing(item)} className="action-btn edit" disabled={uploading || showAddForm}>Edit desc</button>
                       )}
                       <button onClick={() => handleDelete(item.portfolio_id)} className="action-btn delete" disabled={uploading || showAddForm}>Delete</button>
                     </div>

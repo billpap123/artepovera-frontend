@@ -1,253 +1,285 @@
-/* General Reset */
+/* src/styles/Navbar.css */
+
+/* --- CSS Variables and General Resets --- */
+:root {
+  --navbar-bg: #1a202c; /* A deep, dark blue-charcoal */
+  --navbar-text: #e2e8f0; /* A soft, off-white */
+  --navbar-accent: #4299e1; /* A vibrant, accessible blue */
+  --navbar-accent-dark: #2b6cb0;
+  --notification-unread-bg: #2d3748;
+  --notification-border: #4a5568;
+  --notification-badge-bg: #e53e3e; /* A strong red for visibility */
+  --box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* Navbar Container */
+/* --- Main Navbar Container --- */
 .navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #1c1f26; /* Sleek dark color */
-  color: #fff;
-  padding: 10px 20px;
+  background-color: var(--navbar-bg);
+  padding: 0.5rem 1.5rem;
+  height: 70px;
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   z-index: 1000;
-  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
-  transition: all 0.3s ease-in-out;
+  box-shadow: var(--box-shadow);
+  transition: background-color 0.3s ease;
 }
 
-/* Logo */
-.navbar .logo-link {
-  display: flex;
-  align-items: center;
-  height: 100%;
-  text-decoration: none;
+/* --- Logo Styling --- */
+.logo-link {
+  flex-shrink: 0; /* Prevents the logo from shrinking */
 }
-.navbar .logo-image {
-  height: 100px;
+
+.logo-image {
+  height: 50px; /* A more controlled, standard height */
   width: auto;
-  display: block;
+  transition: transform 0.3s ease;
 }
 
-/* Nav Links Container */
+.logo-image:hover {
+  transform: scale(1.05);
+}
+
+/* --- Navigation Links --- */
 .nav-links {
   list-style: none;
   display: flex;
   align-items: center;
-  gap: 20px;
-  margin: 0;
-  padding: 0;
+  gap: 1rem;
 }
-.nav-links li {
+
+.nav-links a,
+.nav-links button {
+  color: var(--navbar-text);
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
   display: flex;
   align-items: center;
+  gap: 0.5rem;
   position: relative;
-}
-.nav-links li a,
-.notifications-button {
-  display: flex; /* Changed to flex for consistency */
-  align-items: center;
-  gap: 6px;
-  color: #fff;
   background: none;
   border: none;
-  text-decoration: none;
-  font-size: 1rem;
-  font-weight: 500;
-  padding: 5px 10px;
   cursor: pointer;
-  transition: color 0.3s ease;
+  transition: color 0.2s ease, background-color 0.2s ease;
 }
 
-/* Hover & Active State */
-.nav-links li a:hover,
-.nav-links li a.active,
-.notifications-button:hover {
-  color: #00b4d8;
+.nav-links a:hover,
+.nav-links button:hover,
+.nav-links a.active {
+  color: white;
+  background-color: rgba(66, 153, 225, 0.1);
 }
 
-/* Underline effect only on links */
-.nav-links li a::after {
-  content: '';
-  display: block;
-  width: 0;
-  height: 2px;
-  background: #00b4d8;
-  transition: width 0.3s ease;
-}
-.nav-links li a:hover::after,
-.nav-links li a.active::after {
-  width: 100%;
+.nav-links a.active {
+  font-weight: 600;
+  color: var(--navbar-accent);
 }
 
-/* Hamburger Menu - Hidden on Desktop */
+.nav-links .register-button {
+  background-color: var(--navbar-accent);
+  color: white;
+}
+.nav-links .register-button:hover {
+  background-color: var(--navbar-accent-dark);
+}
+
+.nav-icon {
+  font-size: 1.1rem;
+}
+
+/* --- Hamburger Menu (Mobile) --- */
 .hamburger {
-  display: none;
-  flex-direction: column;
-  gap: 5px;
+  display: none; /* Hidden by default on larger screens */
   cursor: pointer;
-  transition: all 0.3s ease;
-  z-index: 1001; /* Ensure it's above the menu */
+  z-index: 1001; /* Must be on top of the mobile menu */
+  padding: 10px;
 }
+
 .hamburger span {
   display: block;
   width: 25px;
-  height: 3px;
-  background-color: #fff;
+  height: 2px;
+  background-color: var(--navbar-text);
+  margin: 5px 0;
+  transition: transform 0.3s ease, opacity 0.3s ease;
   border-radius: 2px;
-  transition: all 0.3s ease;
 }
 
-/* Mobile Navigation */
-@media screen and (max-width: 768px) {
-  .hamburger {
-    display: flex; /* Show hamburger on smaller screens */
-  }
-
-  .hamburger.open {
-    position: fixed;
-    top: 35px; /* Adjust to vertically align with your logo */
-    right: 20px;
-  }
-  .nav-links {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100vh;
-    background-color: rgba(28, 31, 38, 0.98);
-    backdrop-filter: blur(5px);
-    flex-direction: column;
-    
-    /* CHANGE THIS: Align items to the top, not the center */
-    justify-content: flex-start; 
-  
-    /* ADD THIS: Allow the entire menu to scroll if needed */
-    overflow-y: auto;
-  
-    /* ADD THIS: Give some space at the top so it's not flush with the screen edge */
-    padding-top: 120px; /* Adjust this value to look right with your logo/header */
-    
-    display: none; /* Keep this */
-    gap: 30px; /* Keep this */
-    transition: opacity 0.3s ease; /* Keep this */
-  }
-  
-  .nav-links.open {
-    display: flex;
-  }
-  .nav-links li a, .notifications-button {
-    font-size: 1.5rem; /* Make mobile links much larger */
-  }
-  
-  /* FIX FOR MOBILE NOTIFICATIONS DROPDOWN */
-  .notifications {
-    /* On mobile, make the notification container a column */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  .notifications-dropdown {
-    /* On mobile, it's not absolutely positioned. It appears in the normal flow. */
-    position: static; 
-    width: 100%;
-    max-width: 300px;
-    margin-top: 15px; /* Add space between the bell button and the dropdown */
-    box-shadow: none;
-    border: 1px solid #444;
-    background: #2a2d34;
-  }
-  /* Hide the desktop arrow on mobile */
-  .notifications-dropdown::before {
-    display: none;
-  }
-  /* --- END FIX --- */
-}
-
-/* --- CORRECTED Hamburger Animations --- */
+/* Hamburger animation to 'X' */
 .hamburger.open span:nth-child(1) {
-  transform: rotate(45deg) translate(6px, 6px);
+  transform: translateY(7px) rotate(45deg);
 }
 .hamburger.open span:nth-child(2) {
   opacity: 0;
 }
 .hamburger.open span:nth-child(3) {
-  transform: rotate(-45deg) translate(6px, -6px);
-}
-/* --- END CORRECTION --- */
-
-/* ICONS */
-.nav-icon, .bell-icon {
-  font-size: 1.2rem;
+  transform: translateY(-7px) rotate(-45deg);
 }
 
-/* Notifications (Desktop) */
+
+/* --- Notifications Bell & Dropdown --- */
 .notifications {
   position: relative;
 }
+
+.notifications-button .bell-icon {
+  font-size: 1.3rem;
+}
+
 .notification-badge {
-  position: absolute; /* Position badge relative to the bell button */
-  top: 0;
-  right: 0;
-  background-color: red;
-  color: #fff;
-  border-radius: 50%;
+  position: absolute;
+  top: 4px;
+  right: 8px;
   width: 18px;
   height: 18px;
-  font-size: 0.7rem;
+  background-color: var(--notification-badge-bg);
+  color: white;
+  border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 2px solid #1c1f26; /* Match navbar background */
+  font-size: 0.7rem;
+  font-weight: 700;
+  border: 2px solid var(--navbar-bg);
 }
 
-/* Desktop Notifications Dropdown */
-@media screen and (min-width: 769px) {
-/* In Navbar.css, inside @media screen and (max-width: 768px) */
-
 .notifications-dropdown {
-  position: static;
-  width: 90%;
-  max-width: 320px;
-  
-  /* ADD THIS: Unset the height limit from the desktop styles */
-  max-height: none; 
-  
-  /* ADD THIS: Ensure the content is visible and not scrolling independently */
-  overflow-y: visible; 
+  position: absolute;
+  top: calc(100% + 10px); /* Position below the navbar */
+  right: 0;
+  background-color: var(--navbar-bg);
+  border: 1px solid var(--notification-border);
+  border-radius: 8px;
+  width: 350px;
+  max-height: 400px;
+  overflow-y: auto;
+  box-shadow: var(--box-shadow);
+  z-index: 999;
+}
 
-  /* FIX THIS: Added a value to the margin */
-  margin-top: 15px; 
+.notifications-dropdown ul {
+  list-style: none;
+}
 
-  box-shadow: none;
-  border: 1px solid #444;
-  background: #2a2d34;
-}  .notifications-dropdown::before {
-    content: "";
-    position: absolute;
-    top: -10px;
-    right: 15px;
-    border-left: 10px solid transparent;
-    border-right: 10px solid transparent;
-    border-bottom: 10px solid #1b1b1b;
+.notifications-dropdown li {
+  padding: 1rem;
+  border-bottom: 1px solid var(--notification-border);
+  font-size: 0.9rem;
+  transition: background-color 0.2s ease;
+}
+
+.notifications-dropdown li:last-child {
+  border-bottom: none;
+}
+
+.notifications-dropdown li:hover {
+  background-color: #2d3748;
+}
+
+.notifications-dropdown .unread {
+  background-color: var(--notification-unread-bg);
+}
+.notifications-dropdown .read {
+  opacity: 0.7;
+}
+
+.notification-item {
+  color: var(--navbar-text);
+}
+
+.notification-item .timestamp {
+  font-size: 0.75rem;
+  color: #a0aec0; /* A lighter gray for timestamps */
+  margin-top: 0.25rem;
+}
+
+.notification-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.notification-actions button {
+  font-size: 0.8rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+}
+
+.mark-read-btn {
+  background-color: var(--navbar-accent);
+  color: white;
+}
+.mark-read-btn:hover {
+  background-color: var(--navbar-accent-dark);
+}
+
+.delete-notif-btn {
+  background-color: #4a5568;
+}
+.delete-notif-btn:hover {
+  background-color: #718096;
+}
+
+/* --- Responsive Design (Mobile-First) --- */
+@media screen and (max-width: 768px) {
+  .hamburger {
+    display: block; /* Show hamburger */
+  }
+
+  .nav-links {
+    display: none; /* Hide links by default */
+    position: fixed;
+    top: 70px; /* Start below the navbar */
+    left: 0;
+    width: 100%;
+    height: calc(100vh - 70px);
+    background-color: var(--navbar-bg);
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    padding-top: 2rem;
+    gap: 1.5rem;
+    overflow-y: auto;
+  }
+
+  .nav-links.open {
+    display: flex; /* Show the menu when open */
+  }
+
+  .nav-links a,
+  .nav-links button {
+    font-size: 1.2rem;
+    width: 80%;
+    justify-content: center;
+  }
+
+  /* Adjust notifications for mobile view */
+  .notifications {
+    display: contents; /* Allows button and dropdown to be treated as siblings */
+  }
+
+  .notifications-dropdown {
+    position: static; /* No longer absolute */
+    width: 90%;
+    max-width: 400px;
+    margin-top: 1rem;
+    box-shadow: none;
+    border-radius: 8px;
+    max-height: none;
+    order: 10; /* Ensure it appears after all other nav items */
   }
 }
 
-/* Shared Notification Item Styling */
-.notifications-dropdown ul { list-style: none; margin: 0; padding: 0; }
-.notifications-dropdown li { border-bottom: 1px solid #333; padding: 12px 16px; transition: background-color 0.2s ease; font-size: 0.9rem; }
-.notifications-dropdown li:last-child { border-bottom: none; }
-.notifications-dropdown li:hover { background-color: #2b2b2b; }
-.unread { font-weight: bold; background-color: #25282e; }
-.read { opacity: 0.7; }
-.notification-item { display: flex; flex-direction: column; gap: 4px; color: #ddd; }
-.notification-actions { margin-top: 8px; }
-.notifications-dropdown button { background: #007bff; color: #fff; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; margin-right: 6px; }
-.notifications-dropdown button:hover { background: #0056b3; }
-.timestamp { font-size: 0.75rem; color: #999; }
