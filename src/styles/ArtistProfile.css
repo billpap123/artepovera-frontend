@@ -628,3 +628,70 @@ button:hover {
   cursor: not-allowed;
 }
 */
+
+/* Button Color Scheme:
+  - GREEN (#28a745): Constructive actions (Add, Post, Update, Save, Submit).
+  - RED (#dc3545): Destructive actions (Delete, Remove, Cancel, Logout).
+  - ORANGE (#fd7e14): Modification actions (Edit, Upload).
+*/
+
+/* --- GENERIC/PRIMARY BUTTONS (Constructive) --- */
+.save-btn,
+.upload-cv-btn,
+.submit-btn,
+.submit-job-btn {
+  background-color: #28a745 !important; /* GREEN */
+  color: white !important;
+}
+
+.save-btn:hover:not(:disabled),
+.upload-cv-btn:hover:not(:disabled),
+.submit-btn:hover:not(:disabled),
+.submit-job-btn:hover:not(:disabled) {
+  background-color: #218838 !important; /* Darker Green */
+}
+
+
+/* --- DESTRUCTIVE/NEGATIVE BUTTONS --- */
+.logout-button,
+.cancel-btn,
+.delete-btn,
+.remove-btn,
+.delete-cv-btn {
+  background-color: #dc3545 !important; /* RED */
+  color: white !important;
+}
+
+.logout-button:hover:not(:disabled),
+.cancel-btn:hover:not(:disabled),
+.delete-btn:hover:not(:disabled),
+.remove-btn:hover:not(:disabled),
+.delete-cv-btn:hover:not(:disabled) {
+  background-color: #c82333 !important; /* Darker Red */
+}
+
+
+/* --- MODIFICATION BUTTONS --- */
+.edit-btn,
+.cv-upload-label { /* Treating 'upload' as an edit-like action */
+  background-color: #fd7e14 !important; /* ORANGE */
+  color: white !important;
+}
+
+.edit-btn:hover:not(:disabled),
+.cv-upload-label:hover:not(:disabled) {
+  background-color: #e67311 !important; /* Darker Orange */
+}
+
+
+/* --- SECONDARY/NEUTRAL BUTTONS (Outlined) --- */
+.add-btn {
+  background-color: white !important;
+  color: #28a745 !important; /* GREEN text */
+  border: 1px solid #28a745 !important;
+}
+
+.add-btn:hover {
+  background-color: #f0fff4 !important;
+}
+

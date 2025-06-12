@@ -163,3 +163,102 @@
     background-color: #dc3545;
     color: #fff;
 }
+/* Button Color Scheme:
+  - GREEN (#28a745): Constructive actions (Add, Post, Update, Save, Submit, Apply).
+  - RED (#dc3545): Destructive actions (Delete, Remove, Cancel, Logout, Clear).
+  - ORANGE (#fd7e14): Modification actions (Edit, Upload).
+  - TERRACOTTA (#C96A50): Neutral/Theme actions (View Details, Primary Calls-to-Action).
+*/
+
+/* --- GENERIC/PRIMARY BUTTONS (Constructive - GREEN) --- */
+.save-btn,
+.upload-cv-btn,
+.submit-btn,
+.submit-job-btn,
+.apply-button-large,
+.apply-button-detailed,
+.action-button { /* <-- Added .action-button */
+  background-color: #28a745 !important; /* GREEN */
+  color: white !important;
+}
+
+.save-btn:hover:not(:disabled),
+.upload-cv-btn:hover:not(:disabled),
+.submit-btn:hover:not(:disabled),
+.submit-job-btn:hover:not(:disabled),
+.apply-button-large:hover:not(:disabled),
+.apply-button-detailed:hover:not(:disabled),
+.action-button:hover:not(:disabled) { /* <-- Added .action-button */
+  background-color: #218838 !important; /* Darker Green */
+}
+
+
+/* --- DESTRUCTIVE/NEGATIVE BUTTONS (RED) --- */
+.logout-button,
+.cancel-btn,
+.delete-btn,
+.remove-btn,
+.delete-cv-btn,
+.clear-filters-button,
+.confirm-delete-btn { /* <-- Added .confirm-delete-btn */
+  background-color: #dc3545 !important; /* RED */
+  color: white !important;
+}
+
+.logout-button:hover:not(:disabled),
+.cancel-btn:hover:not(:disabled),
+.delete-btn:hover:not(:disabled),
+.remove-btn:hover:not(:disabled),
+.delete-cv-btn:hover:not(:disabled),
+.clear-filters-button:hover:not(:disabled),
+.confirm-delete-btn:hover:not(:disabled) { /* <-- Added .confirm-delete-btn */
+  background-color: #c82333 !important; /* Darker Red */
+}
+
+
+/* --- MODIFICATION BUTTONS (ORANGE) --- */
+.edit-btn,
+.cv-upload-label { /* Treating 'upload' as an edit-like action */
+  background-color: #fd7e14 !important; /* ORANGE */
+  color: white !important;
+}
+
+.edit-btn:hover:not(:disabled),
+.cv-upload-label:hover:not(:disabled) {
+  background-color: #e67311 !important; /* Darker Orange */
+}
+
+
+/* --- NEUTRAL/THEME BUTTONS (TERRACOTTA) --- */
+.view-job-button,
+.btn-primary {
+  background-color: #C96A50 !important; /* TERRACOTTA */
+  color: white !important;
+}
+
+.view-job-button:hover:not(:disabled),
+.btn-primary:hover:not(:disabled) {
+  background-color: #b05c46 !important; /* Darker Terracotta */
+}
+
+
+/* --- SECONDARY/NEUTRAL BUTTONS (Outlined) --- */
+.add-btn {
+  background-color: white !important;
+  color: #28a745 !important; /* GREEN text */
+  border: 1px solid #28a745 !important;
+}
+
+.add-btn:hover {
+  background-color: #f0fff4 !important;
+}
+
+/* --- Default 'button' tag --- */
+/* This will apply to any <button> that doesn't have a more specific class. */
+button {
+    background-color: #333333 !important; /* Charcoal Gray */
+    color: white !important;
+}
+button:hover:not(:disabled) {
+    background-color: #444444 !important; /* Dark Gray */
+}

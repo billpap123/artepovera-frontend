@@ -132,19 +132,22 @@
     line-height: 1;
     transition: background-color 0.2s;
 }
+
+/* GREEN for 'Add' action */
 .add-btn { color: #28a745; border-color: #28a745; background-color: white; }
 .add-btn:hover { background-color: #f0fff4; }
 
+/* RED for 'Remove' action */
 .remove-btn { color: #dc3545; border-color: transparent; background-color: transparent; font-size: 1.2rem; padding: 5px; }
 .remove-btn:hover { background-color: #fdf2f3; }
 
-/* --- Submit Button --- */
+/* --- Submit Button (GREEN for 'Update') --- */
 .submit-btn {
     width: 100%;
     padding: 15px;
     font-size: 1.2rem;
     font-weight: bold;
-    background-color: #007bff; /* Using the original blue for consistency */
+    background-color: #28a745; /* CHANGED from blue to green */
     color: white;
     border: none;
     border-radius: 8px;
@@ -152,7 +155,7 @@
     margin-top: 20px;
     transition: background-color 0.2s ease;
 }
-.submit-btn:hover:not(:disabled) { background-color: #0056b3; }
+.submit-btn:hover:not(:disabled) { background-color: #218838; } /* Darker green on hover */
 .submit-btn:disabled { background-color: #6c757d; cursor: wait; }
 
 /* --- Error Message --- */

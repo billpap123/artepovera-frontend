@@ -584,3 +584,138 @@ box-shadow: 0 2px 4px rgba(0,0,0,0.05);
   right: 15px;
   transform: translateY(-50%);
 }
+/* Button Color Scheme:
+  - GREEN (#28a745): Constructive actions (Add, Post, Update, Save, Submit, Apply, Reviewed).
+  - RED (#dc3545): Destructive/State Change actions (Delete, Remove, Cancel, Logout, Clear, Close, Liked, Supported).
+  - ORANGE (#fd7e14): Modification actions (Edit, Upload).
+  - TERRACOTTA (#C96A50): Neutral/Theme actions (View Details, Primary Calls-to-Action).
+  - BLUE (#17a2b8): Communication actions (Message).
+*/
+
+/* --- GENERIC/PRIMARY BUTTONS (Constructive - GREEN) --- */
+.save-btn,
+.upload-cv-btn,
+.submit-btn,
+.submit-job-btn,
+.apply-button-large,
+.apply-button-detailed,
+.action-button.save,
+.add-item-button,
+.rate-user-button.reviewed { /* <-- Added this class */
+  background-color: #28a745 !important; /* GREEN */
+  color: white !important;
+}
+
+.save-btn:hover:not(:disabled),
+.upload-cv-btn:hover:not(:disabled),
+.submit-btn:hover:not(:disabled),
+.submit-job-btn:hover:not(:disabled),
+.apply-button-large:hover:not(:disabled),
+.apply-button-detailed:hover:not(:disabled),
+.action-button.save:hover:not(:disabled),
+.add-item-button:hover:not(:disabled),
+.rate-user-button.reviewed:hover:not(:disabled) { /* <-- Added this class */
+  background-color: #218838 !important; /* Darker Green */
+}
+
+
+/* --- DESTRUCTIVE/NEGATIVE/STATE CHANGE BUTTONS (RED) --- */
+.logout-button,
+.cancel-btn,
+.delete-btn,
+.remove-btn,
+.delete-cv-btn,
+.clear-filters-button,
+.confirm-delete-btn,
+.action-button.delete,
+.close-modal-button,
+.close-btn,
+.like-button.liked,     /* <-- Added this class */
+.support-button.supported { /* <-- Added this class */
+  background-color: #dc3545 !important; /* RED */
+  color: white !important;
+}
+
+.logout-button:hover:not(:disabled),
+.cancel-btn:hover:not(:disabled),
+.delete-btn:hover:not(:disabled),
+.remove-btn:hover:not(:disabled),
+.delete-cv-btn:hover:not(:disabled),
+.clear-filters-button:hover:not(:disabled),
+.confirm-delete-btn:hover:not(:disabled),
+.action-button.delete:hover:not(:disabled),
+.close-modal-button:hover:not(:disabled),
+.close-btn:hover:not(:disabled),
+.like-button.liked:hover:not(:disabled),      /* <-- Added this class */
+.support-button.supported:hover:not(:disabled) { /* <-- Added this class */
+  background-color: #c82333 !important; /* Darker Red */
+}
+
+
+/* --- MODIFICATION BUTTONS (ORANGE) --- */
+.edit-btn,
+.cv-upload-label,
+.action-btn {
+  background-color: #fd7e14 !important; /* ORANGE */
+  color: white !important;
+}
+
+.edit-btn:hover:not(:disabled),
+.cv-upload-label:hover:not(:disabled),
+.action-btn:hover:not(:disabled) {
+  background-color: #e67311 !important; /* Darker Orange */
+}
+
+
+/* --- NEUTRAL/THEME BUTTONS (TERRACOTTA) --- */
+.view-job-button,
+.btn-primary,
+.view-file-link {
+  background-color: #C96A50 !important; /* TERRACOTTA */
+  color: white !important;
+}
+
+.view-job-button:hover:not(:disabled),
+.btn-primary:hover:not(:disabled),
+.view-file-link:hover:not(:disabled) {
+  background-color: #b05c46 !important; /* Darker Terracotta */
+}
+
+/* --- COMMUNICATION BUTTONS (BLUE) --- */
+.message-button,
+.rate-user-button { /* Base state for rate button */
+    background-color: #17a2b8 !important; /* INFO/CYAN */
+    color: white !important;
+}
+.message-button:hover:not(:disabled),
+.rate-user-button:hover:not(:disabled) {
+    background-color: #138496 !important; /* Darker info/cyan */
+}
+
+
+/* --- SECONDARY/NEUTRAL BUTTONS (Outlined) --- */
+.add-btn,
+.like-button,    /* Base state for like button */
+.support-button { /* Base state for support button */
+  background-color: white !important;
+  color: #28a745 !important; /* GREEN text */
+  border: 1px solid #28a745 !important;
+}
+
+.add-btn:hover,
+.like-button:hover:not(:disabled),
+.support-button:hover:not(:disabled) {
+  background-color: #f0fff4 !important;
+}
+
+/* --- Default 'button' tag --- */
+/* This will apply to any <button> that doesn't have a more specific class. */
+button,
+.interaction-button {
+    background-color: #333333 !important; /* Charcoal Gray */
+    color: white !important;
+}
+button:hover:not(:disabled),
+.interaction-button:hover:not(:disabled) {
+    background-color: #444444 !important; /* Dark Gray */
+}

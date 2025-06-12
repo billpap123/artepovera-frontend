@@ -143,3 +143,86 @@
 .apply-button-detailed:hover {
   background-color: #0056b3;
 }
+
+/* Button Color Scheme:
+  - GREEN (#28a745): Constructive actions (Add, Post, Update, Save, Submit, Apply).
+  - RED (#dc3545): Destructive actions (Delete, Remove, Cancel, Logout, Clear).
+  - ORANGE (#fd7e14): Modification actions (Edit, Upload).
+*/
+
+/* --- GENERIC/PRIMARY BUTTONS (Constructive - GREEN) --- */
+.save-btn,
+.upload-cv-btn,
+.submit-btn,
+.submit-job-btn,
+.apply-button-large,
+.apply-button-detailed {
+  background-color: #28a745 !important; /* GREEN */
+  color: white !important;
+}
+
+.save-btn:hover:not(:disabled),
+.upload-cv-btn:hover:not(:disabled),
+.submit-btn:hover:not(:disabled),
+.submit-job-btn:hover:not(:disabled),
+.apply-button-large:hover:not(:disabled),
+.apply-button-detailed:hover:not(:disabled) {
+  background-color: #218838 !important; /* Darker Green */
+}
+
+
+/* --- DESTRUCTIVE/NEGATIVE BUTTONS (RED) --- */
+.logout-button,
+.cancel-btn,
+.delete-btn,
+.remove-btn,
+.delete-cv-btn,
+.clear-filters-button { /* <-- Added this class */
+  background-color: #dc3545 !important; /* RED */
+  color: white !important;
+}
+
+.logout-button:hover:not(:disabled),
+.cancel-btn:hover:not(:disabled),
+.delete-btn:hover:not(:disabled),
+.remove-btn:hover:not(:disabled),
+.delete-cv-btn:hover:not(:disabled),
+.clear-filters-button:hover:not(:disabled) { /* <-- Added this class */
+  background-color: #c82333 !important; /* Darker Red */
+}
+
+
+/* --- MODIFICATION BUTTONS (ORANGE) --- */
+.edit-btn,
+.cv-upload-label { /* Treating 'upload' as an edit-like action */
+  background-color: #fd7e14 !important; /* ORANGE */
+  color: white !important;
+}
+
+.edit-btn:hover:not(:disabled),
+.cv-upload-label:hover:not(:disabled) {
+  background-color: #e67311 !important; /* Darker Orange */
+}
+
+
+/* --- SECONDARY/NEUTRAL BUTTONS (Outlined) --- */
+.add-btn {
+  background-color: white !important;
+  color: #28a745 !important; /* GREEN text */
+  border: 1px solid #28a745 !important;
+}
+
+.add-btn:hover {
+  background-color: #f0fff4 !important;
+}
+
+/* --- Default 'button' tag --- */
+/* This will apply to any <button> that doesn't have a more specific class. 
+   We'll make it a neutral, secondary action color from your original theme. */
+button {
+    background-color: #333333 !important; /* Charcoal Gray */
+    color: white !important;
+}
+button:hover:not(:disabled) {
+    background-color: #444444 !important; /* Dark Gray */
+}
