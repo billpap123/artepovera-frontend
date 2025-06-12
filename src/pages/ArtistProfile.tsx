@@ -8,7 +8,7 @@ import "../styles/ArtistProfile.css";
 import { FaFilePdf } from 'react-icons/fa';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { Upload, Trash2 } from 'lucide-react'; // <<< Import the icons
+import { Upload, Trash2 } from 'lucide-react';
 
 // --- Review Interface ---
 interface Reviewer {
@@ -239,6 +239,28 @@ const ArtistProfile: React.FC = () => {
       setCvProcessing(false);
     }
   };
+  
+  // --- NEW: CV Download Handler ---
+  const handleCvDownload = async (url: string | null) => {
+    if (!url) return;
+    try {
+      const response = await axios.get(url, {
+        responseType: 'blob', // Important to get the file as a blob
+      });
+      // Create a link element, set the download attribute, and trigger a click
+      const link = document.createElement('a');
+      link.href = window.URL.createObjectURL(new Blob([response.data]));
+      link.setAttribute('download', 'artist-cv.pdf'); // Set the desired file name
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(link.href); // Clean up the object URL
+    } catch (error) {
+      console.error("Error downloading CV:", error);
+      alert("Could not download the CV. Please try again.");
+    }
+  };
+  // --- END: CV Download Handler ---
 
   const handleCvDelete = async () => {
     if (!cvUrl) { alert("No CV to remove."); return; }
@@ -276,7 +298,6 @@ const ArtistProfile: React.FC = () => {
             <div className="profile-picture-wrapper">
               <img src={getImageUrl(profilePicture)} alt="Artist profile" className="profile-picture" />
               {isEditing && (
-                // === UPDATED CODE STARTS HERE ===
                 <div className="edit-picture-options flex items-center gap-3">
                   <label
                     htmlFor="profilePicUpload"
@@ -304,7 +325,6 @@ const ArtistProfile: React.FC = () => {
                     </button>
                   )}
                 </div>
-                // === UPDATED CODE ENDS HERE ===
               )}
             </div>
             <div className="profile-summary">
@@ -339,8 +359,17 @@ const ArtistProfile: React.FC = () => {
               </div>
               <div className="profile-section cv-section">
                 <h4>Curriculum Vitae (CV)</h4>
-                {cvUrl ? (<div className="cv-display"> <FaFilePdf className="pdf-icon" /> <a href={cvUrl} target="_blank" rel="noopener noreferrer" className="cv-link"> Download CV </a> </div>)
-                  : (<p className="no-cv-message">No CV uploaded yet.</p>)}
+                 {/* --- UPDATED CV DISPLAY --- */}
+                {cvUrl ? (
+                  <div className="cv-display">
+                    <FaFilePdf className="pdf-icon" />
+                    <button onClick={() => handleCvDownload(cvUrl)} className="cv-link">
+                      Download CV
+                    </button>
+                  </div>
+                ) : (
+                  <p className="no-cv-message">No CV uploaded yet.</p>
+                )}
               </div>
 
               <div className="reviews-section profile-section">
@@ -402,7 +431,12 @@ const ArtistProfile: React.FC = () => {
                 {newCvFile && (<button type="button" onClick={handleCvUpload} disabled={cvProcessing || saving || deleting} className="action-btn upload-cv-btn" style={{ marginTop: '10px' }}> {cvProcessing && !saving && !deleting ? "Uploading CV..." : `Upload Selected CV`} </button>)}
                 {cvUrl && (
                   <div className="current-cv-display">
-                    <span>Current CV: <FaFilePdf className="pdf-icon-inline" /> <a href={cvUrl} target="_blank" rel="noopener noreferrer" className="cv-link-inline">Download</a></span>
+                     {/* --- UPDATED CV DISPLAY (EDIT MODE) --- */}
+                    <span>Current CV: <FaFilePdf className="pdf-icon-inline" /> 
+                      <button onClick={() => handleCvDownload(cvUrl)} className="cv-link-inline">
+                        Download
+                      </button>
+                    </span>
                     {!newCvFile && (<button type="button" onClick={handleCvDelete} disabled={cvProcessing || saving || deleting} className="action-btn delete-cv-btn danger"> {cvProcessing && !saving && !deleting ? "Removing..." : "Remove CV"} </button>)}
                   </div>
                 )}
