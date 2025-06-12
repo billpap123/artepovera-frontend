@@ -4,6 +4,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { UserProvider, useUserContext } from "./context/UserContext"; // Correct import
 
 // Page imports
+import EditJobPage from './pages/EditJobPage'; // <--- IMPORT THE NEW PAGE
 import JobDetailPage from './pages/JobDetailPage'; // Make sure this page is imported
 import MyApplicationsPage from './pages/MyApplicationsPage';
 import MyJobPostingsPage from './pages/MyJobPostingsPage';
@@ -82,6 +83,7 @@ const AppContent = () => {
         {/* Route to view any user's profile by their ID */}
         <Route path="/user-profile/:userId" element={<UserProfilePage />} />
         <Route path="/jobs/:jobId" element={<JobDetailPage />} /> {/* <<< ENSURE THIS ROUTE EXISTS */}
+        <Route path="/edit-job/:job_id" element={<EditJobPage />} /> 
 
         <Route path="/job-listings" element={<JobListings />} />
         <Route
