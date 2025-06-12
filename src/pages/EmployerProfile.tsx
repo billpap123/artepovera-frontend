@@ -4,8 +4,9 @@ import axios from "axios";
 import { useUserContext } from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import ReactMarkdown from 'react-markdown'; // <<< Import the library
-import remarkGfm from 'remark-gfm'; // <<< Import the plugin for tables, links, etc.
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import { Upload, Trash2 } from 'lucide-react';
 
 import "../styles/EmployerProfile.css"; // Ensure this file exists and has styles
 
@@ -18,10 +19,10 @@ interface Reviewer {
 interface ReviewData {
   review_id: number;
   overall_rating: number | null; // Can be null for "no deal" reviews
-  specific_answers?: { 
+  specific_answers?: {
     dealMade?: 'yes' | 'no';
     noDealPrimaryReason?: string;
-    comment?: string; 
+    comment?: string;
   };
   created_at: string;
   reviewer?: Reviewer;
@@ -304,15 +305,35 @@ const EmployerProfile: React.FC = () => {
           <div className="profile-picture-wrapper">
             <img src={getImageUrl(profilePicture)} alt="Employer Profile" className="profile-picture" />
             {isEditing && (
-              <div className="edit-picture-options">
-                <label htmlFor="profilePicUpload" className="upload-pic-btn">Change</label>
-                <input id="profilePicUpload" type="file" accept="image/png, image/jpeg" onChange={handleProfilePictureChange} style={{ display: 'none' }} />
+              // === UPDATED CODE STARTS HERE ===
+              <div className="edit-picture-options flex items-center gap-3">
+                <label
+                  htmlFor="profilePicUpload"
+                  className="flex items-center gap-2 cursor-pointer bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200 ease-in-out transform hover:scale-105"
+                >
+                  <Upload size={16} />
+                  Change
+                </label>
+                <input
+                  id="profilePicUpload"
+                  type="file"
+                  accept="image/png, image/jpeg"
+                  onChange={handleProfilePictureChange}
+                  className="hidden"
+                />
                 {profilePicture && (
-                  <button type="button" className="delete-btn small" onClick={handleDeletePicture} disabled={deleting || saving}>
-                    {deleting ? "..." : "Remove"}
+                  <button
+                    type="button"
+                    className="flex items-center gap-2 delete-btn bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200 ease-in-out transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                    onClick={handleDeletePicture}
+                    disabled={deleting || saving}
+                  >
+                    <Trash2 size={16} />
+                    {deleting ? "Removing..." : "Remove"}
                   </button>
                 )}
               </div>
+              // === UPDATED CODE ENDS HERE ===
             )}
           </div>
           <div className="profile-summary">
@@ -341,7 +362,6 @@ const EmployerProfile: React.FC = () => {
             <> {/* <<< Opening Fragment */}
               <div className="profile-section">
                 <h4>Short description</h4>
-                {/* --- THIS IS THE UPDATED PART --- */}
                 <div className="bio-text markdown-content">
                   <ReactMarkdown remarkPlugins={[remarkGfm]}>
                     {bio || "*No bio provided yet.*"}
@@ -420,7 +440,6 @@ const EmployerProfile: React.FC = () => {
                 <button type="button" className="cancel-btn" onClick={handleEditToggle} disabled={saving || deleting}> Cancel </button>
               </div>
             </div>
-            // --- End Editing Mode --- Comment here is fine
           )}
         </div>
       </div>

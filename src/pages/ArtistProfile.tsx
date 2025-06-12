@@ -5,10 +5,10 @@ import { useUserContext } from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import "../styles/ArtistProfile.css";
-import { FaFilePdf } from 'react-icons/fa'; // Assuming you want to use this for PDF icons
-import ReactMarkdown from 'react-markdown'; // <<< Import the library
-import remarkGfm from 'remark-gfm'; // <<< Import the plugin for tables, links, etc.
-
+import { FaFilePdf } from 'react-icons/fa';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import { Upload, Trash2 } from 'lucide-react'; // <<< Import the icons
 
 // --- Review Interface ---
 interface Reviewer {
@@ -27,13 +27,12 @@ interface ReviewData {
   created_at: string;
   reviewer?: Reviewer;
 }
-
 // --- END Review Interface ---
 
 // --- Star Display Component ---
 const DisplayStars = ({ rating }: { rating: number | null }) => {
   if (rating === null || typeof rating !== 'number' || rating <= 0) {
-    return null; // Return null to hide stars when there's no rating
+    return null;
   }
   const fullStars = Math.floor(rating);
   const halfStar = Math.round(rating * 2) % 2 !== 0 ? 1 : 0;
@@ -49,7 +48,8 @@ const DisplayStars = ({ rating }: { rating: number | null }) => {
       {[...Array(validEmpty)].map((_, i) => <span key={`empty-${i}`} className="star empty">☆</span>)}
     </div>
   );
-};// --- END Star Display Component ---
+};
+// --- END Star Display Component ---
 
 // --- Formatting Function ---
 const formatDate = (dateString: string | undefined | null): string => {
@@ -257,8 +257,8 @@ const ArtistProfile: React.FC = () => {
     } finally {
       setCvProcessing(false);
     }
-
   };
+
   const completedReviews = useMemo(() => reviews.filter((r: ReviewData) => r.specific_answers?.dealMade !== 'no' && r.overall_rating), [reviews]);
   const interactionReviews = useMemo(() => reviews.filter((r: ReviewData) => r.specific_answers?.dealMade === 'no'), [reviews]);
 
@@ -272,43 +272,65 @@ const ArtistProfile: React.FC = () => {
       <Navbar />
       <div className="profile-container artist-profile-container">
 
-        {/* This header is now fixed and structured like the Employer profile */}
         <div className="profile-header">
             <div className="profile-picture-wrapper">
               <img src={getImageUrl(profilePicture)} alt="Artist profile" className="profile-picture" />
-              {isEditing && ( 
-                <div className="edit-picture-options"> 
-                  <label htmlFor="profilePicUpload" className="upload-pic-btn">Change</label> 
-                  <input id="profilePicUpload" type="file" accept="image/png, image/jpeg" onChange={handleProfilePictureChange} style={{display: 'none'}} /> 
-                  {profilePicture && (<button type="button" className="delete-btn small" onClick={handleDeletePicture} disabled={deleting || saving || cvProcessing}> {deleting ? "..." : "Remove"} </button> )} 
-                </div> 
+              {isEditing && (
+                // === UPDATED CODE STARTS HERE ===
+                <div className="edit-picture-options flex items-center gap-3">
+                  <label
+                    htmlFor="profilePicUpload"
+                    className="flex items-center gap-2 cursor-pointer bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200 ease-in-out transform hover:scale-105"
+                  >
+                    <Upload size={16} />
+                    Change
+                  </label>
+                  <input
+                    id="profilePicUpload"
+                    type="file"
+                    accept="image/png, image/jpeg"
+                    onChange={handleProfilePictureChange}
+                    className="hidden"
+                  />
+                  {profilePicture && (
+                    <button
+                      type="button"
+                      className="flex items-center gap-2 delete-btn bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200 ease-in-out transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                      onClick={handleDeletePicture}
+                      disabled={deleting || saving || cvProcessing}
+                    >
+                      <Trash2 size={16} />
+                      {deleting ? "Removing..." : "Remove"}
+                    </button>
+                  )}
+                </div>
+                // === UPDATED CODE ENDS HERE ===
               )}
             </div>
             <div className="profile-summary">
                  <h3 className="profile-name">{profileUserName || 'Artist Name'}</h3>
                  {isStudent && (<span className="student-badge">STUDENT ARTIST</span>)}
-                 <div className="average-rating-display"> 
-                    {reviewsLoading ? ( <span>Loading rating...</span> ) 
-                    : completedReviews.length > 0 && averageRating ? ( 
-                        <> 
-                            <DisplayStars rating={averageRating} /> 
-                            <span className="rating-value">{averageRating.toFixed(1)}</span> 
-                            <span className="review-count">({completedReviews.length} project review{completedReviews.length !== 1 ? 's' : ''})</span> 
-                        </> 
-                    ) : ( <span className="no-rating">No project reviews yet</span> )} 
+                 <div className="average-rating-display">
+                    {reviewsLoading ? ( <span>Loading rating...</span> )
+                    : completedReviews.length > 0 && averageRating ? (
+                        <>
+                            <DisplayStars rating={averageRating} />
+                            <span className="rating-value">{averageRating.toFixed(1)}</span>
+                            <span className="review-count">({completedReviews.length} project review{completedReviews.length !== 1 ? 's' : ''})</span>
+                        </>
+                    ) : ( <span className="no-rating">No project reviews yet</span> )}
                 </div>
                  {!isEditing && ( <button className="edit-btn" onClick={handleEditToggle}> Edit Profile </button> )}
             </div>
         </div>
-        
-        {/* The profile title is removed from here to match the new header layout */}
+
         {error && isEditing && <p className="error-message inline-error">{error}</p>}
 
         <div className="profile-content">
           {!isEditing ? (
             <>
-              <div className="profile-section"> 
-                <h4>Short description:</h4>  
+              <div className="profile-section">
+                <h4>Short description:</h4>
                 <div className="bio-text markdown-content">
                   <ReactMarkdown remarkPlugins={[remarkGfm]}>
                     {bio || "*No bio provided yet.*"}
@@ -320,7 +342,7 @@ const ArtistProfile: React.FC = () => {
                 {cvUrl ? (<div className="cv-display"> <FaFilePdf className="pdf-icon" /> <a href={cvUrl} target="_blank" rel="noopener noreferrer" className="cv-link"> Download CV </a> </div>)
                   : (<p className="no-cv-message">No CV uploaded yet.</p>)}
               </div>
-              
+
               <div className="reviews-section profile-section">
                      <h4>Project Reviews ({completedReviews.length})</h4>
                      {reviewsLoading ? ( <p>Loading...</p> ) : completedReviews.length > 0 ? ( <div className="reviews-list"> {completedReviews.map((review: ReviewData) => (
@@ -331,7 +353,7 @@ const ArtistProfile: React.FC = () => {
                                 <div className="review-stars"> <DisplayStars rating={review.overall_rating} /> </div>
                             </div>
                             {review.specific_answers?.comment && ( <p className="review-comment">"{review.specific_answers.comment}"</p> )}
-                        </div> 
+                        </div>
                      ))} </div>
                      ) : ( <p className="no-reviews">No project reviews have been submitted for this artist yet.</p> )}
               </div>
@@ -372,8 +394,8 @@ const ArtistProfile: React.FC = () => {
             <div className="edit-form">
               <div className="form-field-group"> <label htmlFor="artistBio">Short description:</label> <textarea id="artistBio" value={newBio} onChange={(e) => setNewBio(e.target.value)} rows={5} className="bio-input" /> </div>
               <div className="form-field-group cv-edit-section">
-                <label htmlFor="cvUpload" className="cv-section-title">Update Curriculum Vitae (PDF only):</label> {/* Use specific title class */}
-                <label htmlFor="cvUpload" className="cv-upload-label action-btn"> {/* Styled label for file input */}
+                <label htmlFor="cvUpload" className="cv-section-title">Update Curriculum Vitae (PDF only):</label>
+                <label htmlFor="cvUpload" className="cv-upload-label action-btn">
                   {newCvFile ? `Selected: ${newCvFile.name.substring(0, 25)}${newCvFile.name.length > 25 ? '...' : ''}` : (cvUrl ? "Change CV File" : "Choose CV File")}
                 </label>
                 <input id="cvUpload" type="file" accept="application/pdf" onChange={handleCvFileChange} style={{ display: 'none' }} className="file-input-hidden" />
@@ -387,7 +409,6 @@ const ArtistProfile: React.FC = () => {
                 {!cvUrl && !newCvFile && <p className="no-cv-message-edit">No CV uploaded yet. Choose one above.</p>}
               </div>
               <div className="btn-row form-actions">
-                {/* This is the button that was causing the error on line 331 */}
                 <button className="save-btn submit-btn" onClick={handleSaveChanges} disabled={saving || deleting || cvProcessing}> {saving ? "Saving Profile..." : "Save changes"} </button>
                 <button type="button" className="cancel-btn" onClick={handleEditToggle} disabled={saving || deleting || cvProcessing}> Done Editing </button>
               </div>
