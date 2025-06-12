@@ -17,8 +17,12 @@ interface Reviewer {
 }
 interface ReviewData {
   review_id: number;
-  overall_rating: number;
-  specific_answers?: { comment?: string; };
+  overall_rating: number | null; // Can be null for "no deal" reviews
+  specific_answers?: { 
+    dealMade?: 'yes' | 'no';
+    noDealPrimaryReason?: string;
+    comment?: string; 
+  };
   created_at: string;
   reviewer?: Reviewer;
 }
@@ -37,7 +41,9 @@ const formatDate = (dateString: string | undefined | null): string => {
 
 // --- Star Display Component ---
 const DisplayStars = ({ rating }: { rating: number | null }) => {
-  if (rating === null || typeof rating !== 'number' || rating <= 0) { return <span className="no-rating">(No rating yet)</span>; }
+  if (rating === null || typeof rating !== 'number' || rating <= 0) {
+    return null; // Return null to hide stars when there's no rating
+  }
   const fullStars = Math.floor(rating);
   const halfStar = Math.round(rating * 2) % 2 !== 0 ? 1 : 0;
   const emptyStars = 5 - fullStars - halfStar;
@@ -52,8 +58,8 @@ const DisplayStars = ({ rating }: { rating: number | null }) => {
     </div>
   );
 };
-// --- END Star Display Component ---
 
+// --- END Star Display Component ---
 
 const EmployerProfile: React.FC = () => {
   const { userId, setUserId, employerId, setEmployerId } = useUserContext();
@@ -266,6 +272,15 @@ const EmployerProfile: React.FC = () => {
     }
   };
   // --- END UPDATED handleDeletePicture ---
+  const completedReviews = useMemo(() => reviews.filter((r: ReviewData) => r.specific_answers?.dealMade !== 'no' && r.overall_rating), [reviews]);
+  const interactionReviews = useMemo(() => reviews.filter((r: ReviewData) => r.specific_answers?.dealMade === 'no'), [reviews]);
+
+  // --- FIX: Add getImageUrl helper function ---
+  const getImageUrl = (path?: string | null): string => {
+    if (!path) return '/default-profile.png';
+    if (path.startsWith('http')) return path;
+    return `${BACKEND_URL}/${path.replace(/^uploads\/uploads\//, 'uploads/')}`;
+  };
 
 
   if (loading) {
@@ -287,9 +302,8 @@ const EmployerProfile: React.FC = () => {
         {/* Profile Header */}
         <div className="profile-header">
           <div className="profile-picture-wrapper">
-            <img src={profilePicture ? profilePicture : "/default-profile.png"} alt="Employer Profile" className="profile-picture" />
+            <img src={getImageUrl(profilePicture)} alt="Employer Profile" className="profile-picture" />
             {isEditing && (
-              // This is the correct code for EmployerProfile.tsx
               <div className="edit-picture-options">
                 <label htmlFor="profilePicUpload" className="upload-pic-btn">Change</label>
                 <input id="profilePicUpload" type="file" accept="image/png, image/jpeg" onChange={handleProfilePictureChange} style={{ display: 'none' }} />
@@ -303,15 +317,22 @@ const EmployerProfile: React.FC = () => {
           </div>
           <div className="profile-summary">
             <h3 className="profile-name">{profileUserName || 'Employer Name'}</h3>
-            {/* Average Rating Display */}
             <div className="average-rating-display">
               {reviewsLoading ? (<span>Loading rating...</span>)
-                : reviewCount > 0 ? (<> <DisplayStars rating={averageRating} /> <span className="rating-value">{averageRating?.toFixed(1)}</span> <span className="review-count">({reviewCount} review{reviewCount !== 1 ? 's' : ''})</span> </>)
-                  : (<span className="no-rating">No reviews yet</span>)}
+                : completedReviews.length > 0 && averageRating ? (
+                  <>
+                    <DisplayStars rating={averageRating} />
+                    <span className="rating-value">{averageRating.toFixed(1)}</span>
+                    <span className="review-count">({completedReviews.length} project review{completedReviews.length !== 1 ? 's' : ''})</span>
+                  </>
+                ) : (
+                  <span className="no-rating">No project reviews yet</span>
+                )}
             </div>
-            {!isEditing && (<button className="edit-btn" onClick={handleEditToggle}> Edit profile </button>)}
+            {!isEditing && (<button className="edit-btn" onClick={handleEditToggle}>Edit Profile</button>)}
           </div>
         </div>
+
 
         {/* Main Profile Content */}
         <div className="profile-content">
@@ -328,22 +349,64 @@ const EmployerProfile: React.FC = () => {
                 </div>
               </div>
               <div className="reviews-section profile-section">
-                <h4>Reviews Received ({reviewCount})</h4>
+                <h4>Project Reviews ({completedReviews.length})</h4>
                 {reviewsLoading ? (<p>Loading reviews...</p>)
-                  : reviews.length > 0 ? (
-                    <div className="reviews-list"> {reviews.map((review) => (
-                      <div key={review.review_id} className="review-item">
-                        <div className="review-header">
-                          <img src={review.reviewer?.profile_picture || '/default-profile.png'} alt={review.reviewer?.fullname || 'Reviewer'} className="reviewer-pic" />
-                          <div className="reviewer-info"> <strong>{review.reviewer?.fullname || 'Anonymous'}</strong> <span className="review-date">{formatDate(review.created_at || (review as any).createdAt)}</span> </div>
-                          <div className="review-stars"> <DisplayStars rating={review.overall_rating} /> </div>
+                  : completedReviews.length > 0 ? (
+                    <div className="reviews-list">
+                      {completedReviews.map((review) => (
+                        <div key={review.review_id} className="review-item">
+                          <div className="review-header">
+                            <img src={getImageUrl(review.reviewer?.profile_picture)} alt={review.reviewer?.fullname} className="reviewer-pic" />
+                            <div className="reviewer-info">
+                              <strong>{review.reviewer?.fullname || 'Anonymous'}</strong>
+                              <span className="review-date">{formatDate(review.created_at)}</span>
+                            </div>
+                            <div className="review-stars"><DisplayStars rating={review.overall_rating} /></div>
+                          </div>
+                          {review.specific_answers?.comment && (<p className="review-comment">"{review.specific_answers.comment}"</p>)}
                         </div>
-                        {review.specific_answers?.comment && (<p className="review-comment">"{review.specific_answers.comment}"</p>)}
-                      </div>))}
+                      ))}
                     </div>
-                  ) : (<p className="no-reviews">No reviews have been submitted for this employer yet.</p>)}
+                  ) : (
+                    <p className="no-reviews">You haven't received any project reviews yet.</p>
+                  )}
               </div>
-            </> // <<< --- FIX: Added missing closing fragment tag ---
+
+              {/* --- FIX: Interaction Feedback Section --- */}
+              <div className="reviews-section profile-section">
+                <h4>Interaction Feedback ({interactionReviews.length})</h4>
+                 {reviewsLoading ? (<p>Loading feedback...</p>)
+                  : interactionReviews.length > 0 ? (
+                    <div className="reviews-list">
+                      {interactionReviews.map((review) => (
+                        <div key={review.review_id} className="review-item interaction-review">
+                          <div className="review-header">
+                            <img src={getImageUrl(review.reviewer?.profile_picture)} alt={review.reviewer?.fullname} className="reviewer-pic" />
+                            <div className="reviewer-info">
+                              <strong>{review.reviewer?.fullname || 'Anonymous'}</strong>
+                              <span className="review-date">{formatDate(review.created_at)}</span>
+                            </div>
+                          </div>
+                          <div className="review-comment">
+                            {review.specific_answers?.noDealPrimaryReason && (
+                              <p className="interaction-reason">
+                                <strong>Reason:</strong> {review.specific_answers.noDealPrimaryReason}
+                              </p>
+                            )}
+                            {review.specific_answers?.comment && (
+                              <p><strong>Comment:</strong> "{review.specific_answers.comment}"</p>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="no-reviews">No interaction feedback to show.</p>
+                  )}
+              </div>
+
+            </>
+
           ) : (
             // --- Editing Mode ---
             <div className="edit-form">

@@ -35,7 +35,7 @@ interface Reviewer {
 
 interface ReviewData {
   review_id: number;
-  overall_rating: number; // This can be 0 for "no" reviews now
+  overall_rating: number | null; // Can be null for "no deal" reviews
   specific_answers?: {
     dealMade?: 'yes' | 'no';
     noDealPrimaryReason?: string;
@@ -112,29 +112,29 @@ const DisplayHearts = ({ rating }: { rating: number | null }) => {
 const HeartRatingInput = ({ rating, setRating }: { rating: number, setRating: (r: number) => void }) => {
   const [hover, setHover] = useState(0);
   return (
-      <div className="heart-rating-input">
-          {[1, 2, 3, 4, 5].map((value) => (
-              <span 
-                  key={value} 
-                  // --- MODIFY THIS LINE ---
-                  onClick={() => {
-                      console.log('Heart clicked! Value:', value); // Add this log
-                      setRating(value);
-                  }} 
-                  onMouseEnter={() => setHover(value)} 
-                  onMouseLeave={() => setHover(0)}
-              >
-                  <FaHeart size={28} className={`heart-icon-input ${value <= (hover || rating) ? 'active' : ''}`} />
-              </span>
-          ))}
-      </div>
+    <div className="heart-rating-input">
+      {[1, 2, 3, 4, 5].map((value) => (
+        <span
+          key={value}
+          // --- MODIFY THIS LINE ---
+          onClick={() => {
+            console.log('Heart clicked! Value:', value); // Add this log
+            setRating(value);
+          }}
+          onMouseEnter={() => setHover(value)}
+          onMouseLeave={() => setHover(0)}
+        >
+          <FaHeart size={28} className={`heart-icon-input ${value <= (hover || rating) ? 'active' : ''}`} />
+        </span>
+      ))}
+    </div>
   );
 };
 
 
 const DisplayStars = ({ rating }: { rating: number | null }) => {
   if (rating === null || typeof rating !== 'number' || rating <= 0) {
-    return <span className="no-rating">(Not rated yet)</span>;
+    return null; // Return null instead of text to allow for more flexible display
   }
   const fullStars = Math.floor(rating);
   const halfStar = Math.round(rating * 2) % 2 !== 0 ? 1 : 0;
@@ -156,7 +156,7 @@ const UserProfilePage: React.FC = () => {
   const { userId: userIdFromParams } = useParams<{ userId: string }>();
   const navigate = useNavigate();
   const [supportRating, setSupportRating] = useState(0);
-  
+
   console.log('Current supportRating state is:', supportRating); // <-- ADD THIS LOG
 
   // --- State Declarations ---
@@ -282,54 +282,54 @@ const UserProfilePage: React.FC = () => {
   const handleCommentSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!userProfile) {
-        console.error("Cannot submit comment, user profile data not loaded yet.");
-        return;
+      console.error("Cannot submit comment, user profile data not loaded yet.");
+      return;
     }
     // Validation now correctly checks the rating state and comment text
     if (!newComment.trim() || supportRating === 0) {
-        alert("Please provide a rating and a comment for your viewpoint.");
-        return;
+      alert("Please provide a rating and a comment for your viewpoint.");
+      return;
     }
     if (!loggedInUser || loggedInUser.user_type !== 'Artist' || userProfile.user_type !== 'Artist' || loggedInUser.user_id === userProfile.user_id) {
-        alert("Only artists can comment on other artists' profiles.");
-        return;
+      alert("Only artists can comment on other artists' profiles.");
+      return;
     }
 
     setIsSubmittingComment(true);
     try {
-        const token = localStorage.getItem('token');
-        const response = await axios.post(
-            `${API_BASE_URL}/api/users/${userProfile.user_id}/comments`,
-            {
-                comment_text: newComment.trim(),
-                support_rating: supportRating // Send the rating
-            },
-            { headers: { Authorization: `Bearer ${token}` } }
-        );
+      const token = localStorage.getItem('token');
+      const response = await axios.post(
+        `${API_BASE_URL}/api/users/${userProfile.user_id}/comments`,
+        {
+          comment_text: newComment.trim(),
+          support_rating: supportRating // Send the rating
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
 
-        // --- THIS IS THE FIX ---
-        // The backend now returns the complete, perfect comment object with all details.
-        // We can use it directly. No more manual object creation is needed!
-        const newCommentData = response.data.comment;
+      // --- THIS IS THE FIX ---
+      // The backend now returns the complete, perfect comment object with all details.
+      // We can use it directly. No more manual object creation is needed!
+      const newCommentData = response.data.comment;
 
-        // Add the object from the server directly to our state
-        setProfileComments(prevComments => [newCommentData, ...prevComments]);
-        
-        // Also update the count locally for an instant UI change
-        setViewpointCount(prev => prev + 1);
+      // Add the object from the server directly to our state
+      setProfileComments(prevComments => [newCommentData, ...prevComments]);
 
-        // Reset the form
-        setNewComment("");
-        setSupportRating(0); 
-        setHasCommented(true);
+      // Also update the count locally for an instant UI change
+      setViewpointCount(prev => prev + 1);
+
+      // Reset the form
+      setNewComment("");
+      setSupportRating(0);
+      setHasCommented(true);
 
     } catch (err: any) {
-        if (err.response?.status === 409) { setHasCommented(true); }
-        alert(err.response?.data?.message || "Failed to submit viewpoint.");
+      if (err.response?.status === 409) { setHasCommented(true); }
+      alert(err.response?.data?.message || "Failed to submit viewpoint.");
     } finally {
-        setIsSubmittingComment(false);
+      setIsSubmittingComment(false);
     }
-};
+  };
 
   const getImageUrl = (path?: string | null): string => {
     if (!path) return '/default-profile.png';
@@ -433,17 +433,17 @@ const UserProfilePage: React.FC = () => {
 
         const [profileResponse, ratingResponse, reviewsResponse, commentsResponse] = await Promise.all([
           profilePromise, ratingPromise, reviewsPromise, commentsPromise
-          
+
         ]);
         const [
-          profileRes, 
-          ratingRes, 
-          reviewsRes, 
-          commentsRes, 
+          profileRes,
+          ratingRes,
+          reviewsRes,
+          commentsRes,
           avgSupportRes // <-- And get its result here
-      ] = await Promise.all([
-        profilePromise, ratingPromise, reviewsPromise, commentsPromise, avgSupportPromise
-      ]);
+        ] = await Promise.all([
+          profilePromise, ratingPromise, reviewsPromise, commentsPromise, avgSupportPromise
+        ]);
         if (!isMounted) return;
 
         const fetchedUserProfile = profileResponse.data;
@@ -452,7 +452,7 @@ const UserProfilePage: React.FC = () => {
         setReviewCount(ratingResponse.data.reviewCount);
         setReviews(reviewsResponse.data.reviews || []);
         setProfileComments(commentsResponse.data.comments || []);
-        
+
         // And finally, set the state with the new data
         setAvgSupportRating(avgSupportRes.data.averageRating);
         setViewpointCount(avgSupportRes.data.viewpointCount);
@@ -699,35 +699,49 @@ const UserProfilePage: React.FC = () => {
 
             {interactionReviews.length > 0 && (
               <div className="interaction-feedback-section profile-section-public">
-                <h4>Interaction feedback ({interactionReviews.length})</h4>
-                <p className="section-subtext">
-                  Feedback from users who communicated but did not start a project.
-                </p>
-                <div className="reviews-list">
-                  {interactionReviews.map(review => {
-                    const communicationRating = review.specific_answers?.communicationRating_noDeal || 0;
-                    const primaryReason = review.specific_answers?.noDealPrimaryReason;
-                    const comment = review.specific_answers?.comment;
+                <h4>Interaction Feedback ({interactionReviews.length})</h4>
+                {reviewsLoading ? (<p>Loading feedback...</p>)
+                  : interactionReviews.length > 0 ? (
+                    <div className="reviews-list">
+                      {interactionReviews.map((review) => {
+                        const primaryReason = review.specific_answers?.noDealPrimaryReason;
+                        const comment = review.specific_answers?.comment;
 
-                    return (
-                      <div key={review.review_id} className="review-item interaction-review-item">
-                        <div className="review-header">
-                          <DisplayStars rating={communicationRating} />
-                          <span className="review-date">{formatDate(review.created_at)}</span>
-                        </div>
-                        {primaryReason && (
-                          <p className="interaction-reason">
-                            <strong>Reason:</strong> {primaryReason}
-                          </p>
-                        )}
-                        {comment && (
-                          <p className="review-comment">"{comment}"</p>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
+                        return (
+                          <div key={review.review_id} className="review-item interaction-review-item">
+                            {/* --- Re-using the same structure as a normal review --- */}
+                            <div className="review-header">
+                              <img src={getImageUrl(review.reviewer?.profile_picture)} alt={review.reviewer?.fullname} className="reviewer-pic" />
+                              <div className="reviewer-info">
+                                <strong>{review.reviewer?.fullname || 'Anonymous'}</strong>
+                                <span className="review-date">{formatDate(review.created_at)}</span>
+                              </div>
+                              {/* No stars are shown, but we could add a tag */}
+                              <span className="interaction-tag">No Deal</span>
+                            </div>
+
+                            {/* --- Display the reason and comment --- */}
+                            <div className="review-comment">
+                              {primaryReason && (
+                                <p className="interaction-reason">
+                                  <strong>Reason:</strong> {primaryReason}
+                                </p>
+                              )}
+                              {comment && (
+                                <p>
+                                  <strong>Comment:</strong> "{comment}"
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <p className="no-reviews">No interaction feedback to show.</p>
+                  )}
               </div>
+
             )}
 
             {/* Artist Comments Section */}
@@ -809,29 +823,29 @@ const UserProfilePage: React.FC = () => {
 
             {isArtistProfile ? (
               <div className="portfolio-section profile-section-public">
-              <h4>Portfolio</h4>
-              {loading && portfolio.length === 0 ? <p>Loading portfolio...</p> :
-                portfolio.length === 0 ? (<p>No portfolio items.</p>) : (
-                  <div className="portfolio-items">
-                    {/* The index is passed to openGallery */}
-                    {portfolio.map((item, index) => (
-                      <div key={item.portfolio_id} className="portfolio-item-card">
-                        {item.image_url && (
-                          <img 
-                            className="portfolio-image" 
-                            src={getImageUrl(item.image_url)} 
-                            alt="Portfolio item" 
-                            onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/default-portfolio.png'; }}
-                            onClick={() => openGallery(index)} // <-- THIS IS THE TRIGGER
-                          />
-                        )}
-                        <p>{item.description || 'No description'}</p>
-                      </div>
-                    ))}
-                  </div>
-                )}
-            </div>
-  
+                <h4>Portfolio</h4>
+                {loading && portfolio.length === 0 ? <p>Loading portfolio...</p> :
+                  portfolio.length === 0 ? (<p>No portfolio items.</p>) : (
+                    <div className="portfolio-items">
+                      {/* The index is passed to openGallery */}
+                      {portfolio.map((item, index) => (
+                        <div key={item.portfolio_id} className="portfolio-item-card">
+                          {item.image_url && (
+                            <img
+                              className="portfolio-image"
+                              src={getImageUrl(item.image_url)}
+                              alt="Portfolio item"
+                              onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/default-portfolio.png'; }}
+                              onClick={() => openGallery(index)} // <-- THIS IS THE TRIGGER
+                            />
+                          )}
+                          <p>{item.description || 'No description'}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+              </div>
+
             ) : (
               <div className="job-postings-section profile-section-public">
                 <h4>Active job postings</h4>
@@ -869,45 +883,45 @@ const UserProfilePage: React.FC = () => {
                 )}
               </div>
 
-              
+
 
             )}
           </div> {/* End profile-content-public */}
-      {/* The Gallery Modal is now placed here, at the top level, outside the page layout */}
-      {isGalleryOpen && portfolio.length > 0 && (
-        <div className="gallery-overlay" onClick={closeGallery}>
-          <button className="gallery-close-btn" onClick={closeGallery} aria-label="Close gallery">
-            <FaTimes size={30} />
-          </button>
-          
-          <button 
-            className="gallery-nav-btn prev" 
-            onClick={(e) => { e.stopPropagation(); showPrevImage(); }}
-            aria-label="Previous image"
-          >
-            <FaChevronLeft size={40} />
-          </button>
-          
-          <div className="gallery-content" onClick={(e) => e.stopPropagation()}>
-            <img 
-              src={getImageUrl(portfolio[currentImageIndex].image_url)} 
-              alt={portfolio[currentImageIndex].description || 'Portfolio image'} 
-            />
-            <div className="gallery-info">
-              <p className="gallery-description">{portfolio[currentImageIndex].description}</p>
-              <p className="gallery-counter">{currentImageIndex + 1} / {portfolio.length}</p>
+          {/* The Gallery Modal is now placed here, at the top level, outside the page layout */}
+          {isGalleryOpen && portfolio.length > 0 && (
+            <div className="gallery-overlay" onClick={closeGallery}>
+              <button className="gallery-close-btn" onClick={closeGallery} aria-label="Close gallery">
+                <FaTimes size={30} />
+              </button>
+
+              <button
+                className="gallery-nav-btn prev"
+                onClick={(e) => { e.stopPropagation(); showPrevImage(); }}
+                aria-label="Previous image"
+              >
+                <FaChevronLeft size={40} />
+              </button>
+
+              <div className="gallery-content" onClick={(e) => e.stopPropagation()}>
+                <img
+                  src={getImageUrl(portfolio[currentImageIndex].image_url)}
+                  alt={portfolio[currentImageIndex].description || 'Portfolio image'}
+                />
+                <div className="gallery-info">
+                  <p className="gallery-description">{portfolio[currentImageIndex].description}</p>
+                  <p className="gallery-counter">{currentImageIndex + 1} / {portfolio.length}</p>
+                </div>
+              </div>
+
+              <button
+                className="gallery-nav-btn next"
+                onClick={(e) => { e.stopPropagation(); showNextImage(); }}
+                aria-label="Next image"
+              >
+                <FaChevronRight size={40} />
+              </button>
             </div>
-          </div>
-          
-          <button 
-            className="gallery-nav-btn next" 
-            onClick={(e) => { e.stopPropagation(); showNextImage(); }}
-            aria-label="Next image"
-          >
-            <FaChevronRight size={40} />
-          </button>
-        </div>
-      )}
+          )}
 
           {/* Rating Form Modal (General Reviews) */}
           {isRatingFormOpen && loggedInUser && profile && (
@@ -923,7 +937,7 @@ const UserProfilePage: React.FC = () => {
         </div> {/* End profile-card */}
       </div> {/* End user-profile-page */}
     </>
-    
+
   );
 };
 
