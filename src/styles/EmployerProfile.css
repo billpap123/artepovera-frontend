@@ -552,3 +552,63 @@ button {
 button:hover:not(:disabled) {
     background-color: #444444 !important; /* Dark Gray */
 }
+/****************************************
+ * RESPONSIVE DESIGN (For Employer Profile)
+ ****************************************/
+ @media screen and (max-width: 768px) {
+  #root {
+    padding: 10px;
+  }
+
+  .navbar {
+    padding: 10px 20px;
+    flex-direction: column;
+    height: auto;
+  }
+
+  .navbar .logo {
+    margin-bottom: 10px;
+  }
+
+  .navbar a {
+    margin: 5px 0;
+  }
+
+  .main-content {
+    margin-top: 150px; /* Adjust for taller mobile navbar */
+    padding: 0 10px;
+  }
+  
+  /* Use the employer-specific class name here */
+  .employer-profile-container {
+    padding: 20px; /* Drastically reduce padding for mobile */
+    margin: 20px 10px; /* Reduce margin */
+  }
+
+  .profile-title {
+    font-size: 1.5rem; /* Reduce title font size */
+  }
+
+  .profile-header {
+    flex-direction: column; /* Stack header items vertically */
+    align-items: center;
+    gap: 15px;
+    text-align: center;
+  }
+
+  .profile-picture {
+    width: 120px; /* Smaller profile picture */
+    height: 120px;
+  }
+
+  .review-comment {
+    padding-left: 0; /* Remove indent on mobile */
+    text-align: center;
+  }
+
+  .review-header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+}
