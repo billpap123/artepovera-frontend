@@ -235,6 +235,11 @@
 
 /* --- Responsive Design --- */
 @media screen and (max-width: 768px) {
+  /* Add padding to the top of the body to push content down */
+  body {
+    padding-top: 70px; /* This should match your navbar height */
+  }
+
   /* On mobile, the navbar remains a flex row, but we hide the desktop links */
   .navbar .nav-links {
       display: none;
