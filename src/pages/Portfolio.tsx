@@ -35,6 +35,7 @@ const getItemTypeFromUrl = (url: string): 'image' | 'pdf' | 'video' | 'other' =>
 
 const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewedArtistName }) => {
   const { userId: loggedInUserId, artistId: loggedInUserArtistId } = useUserContext();
+  console.log("PORTFOLIO CONTEXT CHECK:", useUserContext());
 
   const targetArtistId = viewingArtistId || loggedInUserArtistId;
   const isOwner = !!loggedInUserArtistId && (targetArtistId === loggedInUserArtistId);
