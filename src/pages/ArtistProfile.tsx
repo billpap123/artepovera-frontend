@@ -308,7 +308,7 @@ const ArtistProfile: React.FC = () => {
               </>
             ) : (
               <div className="edit-form">
-                <div className="form-field-group"> <label htmlFor="artistBio">Bio:</label> <textarea id="artistBio" value={newBio} onChange={(e) => setNewBio(e.target.value)} rows={5} className="bio-input" /> </div>
+                <div className="form-field-group"> <label htmlFor="artistBio">Short description:</label> <textarea id="artistBio" value={newBio} onChange={(e) => setNewBio(e.target.value)} rows={5} className="bio-input" /> </div>
                 <div className="form-field-group cv-edit-section">
                   <label htmlFor="cvUpload" className="cv-section-title">Update Curriculum Vitae (PDF only):</label> {/* Use specific title class */}
                   <label htmlFor="cvUpload" className="cv-upload-label action-btn"> {/* Styled label for file input */}
@@ -318,7 +318,7 @@ const ArtistProfile: React.FC = () => {
                   {newCvFile && ( <button type="button" onClick={handleCvUpload} disabled={cvProcessing || saving || deleting} className="action-btn upload-cv-btn" style={{marginTop: '10px'}}> {cvProcessing && !saving && !deleting ? "Uploading CV..." : `Upload Selected CV`} </button> )}
                   {cvUrl && (
                     <div className="current-cv-display">
-                        <span>Current CV: <FaFilePdf className="pdf-icon-inline" /> <a href={cvUrl} target="_blank" rel="noopener noreferrer" className="cv-link-inline">View</a></span>
+                        <span>Current CV: <FaFilePdf className="pdf-icon-inline" /> <a href={cvUrl} target="_blank" rel="noopener noreferrer" className="cv-link-inline">Download</a></span>
                         {!newCvFile && ( <button type="button" onClick={handleCvDelete} disabled={cvProcessing || saving || deleting} className="action-btn delete-cv-btn danger"> {cvProcessing && !saving && !deleting ? "Removing..." : "Remove CV"} </button> )}
                     </div>
                   )}
@@ -326,7 +326,7 @@ const ArtistProfile: React.FC = () => {
                 </div>
                 <div className="btn-row form-actions">
                   {/* This is the button that was causing the error on line 331 */}
-                  <button className="save-btn submit-btn" onClick={handleSaveChanges} disabled={saving || deleting || cvProcessing}> {saving ? "Saving Profile..." : "Save Bio/Photo"} </button>
+                  <button className="save-btn submit-btn" onClick={handleSaveChanges} disabled={saving || deleting || cvProcessing}> {saving ? "Saving Profile..." : "Save changes"} </button>
                   <button type="button" className="cancel-btn" onClick={handleEditToggle} disabled={saving || deleting || cvProcessing}> Done Editing </button>
                 </div>
               </div>

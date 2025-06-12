@@ -282,8 +282,8 @@
 }
 .portfolio-modal-content img {
   /* Let the image fill the container up to its limits, but no more */
-  max-width: 70%;
-  max-height: 70%;
+  max-width: 50%;
+  max-height: 50%;
   
   /* These are no longer needed, as max-width/max-height handle it better */
   /* width: 100%; */

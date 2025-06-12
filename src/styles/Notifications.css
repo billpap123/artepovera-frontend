@@ -1,86 +1,169 @@
-/* Outer container for the entire ChatList component */
-.chat-list-container {
-  max-width: 600px;       /* limit how wide the list can get */
-  margin: 20px auto;      /* center horizontally */
-  background-color: #fff; 
-  border: 1px solid #ddd; 
-  border-radius: 8px; 
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  padding: 20px;
-  font-family: sans-serif;
+/* src/styles/Notifications.css */
+
+/* --- Base Container --- */
+.notifications {
+  position: relative;
 }
 
-/* Chat list heading or "No chats yet" text can go in here if needed */
-.chat-list-heading {
-  margin-top: 0;
-  margin-bottom: 16px;
-  font-size: 1.2rem;
-  color: #333;
+/* --- Dropdown Container (Desktop) --- */
+/* This is the default style for screens wider than 768px */
+.notifications-dropdown {
+  position: absolute;
+  top: 100%; /* Position it right below the navbar */
+  right: 0;
+  width: 360px; /* A standard width for notification popups */
+  max-height: 450px; /* Limit height to prevent it from being too long */
+  overflow-y: auto; /* Add a scrollbar if content overflows */
+  background-color: #2a2d34; /* A dark, modern background */
+  border: 1px solid #444;
+  border-radius: 12px; /* Softer rounded corners */
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  z-index: 1001;
+  padding: 8px; /* Add some internal padding */
+  opacity: 0; /* Hidden by default */
+  transform: translateY(10px); /* Start slightly lower */
+  visibility: hidden;
+  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
 }
 
-/* The UL that holds the chat list items */
-.chat-list {
+/* --- Arrow for Desktop Dropdown --- */
+.notifications-dropdown::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  right: 20px;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 10px solid #2a2d34; /* Match dropdown background */
+}
+
+/* --- Show the dropdown when active --- */
+.notifications-dropdown.visible {
+  opacity: 1;
+  transform: translateY(0);
+  visibility: visible;
+}
+
+/* --- List Styling --- */
+.notifications-dropdown ul {
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
-/* Each chat list item */
-.chat-list li {
-  background-color: #f9f9f9;
-  border: 1px solid #eee;
-  border-radius: 6px;
+/* --- Notification Item --- */
+.notification-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
   padding: 12px;
-  margin-bottom: 10px;
-  cursor: pointer;
+  border-radius: 8px; /* Rounded corners for each item */
   transition: background-color 0.2s ease;
 }
 
-/* Hover effect for the chat item */
-.chat-list li:hover {
-  background-color: #f1f1f1;
+.notification-item:hover {
+  background-color: #3b3f46; /* Highlight on hover */
 }
 
-/* "Chat with XXX" text */
-.chat-list li span {
-  font-weight: bold;
-  color: #333;
-}
-
-/* If you want to highlight the currently selected chat, you could do:
-.chat-list li.active {
-  background-color: #e0e0e0;
-}
-*/
-
-/* The container for the chat window view */
-.chat-window-container {
-  max-width: 600px;        /* same width as the list container for consistency */
-  margin: 20px auto;
-  background-color: #fff;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  padding: 20px;
-}
-
-/* Back to Chats button */
-.chat-window-container .back-button {
-  background: #007bff;
-  color: #fff;
-  border: none;
-  padding: 6px 12px;
-  border-radius: 4px;
-  cursor: pointer;
+.notification-item .message {
+  color: #e0e0e0;
   font-size: 0.9rem;
-  margin-bottom: 16px;
-  transition: background-color 0.2s ease;
-}
-.chat-window-container .back-button:hover {
-  background: #0056b3;
+  line-height: 1.5;
 }
 
-/* If your ChatWindow itself has its own styling, you can keep it separate,
-   but here's a snippet for the chat messages, etc. 
-   e.g. .chat-window .messages { ... }
-*/
+/* This targets any links inside the notification message */
+.notification-item .message a {
+  color: #8ab4f8; /* A nice, readable blue for links */
+  font-weight: 600;
+  text-decoration: none;
+}
+.notification-item .message a:hover {
+  text-decoration: underline;
+}
+
+.notification-item .timestamp {
+  font-size: 0.75rem;
+  color: #9aa0a6;
+}
+
+/* --- Read/Unread Status --- */
+.notification-item.unread {
+  background-color: rgba(60, 64, 67, 0.5); /* Slightly different background for unread */
+}
+.notification-item.unread .message {
+  font-weight: 600;
+}
+.notification-item.read {
+  opacity: 0.7; /* Fade out read notifications slightly */
+}
+
+/* --- Actions (Mark as Read, Delete) --- */
+.notification-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.notification-actions button {
+  background: none;
+  border: 1px solid #5f6368;
+  color: #bdc1c6;
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.notification-actions button.mark-read-btn:hover {
+  background-color: #8ab4f8;
+  border-color: #8ab4f8;
+  color: #202124;
+}
+
+.notification-actions button.delete-notif-btn:hover {
+  background-color: #f28b82;
+  border-color: #f28b82;
+  color: #202124;
+}
+
+/* --- Empty/Loading State --- */
+.notification-placeholder {
+  padding: 20px;
+  text-align: center;
+  color: #9aa0a6;
+  font-style: italic;
+}
+
+
+/* --- MOBILE STYLING (screens 768px and smaller) --- */
+@media screen and (max-width: 768px) {
+  /* On mobile, the dropdown is not a popup. It's part of the main menu flow. */
+  .notifications-dropdown {
+    position: static;
+    width: 100%;
+    max-width: 90%; /* Take up 90% of the mobile menu width */
+    margin: 15px auto 0;
+    max-height: none; /* Remove height limit */
+    box-shadow: none;
+    border: 1px solid #5f6368;
+    transform: none; /* Reset transform */
+    opacity: 1; /* Always visible when container is open */
+    visibility: visible;
+  }
+  
+  /* Hide the desktop arrow on mobile */
+  .notifications-dropdown::before {
+    display: none;
+  }
+
+  /* --- FIX: Reduce link size on mobile --- */
+  .notification-item .message {
+    font-size: 1rem; /* Adjust to a more reasonable mobile size */
+  }
+
+  .notification-item .message a {
+    font-weight: normal; /* Less emphasis on mobile links */
+  }
+}
