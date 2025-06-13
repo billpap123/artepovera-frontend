@@ -36,8 +36,12 @@
   padding: 25px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-  position: relative; /* Added for ::before positioning */
-  overflow: hidden; /* Ensures pseudo-elements don't spill out */
+  position: relative; 
+  overflow: hidden;
+  display: flex; /* Using flex for alignment */
+  flex-direction: row; /* Default to row layout */
+  align-items: center; /* Vertically center content */
+  gap: 20px;
 }
 
 .dashboard-card:hover {
@@ -45,79 +49,32 @@
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
 }
 
-/* Styling for the small stat cards */
+/* --- THIS IS THE FIX --- */
+/* Base styling for simple stat cards (no background image) */
 .stat-card {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  background-size: cover;
-  background-position: center;
-  color: white;
-}
-
-/* Specific background for stat cards */
-.stat-card {
-    background-image: url('/images/jobs.png');
-}
-
-/* Dark overlay for stat cards */
-.stat-card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background-color: rgba(44, 62, 80, 0.75);
-  z-index: 1;
-}
-
-/* Ensures stat card content is on top of the overlay */
-.stat-card > * {
-    position: relative;
-    z-index: 2;
+  /* No background image or overlay here */
+  flex-direction: row; /* Keep the icon and text side-by-side */
 }
 
 .stat-icon {
   color: #C96A50; /* Your theme color */
-  margin-right: 20px;
+  font-size: 24px; /* Explicit size for the icon */
   flex-shrink: 0;
 }
 
 .stat-card div h3 {
   margin: 0 0 4px 0;
   font-size: 1.2rem;
-  color: #ffffff; /* Text should be white to be visible */
+  color: #34495e; /* Dark color for text on white background */
 }
 
 .stat-card div p {
   margin: 0;
-  color: #e0e0e0; /* Lighter grey for subtitle */
+  color: #95a5a6; /* Softer grey for subtitle */
   font-size: 0.9rem;
 }
 
-/* Styling for the large job feed card */
-.job-feed-card {
-  grid-column: 1 / -1; /* Make it span the full width */
-  background-color: #fdfdfd; 
-}
-
-@media (min-width: 992px) {
-  .job-feed-card {
-    grid-column: span 2; 
-    grid-row: span 2;
-  }
-}
-
-.job-feed-card h2 {
-  margin-top: 0;
-  padding-bottom: 15px;
-  border-bottom: 1px solid #eee;
-  margin-bottom: 20px;
-}
-
-
-/* --- THIS IS THE FIX --- */
-/* Base styles for all cards with background images */
+/* Base styles for cards that WILL have background images */
 .image-link-card,
 .image-link-card2 {
   min-height: 180px;
@@ -130,6 +87,7 @@
   color: white;
   background-size: cover;
   background-position: center;
+  text-decoration: none; /* Remove underline from links */
 }
 
 /* Set specific background images */
@@ -181,6 +139,28 @@
 }
 /* --- END OF FIX --- */
 
+
+/* Styling for the large job feed card */
+.job-feed-card {
+  grid-column: 1 / -1; 
+  background-color: #fdfdfd; 
+  flex-direction: column; /* Override flex for this specific card */
+  align-items: stretch;
+}
+
+@media (min-width: 992px) {
+  .job-feed-card {
+    grid-column: span 2; 
+    grid-row: span 2;
+  }
+}
+
+.job-feed-card h2 {
+  margin-top: 0;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 20px;
+}
 
 .admin-card {
   background-color: #f8d7da;
