@@ -848,6 +848,10 @@
             "en": "EN",
             "el": "EL"
           }
-        }
+        },
+        "userTypes": {
+  "Artist": "Artist",
+  "Employer": "Employer"
+}
       
 }

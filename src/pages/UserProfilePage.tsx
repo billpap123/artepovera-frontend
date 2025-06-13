@@ -577,8 +577,7 @@ const UserProfilePage: React.FC = () => {
             <img className="user-profile-img" src={getImageUrl(profilePic)} alt={profile.fullname} onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/default-profile.png'; }} />
             <div className="profile-summary-public">
               <h3 className="user-fullname">{profile.fullname}</h3>
-              <p className="user-type-public">{profile.user_type}{isStudent && <span className="student-badge-public">{t('userProfilePage.header.studentBadge')}</span>}</p>
-
+              <p className="user-type-public">{t(`userTypes.${profile.user_type}`)}{isStudent && <span className="student-badge-public">{t('userProfilePage.header.studentBadge')}</span>}</p>
               <div className="average-rating-display">
                 {reviewsLoading && reviewCount === 0 ? (<span>{t('userProfilePage.status.loadingRating')}</span>)
                   : reviewCount > 0 && averageRating !== null ? (

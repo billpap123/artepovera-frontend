@@ -158,7 +158,7 @@ const JobFeed: React.FC<JobFeedProps> = ({ jobs, isLoading, error }) => {
                   {job.insurance ? (
                     <><FaCheckCircle color="green" /> {t('jobFeed.card.included')}</>
                   ) : (
-                    <><FaTimesCircle color="gray" /> {t('jobFeed.e.notIncluded')}</>
+                    <><FaTimesCircle color="gray" /> {t('jobFeed.card.notIncluded')}</>
                   )}
                 </span>
               </div>

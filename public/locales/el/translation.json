@@ -139,11 +139,11 @@
     "loadingReviews": "Φόρτωση αξιολογήσεων...",
     "anonymous": "Ανώνυμος",
     "noProjectReviewsReceived": "Δεν έχετε λάβει ακόμη αξιολογήσεις έργων.",
-    "interactionFeedback": "Ανατροφοδότηση αλληλεπίδρασης",
-    "loadingFeedback": "Φόρτωση ανατροφοδότησης...",
+    "interactionFeedback": "Αξιολόγηση αλληλεπίδρασης ",
+    "loadingFeedback": "Φόρτωση αξιολόγησης...",
     "reason": "Αιτία:",
     "comment": "Σχόλιο:",
-    "noInteractionFeedback": "Δεν υπάρχει ανατροφοδότηση αλληλεπίδρασης για εμφάνιση.",
+    "noInteractionFeedback": "Δεν υπάρχει αξιολόγηση αλληλεπίδρασης για εμφάνιση.",
     "bioLabel": "Βιογραφικό:",
     "saveChanges": "Αποθήκευση αλλαγών",
     "saving": "Αποθήκευση...",
@@ -668,9 +668,9 @@
       "loadingReviews": "Φόρτωση αξιολογήσεων...",
       "noProjectReviews": "Αυτός ο χρήστης δεν έχει λάβει ακόμη καμία αξιολόγηση έργου.",
       "anonymous": "Ανώνυμος",
-      "interactionFeedback": "Ανατροφοδότηση αλληλεπίδρασης ({{count}})",
-      "loadingFeedback": "Φόρτωση ανατροφοδότησης...",
-      "noInteractionFeedback": "Δεν υπάρχει ανατροφοδότηση αλληλεπίδρασης για εμφάνιση.",
+      "interactionFeedback": "Αξιολόγηση αλληλεπίδρασης ",
+      "loadingFeedback": "Φόρτωση αξιολόγησης...",
+      "noInteractionFeedback": "Δεν υπάρχει αξιολόγηση αλληλεπίδρασης για εμφάνιση.",
       "noDealTag": "Χωρίς συμφωνία",
       "reason": "Αιτία:",
       "comment": "Σχόλιο:",
@@ -843,6 +843,10 @@
               "en": "EN",
               "el": "EL"
             }
-          }
+          },
+          "userTypes": {
+  "Artist": "Καλλιτέχνης",
+  "Employer": "Εργοδότης"
+}
         
 }
