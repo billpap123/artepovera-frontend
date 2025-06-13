@@ -14,8 +14,9 @@ const Login = () => {
     const [error, setError] = useState('');
     const navigate = useNavigate();
     
-    // <-- 2. GET THE SETTER FUNCTIONS FROM YOUR CONTEXT
-    const { setUserId, setUserType, setArtistId, setEmployerId } = useUserContext();
+    // --- THIS IS THE FIX (PART 1) ---
+    // Get the setFullname function from your context as well.
+    const { setUserId, setUserType, setArtistId, setEmployerId, setFullname } = useUserContext();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -28,14 +29,14 @@ const Login = () => {
 
             const { token, user } = response.data;
 
-            // Your existing logic to save to storage
             localStorage.setItem('token', token);
             localStorage.setItem('user', JSON.stringify(user));
             
-            // <-- 3. UPDATE THE GLOBAL CONTEXT STATE
-            // This is the crucial step that makes the Navbar update instantly.
+            // --- THIS IS THE FIX (PART 2) ---
+            // Update all relevant user data in the global context *before* navigating.
             setUserId(user.user_id);
             setUserType(user.user_type);
+            setFullname(user.fullname); // This is the critical line you were missing.
 
             // Check for nested profile objects to set the correct ID
             if (user.user_type === 'Artist' && user.artistProfile) {
@@ -44,7 +45,7 @@ const Login = () => {
                 setEmployerId(user.employerProfile.employer_id);
             }
             
-            navigate('/main'); // Redirect to the main page
+            navigate('/main');
 
         } catch (err: any) {
             console.error('Login error:', err);
