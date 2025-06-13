@@ -101,7 +101,7 @@ const Navbar = () => {
       });
 
       // Navigate to login or landing page
-      navigate("/login");
+      window.location.href = '/login'; 
     }
   };
 
