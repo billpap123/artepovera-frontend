@@ -4,8 +4,8 @@ import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { useUserContext } from '../context/UserContext';
 import Navbar from '../components/Navbar';
-import JobFeed from './JobFeed'; // Your new, simpler JobFeed component
-import JobFilters, { Filters } from '../components/JobFilters'; // The new, separate JobFilters component
+import JobFeed from './JobFeed';
+import JobFilters, { Filters } from '../components/JobFilters';
 import '../styles/MainPage.css';
 import { 
   FaEye, FaBriefcase, FaUserEdit, FaMapMarkedAlt, 
@@ -34,14 +34,28 @@ const MainPage = () => {
   const navigate = useNavigate();
   const { userType, userId, fullname } = useUserContext();
 
-  // --- State for Job Feed is now managed here in the parent ---
+  // --- State for Job Feed ---
   const [allJobs, setAllJobs] = useState<Job[]>([]);
   const [filters, setFilters] = useState<Filters | null>(null);
   const [isLoadingJobs, setIsLoadingJobs] = useState(true);
   const [jobsError, setJobsError] = useState<string | null>(null);
+  
+  // --- THIS IS THE FIX ---
+  // Local state to hold the welcome name, ensuring it reacts to context changes.
+  const [welcomeName, setWelcomeName] = useState('');
+
+  // This effect listens for changes to `fullname` from the context
+  useEffect(() => {
+    if (fullname) {
+      setWelcomeName(`, ${fullname.split(' ')[0]}`);
+    } else {
+      setWelcomeName('');
+    }
+  }, [fullname]); // The dependency array ensures this runs whenever fullname changes.
+  // --- END OF FIX ---
+
 
   useEffect(() => {
-    // This effect runs once to fetch all job data.
     const fetchAllJobs = async () => {
       setIsLoadingJobs(true);
       setJobsError(null);
@@ -59,26 +73,21 @@ const MainPage = () => {
       }
     };
     
-    // We only fetch jobs if the user is not an Admin
     if (userType && userType !== 'Admin') {
         fetchAllJobs();
     } else {
-        setIsLoadingJobs(false); // If admin, no need to load jobs
+        setIsLoadingJobs(false);
     }
-  }, [userType]); // Re-run if userType changes (e.g., on login)
+  }, [userType]);
 
-  // This function is passed down to the JobFilters component
   const handleFilterChange = (newFilters: Filters) => {
     setFilters(newFilters);
   };
   
-  // The filtering logic now lives in this parent component
   const filteredJobs = useMemo(() => {
-    // If filters haven't been set by the child component yet, show all jobs
     if (!filters) return allJobs;
 
     return allJobs.filter(job => {
-        // Keywords filter (searches title, description, and desired keywords)
         if (filters.keywords) {
             const searchString = filters.keywords.toLowerCase();
             const inTitle = job.title.toLowerCase().includes(searchString);
@@ -86,19 +95,12 @@ const MainPage = () => {
             const inKeywords = job.desired_keywords?.toLowerCase().includes(searchString) || false;
             if (!inTitle && !inDescription && !inKeywords) return false;
         }
-        // Location filter (case-insensitive)
         if (filters.location && !job.location?.toLowerCase().includes(filters.location.toLowerCase())) return false;
-        
-        // Payment filter
         if (filters.minPayment !== '' && job.payment_total < filters.minPayment) return false;
         if (filters.maxPayment !== '' && job.payment_total > filters.maxPayment) return false;
-
-        // Dropdown filters
         if (filters.category && job.category !== filters.category) return false;
         if (filters.presence && job.presence !== filters.presence) return false;
         if (filters.experience && job.requirements?.experience_years !== filters.experience) return false;
-
-        // Insurance filter
         if (filters.insurance === 'yes' && job.insurance !== true) return false;
         if (filters.insurance === 'no' && job.insurance === true) return false;
 
@@ -106,43 +108,35 @@ const MainPage = () => {
     });
   }, [allJobs, filters]);
 
-  const welcomeName = fullname ? `, ${fullname.split(' ')[0]}` : '';
-
   return (
     <>
       <Navbar />
       <div className="main-page-container">
         <header className="main-page-header">
+          {/* Use the state variable here for the welcome message */}
           <h1>{userType === 'Admin' ? 'Administrator Control Panel' : `Welcome back${welcomeName}!`}</h1>
           <p>{userType === 'Admin' ? 'Manage users, content, and application data.' : "Here's what's happening in the Arte Povera community today."}</p>
         </header>
 
         <div className="dashboard-grid">
-          {/* Your existing conditional cards for Artist, Employer, and Admin */}
           {userType === 'Artist' && (
             <>
               <Link to={`/user-profile/${userId}`} className="dashboard-card stat-card"><FaEye size={24} className="stat-icon" /><div><h3>My public profile</h3><p>View and share your profile</p></div></Link>
               <Link to="/artist-profile/edit" className="dashboard-card stat-card"><FaUserEdit size={24} className="stat-icon" /><div><h3>Edit my profile</h3><p>Update your bio, CV, and photo</p></div></Link>
               <Link to="/portfolio" className="dashboard-card stat-card"><FaImages size={24} className="stat-icon" /><div><h3>Edit my portfolio</h3><p>Showcase your best work</p></div></Link>
               <Link to="/chat" className="dashboard-card stat-card"><FaCommentDots size={24} className="stat-icon" /><div><h3>My messages</h3><p>Check your conversations</p></div></Link>
-              
-              {/* --- THIS IS THE ONLY ADDITION --- */}
               <Link to="/my-applications" className="dashboard-card image-link-card">
                 <div>
                   <h3>My Applications</h3>
                   <p>Track your job applications</p>
                 </div>
               </Link>
-
-              {/* --- CARD 2: UPDATED CLASSNAME AND REMOVED ICON --- */}
               <Link to="/map" className="dashboard-card image-link-card">
                 <div>
                   <h3>Community Map</h3>
                   <p>Discover artists & employers</p>
                 </div>
               </Link>
-
-              {/* --- END OF ADDITION --- */}
             </>
           )}
 
@@ -152,8 +146,7 @@ const MainPage = () => {
               <Link to="/employer-profile/edit" className="dashboard-card stat-card"><FaUserEdit size={24} className="stat-icon" /><div><h3>Edit my profile</h3><p>Update your bio and photo</p></div></Link>
               <Link to="/post-job" className="dashboard-card stat-card"><FaPlusCircle size={24} className="stat-icon" /><div><h3>Post a new job</h3><p>Find the perfect artist</p></div></Link>
               <Link to="/chat" className="dashboard-card stat-card"><FaCommentDots size={24} className="stat-icon" /><div><h3>My messages</h3><p>Check applicant conversations</p></div></Link>
-            {/* --- THIS IS THE NEW CARD FOR EMPLOYERS --- */}
-            <Link to="/my-jobs" className="dashboard-card stat-card">
+              <Link to="/my-jobs" className="dashboard-card stat-card">
                 <FaClipboardList />
                 <div>
                   <h3>My Job Postings</h3>
@@ -167,7 +160,6 @@ const MainPage = () => {
                 </div>
               </Link>
             </>
-            
           )}
 
           {userType === 'Admin' && (
@@ -177,7 +169,6 @@ const MainPage = () => {
             </>
           )}
 
-          {/* Job Feed & Map Area are RESTORED and hidden for Admins */}
           {userType !== 'Admin' && (
             <>
               <div className="dashboard-card job-feed-card">
@@ -188,8 +179,6 @@ const MainPage = () => {
                 <hr className="filter-divider" />
                 <JobFeed jobs={filteredJobs} isLoading={isLoadingJobs} error={jobsError} />
               </div>
-
-              
             </>
           )}
           
