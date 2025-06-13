@@ -125,7 +125,7 @@ const MainPage = () => {
               <Link to="/artist-profile/edit" className="dashboard-card stat-card"><FaUserEdit size={24} className="stat-icon" /><div><h3>Edit my profile</h3><p>Update your bio, CV, and photo</p></div></Link>
               <Link to="/portfolio" className="dashboard-card stat-card"><FaImages size={24} className="stat-icon" /><div><h3>Edit my portfolio</h3><p>Showcase your best work</p></div></Link>
               <Link to="/chat" className="dashboard-card stat-card"><FaCommentDots size={24} className="stat-icon" /><div><h3>My messages</h3><p>Check your conversations</p></div></Link>
-              <Link to="/my-applications" className="dashboard-card image-link-card">
+              <Link to="/my-applications" className="dashboard-card image-link-card2">
                 <div>
                   <h3>My Applications</h3>
                   <p>Track your job applications</p>
