@@ -2,6 +2,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import '../styles/RatingForm.css'; // Make sure you have created this CSS file
+import { useTranslation } from "react-i18next";
+
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:50001";
 
@@ -46,7 +48,10 @@ const StarRatingInput = ({ rating, onRatingChange, labelId }: { rating: number; 
     );
 };
 
-const RatingForm: React.FC<RatingFormProps> = ({
+const RatingForm: React.FC<RatingFormProps> = (
+    
+    {
+    
     chatId,
     reviewerId,
     reviewedUserId,
@@ -63,6 +68,7 @@ const RatingForm: React.FC<RatingFormProps> = ({
     const [comment, setComment] = useState(""); // This is the single source of truth for comments now
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const { t } = useTranslation();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -110,66 +116,71 @@ const RatingForm: React.FC<RatingFormProps> = ({
     return (
         <div className="rating-form-container">
             <div className="rating-form-header">
-                <h3>Rate your interaction with {reviewedUserName}</h3>
-                <button onClick={() => onClose(false)} className="close-btn">×</button>
+                <h3>{t('ratingForm.title', { name: reviewedUserName })}</h3>
+                <button onClick={() => onClose(false)} className="close-btn">{t('ratingForm.closeButton')}</button>
             </div>
             <form onSubmit={handleSubmit} className="rating-form-content">
                 <div className="form-group form-group-radio">
-                    <label id="deal-made-label">Did you end up working together? *</label>
+                    <label id="deal-made-label">{t('ratingForm.dealQuestion')}</label>
                     <div className="radio-options">
-                       <label><input type="radio" name="dealMade" value="yes" checked={dealMade === 'yes'} onChange={() => setDealMade('yes')} required /> Yes</label>
-                       <label><input type="radio" name="dealMade" value="no" checked={dealMade === 'no'} onChange={() => setDealMade('no')} required /> No</label>
+                       <label><input type="radio" name="dealMade" value="yes" checked={dealMade === 'yes'} onChange={() => setDealMade('yes')} required /> {t('ratingForm.dealOptions.yes')}</label>
+                       <label><input type="radio" name="dealMade" value="no" checked={dealMade === 'no'} onChange={() => setDealMade('no')} required /> {t('ratingForm.dealOptions.no')}</label>
                     </div>
                 </div>
-
+    
                 {dealMade === 'no' && (
                     <div className="follow-up-questions fade-in">
                         <hr />
-                        <p className="rating-form-subtext">Please provide feedback on why you didn't work together.</p>
+                        <p className="rating-form-subtext">{t('ratingForm.noDeal.subtext')}</p>
                         <div className="form-group">
-                            <label id="comm-no-deal-label">Communication Quality *</label>
+                            <label id="comm-no-deal-label">{t('ratingForm.noDeal.communicationLabel')}</label>
                             <StarRatingInput rating={communicationRating} onRatingChange={setCommunicationRating} labelId="comm-no-deal-label" />
                         </div>
                         <div className="form-group">
-                            <label htmlFor="no-deal-primary-reason">Primary reason? *</label>
+                            <label htmlFor="no-deal-primary-reason">{t('ratingForm.noDeal.reasonLabel')}</label>
                             <select id="no-deal-primary-reason" value={noDealPrimaryReason} onChange={(e) => setNoDealPrimaryReason(e.target.value)} required>
-                                <option value="" disabled>-- Please select a reason --</option>
-                                <option value="Budget Mismatch">Budget mismatch</option>
-                                <option value="Scheduling Conflict">Scheduling/timeline conflict</option>
-                                <option value="Creative Differences">Creative differences</option>
-                                <option value="Poor Communication">Unresponsive / poor communication</option>
-                                <option value="Chose Another Option">Decided to go another direction</option>
-                                <option value="Other">Other (please specify in comments)</option>
+                                <option value="" disabled>{t('ratingForm.noDeal.reasonPlaceholder')}</option>
+                                <option value="Budget Mismatch">{t('ratingForm.noDeal.reasons.budget')}</option>
+                                <option value="Scheduling Conflict">{t('ratingForm.noDeal.reasons.scheduling')}</option>
+                                <option value="Creative Differences">{t('ratingForm.noDeal.reasons.creative')}</option>
+                                <option value="Poor Communication">{t('ratingForm.noDeal.reasons.communication')}</option>
+                                <option value="Chose Another Option">{t('ratingForm.noDeal.reasons.direction')}</option>
+                                <option value="Other">{t('ratingForm.noDeal.reasons.other')}</option>
                             </select>
                         </div>
                     </div>
                 )}
-
+    
                 {dealMade === 'yes' && (
                     <div className="follow-up-questions fade-in">
                          <hr />
-                         <p className="rating-form-subtext">Please rate the following aspects:</p>
-                         <div className="form-group"><label id="prof-label">Professionalism *</label><StarRatingInput rating={professionalismRating} onRatingChange={setProfessionalismRating} labelId="prof-label" /></div>
-                         <div className="form-group"><label id="qual-label">Quality of work / brief *</label><StarRatingInput rating={qualityRating} onRatingChange={setQualityRating} labelId="qual-label"/></div>
-                         <div className="form-group"><label id="comm-label">Communication *</label><StarRatingInput rating={communicationRating} onRatingChange={setCommunicationRating} labelId="comm-label"/></div>
-                         <div className="form-group"><label id="overall-label">Overall collaboration rating *</label><StarRatingInput rating={overallRating} onRatingChange={setOverallRating} labelId="overall-label"/></div>
+                         <p className="rating-form-subtext">{t('ratingForm.yesDeal.subtext')}</p>
+                         <div className="form-group"><label id="prof-label">{t('ratingForm.yesDeal.professionalismLabel')}</label><StarRatingInput rating={professionalismRating} onRatingChange={setProfessionalismRating} labelId="prof-label" /></div>
+                         <div className="form-group"><label id="qual-label">{t('ratingForm.yesDeal.qualityLabel')}</label><StarRatingInput rating={qualityRating} onRatingChange={setQualityRating} labelId="qual-label"/></div>
+                         <div className="form-group"><label id="comm-label">{t('ratingForm.yesDeal.communicationLabel')}</label><StarRatingInput rating={communicationRating} onRatingChange={setCommunicationRating} labelId="comm-label"/></div>
+                         <div className="form-group"><label id="overall-label">{t('ratingForm.yesDeal.overallLabel')}</label><StarRatingInput rating={overallRating} onRatingChange={setOverallRating} labelId="overall-label"/></div>
                     </div>
                 )}
-
-                 {/* --- THIS IS NOW THE ONLY COMMENT BOX --- */}
+    
                  {dealMade !== null && (
                      <div className="form-group fade-in">
-                         <label htmlFor="comment">Additional comments (Optional):</label>
-                         <textarea id="comment" value={comment} onChange={(e) => setComment(e.target.value)} rows={4} placeholder={dealMade === 'yes' ? "Any other feedback about the collaboration?" : "Any other comments about the interaction?"} />
+                         <label htmlFor="comment">{t('ratingForm.commentLabel')}</label>
+                         <textarea
+                            id="comment"
+                            value={comment}
+                            onChange={(e) => setComment(e.target.value)}
+                            rows={4}
+                            placeholder={dealMade === 'yes' ? t('ratingForm.commentPlaceholder.yes') : t('ratingForm.commentPlaceholder.no')}
+                         />
                      </div>
                  )}
-
+    
                 {error && <p className="error-message">{error}</p>}
-
+    
                 <div className="form-actions">
-                    <button type="button" onClick={() => onClose(false)} disabled={isSubmitting} className="cancel-btn">Cancel</button>
+                    <button type="button" onClick={() => onClose(false)} disabled={isSubmitting} className="cancel-btn">{t('ratingForm.buttons.cancel')}</button>
                     <button type="submit" disabled={isSubmitting || dealMade === null} className="submit-btn">
-                        {isSubmitting ? "Submitting..." : "Submit Review"}
+                        {isSubmitting ? t('ratingForm.buttons.submitting') : t('ratingForm.buttons.submit')}
                     </button>
                 </div>
             </form>

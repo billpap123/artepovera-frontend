@@ -6,6 +6,7 @@ import '../styles/JobPostings.css'; // Make sure this CSS file exists
 import { FaMapMarkerAlt, FaGlobe, FaBuilding, FaEuroSign, FaCalendarAlt, FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
 import { formatDate } from '../utils/formatDate'; // Assuming you have this utility
 import { useUserContext } from '../context/UserContext'; // To check user type
+import { useTranslation } from "react-i18next";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:50001";
 
@@ -55,6 +56,7 @@ const JobPostings: React.FC<JobPostingsProps> = ({ employerId }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const { userType: loggedInUserType } = useUserContext();
   const isArtist = loggedInUserType === 'Artist';
@@ -117,63 +119,78 @@ const JobPostings: React.FC<JobPostingsProps> = ({ employerId }) => {
 
   return (
     <div className="job-postings-container">
-      {/* The H4 title is now managed by the parent page (e.g., UserProfilePage) */}
-      {/* <h4>Job Postings</h4> */}
       {jobPostings.length > 0 ? (
         jobPostings.map((job) => (
-          // We reuse the same detailed card style for consistency
           <div key={job.job_id} className="job-card-detailed">
             <div className="job-card-header">
               <h3>{job.title}</h3>
-              {/* No need to show "Posted by" since we are on their profile, but date is useful */}
-              <span className="post-date">Posted on {formatDate(job.createdAt)}</span>
+              <span className="post-date">{t('jobPostings.card.postedOn')} {formatDate(job.createdAt)}</span>
             </div>
 
             <div className="job-card-tags">
                 <span className="tag-item category-tag">{job.category}</span>
                 {job.location && <span className="tag-item"><FaMapMarkerAlt /> {job.location}</span>}
-                {job.presence === 'Online' && <span className="tag-item"><FaGlobe /> Online</span>}
-                {job.presence === 'Physical' && <span className="tag-item"><FaBuilding /> On-site</span>}
-                {job.presence === 'Both' && <span className="tag-item"><FaGlobe />/<FaBuilding /> Hybrid</span>}
+                {job.presence === 'Online' && <span className="tag-item"><FaGlobe /> {t('jobPostings.card.online')}</span>}
+                {job.presence === 'Physical' && <span className="tag-item"><FaBuilding /> {t('jobPostings.card.onSite')}</span>}
+                {job.presence === 'Both' && <span className="tag-item"><FaGlobe />/<FaBuilding /> {t('jobPostings.card.hybrid')}</span>}
             </div>
 
             {job.description && <p className="job-card-description">{job.description}</p>}
 
             <div className="job-card-details-grid">
                 <div className="detail-item">
-                    <strong>Total payment:</strong>
-                    <span><FaEuroSign /> {job.payment_total.toFixed(2)} {job.payment_is_monthly && `(€${job.payment_monthly_amount?.toFixed(2)}/month)`}</span>
+                    <strong>{t('jobPostings.card.totalPayment')}</strong>
+                    <span><FaEuroSign /> {job.payment_total.toFixed(2)} {job.payment_is_monthly && `(€${job.payment_monthly_amount?.toFixed(2)}${t('jobPostings.card.perMonth')})`}</span>
                 </div>
                 <div className="detail-item">
-                    <strong>Duration:</strong>
-                    <span>{formatDate(job.start_date)} to {formatDate(job.end_date)}</span>
+                    <strong>{t('jobPostings.card.duration')}</strong>
+                    <span>{formatDate(job.start_date)} {t('jobPostings.card.to')} {formatDate(job.end_date)}</span>
                 </div>
                 <div className="detail-item">
-                    <strong>Insurance:</strong>
-                    <span>{job.insurance ? <><FaCheckCircle color="green" /> Included</> : <><FaTimesCircle color="gray" /> Not included</>}</span>
+                    <strong>{t('jobPostings.card.insurance')}</strong>
+                    <span>{job.insurance ? <><FaCheckCircle color="green" /> {t('jobPostings.card.included')}</> : <><FaTimesCircle color="gray" /> {t('jobPostings.card.notIncluded')}</>}</span>
                 </div>
                 {job.application_deadline && <div className="detail-item">
-                    <strong>Apply by:</strong>
+                    <strong>{t('jobPostings.card.applyBy')}</strong>
                     <span><FaCalendarAlt /> {formatDate(job.application_deadline)}</span>
                 </div>}
             </div>
             
-            {/* You can optionally show requirements or a "View Details" button */}
-            
             {isArtist && (
               <div className="job-card-actions">
                 <button onClick={() => handleApply(job.job_id)} className="apply-button-detailed">
-                  Apply now
+                  {t('jobPostings.actions.applyNow')}
                 </button>
               </div>
             )}
           </div>
         ))
       ) : (
-        <p>This user has no active job postings.</p>
+        <p>{t('jobPostings.status.none')}</p>
       )}
     </div>
   );
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 export default JobPostings;

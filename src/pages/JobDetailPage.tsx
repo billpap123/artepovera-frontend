@@ -11,6 +11,8 @@ import {
     FaTools, FaUserGraduate, FaLanguage, FaFileContract, FaRegClock
 } from 'react-icons/fa';
 import '../styles/JobDetailPage.css';
+import { useTranslation } from "react-i18next";
+
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:50001";
 
@@ -31,6 +33,7 @@ interface Job {
 }
 
 const JobDetailPage: React.FC = () => {
+    const { t } = useTranslation();
     const { jobId } = useParams<{ jobId: string }>();
     const { userType, userId } = useUserContext();
     const isArtist = userType === 'Artist';
@@ -97,88 +100,88 @@ const JobDetailPage: React.FC = () => {
                 {/* --- NEW LAYOUT: Column 1 (Details Sidebar) --- */}
                 <aside className="job-detail-sidebar">
                     <div className="sidebar-card details-card">
-                        <h4><FaCalendarAlt /> Duration</h4>
+                        <h4><FaCalendarAlt /> {t('jobDetailPage.sidebar.duration')}</h4>
                         <ul>
-                            <li><strong>Starts:</strong><span>{formatDate(job.start_date)}</span></li>
-                            <li><strong>Ends:</strong><span>{formatDate(job.end_date)}</span></li>
+                            <li><strong>{t('jobDetailPage.sidebar.starts')}</strong><span>{formatDate(job.start_date)}</span></li>
+                            <li><strong>{t('jobDetailPage.sidebar.ends')}</strong><span>{formatDate(job.end_date)}</span></li>
                         </ul>
                     </div>
-
+    
                     <div className="sidebar-card details-card">
-                        <h4><FaMapMarkerAlt /> Location & Presence</h4>
+                        <h4><FaMapMarkerAlt /> {t('jobDetailPage.sidebar.locationPresence')}</h4>
                          <ul>
-                            <li><strong>Presence:</strong><span>{job.presence}</span></li>
-                            {job.location && <li><strong>Location:</strong><span>{job.location}</span></li>}
+                            <li><strong>{t('jobDetailPage.sidebar.presence')}</strong><span>{job.presence}</span></li>
+                            {job.location && <li><strong>{t('jobDetailPage.sidebar.location')}</strong><span>{job.location}</span></li>}
                         </ul>
                     </div>
-
+    
                     <div className="sidebar-card details-card">
-                        <h4><FaEuroSign /> Compensation</h4>
+                        <h4><FaEuroSign /> {t('jobDetailPage.sidebar.compensation')}</h4>
                         <ul>
                             {job.payment_is_monthly ? (
                                 <>
-                                    <li><strong>Salary:</strong><span>€{Number(job.payment_monthly_amount).toFixed(2)} / month</span></li>
-                                    <li><strong>For:</strong><span>{job.number_of_months} month(s)</span></li>
+                                    <li><strong>{t('jobDetailPage.sidebar.salary')}</strong><span>€{Number(job.payment_monthly_amount).toFixed(2)} {t('jobDetailPage.sidebar.perMonth')}</span></li>
+                                    <li><strong>{t('jobDetailPage.sidebar.for')}</strong><span>{job.number_of_months} {t('jobDetailPage.sidebar.months')}</span></li>
                                 </>
                             ) : (
-                                <li><strong>Total Pay:</strong><span>€{Number(job.payment_total).toFixed(2)}</span></li>
+                                <li><strong>{t('jobDetailPage.sidebar.totalPay')}</strong><span>€{Number(job.payment_total).toFixed(2)}</span></li>
                             )}
-                            <li><strong>Insurance:</strong><span>{job.insurance ? 'Provided' : 'Not Provided'}</span></li>
+                            <li><strong>{t('jobDetailPage.sidebar.insurance')}</strong><span>{job.insurance ? t('jobDetailPage.sidebar.provided') : t('jobDetailPage.sidebar.notProvided')}</span></li>
                         </ul>
                     </div>
                      {isArtist && (
                         <div className="sidebar-card apply-card">
-                            <h4>Ready to Apply?</h4>
-                            {job.application_deadline && <p className="deadline-text"><FaRegClock /> Deadline: {formatDate(job.application_deadline)}</p>}
+                            <h4>{t('jobDetailPage.sidebar.readyToApply')}</h4>
+                            {job.application_deadline && <p className="deadline-text"><FaRegClock /> {t('jobDetailPage.sidebar.deadline')} {formatDate(job.application_deadline)}</p>}
                             <button onClick={handleApply} disabled={isApplied || isApplying} className="apply-button-large">
-                                {isApplying ? 'Submitting...' : isApplied ? 'Applied' : 'Apply Now'}
+                                {isApplying ? t('jobDetailPage.sidebar.submitting') : isApplied ? t('jobDetailPage.sidebar.applied') : t('jobDetailPage.sidebar.applyNow')}
                             </button>
                         </div>
                     )}
                 </aside>
-
+    
                 {/* --- NEW LAYOUT: Column 2 (Main Content) --- */}
                 <main className="job-detail-main">
                     <div className="sidebar-card employer-card">
                         <Link to={`/user-profile/${job.employer?.user?.user_id}`} className="employer-link">
                             <img src={getImageUrl(job.employer?.user?.profile_picture)} alt={job.employer?.user?.fullname} />
                             <div>
-                                <span className="posted-by-label">Posted by</span>
-                                <span className="employer-name">{job.employer?.user?.fullname || 'N/A'}</span>
+                                <span className="posted-by-label">{t('jobDetailPage.main.postedBy')}</span>
+                                <span className="employer-name">{job.employer?.user?.fullname || t('jobDetailPage.main.notAvailable')}</span>
                             </div>
                         </Link>
                     </div>
-
+    
                     <div className="job-detail-header">
                         <span className="job-detail-category">{job.category}</span>
                         <h1>{job.title}</h1>
-                        <p className="job-detail-post-date">Posted on {formatDate(job.createdAt)}</p>
+                        <p className="job-detail-post-date">{t('jobDetailPage.main.postedOn')} {formatDate(job.createdAt)}</p>
                     </div>
-
+    
                     {job.description && (
                         <section className="job-detail-section">
-                            <h2>Project Description</h2>
+                            <h2>{t('jobDetailPage.main.descriptionTitle')}</h2>
                             <p>{job.description}</p>
                         </section>
                     )}
-
+    
                     {job.requirements && (
                         <section className="job-detail-section">
-                            <h2>Requirements</h2>
+                            <h2>{t('jobDetailPage.main.requirementsTitle')}</h2>
                             <ul className="requirements-list">
-                                {job.requirements.experience_years && <li><FaTools /><span><strong>Experience:</strong> {job.requirements.experience_years} years</span></li>}
-                                {job.requirements.university_degree?.required && <li><FaUserGraduate /><span><strong>Degree:</strong> {job.requirements.university_degree.details || 'Required'}</span></li>}
-                                {job.requirements.military_service && job.requirements.military_service !== 'Not Applicable' && <li><span><strong>Military Service:</strong> {job.requirements.military_service}</span></li>}
+                                {job.requirements.experience_years && <li><FaTools /><span><strong>{t('jobDetailPage.main.experience')}</strong> {job.requirements.experience_years} {t('jobDetailPage.main.years')}</span></li>}
+                                {job.requirements.university_degree?.required && <li><FaUserGraduate /><span><strong>{t('jobDetailPage.main.degree')}</strong> {job.requirements.university_degree.details || t('jobDetailPage.main.required')}</span></li>}
+                                {job.requirements.military_service && job.requirements.military_service !== 'Not Applicable' && <li><span><strong>{t('jobDetailPage.main.militaryService')}</strong> {job.requirements.military_service}</span></li>}
                                 {job.requirements.foreign_languages && job.requirements.foreign_languages.length > 0 && (
-                                    <li><FaLanguage /><span><strong>Languages:</strong> {job.requirements.foreign_languages.map(l => `${l.language} (${l.certificate})`).join(', ')}</span></li>
+                                    <li><FaLanguage /><span><strong>{t('jobDetailPage.main.languages')}</strong> {job.requirements.foreign_languages.map(l => `${l.language} (${l.certificate})`).join(', ')}</span></li>
                                 )}
                             </ul>
                         </section>
                     )}
-
+    
                     {job.desired_keywords && (
                         <section className="job-detail-section">
-                            <h2>Desired Skills & Keywords</h2>
+                            <h2>{t('jobDetailPage.main.skillsTitle')}</h2>
                             <div className="keywords-container">
                                 {job.desired_keywords.split(',').map((keyword, index) => (
                                     <span key={index} className="keyword-tag">{keyword.trim()}</span>

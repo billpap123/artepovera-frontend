@@ -9,6 +9,9 @@ import {
   FaFilePdf, FaChevronLeft, FaChevronRight, FaHeart, FaRegHeart, FaCommentDots,
   FaMapMarkerAlt, FaGlobe, FaTimes, FaBuilding
 } from 'react-icons/fa'; // Make sure FaHeart is imported
+import { useTranslation } from "react-i18next";
+
+
 
 
 
@@ -152,7 +155,7 @@ const DisplayStars = ({ rating }: { rating: number | null }) => {
 // --- End Helper Functions ---
 
 const UserProfilePage: React.FC = () => {
-
+  const { t } = useTranslation();
   const { userId: userIdFromParams } = useParams<{ userId: string }>();
   const navigate = useNavigate();
   const [supportRating, setSupportRating] = useState(0);
@@ -574,38 +577,30 @@ const UserProfilePage: React.FC = () => {
             <img className="user-profile-img" src={getImageUrl(profilePic)} alt={profile.fullname} onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/default-profile.png'; }} />
             <div className="profile-summary-public">
               <h3 className="user-fullname">{profile.fullname}</h3>
-              <p className="user-type-public">{profile.user_type}{isStudent && <span className="student-badge-public"> (STUDENT)</span>}</p>
+              <p className="user-type-public">{profile.user_type}{isStudent && <span className="student-badge-public">{t('userProfilePage.header.studentBadge')}</span>}</p>
 
               <div className="average-rating-display">
-                {reviewsLoading && reviewCount === 0 ? (<span>Loading rating...</span>)
+                {reviewsLoading && reviewCount === 0 ? (<span>{t('userProfilePage.status.loadingRating')}</span>)
                   : reviewCount > 0 && averageRating !== null ? (
                     <>
                       <DisplayStars rating={averageRating} />
                       <span className="rating-value">{averageRating.toFixed(1)}</span>
-                      <span className="review-count">({reviewCount} review{reviewCount !== 1 ? 's' : ''})</span>
+                      <span className="review-count">({t('userProfilePage.header.reviews', { count: reviewCount })})</span>
                     </>
-                  ) : (<span className="no-rating">No project reviews yet</span>)}
+                  ) : (<span className="no-rating">{t('userProfilePage.status.noReviews')}</span>)}
               </div>
 
               <div className="profile-actions">
-                {/* --- Like Button --- */}
-                {/* Shows if user is logged in and not viewing their own profile */}
                 {canLoggedInUserInteract && (
                   <button
                     onClick={handleLike}
                     disabled={liked}
                     className={`like-button ${liked ? 'liked' : ''}`}
                   >
-                    {liked ? <FaHeart /> : <FaRegHeart />} {liked ? 'Liked' : 'Like'}
+                    {liked ? <FaHeart /> : <FaRegHeart />} {liked ? t('userProfilePage.actions.liked') : t('userProfilePage.actions.like')}
                   </button>
                 )}
 
-                {/* --- Rate User Button (General Review) --- */}
-                {/* Shows if: 
-                  1. User is logged in (canLoggedInUserInteract)
-                  2. It's NOT their own profile (canLoggedInUserInteract)
-                  3. AND it's NOT the case that an Artist is viewing another Artist's profile
-                */}
                 {canLoggedInUserInteract && !(loggedInUser?.user_type === profile.user_type) && (
                   <button
                     onClick={handleOpenRatingForm}
@@ -615,34 +610,29 @@ const UserProfilePage: React.FC = () => {
                     {isLoadingReviewStatus
                       ? "..."
                       : alreadyReviewed
-                        ? "Reviewed"
-                        : "Rate User"}
+                        ? t('userProfilePage.actions.reviewed')
+                        : t('userProfilePage.actions.rateUser')}
                   </button>
                 )}
 
 
-                {/* --- Login to Interact Button --- */}
-                {/* Shows if user is NOT logged in and viewing someone else's profile */}
                 {!loggedInUser && !isOwnProfile && (
                   <button
                     className="interaction-button"
                     onClick={() => navigate(`/login?redirect=/user-profile/${userIdFromParams}`)}
                   >
-                    Login to Interact
+                    {t('userProfilePage.actions.loginToInteract')}
                   </button>
                 )}
 
-                {/* --- Artist Support Button --- */}
-                {/* Shows if logged-in user is Artist, profile is Artist, and not own profile */}
                 {canLoggedInArtistInteractWithArtistProfile && (
                   <button
-                    onClick={handleSupportArtist} // Use the new function name
-                    // Add 'hasSupported' to the disabled condition. This is the lock.
+                    onClick={handleSupportArtist}
                     disabled={isTogglingSupport || isLoadingSupportStatus || hasSupported}
                     className={`support-button ${hasSupported ? 'supported' : ''}`}
                   >
                     {isLoadingSupportStatus ? "..." : isTogglingSupport ? "..." : hasSupported ? <FaHeart color="deeppink" /> : <FaRegHeart />}
-                    {hasSupported ? "Supported" : "Support Artist"}
+                    {hasSupported ? t('userProfilePage.actions.supported') : t('userProfilePage.actions.supportArtist')}
                     {!isLoadingSupportStatus && <span className="support-count">({supportCount})</span>}
                   </button>
                 )}
@@ -651,22 +641,22 @@ const UserProfilePage: React.FC = () => {
           </div>
 
           <div className="profile-content-public">
-            <div className="profile-section-public"><h4>Bio</h4><p className="user-bio">{bio || 'No bio available.'}</p></div>
+            <div className="profile-section-public"><h4>{t('userProfilePage.content.bio')}</h4><p className="user-bio">{bio || t('userProfilePage.content.noBio')}</p></div>
 
             {isArtistProfile && cvUrl && (
               <div className="profile-section-public cv-section">
-                <h4>Curriculum Vitae (CV)</h4>
+                <h4>{t('userProfilePage.content.cv')}</h4>
                 <div className="cv-display">
                   <FaFilePdf className="pdf-icon" />
-                  <a href={cvUrl} target="_blank" rel="noopener noreferrer" className="cv-link">Download CV</a>
+                  <a href={cvUrl} target="_blank" rel="noopener noreferrer" className="cv-link">{t('userProfilePage.content.downloadCv')}</a>
                 </div>
               </div>
             )}
 
             <div className="reviews-section profile-section-public">
-              <h4>Project reviews received ({completedReviews.length})</h4>
+              <h4>{t('userProfilePage.content.projectReviews', { count: completedReviews.length })}</h4>
               {reviewsLoading ? (
-                <p>Loading reviews...</p>
+                <p>{t('userProfilePage.content.loadingReviews')}</p>
               ) : completedReviews.length > 0 ? (
                 <div className="reviews-list">
                   {completedReviews.map((review) => {
@@ -676,11 +666,11 @@ const UserProfilePage: React.FC = () => {
                         <div className="review-header">
                           <img
                             src={getImageUrl(reviewerProfilePic)}
-                            alt={review.reviewer?.fullname || 'Reviewer'}
+                            alt={review.reviewer?.fullname || t('userProfilePage.content.anonymous')}
                             className="reviewer-pic"
                           />
                           <div className="reviewer-info">
-                            <strong>{review.reviewer?.fullname || 'Anonymous'}</strong>
+                            <strong>{review.reviewer?.fullname || t('userProfilePage.content.anonymous')}</strong>
                             <span className="review-date">{formatDate(review.created_at)}</span>
                           </div>
                           <div className="review-stars"><DisplayStars rating={review.overall_rating} /></div>
@@ -691,16 +681,14 @@ const UserProfilePage: React.FC = () => {
                   })}
                 </div>
               ) : (
-                <p className="no-reviews">This user hasn't received any project reviews yet.</p>
+                <p className="no-reviews">{t('userProfilePage.content.noProjectReviews')}</p>
               )}
-            </div> {/* This closing div is for "reviews-section" */}
-
-
+            </div>
 
             {interactionReviews.length > 0 && (
               <div className="interaction-feedback-section profile-section-public">
-                <h4>Interaction Feedback ({interactionReviews.length})</h4>
-                {reviewsLoading ? (<p>Loading feedback...</p>)
+                <h4>{t('userProfilePage.content.interactionFeedback', { count: interactionReviews.length })}</h4>
+                {reviewsLoading ? (<p>{t('userProfilePage.content.loadingFeedback')}</p>)
                   : interactionReviews.length > 0 ? (
                     <div className="reviews-list">
                       {interactionReviews.map((review) => {
@@ -709,27 +697,24 @@ const UserProfilePage: React.FC = () => {
 
                         return (
                           <div key={review.review_id} className="review-item interaction-review-item">
-                            {/* --- Re-using the same structure as a normal review --- */}
                             <div className="review-header">
-                              <img src={getImageUrl(review.reviewer?.profile_picture)} alt={review.reviewer?.fullname} className="reviewer-pic" />
+                              <img src={getImageUrl(review.reviewer?.profile_picture)} alt={review.reviewer?.fullname || t('userProfilePage.content.anonymous')} className="reviewer-pic" />
                               <div className="reviewer-info">
-                                <strong>{review.reviewer?.fullname || 'Anonymous'}</strong>
+                                <strong>{review.reviewer?.fullname || t('userProfilePage.content.anonymous')}</strong>
                                 <span className="review-date">{formatDate(review.created_at)}</span>
                               </div>
-                              {/* No stars are shown, but we could add a tag */}
-                              <span className="interaction-tag">No Deal</span>
+                              <span className="interaction-tag">{t('userProfilePage.content.noDealTag')}</span>
                             </div>
 
-                            {/* --- Display the reason and comment --- */}
                             <div className="review-comment">
                               {primaryReason && (
                                 <p className="interaction-reason">
-                                  <strong>Reason:</strong> {primaryReason}
+                                  <strong>{t('userProfilePage.content.reason')}</strong> {primaryReason}
                                 </p>
                               )}
                               {comment && (
                                 <p>
-                                  <strong>Comment:</strong> "{comment}"
+                                  <strong>{t('userProfilePage.content.comment')}</strong> "{comment}"
                                 </p>
                               )}
                             </div>
@@ -738,76 +723,65 @@ const UserProfilePage: React.FC = () => {
                       })}
                     </div>
                   ) : (
-                    <p className="no-reviews">No interaction feedback to show.</p>
+                    <p className="no-reviews">{t('userProfilePage.content.noInteractionFeedback')}</p>
                   )}
               </div>
-
             )}
 
-            {/* Artist Comments Section */}
-            {/* Artist Comments Section */}
             {isArtistProfile && (
               <div className="artist-comments-section profile-section-public">
                 <div className="section-header">
-                  <h4>Artistic viewpoints <FaCommentDots /> ({viewpointCount})</h4>
+                  <h4>{t('userProfilePage.content.artisticViewpoints')} <FaCommentDots /> ({viewpointCount})</h4>
                   {avgSupportRating !== null && (
                     <div className="average-support-rating">
                       <DisplayHearts rating={avgSupportRating} />
-                      <span>{avgSupportRating.toFixed(1)} avg support</span>
+                      <span>{avgSupportRating.toFixed(1)} {t('userProfilePage.content.avgSupport')}</span>
                     </div>
                   )}
                 </div>
 
-                {/* --- MODIFIED: Conditional Rendering for Comment Form --- */}
-                {/* This block now handles all cases for the form's visibility */}
                 {canLoggedInArtistInteractWithArtistProfile && (
                   <>
                     {isLoadingCommentStatus ? (
-                      // 1. Show a loading state while we check
                       <div className="comment-form-placeholder">
-                        <p>Loading...</p>
+                        <p>{t('userProfilePage.status.loading')}</p>
                       </div>
                     ) : hasCommented ? (
-                      // 2. If check is done and they have commented, show a message
                       <div className="comment-form-placeholder">
-                        <p>You have already shared your viewpoint on this artist.</p>
+                        <p>{t('userProfilePage.content.alreadyCommented')}</p>
                       </div>
                     ) : (
-                      // 3. If check is done and they have NOT commented, show the form
                       <form onSubmit={handleCommentSubmit} className="comment-form">
                         <div className="form-group">
-                          <label>Rate your support for this artist's work*</label>
+                          <label>{t('userProfilePage.content.commentFormLabel')}</label>
                           <HeartRatingInput rating={supportRating} setRating={setSupportRating} />
                         </div>
                         <textarea
-                          placeholder={`Share your artistic viewpoint on ${profile.fullname}'s work...`}
+                          placeholder={t('userProfilePage.content.commentFormPlaceholder', { name: profile.fullname })}
                           value={newComment}
                           onChange={(e) => setNewComment(e.target.value)}
                           rows={3}
                           disabled={isSubmittingComment}
                         />
                         <button type="submit" disabled={isSubmittingComment || !newComment.trim() || supportRating === 0}>
-                          {isSubmittingComment ? "Posting..." : "Post viewpoint"}
+                          {isSubmittingComment ? t('userProfilePage.content.posting') : t('userProfilePage.content.postViewpoint')}
                         </button>
                       </form>
                     )}
                   </>
                 )}
-                {/* --- END MODIFICATION --- */}
 
-                {/* The logic for displaying the list of comments remains the same */}
-                {isLoadingComments ? (<p>Loading viewpoints...</p>) :
+                {isLoadingComments ? (<p>{t('userProfilePage.content.loadingViewpoints')}</p>) :
                   profileComments.length > 0 ? (
                     <div className="comments-list">
                       {profileComments.map(comment => (
                         <div key={comment.comment_id} className="comment-item artist-comment-item">
                           <div className="comment-header">
-                            <img src={getImageUrl(comment.commenter?.profile_picture)} alt={comment.commenter?.fullname || "Commenter"} className="commenter-pic" />
+                            <img src={getImageUrl(comment.commenter?.profile_picture)} alt={comment.commenter?.fullname || t('userProfilePage.content.anonymous')} className="commenter-pic" />
                             <div className="commenter-info">
-                              <strong>{comment.commenter?.fullname || "An Artist"}</strong>
+                              <strong>{comment.commenter?.fullname || t('userProfilePage.content.anonymous')}</strong>
                               <span className="comment-date">{formatDate(comment.created_at)}</span>
                             </div>
-                            {/* This displays the hearts for the individual comment */}
                             <div className="comment-rating">
                               <DisplayHearts rating={comment.support_rating} />
                             </div>
@@ -816,43 +790,40 @@ const UserProfilePage: React.FC = () => {
                         </div>
                       ))}
                     </div>
-
-                  ) : (<p>No artistic viewpoints yet for {profile.fullname}.</p>)}
+                  ) : (<p>{t('userProfilePage.content.noViewpoints', { name: profile.fullname })}</p>)}
               </div>
             )}
 
             {isArtistProfile ? (
               <div className="portfolio-section profile-section-public">
-                <h4>Portfolio</h4>
-                {loading && portfolio.length === 0 ? <p>Loading portfolio...</p> :
-                  portfolio.length === 0 ? (<p>No portfolio items.</p>) : (
+                <h4>{t('userProfilePage.artistContent.portfolio')}</h4>
+                {loading && portfolio.length === 0 ? <p>{t('userProfilePage.artistContent.loadingPortfolio')}</p> :
+                  portfolio.length === 0 ? (<p>{t('userProfilePage.artistContent.noPortfolio')}</p>) : (
                     <div className="portfolio-items">
-                      {/* The index is passed to openGallery */}
                       {portfolio.map((item, index) => (
                         <div key={item.portfolio_id} className="portfolio-item-card">
                           {item.image_url && (
                             <img
                               className="portfolio-image"
                               src={getImageUrl(item.image_url)}
-                              alt="Portfolio item"
+                              alt={t('userProfilePage.gallery.altText')}
                               onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/default-portfolio.png'; }}
-                              onClick={() => openGallery(index)} // <-- THIS IS THE TRIGGER
+                              onClick={() => openGallery(index)}
                             />
                           )}
-                          <p>{item.description || 'No description'}</p>
+                          <p>{item.description || t('userProfilePage.artistContent.noDescription')}</p>
                         </div>
                       ))}
                     </div>
                   )}
               </div>
-
             ) : (
               <div className="job-postings-section profile-section-public">
-                <h4>Active job postings</h4>
+                <h4>{t('userProfilePage.employerContent.activeJobs')}</h4>
                 {loading && jobPostings.length === 0 ? (
-                  <p>Loading job postings...</p>
+                  <p>{t('userProfilePage.employerContent.loadingJobs')}</p>
                 ) : jobPostings.length === 0 ? (
-                  <p>This employer has no active job postings.</p>
+                  <p>{t('userProfilePage.employerContent.noJobs')}</p>
                 ) : (
                   <div className="profile-job-postings-list">
                     {jobPostings.map((job) => (
@@ -862,68 +833,58 @@ const UserProfilePage: React.FC = () => {
                           <span className="profile-job-item-payment">
                             €{job.payment_total != null ? Number(job.payment_total).toFixed(2) : 'N/A'}
                           </span>
-
                         </div>
                         <p className="profile-job-item-category">{job.category}</p>
                         <div className="profile-job-item-tags">
                           {job.location && <span className="tag-item compact"><FaMapMarkerAlt /> {job.location}</span>}
-                          {job.presence === 'Online' && <span className="tag-item compact"><FaGlobe /> Online</span>}
-                          {job.presence === 'Physical' && <span className="tag-item compact"><FaBuilding /> On-site</span>}
-                          {job.presence === 'Both' && <span className="tag-item compact"><FaGlobe /> / <FaBuilding /> Hybrid</span>}
+                          {job.presence === 'Online' && <span className="tag-item compact"><FaGlobe /> {t('userProfilePage.employerContent.online')}</span>}
+                          {job.presence === 'Physical' && <span className="tag-item compact"><FaBuilding /> {t('userProfilePage.employerContent.onSite')}</span>}
+                          {job.presence === 'Both' && <span className="tag-item compact"><FaGlobe /> / <FaBuilding /> {t('userProfilePage.employerContent.hybrid')}</span>}
                         </div>
                         <div className="profile-job-item-footer">
-                          <span className="post-date">Posted {formatDate(job.createdAt)}</span>
-                          {/* This link should ideally go to a detailed job page like /jobs/:job_id */}
-                          {/* For now, it can link to the main job feed for context */}
-                          <Link to={`/jobs/${job.job_id}`} className="view-job-link">View Details</Link>
+                          <span className="post-date">{t('userProfilePage.employerContent.posted')} {formatDate(job.createdAt)}</span>
+                          <Link to={`/jobs/${job.job_id}`} className="view-job-link">{t('userProfilePage.actions.viewDetails')}</Link>
                         </div>
                       </div>
                     ))}
                   </div>
                 )}
               </div>
-
-
-
             )}
-          </div> {/* End profile-content-public */}
-          {/* The Gallery Modal is now placed here, at the top level, outside the page layout */}
+          </div>
+          
           {isGalleryOpen && portfolio.length > 0 && (
             <div className="gallery-overlay" onClick={closeGallery}>
-              <button className="gallery-close-btn" onClick={closeGallery} aria-label="Close gallery">
+              <button className="gallery-close-btn" onClick={closeGallery} aria-label={t('userProfilePage.gallery.close')}>
                 <FaTimes size={30} />
               </button>
-
               <button
                 className="gallery-nav-btn prev"
                 onClick={(e) => { e.stopPropagation(); showPrevImage(); }}
-                aria-label="Previous image"
+                aria-label={t('userProfilePage.gallery.prev')}
               >
                 <FaChevronLeft size={40} />
               </button>
-
               <div className="gallery-content" onClick={(e) => e.stopPropagation()}>
                 <img
                   src={getImageUrl(portfolio[currentImageIndex].image_url)}
-                  alt={portfolio[currentImageIndex].description || 'Portfolio image'}
+                  alt={portfolio[currentImageIndex].description || t('userProfilePage.gallery.altText')}
                 />
                 <div className="gallery-info">
                   <p className="gallery-description">{portfolio[currentImageIndex].description}</p>
                   <p className="gallery-counter">{currentImageIndex + 1} / {portfolio.length}</p>
                 </div>
               </div>
-
               <button
                 className="gallery-nav-btn next"
                 onClick={(e) => { e.stopPropagation(); showNextImage(); }}
-                aria-label="Next image"
+                aria-label={t('userProfilePage.gallery.next')}
               >
                 <FaChevronRight size={40} />
               </button>
             </div>
           )}
 
-          {/* Rating Form Modal (General Reviews) */}
           {isRatingFormOpen && loggedInUser && profile && (
             <div ref={ratingFormRef} className="rating-form-modal-overlay">
               <RatingForm
@@ -934,10 +895,9 @@ const UserProfilePage: React.FC = () => {
               />
             </div>
           )}
-        </div> {/* End profile-card */}
-      </div> {/* End user-profile-page */}
+        </div>
+      </div>
     </>
-
   );
 };
 

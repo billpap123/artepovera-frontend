@@ -6,10 +6,14 @@ import axios from 'axios';
 import { useUserContext } from '../context/UserContext';
 import "../styles/Register.css";
 import '../styles/Global.css';
+import { useTranslation } from "react-i18next";
+
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:50001";
 
 const Register = () => {
+  const { t } = useTranslation();
+
   // Get all the necessary setters from your context
   const { setUserId, setArtistId, setEmployerId, setUserType, setFullname } = useUserContext();
   const [username, setUsername] = useState('');
@@ -126,17 +130,17 @@ const Register = () => {
     <div className="auth-page-container">
         <div className="auth-logo-container">
           <Link to="/">
-            <img src="/images/logo2.png" alt="Artepovera Home" className="auth-logo" />
-            <span style={{ marginLeft: '8px' }}>Back to main page</span>
+            <img src="/images/logo2.png" alt={t('registerPage.altText.logo')} className="auth-logo" />
+            <span style={{ marginLeft: '8px' }}>{t('registerPage.backLink')}</span>
           </Link>
         </div>
 
         <div className="register-container auth-form-container">
           <form onSubmit={handleSubmit} className="register-form auth-form">
-            <h2>Create your account</h2>
+            <h2>{t('registerPage.title')}</h2>
 
             <div>
-              <label htmlFor="username">Username:</label>
+              <label htmlFor="username">{t('registerPage.labels.username')}</label>
               <input
                 id="username"
                 type="text"
@@ -147,7 +151,7 @@ const Register = () => {
             </div>
 
             <div>
-              <label htmlFor="email">Email:</label>
+              <label htmlFor="email">{t('registerPage.labels.email')}</label>
               <input
                 id="email"
                 type="email"
@@ -158,19 +162,19 @@ const Register = () => {
             </div>
 
             <div>
-              <label htmlFor="password">Password:</label>
+              <label htmlFor="password">{t('registerPage.labels.password')}</label>
               <input
                 id="password"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                minLength={6} // Added for better security practice
+                minLength={6}
               />
             </div>
 
             <div>
-              <label htmlFor="fullname">Full Name:</label>
+              <label htmlFor="fullname">{t('registerPage.labels.fullname')}</label>
               <input
                 id="fullname"
                 type="text"
@@ -181,7 +185,7 @@ const Register = () => {
             </div>
 
             <div>
-              <label htmlFor="phone_number">Phone Number (Optional):</label>
+              <label htmlFor="phone_number">{t('registerPage.labels.phone')}</label>
               <input
                 id="phone_number"
                 type="tel"
@@ -191,10 +195,10 @@ const Register = () => {
             </div>
 
             <div>
-              <label htmlFor="user_type">Register as:</label>
+              <label htmlFor="user_type">{t('registerPage.labels.userType')}</label>
               <select id="user_type" value={user_type} onChange={(e) => setUserTypeState(e.target.value)}>
-                <option value="Artist">Artist</option>
-                <option value="Employer">Employer</option>
+                <option value="Artist">{t('registerPage.options.artist')}</option>
+                <option value="Employer">{t('registerPage.options.employer')}</option>
               </select>
             </div>
 
@@ -206,7 +210,7 @@ const Register = () => {
                   checked={isStudent}
                   onChange={(e) => setIsStudent(e.target.checked)}
                 />
-                <label htmlFor="isStudent" className="checkbox-label">I am a student artist</label>
+                <label htmlFor="isStudent" className="checkbox-label">{t('registerPage.labels.isStudent')}</label>
               </div>
             )}
 
@@ -217,15 +221,15 @@ const Register = () => {
                 checked={enableLocation}
                 onChange={(e) => setEnableLocation(e.target.checked)}
               />
-              <label htmlFor="enableLocation" className="checkbox-label">Share my current location (for better local matches)</label>
+              <label htmlFor="enableLocation" className="checkbox-label">{t('registerPage.labels.shareLocation')}</label>
             </div>
 
-            <button type="submit" className="auth-button">Register</button>
+            <button type="submit" className="auth-button">{t('registerPage.buttons.register')}</button>
             {error && <p className="error-message">{error}</p>}
 
             <p className="auth-switch-link">
-              Already have an account?{' '}
-              <Link to="/login">Sign In</Link>
+              {t('registerPage.loginPrompt.text')}{' '}
+              <Link to="/login">{t('registerPage.loginPrompt.link')}</Link>
             </p>
           </form>
         </div>

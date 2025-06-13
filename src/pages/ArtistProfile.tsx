@@ -1,6 +1,8 @@
 // src/pages/ArtistProfile.tsx
 import React, { useState, useEffect, useMemo } from "react";
 import axios from "axios";
+// STEP 1: Import the useTranslation hook from your i18n library
+import { useTranslation } from "react-i18next";
 import { useUserContext } from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
@@ -63,6 +65,8 @@ const formatDate = (dateString: string | undefined | null): string => {
 // --- End Formatting Function ---
 
 const ArtistProfile: React.FC = () => {
+  // STEP 2: Initialize the hook to get the 't' function
+  const { t } = useTranslation();
   const { userId, setUserId, artistId, setArtistId } = useUserContext();
 
   // Profile State
@@ -304,7 +308,7 @@ const ArtistProfile: React.FC = () => {
                     className="flex items-center gap-2 cursor-pointer bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200 ease-in-out transform hover:scale-105"
                   >
                     <Upload size={16} />
-                    Change
+                    {t('artistProfile.change')}
                   </label>
                   <input
                     id="profilePicUpload"
@@ -321,7 +325,7 @@ const ArtistProfile: React.FC = () => {
                       disabled={deleting || saving || cvProcessing}
                     >
                       <Trash2 size={16} />
-                      {deleting ? "Removing..." : "Remove"}
+                      {deleting ? t('artistProfile.removing') : t('artistProfile.remove')}
                     </button>
                   )}
                 </div>
@@ -329,18 +333,19 @@ const ArtistProfile: React.FC = () => {
             </div>
             <div className="profile-summary">
                  <h3 className="profile-name">{profileUserName || 'Artist Name'}</h3>
-                 {isStudent && (<span className="student-badge">STUDENT ARTIST</span>)}
+                 {isStudent && (<span className="student-badge">{t('artistProfile.studentBadge')}</span>)}
                  <div className="average-rating-display">
-                    {reviewsLoading ? ( <span>Loading rating...</span> )
+                    {reviewsLoading ? ( <span>{t('artistProfile.loadingRating')}</span> )
                     : completedReviews.length > 0 && averageRating ? (
                         <>
                             <DisplayStars rating={averageRating} />
                             <span className="rating-value">{averageRating.toFixed(1)}</span>
-                            <span className="review-count">({completedReviews.length} project review{completedReviews.length !== 1 ? 's' : ''})</span>
+                            {/* Pluralization handled by i18next */}
+                            <span className="review-count">({t('artistProfile.projectReviews', { count: completedReviews.length })})</span>
                         </>
-                    ) : ( <span className="no-rating">No project reviews yet</span> )}
+                    ) : ( <span className="no-rating">{t('artistProfile.noProjectReviews')}</span> )}
                 </div>
-                 {!isEditing && ( <button className="edit-btn" onClick={handleEditToggle}> Edit profile </button> )}
+                 {!isEditing && ( <button className="edit-btn" onClick={handleEditToggle}>{t('artistProfile.editProfile')}</button> )}
             </div>
         </div>
 
@@ -350,101 +355,99 @@ const ArtistProfile: React.FC = () => {
           {!isEditing ? (
             <>
               <div className="profile-section">
-                <h4>Short description:</h4>
+                <h4>{t('artistProfile.shortDescription')}</h4>
                 <div className="bio-text markdown-content">
                   <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                    {bio || "*No bio provided yet.*"}
+                    {bio || t('artistProfile.noBio')}
                   </ReactMarkdown>
                 </div>
               </div>
               <div className="profile-section cv-section">
-                <h4>Curriculum Vitae (CV)</h4>
-                 {/* --- UPDATED CV DISPLAY --- */}
+                <h4>{t('artistProfile.cvTitle')}</h4>
                 {cvUrl ? (
                   <div className="cv-display">
                     <FaFilePdf className="pdf-icon" />
                     <button onClick={() => handleCvDownload(cvUrl)} className="cv-link">
-                      Download CV
+                      {t('artistProfile.downloadCv')}
                     </button>
                   </div>
                 ) : (
-                  <p className="no-cv-message">No CV uploaded yet.</p>
+                  <p className="no-cv-message">{t('artistProfile.noCv')}</p>
                 )}
               </div>
 
               <div className="reviews-section profile-section">
-                     <h4>Project Reviews ({completedReviews.length})</h4>
+                     <h4>{t('artistProfile.projectReviews', { count: completedReviews.length })}</h4>
                      {reviewsLoading ? ( <p>Loading...</p> ) : completedReviews.length > 0 ? ( <div className="reviews-list"> {completedReviews.map((review: ReviewData) => (
                         <div key={review.review_id} className="review-item">
                             <div className="review-header">
-                                <img src={getImageUrl(review.reviewer?.profile_picture)} alt={review.reviewer?.fullname || 'Reviewer'} className="reviewer-pic"/>
-                                <div className="reviewer-info"> <strong>{review.reviewer?.fullname || 'Anonymous'}</strong> <span className="review-date">{formatDate(review.created_at)}</span> </div>
+                                <img src={getImageUrl(review.reviewer?.profile_picture)} alt={review.reviewer?.fullname || t('artistProfile.anonymous')} className="reviewer-pic"/>
+                                <div className="reviewer-info"> <strong>{review.reviewer?.fullname || t('artistProfile.anonymous')}</strong> <span className="review-date">{formatDate(review.created_at)}</span> </div>
                                 <div className="review-stars"> <DisplayStars rating={review.overall_rating} /> </div>
                             </div>
                             {review.specific_answers?.comment && ( <p className="review-comment">"{review.specific_answers.comment}"</p> )}
                         </div>
                      ))} </div>
-                     ) : ( <p className="no-reviews">No project reviews have been submitted for this artist yet.</p> )}
+                     ) : ( <p className="no-reviews">{t('artistProfile.noProjectReviews')}</p> )}
               </div>
 
               <div className="reviews-section profile-section">
-                <h4>Interaction Feedback ({interactionReviews.length})</h4>
-                {reviewsLoading ? (<p>Loading feedback...</p>)
+                <h4>{t('artistProfile.interactionFeedback', { count: interactionReviews.length })}</h4>
+                {reviewsLoading ? (<p>{t('artistProfile.loadingFeedback')}</p>)
                   : interactionReviews.length > 0 ? (
                     <div className="reviews-list">
                       {interactionReviews.map((review: ReviewData) => (
                         <div key={review.review_id} className="review-item interaction-review">
                           <div className="review-header">
-                            <img src={getImageUrl(review.reviewer?.profile_picture)} alt={review.reviewer?.fullname} className="reviewer-pic" />
+                            <img src={getImageUrl(review.reviewer?.profile_picture)} alt={review.reviewer?.fullname || t('artistProfile.anonymous')} className="reviewer-pic" />
                             <div className="reviewer-info">
-                              <strong>{review.reviewer?.fullname || 'Anonymous'}</strong>
+                              <strong>{review.reviewer?.fullname || t('artistProfile.anonymous')}</strong>
                               <span className="review-date">{formatDate(review.created_at)}</span>
                             </div>
                           </div>
                           <div className="review-comment">
                             {review.specific_answers?.noDealPrimaryReason && (
                               <p className="interaction-reason">
-                                <strong>Reason:</strong> {review.specific_answers.noDealPrimaryReason}
+                                <strong>{t('artistProfile.reason')}</strong> {review.specific_answers.noDealPrimaryReason}
                               </p>
                             )}
                             {review.specific_answers?.comment && (
-                              <p><strong>Comment:</strong> "{review.specific_answers.comment}"</p>
+                              <p><strong>{t('artistProfile.comment')}</strong> "{review.specific_answers.comment}"</p>
                             )}
                           </div>
                         </div>
                       ))}
                     </div>
-                  ) : (<p className="no-reviews">No interaction feedback to show.</p>
+                  ) : (<p className="no-reviews">{t('artistProfile.noInteractionFeedback')}</p>
                 )}
               </div>
             </>
 
           ) : (
             <div className="edit-form">
-              <div className="form-field-group"> <label htmlFor="artistBio">Short description:</label> <textarea id="artistBio" value={newBio} onChange={(e) => setNewBio(e.target.value)} rows={5} className="bio-input" /> </div>
+              <div className="form-field-group"> <label htmlFor="artistBio">{t('artistProfile.shortDescription')}</label> <textarea id="artistBio" value={newBio} onChange={(e) => setNewBio(e.target.value)} rows={5} className="bio-input" /> </div>
               <div className="form-field-group cv-edit-section">
-                <label htmlFor="cvUpload" className="cv-section-title">Update Curriculum Vitae (PDF only):</label>
+                <label htmlFor="cvUpload" className="cv-section-title">{t('artistProfile.updateCvTitle')}</label>
                 <label htmlFor="cvUpload" className="cv-upload-label action-btn">
-                  {newCvFile ? `Selected: ${newCvFile.name.substring(0, 25)}${newCvFile.name.length > 25 ? '...' : ''}` : (cvUrl ? "Change CV File" : "Choose CV File")}
+                  {newCvFile ? `Selected: ${newCvFile.name.substring(0, 25)}${newCvFile.name.length > 25 ? '...' : ''}` : (cvUrl ? t('artistProfile.changeCvFile') : t('artistProfile.chooseCvFile'))}
                 </label>
                 <input id="cvUpload" type="file" accept="application/pdf" onChange={handleCvFileChange} style={{ display: 'none' }} className="file-input-hidden" />
-                {newCvFile && (<button type="button" onClick={handleCvUpload} disabled={cvProcessing || saving || deleting} className="action-btn upload-cv-btn" style={{ marginTop: '10px' }}> {cvProcessing && !saving && !deleting ? "Uploading CV..." : `Upload Selected CV`} </button>)}
+                {newCvFile && (<button type="button" onClick={handleCvUpload} disabled={cvProcessing || saving || deleting} className="action-btn upload-cv-btn" style={{ marginTop: '10px' }}> {cvProcessing ? t('artistProfile.uploadingCv') : t('artistProfile.uploadSelectedCv')} </button>)}
                 {cvUrl && (
                   <div className="current-cv-display">
-                     {/* --- UPDATED CV DISPLAY (EDIT MODE) --- */}
-                    <span>Current CV: <FaFilePdf className="pdf-icon-inline" /> 
+                    <span>{t('artistProfile.currentCv')} <FaFilePdf className="pdf-icon-inline" /> 
                       <button onClick={() => handleCvDownload(cvUrl)} className="cv-link-inline">
                         Download
                       </button>
                     </span>
-                    {!newCvFile && (<button type="button" onClick={handleCvDelete} disabled={cvProcessing || saving || deleting} className="action-btn delete-cv-btn danger"> {cvProcessing && !saving && !deleting ? "Removing..." : "Remove CV"} </button>)}
+                    {!newCvFile && (<button type="button" onClick={handleCvDelete} disabled={cvProcessing || saving || deleting} className="action-btn delete-cv-btn danger"> {cvProcessing ? t('artistProfile.removingCv') : t('artistProfile.removeCv')} </button>)}
                   </div>
                 )}
-                {!cvUrl && !newCvFile && <p className="no-cv-message-edit">No CV uploaded yet. Choose one above.</p>}
+                {!cvUrl && !newCvFile && <p className="no-cv-message-edit">{t('artistProfile.noCvEdit')}</p>}
               </div>
               <div className="btn-row form-actions">
-                <button className="save-btn submit-btn" onClick={handleSaveChanges} disabled={saving || deleting || cvProcessing}> {saving ? "Saving Profile..." : "Save changes"} </button>
-                <button type="button" className="cancel-btn" onClick={handleEditToggle} disabled={saving || deleting || cvProcessing}> Done Editing </button>
+                <button className="save-btn submit-btn" onClick={handleSaveChanges} disabled={saving || deleting || cvProcessing}> {saving ? t('artistProfile.savingProfile') : t('artistProfile.saveChanges')} </button>
+                <button type="button" className="cancel-btn" onClick={handleEditToggle} disabled={saving || deleting || cvProcessing}> {t('artistProfile.doneEditing')} </button>
               </div>
             </div>
           )}

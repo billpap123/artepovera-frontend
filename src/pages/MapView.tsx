@@ -7,6 +7,10 @@ import {
   Popup,
   useMap,
 } from 'react-leaflet';
+import { useTranslation } from "react-i18next";
+
+
+
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { useNavigate } from 'react-router-dom';
@@ -96,7 +100,7 @@ const MapView: React.FC<MapViewProps> = ({ userType: loggedInUserType, loggedInU
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-
+  const { t } = useTranslation();
   const initialCenter: [number, number] = [39.0742, 21.8243];
   const initialZoom = 7;
 
@@ -160,12 +164,12 @@ const MapView: React.FC<MapViewProps> = ({ userType: loggedInUserType, loggedInU
       <Navbar />
       <div className="map-page-container">
         <div className="map-controls">
-          <h2 className="map-title">Explore the community</h2>
+          <h2 className="map-title">{t('mapView.title')}</h2>
         </div>
 
         <div className="map-content-wrapper">
           {!loading && !error && allLocations.length === 0 && (
-            <div className="map-overlay-message"><p>No users found to display on the map.</p></div>
+            <div className="map-overlay-message"><p>{t('mapView.status.noUsers')}</p></div>
           )}
           <MapContainer
             className="leaflet-map"
@@ -185,32 +189,27 @@ const MapView: React.FC<MapViewProps> = ({ userType: loggedInUserType, loggedInU
               
               let pinIcon;
               if (isSelf) {
-                pinIcon = selfIcon; // Use the special icon for the logged-in user
+                pinIcon = selfIcon;
               } else {
                 pinIcon = loc.user_type === 'Artist' ? artistIcon : employerIcon;
               }
-
-              // Filter out the logged-in user's own pin if you prefer not to see it
-              // if (isSelf) {
-              //   return null;
-              // }
 
               return (
                 <Marker
                   key={loc.user_id}
                   position={[loc.location.latitude, loc.location.longitude]}
                   icon={pinIcon}
-                  zIndexOffset={isSelf ? 1000 : 0} // Make the "self" pin appear on top
+                  zIndexOffset={isSelf ? 1000 : 0}
                 >
                   <Popup>
                     <div className="map-popup-content">
-                        {isSelf && <div className="popup-self-indicator">📍 This is you!</div>}
+                        {isSelf && <div className="popup-self-indicator">{t('mapView.popup.selfIndicator')}</div>}
                         <div className="popup-header">
                             <strong className="popup-name">{loc.fullname}</strong>
                             <span className={`popup-user-type ${loc.user_type?.toLowerCase()}`}>{loc.user_type}</span>
                         </div>
                         <button className="popup-button" onClick={() => navigate(`/user-profile/${loc.user_id}`)}>
-                          View profile
+                          {t('mapView.popup.viewProfile')}
                         </button>
                     </div>
                   </Popup>

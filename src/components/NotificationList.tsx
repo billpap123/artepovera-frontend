@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "../styles/Notifications.css";
+import { useTranslation } from "react-i18next";
+
+
 
 type Notification = {
   notification_id: number;
@@ -15,7 +18,7 @@ const NotificationList: React.FC = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
+  const { t } = useTranslation();
   // 1) Grab the user & token from localStorage
   const user = JSON.parse(localStorage.getItem("user") || "{}");
   const token = localStorage.getItem("token");
@@ -95,9 +98,9 @@ const NotificationList: React.FC = () => {
 
   return (
     <div className="notification-list">
-      <h2>Notifications</h2>
+      <h2>{t('notificationList.title')}</h2>
       {notifications.length === 0 ? (
-        <p>No notifications yet.</p>
+        <p>{t('notificationList.status.none')}</p>
       ) : (
         <ul>
           {notifications.map((notif) => (
@@ -106,31 +109,28 @@ const NotificationList: React.FC = () => {
               className={notif.read_status ? "read" : "unread"}
               style={{ marginBottom: "15px" }}
             >
-              {/* Sender Name + HTML Message */}
               <div>
                 <strong>{notif.sender_name}</strong>:{" "}
                 <span dangerouslySetInnerHTML={{ __html: notif.message }} />
               </div>
 
-              {/* Created at */}
               <small
                 style={{ display: "block", marginTop: "5px", color: "#555" }}
               >
                 {new Date(notif.created_at).toLocaleString()}
               </small>
 
-              {/* Action Buttons */}
               <div style={{ marginTop: "8px" }}>
                 {!notif.read_status && (
                   <button
                     onClick={() => handleMarkAsRead(notif.notification_id)}
                     style={{ marginRight: "8px" }}
                   >
-                    Mark as read
+                    {t('notificationList.actions.markAsRead')}
                   </button>
                 )}
                 <button onClick={() => handleDelete(notif.notification_id)}>
-                  Delete
+                  {t('notificationList.actions.delete')}
                 </button>
               </div>
             </li>

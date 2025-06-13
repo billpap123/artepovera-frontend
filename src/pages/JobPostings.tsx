@@ -6,6 +6,7 @@ import '../styles/JobPostings.css'; // Make sure this CSS file exists
 import { FaMapMarkerAlt, FaGlobe, FaBuilding, FaEuroSign, FaCalendarAlt, FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
 import { formatDate } from '../utils/formatDate';
 import { useUserContext } from '../context/UserContext';
+import { useTranslation } from "react-i18next";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:50001";
 
@@ -55,7 +56,8 @@ const JobPostings: React.FC<JobPostingsProps> = ({ jobs, employerId }) => {
   const [internalJobPostings, setInternalJobPostings] = useState<JobPosting[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
+  const { t } = useTranslation();
+
   const { userType: loggedInUserType, userId: loggedInUserId } = useUserContext();
   const isArtist = loggedInUserType === 'Artist';
   

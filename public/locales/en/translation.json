@@ -1,0 +1,853 @@
+{
+  "artistProfile": {
+    "studentBadge": "Student artist",
+    "editProfile": "Edit profile",
+    "loadingRating": "Loading rating...",
+    "projectReviews": "{{count}} project review",
+    "projectReviews_plural": "{{count}} project reviews",
+    "noProjectReviews": "No project reviews yet",
+    "shortDescription": "Short description:",
+    "noBio": "*No bio provided yet.*",
+    "cvTitle": "Curriculum vitae (CV)",
+    "downloadCv": "Download CV",
+    "noCv": "No cv uploaded yet.",
+    "interactionFeedback": "Interaction feedback ({{count}})",
+    "loadingFeedback": "Loading feedback...",
+    "noInteractionFeedback": "No interaction feedback to show.",
+    "anonymous": "Anonymous",
+    "reason": "Reason:",
+    "comment": "Comment:",
+    "change": "Change",
+    "remove": "Remove",
+    "removing": "Removing...",
+    "updateCvTitle": "Update curriculum vitae (PDF only):",
+    "changeCvFile": "Change cv file",
+    "chooseCvFile": "Choose cv file",
+    "uploadSelectedCv": "Upload selected cv",
+    "uploadingCv": "Uploading cv...",
+    "currentCv": "Current cv:",
+    "removeCv": "Remove cv",
+    "removingCv": "Removing...",
+    "noCvEdit": "No cv uploaded yet. choose one above.",
+    "saveChanges": "Save changes",
+    "savingProfile": "Saving profile...",
+    "doneEditing": "Done editing"
+  },
+  "chatPage": {
+    "sidebar": {
+      "title": "Conversations",
+      "loading": "Loading chats...",
+      "noChats": "No conversations yet.",
+      "item": {
+        "unknownUser": "Unknown user",
+        "preview": "Click to view messages"
+      }
+    },
+    "main": {
+      "header": {
+        "fallbackTitle": "Chat",
+        "viewProfile": "View profile"
+      },
+      "messages": {
+        "loading": "Loading messages..."
+      },
+      "input": {
+        "placeholder": "Type a message...",
+        "sendButton": "Send"
+      },
+      "placeholder": {
+        "prompt": "Select a conversation from the left to start chatting."
+      }
+    },
+    "errors": {
+      "loadFailed": "Failed to load conversations.",
+      "sendFailed": "Failed to send message."
+    }
+  },
+  "editJobPage": {
+    "title": "Edit job posting",
+    "loading": "Loading...",
+    "error": {
+      "loadFailed": "Could not load job data.",
+      "updateFailed": "An error occurred while updating."
+    },
+    "success": {
+      "updated": "Job posting updated successfully!"
+    },
+    "labels": {
+      "title": "Title",
+      "description": "Description",
+      "category": "Category",
+      "location": "Location",
+      "presence": "Presence",
+      "startDate": "Start date",
+      "endDate": "End date",
+      "applicationDeadline": "Application deadline",
+      "monthlySalaryQuestion": "Is this a monthly salary?",
+      "monthlyAmount": "Monthly amount (€)",
+      "numberOfMonths": "Number of months",
+      "totalPay": "Total pay (€)",
+      "insuranceProvided": "Insurance provided",
+      "experienceYears": "Experience years",
+      "degreeRequired": "University degree required?",
+      "degreeDetails": "Degree details (optional)",
+      "militaryService": "Military service",
+      "foreignLanguages": "Foreign languages",
+      "languagePlaceholder": "Language",
+      "certificatePlaceholder": "Certificate (e.g., C2)",
+      "desiredSkills": "Desired skills (comma-separated)",
+      "skillsPlaceholder": "e.g., painting, sculpture, photoshop"
+    },
+    "options": {
+      "presence": {
+        "physical": "Physical",
+        "online": "Online",
+        "both": "Both"
+      },
+      "experience": {
+        "select": "Select range..."
+      },
+      "military": {
+        "notApplicable": "Not applicable",
+        "notRequired": "Not required",
+        "completed": "Completed"
+      }
+    },
+    "buttons": {
+      "addLanguage": "Add language",
+      "update": "Update job",
+      "updating": "Updating..."
+    },
+    "sections": {
+      "compensation": "Compensation",
+      "requirements": "Requirements"
+    }
+  },
+  "employerProfile": {
+    "altText": "Employer profile",
+    "unnamed": "Employer name",
+    "change": "Change",
+    "remove": "Remove",
+    "removing": "Removing...",
+    "loadingRating": "Loading rating...",
+    "projectReviews": "{{count}} project review",
+    "projectReviews_plural": "{{count}} project reviews",
+    "noProjectReviews": "No project reviews yet",
+    "editProfile": "Edit profile",
+    "shortDescription": "Short description",
+    "noBio": "*No bio provided yet.*",
+    "loadingReviews": "Loading reviews...",
+    "anonymous": "Anonymous",
+    "noProjectReviewsReceived": "You haven't received any project reviews yet.",
+    "interactionFeedback": "Interaction feedback",
+    "loadingFeedback": "Loading feedback...",
+    "reason": "Reason:",
+    "comment": "Comment:",
+    "noInteractionFeedback": "No interaction feedback to show.",
+    "bioLabel": "Bio:",
+    "saveChanges": "Save changes",
+    "saving": "Saving...",
+    "cancel": "Cancel"
+  },
+  "jobDetailPage": {
+    "sidebar": {
+      "duration": "Duration",
+      "starts": "Starts:",
+      "ends": "Ends:",
+      "locationPresence": "Location & presence",
+      "presence": "Presence:",
+      "location": "Location:",
+      "compensation": "Compensation",
+      "salary": "Salary:",
+      "perMonth": "/ month",
+      "for": "For:",
+      "months": "month(s)",
+      "totalPay": "Total pay:",
+      "insurance": "Insurance:",
+      "provided": "Provided",
+      "notProvided": "Not provided",
+      "readyToApply": "Ready to apply?",
+      "deadline": "Deadline:",
+      "submitting": "Submitting...",
+      "applied": "Applied",
+      "applyNow": "Apply now"
+    },
+    "main": {
+      "postedBy": "Posted by",
+      "notAvailable": "N/A",
+      "postedOn": "Posted on",
+      "descriptionTitle": "Project description",
+      "requirementsTitle": "Requirements",
+      "experience": "Experience:",
+      "years": "years",
+      "degree": "Degree:",
+      "required": "Required",
+      "militaryService": "Military service:",
+      "languages": "Languages:",
+      "skillsTitle": "Desired skills & keywords"
+    },
+    "alertsAndStatus": {
+      "loading": "Loading job details...",
+      "notFound": "Job not found.",
+      "loadError": "Failed to load job details.",
+      "applyError": "Failed to apply.",
+      "loginToApply": "Please log in to apply.",
+      "applySuccess": "Application successful!"
+    }
+  },
+  "jobFeed": {
+    "status": {
+      "loading": "Loading job feed...",
+      "noJobs": "No job postings match the current filters."
+    },
+    "card": {
+      "postedBy": "Posted by:",
+      "postedOn": "Posted on",
+      "notAvailable": "N/A",
+      "online": "Online",
+      "onSite": "On-site",
+      "hybrid": "Hybrid",
+      "totalPayment": "Total payment:",
+      "perMonth": "/month",
+      "duration": "Duration:",
+      "to": "to",
+      "insurance": "Insurance:",
+      "included": "Included",
+      "notIncluded": "Not included",
+      "applyBy": "Apply by:",
+      "requirements": "Requirements",
+      "experience": "Experience:",
+      "years": "years",
+      "degree": "Degree:",
+      "required": "Required",
+      "militaryService": "Military service:",
+      "languages": "Languages:",
+      "desiredKeywords": "Desired keywords"
+    },
+    "actions": {
+      "applying": "Applying...",
+      "applied": "Applied",
+      "applyNow": "Apply now"
+    },
+    "alerts": {
+      "loginRequired": "Please log in to apply for jobs.",
+      "applySuccess": "Application successful!",
+      "applyFailed": "Failed to apply."
+    }
+  },
+  "jobPostings": {
+    "status": {
+      "loading": "Loading job postings...",
+      "error": "Failed to load job postings.",
+      "none": "This user has no active job postings."
+    },
+    "card": {
+      "postedOn": "Posted on",
+      "online": "Online",
+      "onSite": "On-site",
+      "hybrid": "Hybrid",
+      "totalPayment": "Total payment:",
+      "perMonth": "/month",
+      "duration": "Duration:",
+      "to": "to",
+      "insurance": "Insurance:",
+      "included": "Included",
+      "notIncluded": "Not included",
+      "applyBy": "Apply by:"
+    },
+    "actions": {
+      "applyNow": "Apply now"
+    },
+    "alerts": {
+      "loginRequired": "You must be logged in as an artist to apply.",
+      "applySuccess": "Application successful!",
+      "applyFailed": "Failed to apply. you may have already applied to this job."
+    }
+  },
+  "jobListings": {
+    "status": {
+      "loading": "Loading job postings...",
+      "none": "No job postings to display."
+    },
+    "card": {
+      "postedBy": "Posted by:",
+      "postedOn": "Posted on",
+      "online": "Online",
+      "onSite": "On-site",
+      "hybrid": "Hybrid",
+      "totalPayment": "Total payment:",
+      "perMonth": "/month",
+      "duration": "Duration:",
+      "to": "to",
+      "insurance": "Insurance:",
+      "included": "Included",
+      "notIncluded": "Not included",
+      "applyBy": "Apply by:",
+      "requirements": "Requirements",
+      "experience": "Experience:",
+      "years": "years",
+      "degree": "Degree:",
+      "required": "Required",
+      "militaryService": "Military service:",
+      "languages": "Languages:",
+      "desiredKeywords": "Desired keywords"
+    },
+    "actions": {
+      "applyNow": "Apply now"
+    }
+  },
+  "landingPage": {
+    "hero": {
+      "videoError": "Your browser does not support the video tag.",
+      "title": "ARTEPOVERA",
+      "subtitle": "Where imagination meets opportunity.",
+      "description": "Showcase your talents, discover unique gigs, and connect with the creative world—<em>all in one place</em>.",
+      "loginButton": "Log in",
+      "signupButton": "Sign up"
+    },
+    "categories": {
+      "title": "Explore opportunities",
+      "intro": "Find jobs tailored to your craft. connect with employers looking for painters, musicians, performers, and more.",
+      "visuals": {
+        "title": "Visual creators",
+        "description": "Find commissions, gallery showings, illustration gigs, and graphic design projects.",
+        "link": "Browse visual gigs"
+      },
+      "music": {
+        "title": "Musicians & composers",
+        "description": "Discover live performance opportunities, scoring jobs, session work, and band openings.",
+        "link": "Find music opps"
+      },
+      "acting": {
+        "title": "Actors & performers",
+        "description": "Get cast in your next role. find auditions for theatre, film, voice-over, and live events.",
+        "link": "See casting calls"
+      }
+    },
+    "features": {
+      "title": "How it works",
+      "intro": "A platform designed for creative connections and career growth.",
+      "portfolio": {
+        "title": "Build your portfolio",
+        "description": "Showcase your best work with a beautiful, easy-to-manage portfolio."
+      },
+      "find": {
+        "title": "Find opportunities",
+        "description": "Browse relevant job postings and gigs filtered by your artistic discipline."
+      },
+      "connect": {
+        "title": "Connect & collaborate",
+        "description": "Directly message employers and fellow artists to build your network."
+      }
+    },
+    "cta": {
+      "title": "Ready to join the creative revolution?",
+      "intro": "Unlock your full potential—sign up and connect with a vibrant community of artists and employers today.",
+      "button": "Sign up now"
+    }
+  },
+  "loginPage": {
+    "backLink": "Back to main page",
+    "title": "Login to your account",
+    "emailLabel": "Email:",
+    "passwordLabel": "Password:",
+    "loginButton": "Login",
+    "registerPrompt": "Don't have an account?",
+    "registerLink": "Register now",
+    "altText": {
+      "logo": "Artepovera home"
+    },
+    "errors": {
+      "invalidCredentials": "Invalid email or password.",
+      "unexpected": "An unexpected error occurred during login."
+    }
+  },
+  "mainPage": {
+    "header": {
+      "adminTitle": "Administrator control panel",
+      "adminSubtitle": "Manage users, content, and application data.",
+      "welcome": "Welcome back{{name}}!",
+      "userSubtitle": "Here's what's happening in the arte povera community today."
+    },
+    "artist": {
+      "publicProfile": "My public profile",
+      "publicProfileDesc": "View and share your profile",
+      "editProfile": "Edit my profile",
+      "editProfileDesc": "Update your bio, cv, and photo",
+      "editPortfolio": "Edit my portfolio",
+      "editPortfolioDesc": "Showcase your best work",
+      "messages": "My messages",
+      "messagesDesc": "Check your conversations",
+      "applications": "My applications",
+      "applicationsDesc": "Track your job applications",
+      "map": "Community map",
+      "mapDesc": "Discover artists & employers"
+    },
+    "employer": {
+      "publicProfile": "My public profile",
+      "publicProfileDesc": "View your employer profile",
+      "editProfile": "Edit my profile",
+      "editProfileDesc": "Update your bio and photo",
+      "postJob": "Post a new job",
+      "postJobDesc": "Find the perfect artist",
+      "messages": "My messages",
+      "messagesDesc": "Check applicant conversations",
+      "jobPostings": "My job postings",
+      "jobPostingsDesc": "Manage your active listings",
+      "map": "Community map",
+      "mapDesc": "Discover artists & employers"
+    },
+    "admin": {
+      "manageUsers": "Manage users",
+      "manageUsersDesc": "View, edit, or delete users",
+      "moderateContent": "Moderate content",
+      "moderateContentDesc": "Manage reviews and comments",
+      "overviewTitle": "Application overview",
+      "overviewDesc": "This is your central hub for managing the application."
+    },
+    "jobFeed": {
+      "title": "Job postings from around the world"
+    }
+  },
+  "mapView": {
+    "title": "Explore the community",
+    "status": {
+      "loading": "Loading map...",
+      "noUsers": "No users found to display on the map."
+    },
+    "popup": {
+      "selfIndicator": "📍 This is you!",
+      "viewProfile": "View profile"
+    },
+    "errors": {
+      "authRequired": "Authentication required to view the map.",
+      "loadFailed": "Failed to load location data."
+    }
+  },
+  "messagesPage": {
+    "title": "Chat messages",
+    "logo": "Logo",
+    "nav": {
+      "dashboard": "Dashboard",
+      "profile": "Profile",
+      "logout": "Logout"
+    },
+    "status": {
+      "noMessages": "No messages available."
+    },
+    "error": "Failed to fetch messages."
+  },
+  "myApplicationsPage": {
+    "title": "My applications",
+    "subtitle": "A list of all the jobs you've applied for.",
+    "status": {
+      "loading": "Loading your applications...",
+      "noApplicationsTitle": "No applications found",
+      "noApplicationsDesc": "You haven't applied to any jobs yet. when you do, they'll show up here.",
+      "noDescription": "No description available."
+    },
+    "card": {
+      "by": "by",
+      "notAvailable": "N/A",
+      "viewDetails": "View job details"
+    },
+    "actions": {
+      "browseJobs": "Browse jobs"
+    },
+    "errors": {
+      "loginRequired": "You must be logged in to view your applications.",
+      "loadFailed": "Could not load your applications. please try again later."
+    }
+  },
+  "portfolioPage": {
+    "header": {
+      "myPortfolio": "My portfolio",
+      "artistsPortfolio": "{{name}}'s portfolio",
+      "genericArtist": "Artist",
+      "addNew": "+ add new work"
+    },
+    "status": {
+      "loadingProfile": "Loading user profile...",
+      "loadingPortfolio": "Loading portfolio...",
+      "emptyOwner": "Your portfolio is empty. click 'add new work' to get started!",
+      "emptyViewer": "This artist hasn't added any portfolio items yet.",
+      "noDescription": "No description."
+    },
+    "form": {
+      "title": "Upload new work",
+      "fileLabel": "Select file (image, pdf, video)*",
+      "descriptionLabel": "Description*",
+      "descriptionPlaceholder": "Describe your work, cv content, or video...",
+      "uploadButton": "Upload to portfolio",
+      "uploadingButton": "Uploading...",
+      "cancelButton": "Cancel"
+    },
+    "item": {
+      "imageAlt": "Portfolio image",
+      "pdfAriaLabel": "Pdf document",
+      "pdfDefaultName": "Document",
+      "viewPdf": "View pdf",
+      "videoError": "Your browser does not support the video tag.",
+      "otherAriaLabel": "File",
+      "otherDefaultName": "File",
+      "openFile": "Open file",
+      "saveButton": "Save",
+      "editButton": "Edit desc",
+      "deleteButton": "Delete"
+    },
+    "modal": {
+      "closeButton": "×",
+      "enlargedViewAlt": "Enlarged portfolio view"
+    },
+    "alerts": {
+      "tryAgain": "Try again",
+      "loadFailed": "Failed to load portfolio items.",
+      "invalidFileType": "Invalid file type.",
+      "fileAndDescRequired": "Please select a file and enter a description.",
+      "tokenNotFound": "Authentication token not found.",
+      "uploadSuccess": "Portfolio item uploaded successfully!",
+      "uploadFailed": "Failed to upload item.",
+      "descNotEmpty": "Description cannot be empty.",
+      "updateSuccess": "Description updated successfully!",
+      "updateFailed": "Failed to update portfolio item.",
+      "deleteConfirm": "Are you sure you want to delete this item?",
+      "deleteSuccess": "Portfolio item deleted.",
+      "deleteFailed": "Failed to delete portfolio item."
+    }
+  },
+  "postJobPage": {
+    "title": {
+      "create": "Create a new job posting",
+      "edit": "Edit job posting"
+    },
+    "subtitle": {
+      "create": "Provide details about the opportunity to attract the right artists.",
+      "edit": "Update the details for your job listing."
+    },
+    "sections": {
+      "coreDetails": "Core details",
+      "logistics": "Logistics",
+      "compensation": "Compensation",
+      "requirements": "Requirements & desired skills"
+    },
+    "labels": {
+      "jobTitle": "Job title*",
+      "category": "Category*",
+      "customCategory": "Please specify category*",
+      "description": "Description",
+      "location": "Location",
+      "workPresence": "Work presence*",
+      "startDate": "Approx. start date",
+      "endDate": "Approx. end date",
+      "deadline": "Application deadline",
+      "paymentStructure": "Payment structure*",
+      "totalPayment": "Total payment (eur)*",
+      "monthlyWage": "Monthly wage (eur)*",
+      "numMonths": "Number of months*",
+      "insurance": "Insurance is included",
+      "experience": "Years of experience required",
+      "degreeRequired": "University degree is a requirement",
+      "degreeDetails": "Specify degree",
+      "militaryService": "Military service status",
+      "languages": "Language certificates"
+    },
+    "placeholders": {
+      "title": "e.g., mural artist for downtown cafe",
+      "customCategory": "e.g., vfx artist, puppet master",
+      "description": "Briefly describe the project, the artist's role, and key deliverables.",
+      "location": "e.g., athens, greece",
+      "totalPayment": "e.g., 1500",
+      "monthlyPayment": "e.g., 500",
+      "numMonths": "e.g., 3",
+      "degreeDetails": "e.g., bachelor's in fine arts",
+      "language": "Language (e.g., english)",
+      "certificate": "Certificate (e.g., c2 proficiency)",
+      "keywords": "e.g., vibrant, abstract, digital illustration, large-scale"
+    },
+    "options": {
+      "selectCategory": "Select a category...",
+      "otherCategory": "Other (please specify)",
+      "presencePhysical": "Physical / on-site",
+      "presenceOnline": "Online / remote",
+      "presenceBoth": "Both / hybrid",
+      "paymentTotal": "Total project compensation",
+      "paymentMonthly": "Monthly salary",
+      "yearsSuffix": "years",
+      "militaryNotApplicable": "Not applicable",
+      "militaryCompleted": "Completed",
+      "militaryNotRequired": "Not required"
+    },
+    "buttons": {
+      "addLanguage": "+ add language",
+      "saving": "Saving...",
+      "saveChanges": "Save changes",
+      "postJob": "Post this job"
+    },
+    "status": {
+      "loading": "Loading job details..."
+    },
+    "errors": {
+      "loadFailed": "Could not load job data. it may have been deleted.",
+      "totalPayment": "Please enter a valid total payment amount.",
+      "monthlyPayment": "Please enter a valid monthly wage and number of months.",
+      "requiredFields": "Title and category are required.",
+      "generic": "An error occurred."
+    },
+    "alerts": {
+      "updateSuccess": "Job updated successfully!",
+      "postSuccess": "Job posted successfully!"
+    }
+  },
+  "registerPage": {
+    "backLink": "Back to main page",
+    "title": "Create your account",
+    "labels": {
+      "username": "Username:",
+      "email": "Email:",
+      "password": "Password:",
+      "fullname": "Full name:",
+      "phone": "Phone number (optional):",
+      "userType": "Register as:",
+      "isStudent": "I am a student artist",
+      "shareLocation": "Share my current location"
+    },
+    "options": {
+      "artist": "Artist",
+      "employer": "Employer"
+    },
+    "buttons": {
+      "register": "Register"
+    },
+    "loginPrompt": {
+      "text": "Already have an account?",
+      "link": "Sign in"
+    },
+    "altText": {
+      "logo": "Artepovera home"
+    },
+    "errors": {
+      "allFields": "Please fill in all required fields.",
+      "failed": "Registration failed. please check your details.",
+      "unexpected": "An unexpected error occurred during registration.",
+      "missingUserData": "Registration successful, but essential user data missing. please try logging in."
+    },
+    "alerts": {
+      "locationError": "Could not get location: {{message}}. location sharing has been disabled.",
+      "locationNotSupported": "Geolocation is not supported by your browser. location sharing has been disabled."
+    }
+  },
+  "userProfilePage": {
+    "status": {
+      "loadingProfile": "Loading user profile...",
+      "noProfile": "No user profile data found.",
+      "loadingRating": "Loading rating...",
+      "noReviews": "No project reviews yet",
+      "loading": "Loading..."
+    },
+    "header": {
+      "studentBadge": " (student)",
+      "reviews_one": "{{count}} review",
+      "reviews_other": "{{count}} reviews"
+    },
+    "actions": {
+      "like": "Like",
+      "liked": "Liked",
+      "rateUser": "Rate user",
+      "reviewed": "Reviewed",
+      "loginToInteract": "Login to interact",
+      "supportArtist": "Support artist",
+      "supported": "Supported",
+      "viewDetails": "View details"
+    },
+    "content": {
+      "bio": "Bio",
+      "noBio": "No bio available.",
+      "cv": "Curriculum vitae (cv)",
+      "downloadCv": "Download cv",
+      "projectReviews": "Project reviews received ({{count}})",
+      "loadingReviews": "Loading reviews...",
+      "noProjectReviews": "This user hasn't received any project reviews yet.",
+      "anonymous": "Anonymous",
+      "interactionFeedback": "Interaction feedback ({{count}})",
+      "loadingFeedback": "Loading feedback...",
+      "noInteractionFeedback": "No interaction feedback to show.",
+      "noDealTag": "No deal",
+      "reason": "Reason:",
+      "comment": "Comment:",
+      "artisticViewpoints": "Artistic viewpoints",
+      "avgSupport": "avg support",
+      "alreadyCommented": "You have already shared your viewpoint on this artist.",
+      "commentFormLabel": "Rate your support for this artist's work*",
+      "commentFormPlaceholder": "Share your artistic viewpoint on {{name}}'s work...",
+      "postViewpoint": "Post viewpoint",
+      "posting": "Posting...",
+      "loadingViewpoints": "Loading viewpoints...",
+      "noViewpoints": "No artistic viewpoints yet for {{name}}."
+    },
+    "artistContent": {
+      "portfolio": "Portfolio",
+      "loadingPortfolio": "Loading portfolio...",
+      "noPortfolio": "No portfolio items.",
+      "noDescription": "No description"
+    },
+    "employerContent": {
+      "activeJobs": "Active job postings",
+      "loadingJobs": "Loading job postings...",
+      "noJobs": "This employer has no active job postings.",
+      "posted": "Posted",
+      "online": "Online",
+      "onSite": "On-site",
+      "hybrid": "Hybrid"
+    },
+    "gallery": {
+      "close": "Close gallery",
+      "prev": "Previous image",
+      "next": "Next image",
+      "altText": "Portfolio image"
+    }
+  },
+  
+    "jobFilters": {
+      "title": "Refine your search",
+      "placeholders": {
+        "keywords": "Keywords (e.g., oil painting)",
+        "location": "Employers location (e.g., Athens)",
+        "minPayment": "Min Payment (€)",
+        "maxPayment": "Max Payment (€)"
+      },
+      "options": {
+        "allCategories": "All categories",
+        "anyPresence": "Any presence (Online/On-site)",
+        "presencePhysical": "Physical / On-site",
+        "presenceOnline": "Online / Remote",
+        "presenceHybrid": "Hybrid / Both",
+        "allExperience": "All experience levels",
+        "yearsSuffix": "years",
+        "anyInsurance": "Any insurance",
+        "insuranceIncluded": "Insurance included",
+        "noInsurance": "No insurance"
+      },
+      "buttons": {
+        "clear": "Clear filters"
+      }
+    }
+    ,
+      "likeButton": {
+        "status": {
+          "loading": "Loading...",
+          "toggling": "...",
+          "liked": "Liked",
+          "like": "Like"
+        },
+        "alerts": {
+          "loginRequired": "Please log in to like users.",
+          "match": "It's a match! You can now chat.",
+          "updateFailed": "Failed to update like status.",
+          "genericError": "An error occurred: {{message}}"
+        }
+      
+    }
+    ,
+      "notificationList": {
+        "title": "Notifications",
+        "status": {
+          "loading": "Loading notifications...",
+          "none": "No notifications yet."
+        },
+        "actions": {
+          "markAsRead": "Mark as read",
+          "delete": "Delete"
+        },
+        "errors": {
+          "loginRequired": "No user or token found. Please log in.",
+          "fetchFailed": "Failed to fetch notifications.",
+          "markAsReadFailed": "Failed to mark notification as read.",
+          "deleteFailed": "Failed to delete notification."
+        }
+      }
+    
+      ,
+        "ratingForm": {
+          "title": "Rate your interaction with {{name}}",
+          "closeButton": "×",
+          "dealQuestion": "Did you end up working together? *",
+          "dealOptions": {
+            "yes": "Yes",
+            "no": "No"
+          },
+          "noDeal": {
+            "subtext": "Please provide feedback on why you didn't work together.",
+            "communicationLabel": "Communication Quality *",
+            "reasonLabel": "Primary reason? *",
+            "reasonPlaceholder": "-- Please select a reason --",
+            "reasons": {
+              "budget": "Budget mismatch",
+              "scheduling": "Scheduling/timeline conflict",
+              "creative": "Creative differences",
+              "communication": "Unresponsive / poor communication",
+              "direction": "Decided to go another direction",
+              "other": "Other (please specify in comments)"
+            }
+          },
+          "yesDeal": {
+            "subtext": "Please rate the following aspects:",
+            "professionalismLabel": "Professionalism *",
+            "qualityLabel": "Quality of work / brief *",
+            "communicationLabel": "Communication *",
+            "overallLabel": "Overall collaboration rating *"
+          },
+          "commentLabel": "Additional comments (Optional):",
+          "commentPlaceholder": {
+            "yes": "Any other feedback about the collaboration?",
+            "no": "Any other comments about the interaction?"
+          },
+          "buttons": {
+            "cancel": "Cancel",
+            "submitting": "Submitting...",
+            "submit": "Submit Review"
+          },
+          "errors": {
+            "dealRequired": "Please indicate if you ended up working together.",
+            "ratingRequired": "Please provide an overall star rating for the collaboration.",
+            "auth": "Authentication error. Please log in.",
+            "submitFailed": "Failed to submit review."
+          },
+          "alerts": {
+            "success": "Review submitted successfully!"
+          }
+        }
+      ,
+      
+        "navbar": {
+          "altText": {
+            "logo": "Artepovera Home"
+          },
+          "links": {
+            "home": "Home",
+            "map": "Map",
+            "profile": "My profile"
+          },
+          "notifications": {
+            "loading": "Loading...",
+            "markAsRead": "Mark as read",
+            "delete": "Delete",
+            "none": "No new notifications"
+          },
+          "actions": {
+            "logout": "Logout",
+            "login": "Login",
+            "register": "Register"
+          },
+          "alerts": {
+            "logoutConfirm": "Are you sure you want to log out?"
+          },
+          "errors": {
+            "fetchNotifications": "Failed to fetch notifications."
+          },
+          "language": {
+            "en": "EN",
+            "el": "EL"
+          }
+        }
+      
+}

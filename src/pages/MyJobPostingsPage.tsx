@@ -7,6 +7,9 @@ import Navbar from '../components/Navbar';
 import { formatDate } from '../utils/formatDate'; // Assuming you have this
 import { FaEdit, FaTrash, FaPlusCircle } from 'react-icons/fa';
 import '../styles/MyJobPostingsPage.css'; // We will create this CSS file next
+import { useTranslation } from "react-i18next";
+
+
 
 // Use a shared Job interface, ideally from a types.ts file
 interface Job {
@@ -21,7 +24,7 @@ const API_URL = import.meta.env.VITE_API_URL || "http://localhost:50001";
 const MyJobPostingsPage: React.FC = () => {
     const navigate = useNavigate();
     const { userType } = useUserContext();
-    
+    const { t } = useTranslation();
     const [jobs, setJobs] = useState<Job[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -87,13 +90,13 @@ const MyJobPostingsPage: React.FC = () => {
             <Navbar />
             <div className="my-jobs-page-container">
                 <header className="my-jobs-header">
-                    <h1>My Job Postings</h1>
+                    <h1>{t('myJobPostingsPage.title')}</h1>
                     <Link to="/post-job" className="action-button">
-                        <FaPlusCircle /> Post a New Job
+                        <FaPlusCircle /> {t('myJobPostingsPage.postNewJob')}
                     </Link>
                 </header>
-
-                {loading && <p>Loading your jobs...</p>}
+    
+                {loading && <p>{t('myJobPostingsPage.status.loading')}</p>}
                 {error && <p className="error-message">{error}</p>}
                 
                 {!loading && !error && (
@@ -103,38 +106,38 @@ const MyJobPostingsPage: React.FC = () => {
                                 <div key={job.job_id} className="job-management-card">
                                     <div className="job-card-info">
                                         <h3>{job.title}</h3>
-                                        <p><strong>Category:</strong> {job.category}</p>
-                                        <p className="post-date">Posted on: {formatDate(job.createdAt)}</p>
+                                        <p><strong>{t('myJobPostingsPage.card.category')}</strong> {job.category}</p>
+                                        <p className="post-date">{t('myJobPostingsPage.card.postedOn')} {formatDate(job.createdAt)}</p>
                                     </div>
                                     <div className="job-card-actions">
                                         <Link to={`/edit-job/${job.job_id}`} className="edit-btn">
-                                            <FaEdit /> Edit
+                                            <FaEdit /> {t('myJobPostingsPage.actions.edit')}
                                         </Link>
                                         <button onClick={() => handleDeleteClick(job.job_id)} className="delete-btn">
-                                            <FaTrash /> Delete
+                                            <FaTrash /> {t('myJobPostingsPage.actions.delete')}
                                         </button>
                                     </div>
                                 </div>
                             ))
                         ) : (
-                            <p>You have not posted any jobs yet.</p>
+                            <p>{t('myJobPostingsPage.status.none')}</p>
                         )}
                     </div>
                 )}
             </div>
-
+    
             {/* --- Delete Confirmation Modal --- */}
             {showConfirmModal && (
                 <div className="confirm-modal-overlay">
                     <div className="confirm-modal">
-                        <h4>Confirm Deletion</h4>
-                        <p>Are you sure you want to permanently delete this job posting? This action cannot be undone.</p>
+                        <h4>{t('myJobPostingsPage.deleteModal.title')}</h4>
+                        <p>{t('myJobPostingsPage.deleteModal.message')}</p>
                         <div className="modal-actions">
                             <button onClick={() => setShowConfirmModal(false)} className="cancel-btn">
-                                Cancel
+                                {t('myJobPostingsPage.deleteModal.cancel')}
                             </button>
                             <button onClick={confirmDelete} className="confirm-delete-btn">
-                                Yes, Delete
+                                {t('myJobPostingsPage.deleteModal.confirm')}
                             </button>
                         </div>
                     </div>

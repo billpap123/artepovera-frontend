@@ -1,6 +1,8 @@
 // src/pages/LandingPage.tsx
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from "react-i18next";
+
 
 // --- Embedded CSS Styles for LandingPage (Earthy Tones) ---
 const landingPageStyles = `
@@ -308,130 +310,71 @@ const landingPageStyles = `
 
 
 const LandingPage: React.FC = () => {
+  const { t } = useTranslation();
+
   return (
     <>
-      {/* Inject styles */}
       <style>{landingPageStyles}</style>
-      {/* <Navbar /> */}
       <div className="landing-page-container">
 
-        {/* ─────────────────────────── HERO SECTION ─────────────────────────── */}
         <header className="hero-section">
           <video className="hero-video-background" autoPlay loop muted playsInline>
               <source src="/images/video.mp4" type="video/mp4" />
-              Your browser does not support the video tag.
+              {t('landingPage.hero.videoError')}
           </video>
           <div className="hero-overlay"></div>
           <div className="hero-content">
-            {/* NOTE: ARTEPOVERA is likely a proper noun/brand, keeping it uppercase */}
-            <h1 className="hero-title">ARTEPOVERA</h1>
-            {/* Applying rule to subtitle */}
-            <p className="hero-subtitle">Where imagination meets opportunity.</p>
-            {/* Paragraphs use sentence case */}
-            <p className="hero-description">
-              Showcase your talents, discover unique gigs, and connect with the creative world—<em>all in one place</em>.
-            </p>
+            <h1 className="hero-title">{t('landingPage.hero.title')}</h1>
+            <p className="hero-subtitle">{t('landingPage.hero.subtitle')}</p>
+            <p className="hero-description" dangerouslySetInnerHTML={{ __html: t('landingPage.hero.description') }} />
             <div className="hero-cta-buttons">
-              {/* Applying rule to buttons */}
-              <Link to="/login" className="hero-btn">Log in</Link>
-              <Link to="/register" className="hero-btn alt">Sign up</Link>
+              <Link to="/login" className="hero-btn">{t('landingPage.hero.loginButton')}</Link>
+              <Link to="/register" className="hero-btn alt">{t('landingPage.hero.signupButton')}</Link>
             </div>
           </div>
         </header>
 
-        {/* ─────────────────────────── CATEGORY SHOWCASE SECTION ─────────────────────────── */}
         <section className="landing-section category-showcase-section">
-          {/* Applying rule to heading */}
-          <h2>Explore opportunities</h2>
-          {/* Paragraphs use sentence case */}
-          <p className="section-intro">
-            Find jobs tailored to your craft. Connect with employers looking for painters, musicians, performers, and more.
-          </p>
+          <h2>{t('landingPage.categories.title')}</h2>
+          <p className="section-intro">{t('landingPage.categories.intro')}</p>
           <div className="category-grid">
-            {/* --- Painter Card --- */}
             <div className="category-card">
               <img src="/images/painter.jpg" alt="Painting and Visual Arts" />
-              {/* Applying rule to card heading */}
-              <h3>Visual creators</h3>
-              {/* Paragraphs use sentence case */}
-              <p>Find commissions, gallery showings, illustration gigs, and graphic design projects.</p>
-              {/* Applying rule to link text */}
-              <Link to="/main?category=painter&category=digital_artist&category=graphic_designer" className="category-link">Browse visual gigs</Link>
+              <h3>{t('landingPage.categories.visuals.title')}</h3>
+              <p>{t('landingPage.categories.visuals.description')}</p>
+              <Link to="/main?category=painter&category=digital_artist&category=graphic_designer" className="category-link">{t('landingPage.categories.visuals.link')}</Link>
             </div>
-            {/* --- Musician Card --- */}
             <div className="category-card">
               <img src="/images/musician.jpg" alt="Music and Composition" />
-              {/* Applying rule to card heading */}
-              <h3>Musicians & composers</h3>
-              {/* Paragraphs use sentence case */}
-              <p>Discover live performance opportunities, scoring jobs, session work, and band openings.</p>
-              {/* Applying rule to link text */}
-              <Link to="/main?category=musician" className="category-link">Find music opps</Link>
+              <h3>{t('landingPage.categories.music.title')}</h3>
+              <p>{t('landingPage.categories.music.description')}</p>
+              <Link to="/main?category=musician" className="category-link">{t('landingPage.categories.music.link')}</Link>
             </div>
-            {/* --- Actor Card --- */}
             <div className="category-card">
               <img src="/images/actor.jpg" alt="Acting and Performance" />
-              {/* Applying rule to card heading */}
-              <h3>Actors & performers</h3>
-              {/* Paragraphs use sentence case */}
-              <p>Get cast in your next role. Find auditions for theatre, film, voice-over, and live events.</p>
-              {/* Applying rule to link text */}
-              <Link to="/main?category=actor&category=actress&category=dancer&category=comedian" className="category-link">See casting calls</Link>
+              <h3>{t('landingPage.categories.acting.title')}</h3>
+              <p>{t('landingPage.categories.acting.description')}</p>
+              <Link to="/main?category=actor&category=actress&category=dancer&category=comedian" className="category-link">{t('landingPage.categories.acting.link')}</Link>
             </div>
           </div>
         </section>
 
-        {/* ─────────────────────────── FEATURES SECTION (Example) ─────────────────────────── */}
-         {/* If uncommented, apply rule to h4 elements */}
-         {/*
-         <section className="landing-section features-section">
-              <h2>How it works</h2> // <-- Apply rule
-              <p className="section-intro">A platform designed for creative connections and career growth.</p>
-              <div className="features-grid">
-                  <div className="feature-item">
-                       {/* <FaPalette className="feature-icon" /> */}
-        {/* <div>
-                           <h4>Build your portfolio</h4> // <-- Apply rule
-                           <p>Showcase your best work with a beautiful, easy-to-manage portfolio.</p>
-                       </div>
-                   </div>
-                   <div className="feature-item">
-                       {/* <FaSearch className="feature-icon" /> */}
-        {/* <div>
-                           <h4>Find opportunities</h4> // <-- Apply rule
-                           <p>Browse relevant job postings and gigs filtered by your artistic discipline.</p>
-                       </div>
-                   </div>
-                  <div className="feature-item">
-                      {/* <FaHandshake className="feature-icon" /> */}
-       {/* <div>
-                           <h4>Connect & collaborate</h4> // <-- Apply rule
-                           <p>Directly message employers and fellow artists to build your network.</p>
-                       </div>
-                   </div>
-              </div>
-         </section>
-         */}
-
-
-        {/* ─────────────────────────── CALL TO ACTION ─────────────────────────── */}
         <section className="landing-section cta-section">
-          {/* Applying rule to heading */}
-          <h2>Ready to join the creative revolution?</h2>
-          {/* Paragraphs use sentence case */}
-          <p className="section-intro">
-            Unlock your full potential—sign up and connect with a vibrant community of artists and employers today.
-          </p>
-           {/* Applying rule to button text */}
-          <Link to="/register" className="cta-button">Sign up now</Link>
+          <h2>{t('landingPage.cta.title')}</h2>
+          <p className="section-intro">{t('landingPage.cta.intro')}</p>
+          <Link to="/register" className="cta-button">{t('landingPage.cta.button')}</Link>
         </section>
-
-         {/* Optional Footer */}
-         {/* <footer className="landing-footer"> ... </footer> */}
 
       </div>
     </>
   );
+
+
+
+
+
+
+
 };
 
 export default LandingPage;

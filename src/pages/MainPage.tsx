@@ -11,6 +11,9 @@ import {
   FaEye, FaBriefcase, FaUserEdit, FaMapMarkedAlt, 
   FaPlusCircle, FaCommentDots, FaImages, FaUsersCog, FaThList, FaClipboardList 
 } from 'react-icons/fa';
+import { useTranslation } from "react-i18next";
+
+
 
 // Define the Job interface here or import it from a shared types file
 interface JobRequirements {
@@ -32,6 +35,7 @@ const API_URL = import.meta.env.VITE_API_URL || "http://localhost:50001";
 
 const MainPage = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { userType, userId, fullname } = useUserContext();
 
   // --- State for Job Feed ---
@@ -113,28 +117,27 @@ const MainPage = () => {
       <Navbar />
       <div className="main-page-container">
         <header className="main-page-header">
-          {/* Use the state variable here for the welcome message */}
-          <h1>{userType === 'Admin' ? 'Administrator Control Panel' : `Welcome back${welcomeName}!`}</h1>
-          <p>{userType === 'Admin' ? 'Manage users, content, and application data.' : "Here's what's happening in the Arte Povera community today."}</p>
+          <h1>{userType === 'Admin' ? t('mainPage.header.adminTitle') : t('mainPage.header.welcome', { name: welcomeName })}</h1>
+          <p>{userType === 'Admin' ? t('mainPage.header.adminSubtitle') : t('mainPage.header.userSubtitle')}</p>
         </header>
 
         <div className="dashboard-grid">
           {userType === 'Artist' && (
             <>
-              <Link to={`/user-profile/${userId}`} className="dashboard-card stat-card"><FaEye size={24} className="stat-icon" /><div><h3>My public profile</h3><p>View and share your profile</p></div></Link>
-              <Link to="/artist-profile/edit" className="dashboard-card stat-card"><FaUserEdit size={24} className="stat-icon" /><div><h3>Edit my profile</h3><p>Update your bio, CV, and photo</p></div></Link>
-              <Link to="/portfolio" className="dashboard-card stat-card"><FaImages size={24} className="stat-icon" /><div><h3>Edit my portfolio</h3><p>Showcase your best work</p></div></Link>
-              <Link to="/chat" className="dashboard-card stat-card"><FaCommentDots size={24} className="stat-icon" /><div><h3>My messages</h3><p>Check your conversations</p></div></Link>
+              <Link to={`/user-profile/${userId}`} className="dashboard-card stat-card"><FaEye size={24} className="stat-icon" /><div><h3>{t('mainPage.artist.publicProfile')}</h3><p>{t('mainPage.artist.publicProfileDesc')}</p></div></Link>
+              <Link to="/artist-profile/edit" className="dashboard-card stat-card"><FaUserEdit size={24} className="stat-icon" /><div><h3>{t('mainPage.artist.editProfile')}</h3><p>{t('mainPage.artist.editProfileDesc')}</p></div></Link>
+              <Link to="/portfolio" className="dashboard-card stat-card"><FaImages size={24} className="stat-icon" /><div><h3>{t('mainPage.artist.editPortfolio')}</h3><p>{t('mainPage.artist.editPortfolioDesc')}</p></div></Link>
+              <Link to="/chat" className="dashboard-card stat-card"><FaCommentDots size={24} className="stat-icon" /><div><h3>{t('mainPage.artist.messages')}</h3><p>{t('mainPage.artist.messagesDesc')}</p></div></Link>
               <Link to="/my-applications" className="dashboard-card image-link-card2">
                 <div>
-                  <h3>My applications</h3>
-                  <p>Track your job applications</p>
+                  <h3>{t('mainPage.artist.applications')}</h3>
+                  <p>{t('mainPage.artist.applicationsDesc')}</p>
                 </div>
               </Link>
               <Link to="/map" className="dashboard-card image-link-card">
                 <div>
-                  <h3>Community map</h3>
-                  <p>Discover artists & employers</p>
+                  <h3>{t('mainPage.artist.map')}</h3>
+                  <p>{t('mainPage.artist.mapDesc')}</p>
                 </div>
               </Link>
             </>
@@ -142,22 +145,21 @@ const MainPage = () => {
 
           {userType === 'Employer' && (
             <>
-              <Link to={`/user-profile/${userId}`} className="dashboard-card stat-card"><FaEye size={24} className="stat-icon" /><div><h3>My public profile</h3><p>View your employer profile</p></div></Link>
-              <Link to="/employer-profile/edit" className="dashboard-card stat-card"><FaUserEdit size={24} className="stat-icon" /><div><h3>Edit my profile</h3><p>Update your bio and photo</p></div></Link>
-              <Link to="/post-job" className="dashboard-card stat-card"><FaPlusCircle size={24} className="stat-icon" /><div><h3>Post a new job</h3><p>Find the perfect artist</p></div></Link>
-              <Link to="/chat" className="dashboard-card stat-card"><FaCommentDots size={24} className="stat-icon" /><div><h3>My messages</h3><p>Check applicant conversations</p></div></Link>
+              <Link to={`/user-profile/${userId}`} className="dashboard-card stat-card"><FaEye size={24} className="stat-icon" /><div><h3>{t('mainPage.employer.publicProfile')}</h3><p>{t('mainPage.employer.publicProfileDesc')}</p></div></Link>
+              <Link to="/employer-profile/edit" className="dashboard-card stat-card"><FaUserEdit size={24} className="stat-icon" /><div><h3>{t('mainPage.employer.editProfile')}</h3><p>{t('mainPage.employer.editProfileDesc')}</p></div></Link>
+              <Link to="/post-job" className="dashboard-card stat-card"><FaPlusCircle size={24} className="stat-icon" /><div><h3>{t('mainPage.employer.postJob')}</h3><p>{t('mainPage.employer.postJobDesc')}</p></div></Link>
+              <Link to="/chat" className="dashboard-card stat-card"><FaCommentDots size={24} className="stat-icon" /><div><h3>{t('mainPage.employer.messages')}</h3><p>{t('mainPage.employer.messagesDesc')}</p></div></Link>
               <Link to="/my-jobs" className="dashboard-card image-link-card card-bg-jobs">
-
-<FaClipboardList />
+                <FaClipboardList />
                 <div>
-                  <h3>My job postings</h3>
-                  <p>Manage your active listings</p>
+                  <h3>{t('mainPage.employer.jobPostings')}</h3>
+                  <p>{t('mainPage.employer.jobPostingsDesc')}</p>
                 </div>
               </Link>
               <Link to="/map" className="dashboard-card image-link-card">
                 <div>
-                  <h3>Community map</h3>
-                  <p>Discover artists & employers</p>
+                  <h3>{t('mainPage.employer.map')}</h3>
+                  <p>{t('mainPage.employer.mapDesc')}</p>
                 </div>
               </Link>
             </>
@@ -165,17 +167,15 @@ const MainPage = () => {
 
           {userType === 'Admin' && (
             <>
-              <Link to="/admin" className="dashboard-card stat-card admin-card"><FaUsersCog size={24} className="stat-icon" /><div><h3>Manage Users</h3><p>View, edit, or delete users</p></div></Link>
-              <Link to="/admin/content" className="dashboard-card stat-card admin-card"><FaThList size={24} className="stat-icon" /><div><h3>Moderate Content</h3><p>Manage reviews and comments</p></div></Link>
+              <Link to="/admin" className="dashboard-card stat-card admin-card"><FaUsersCog size={24} className="stat-icon" /><div><h3>{t('mainPage.admin.manageUsers')}</h3><p>{t('mainPage.admin.manageUsersDesc')}</p></div></Link>
+              <Link to="/admin/content" className="dashboard-card stat-card admin-card"><FaThList size={24} className="stat-icon" /><div><h3>{t('mainPage.admin.moderateContent')}</h3><p>{t('mainPage.admin.moderateContentDesc')}</p></div></Link>
             </>
           )}
 
           {userType !== 'Admin' && (
             <>
               <div className="dashboard-card job-feed-card">
-              <h2>Job postings from around the world
-              </h2>
-
+                <h2>{t('mainPage.jobFeed.title')}</h2>
                 <JobFilters onFilterChange={handleFilterChange} />
                 <hr className="filter-divider" />
                 <JobFeed jobs={filteredJobs} isLoading={isLoadingJobs} error={jobsError} />
@@ -185,8 +185,8 @@ const MainPage = () => {
           
           {userType === 'Admin' && (
             <div className="dashboard-card admin-overview-card">
-              <h2>Application overview</h2>
-              <p>This is your central hub for managing the application.</p>
+              <h2>{t('mainPage.admin.overviewTitle')}</h2>
+              <p>{t('mainPage.admin.overviewDesc')}</p>
             </div>
           )}
         </div>

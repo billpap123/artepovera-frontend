@@ -1,5 +1,8 @@
 import React, { useState, useEffect, useCallback } from "react"; // Added useEffect, useCallback
 import axios from "axios";
+import { useTranslation } from "react-i18next";
+
+
 
 interface LikeButtonProps {
   // userId: number; // Logged-in user ID comes from token, not needed as prop
@@ -9,7 +12,7 @@ interface LikeButtonProps {
 const LikeButton: React.FC<LikeButtonProps> = ({ likedUserId }) => {
   const [isLiked, setIsLiked] = useState<boolean | null>(null); // Use null for initial loading state
   const [isLoading, setIsLoading] = useState(false); // Prevent double clicks
-
+  const { t } = useTranslation();
   const BACKEND_URL = import.meta.env.VITE_API_URL || "http://localhost:50001";
 
   // --- Fetch initial like status ---
@@ -79,15 +82,16 @@ const LikeButton: React.FC<LikeButtonProps> = ({ likedUserId }) => {
   // --- REMOVED createChat function - Backend handles this ---
 
   // Handle loading state for the button
+  // Handle loading state for the button
   if (isLiked === null) {
-    return <button disabled>Loading...</button>;
+    return <button disabled>{t('likeButton.status.loading')}</button>;
   }
-
+  
   return (
     <button onClick={handleLikeToggle} disabled={isLoading}>
-      {isLoading ? '...' : (isLiked ? "Liked" : "Like")}
+      {isLoading ? t('likeButton.status.toggling') : (isLiked ? t('likeButton.status.liked') : t('likeButton.status.like'))}
     </button>
   );
-};
+}
 
 export default LikeButton;

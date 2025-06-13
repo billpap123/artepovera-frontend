@@ -5,6 +5,8 @@ import { Link } from 'react-router-dom';
 import { FaBriefcase, FaExternalLinkAlt } from 'react-icons/fa';
 import Navbar from '../components/Navbar';
 import '../styles/MyApplications.css';
+import { useTranslation } from "react-i18next";
+
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:50001";
 
@@ -31,6 +33,7 @@ const MyApplicationsPage: React.FC = () => {
     const [applications, setApplications] = useState<Application[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
+    const { t } = useTranslation();
 
     useEffect(() => {
         const fetchMyApplications = async () => {
@@ -70,16 +73,16 @@ const MyApplicationsPage: React.FC = () => {
             <Navbar />
             <div className="my-applications-page">
                 <header className="page-header">
-                    <h1>My applications</h1>
-                    <p>A list of all the jobs you've applied for.</p>
+                    <h1>{t('myApplicationsPage.title')}</h1>
+                    <p>{t('myApplicationsPage.subtitle')}</p>
                 </header>
                 
                 {applications.length === 0 ? (
                     <div className="empty-state-container">
                         <FaBriefcase size={60} className="empty-state-icon" />
-                        <h2>No applications found</h2>
-                        <p>You haven't applied to any jobs yet. When you do, they'll show up here.</p>
-                        <Link to="/main" className="btn-primary">Browse Jobs</Link>
+                        <h2>{t('myApplicationsPage.status.noApplicationsTitle')}</h2>
+                        <p>{t('myApplicationsPage.status.noApplicationsDesc')}</p>
+                        <Link to="/main" className="btn-primary">{t('myApplicationsPage.actions.browseJobs')}</Link>
                     </div>
                 ) : (
                     <div className="applications-list">
@@ -88,17 +91,18 @@ const MyApplicationsPage: React.FC = () => {
                                 <div className="item-main-content">
                                     <h2 className="job-title">{app.jobPosting.title}</h2>
                                     <p className="employer-name">
-                                        {/* --- FIX #1: Added optional chaining to the link for safety --- */}
-                                        by <Link to={`/user-profile/${app.jobPosting.employer?.user?.user_id}`}>{app.jobPosting.employer?.user?.fullname || 'N/A'}</Link>
+                                        {t('myApplicationsPage.card.by')}{' '}
+                                        <Link to={`/user-profile/${app.jobPosting.employer?.user?.user_id}`}>
+                                            {app.jobPosting.employer?.user?.fullname || t('myApplicationsPage.card.notAvailable')}
+                                        </Link>
                                     </p>
                                     <p className="job-description">
-                                        {/* --- FIX #2: Removed substring to show the full description --- */}
-                                        {app.jobPosting.description || 'No description available.'}
+                                        {app.jobPosting.description || t('myApplicationsPage.status.noDescription')}
                                     </p>
                                 </div>
                                 <div className="item-actions">
                                     <Link to={`/jobs/${app.jobPosting.job_id}`} className="view-job-button">
-                                        View job details <FaExternalLinkAlt />
+                                        {t('myApplicationsPage.card.viewDetails')} <FaExternalLinkAlt />
                                     </Link>
                                 </div>
                             </div>

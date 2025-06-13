@@ -5,6 +5,7 @@ import axios from 'axios';
 import { useUserContext } from '../context/UserContext'; // <-- 1. IMPORT THE HOOK
 import '../styles/Global.css';
 import '../styles/Login.css';
+import { useTranslation } from "react-i18next";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:50001';
 
@@ -13,7 +14,8 @@ const Login = () => {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const navigate = useNavigate();
-    
+    const { t } = useTranslation();
+
     // --- THIS IS THE FIX (PART 1) ---
     // Get the setFullname function from your context as well.
     const { setUserId, setUserType, setArtistId, setEmployerId, setFullname } = useUserContext();
@@ -61,16 +63,16 @@ const Login = () => {
         <div className="auth-page-container">
             <div className="auth-logo-container">
                 <Link to="/">
-                    <img src="/images/logo2.png" alt="Artepovera Home" className="auth-logo" />
-                    <span style={{ marginLeft: '8px' }}>Back to main page</span>
+                    <img src="/images/logo2.png" alt={t('loginPage.altText.logo')} className="auth-logo" />
+                    <span style={{ marginLeft: '8px' }}>{t('loginPage.backLink')}</span>
                 </Link>
             </div>
-
+    
             <div className="login-container auth-form-container">
                 <form onSubmit={handleSubmit} className="login-form auth-form">
-                    <h2 className="login-title">Login to your account</h2>
+                    <h2 className="login-title">{t('loginPage.title')}</h2>
                     <div className="form-group">
-                        <label htmlFor="login-email">Email:</label>
+                        <label htmlFor="login-email">{t('loginPage.emailLabel')}</label>
                         <input
                             id="login-email"
                             type="email"
@@ -81,7 +83,7 @@ const Login = () => {
                         />
                     </div>
                     <div className="form-group">
-                        <label htmlFor="login-password">Password:</label>
+                        <label htmlFor="login-password">{t('loginPage.passwordLabel')}</label>
                         <input
                             id="login-password"
                             type="password"
@@ -91,14 +93,14 @@ const Login = () => {
                             className="login-input"
                         />
                     </div>
-                    <button type="submit" className="login-button auth-button">Login</button>
+                    <button type="submit" className="login-button auth-button">{t('loginPage.loginButton')}</button>
                     {error && <p className="login-error error-message">{error}</p>}
                 </form>
-
+    
                 <p className="register-link auth-switch-link">
-                    Don't have an account?{' '}
+                    {t('loginPage.registerPrompt')}{' '}
                     <Link to="/register">
-                        Register now
+                        {t('loginPage.registerLink')}
                     </Link>
                 </p>
             </div>

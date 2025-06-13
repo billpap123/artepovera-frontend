@@ -7,6 +7,8 @@ import Navbar from "../components/Navbar";
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Upload, Trash2 } from 'lucide-react';
+import { useTranslation } from "react-i18next";
+
 
 import "../styles/EmployerProfile.css"; // Ensure this file exists and has styles
 
@@ -63,6 +65,8 @@ const DisplayStars = ({ rating }: { rating: number | null }) => {
 // --- END Star Display Component ---
 
 const EmployerProfile: React.FC = () => {
+  const { t } = useTranslation();
+
   const { userId, setUserId, employerId, setEmployerId } = useUserContext();
 
   // State for displaying & editing
@@ -303,16 +307,15 @@ const EmployerProfile: React.FC = () => {
         {/* Profile Header */}
         <div className="profile-header">
           <div className="profile-picture-wrapper">
-            <img src={getImageUrl(profilePicture)} alt="Employer Profile" className="profile-picture" />
+            <img src={getImageUrl(profilePicture)} alt={t('employerProfile.altText')} className="profile-picture" />
             {isEditing && (
-              // === UPDATED CODE STARTS HERE ===
               <div className="edit-picture-options flex items-center gap-3">
                 <label
                   htmlFor="profilePicUpload"
                   className="flex items-center gap-2 cursor-pointer bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200 ease-in-out transform hover:scale-105"
                 >
                   <Upload size={16} />
-                  Change
+                  {t('employerProfile.change')}
                 </label>
                 <input
                   id="profilePicUpload"
@@ -329,28 +332,27 @@ const EmployerProfile: React.FC = () => {
                     disabled={deleting || saving}
                   >
                     <Trash2 size={16} />
-                    {deleting ? "Removing..." : "Remove"}
+                    {deleting ? t('employerProfile.removing') : t('employerProfile.remove')}
                   </button>
                 )}
               </div>
-              // === UPDATED CODE ENDS HERE ===
             )}
           </div>
           <div className="profile-summary">
-            <h3 className="profile-name">{profileUserName || 'Employer Name'}</h3>
+            <h3 className="profile-name">{profileUserName || t('employerProfile.unnamed')}</h3>
             <div className="average-rating-display">
-              {reviewsLoading ? (<span>Loading rating...</span>)
+              {reviewsLoading ? (<span>{t('employerProfile.loadingRating')}</span>)
                 : completedReviews.length > 0 && averageRating ? (
                   <>
                     <DisplayStars rating={averageRating} />
                     <span className="rating-value">{averageRating.toFixed(1)}</span>
-                    <span className="review-count">({completedReviews.length} project review{completedReviews.length !== 1 ? 's' : ''})</span>
+                    <span className="review-count">({t('employerProfile.projectReviews', { count: completedReviews.length })})</span>
                   </>
                 ) : (
-                  <span className="no-rating">No project reviews yet</span>
+                  <span className="no-rating">{t('employerProfile.noProjectReviews')}</span>
                 )}
             </div>
-            {!isEditing && (<button className="edit-btn" onClick={handleEditToggle}>Edit profile</button>)}
+            {!isEditing && (<button className="edit-btn" onClick={handleEditToggle}>{t('employerProfile.editProfile')}</button>)}
           </div>
         </div>
 
@@ -359,26 +361,26 @@ const EmployerProfile: React.FC = () => {
         <div className="profile-content">
           {!isEditing ? (
             // --- Display Mode ---
-            <> {/* <<< Opening Fragment */}
+            <>
               <div className="profile-section">
-                <h4>Short description</h4>
+                <h4>{t('employerProfile.shortDescription')}</h4>
                 <div className="bio-text markdown-content">
                   <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                    {bio || "*No bio provided yet.*"}
+                    {bio || t('employerProfile.noBio')}
                   </ReactMarkdown>
                 </div>
               </div>
               <div className="reviews-section profile-section">
-                <h4>Project reviews ({completedReviews.length})</h4>
-                {reviewsLoading ? (<p>Loading reviews...</p>)
+                <h4>{t('employerProfile.projectReviews_plural', { count: completedReviews.length })}</h4>
+                {reviewsLoading ? (<p>{t('employerProfile.loadingReviews')}</p>)
                   : completedReviews.length > 0 ? (
                     <div className="reviews-list">
                       {completedReviews.map((review) => (
                         <div key={review.review_id} className="review-item">
                           <div className="review-header">
-                            <img src={getImageUrl(review.reviewer?.profile_picture)} alt={review.reviewer?.fullname} className="reviewer-pic" />
+                            <img src={getImageUrl(review.reviewer?.profile_picture)} alt={review.reviewer?.fullname || t('employerProfile.anonymous')} className="reviewer-pic" />
                             <div className="reviewer-info">
-                              <strong>{review.reviewer?.fullname || 'Anonymous'}</strong>
+                              <strong>{review.reviewer?.fullname || t('employerProfile.anonymous')}</strong>
                               <span className="review-date">{formatDate(review.created_at)}</span>
                             </div>
                             <div className="review-stars"><DisplayStars rating={review.overall_rating} /></div>
@@ -388,56 +390,52 @@ const EmployerProfile: React.FC = () => {
                       ))}
                     </div>
                   ) : (
-                    <p className="no-reviews">You haven't received any project reviews yet.</p>
+                    <p className="no-reviews">{t('employerProfile.noProjectReviewsReceived')}</p>
                   )}
               </div>
 
-              {/* --- FIX: Interaction Feedback Section --- */}
               <div className="reviews-section profile-section">
-                <h4>Interaction feedback ({interactionReviews.length})</h4>
-                 {reviewsLoading ? (<p>Loading feedback...</p>)
+                <h4>{t('employerProfile.interactionFeedback')} ({interactionReviews.length})</h4>
+                 {reviewsLoading ? (<p>{t('employerProfile.loadingFeedback')}</p>)
                   : interactionReviews.length > 0 ? (
                     <div className="reviews-list">
                       {interactionReviews.map((review) => (
                         <div key={review.review_id} className="review-item interaction-review">
                           <div className="review-header">
-                            <img src={getImageUrl(review.reviewer?.profile_picture)} alt={review.reviewer?.fullname} className="reviewer-pic" />
+                            <img src={getImageUrl(review.reviewer?.profile_picture)} alt={review.reviewer?.fullname || t('employerProfile.anonymous')} className="reviewer-pic" />
                             <div className="reviewer-info">
-                              <strong>{review.reviewer?.fullname || 'Anonymous'}</strong>
+                              <strong>{review.reviewer?.fullname || t('employerProfile.anonymous')}</strong>
                               <span className="review-date">{formatDate(review.created_at)}</span>
                             </div>
                           </div>
                           <div className="review-comment">
                             {review.specific_answers?.noDealPrimaryReason && (
                               <p className="interaction-reason">
-                                <strong>Reason:</strong> {review.specific_answers.noDealPrimaryReason}
+                                <strong>{t('employerProfile.reason')}</strong> {review.specific_answers.noDealPrimaryReason}
                               </p>
                             )}
                             {review.specific_answers?.comment && (
-                              <p><strong>Comment:</strong> "{review.specific_answers.comment}"</p>
+                              <p><strong>{t('employerProfile.comment')}</strong> "{review.specific_answers.comment}"</p>
                             )}
                           </div>
                         </div>
                       ))}
                     </div>
                   ) : (
-                    <p className="no-reviews">No interaction feedback to show.</p>
+                    <p className="no-reviews">{t('employerProfile.noInteractionFeedback')}</p>
                   )}
               </div>
-
             </>
-
           ) : (
             // --- Editing Mode ---
             <div className="edit-form">
               <div className="form-field-group">
-                <label htmlFor="employerBio">Bio:</label>
+                <label htmlFor="employerBio">{t('employerProfile.bioLabel')}</label>
                 <textarea id="employerBio" value={newBio} onChange={(e) => setNewBio(e.target.value)} rows={5} className="bio-input" />
               </div>
-              {/* Delete button moved near picture */}
               <div className="btn-row form-actions">
-                <button className="save-btn submit-btn" onClick={handleSaveChanges} disabled={saving || deleting}> {saving ? "Saving..." : "Save changes"} </button>
-                <button type="button" className="cancel-btn" onClick={handleEditToggle} disabled={saving || deleting}> Cancel </button>
+                <button className="save-btn submit-btn" onClick={handleSaveChanges} disabled={saving || deleting}> {saving ? t('employerProfile.saving') : t('employerProfile.saveChanges')} </button>
+                <button type="button" className="cancel-btn" onClick={handleEditToggle} disabled={saving || deleting}> {t('employerProfile.cancel')} </button>
               </div>
             </div>
           )}
@@ -445,6 +443,13 @@ const EmployerProfile: React.FC = () => {
       </div>
     </>
   );
+
+
+
+
+
+
+
 };
 
 export default EmployerProfile;

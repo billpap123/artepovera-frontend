@@ -6,6 +6,8 @@ import { FaMapMarkerAlt, FaGlobe, FaBuilding, FaEuroSign, FaCalendarAlt, FaCheck
 import { formatDate } from '../utils/formatDate';
 import { useUserContext } from '../context/UserContext';
 import '../styles/JobFeed.css';
+import { useTranslation } from "react-i18next";
+
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:50001";
 
@@ -53,6 +55,7 @@ interface JobFeedProps {
 const JobFeed: React.FC<JobFeedProps> = ({ jobs, isLoading, error }) => {
   const { userType, userId } = useUserContext();
   const isArtist = userType === 'Artist';
+  const { t } = useTranslation();
 
   // State for application logic (which buttons are loading, which jobs are applied to)
   const [appliedJobIds, setAppliedJobIds] = useState<Set<number>>(new Set());
@@ -115,76 +118,98 @@ const JobFeed: React.FC<JobFeedProps> = ({ jobs, isLoading, error }) => {
             <div className="job-card-header">
               <h3>{job.title}</h3>
               <p className="employer-name">
-                Posted by: <Link to={`/user-profile/${job.employer?.user?.user_id}`}>{job.employer?.user?.fullname || 'N/A'}</Link>
+                {t('jobFeed.card.postedBy')}{' '}
+                <Link to={`/user-profile/${job.employer?.user?.user_id}`}>
+                  {job.employer?.user?.fullname || t('jobFeed.card.notAvailable')}
+                </Link>
               </p>
-              <span className="post-date">Posted on {formatDate(job.createdAt)}</span>
+              <span className="post-date">
+                {t('jobFeed.card.postedOn')} {formatDate(job.createdAt)}
+              </span>
             </div>
 
             <div className="job-card-tags">
-                <span className="tag-item category-tag">{job.category}</span>
-                {job.location && <span className="tag-item"><FaMapMarkerAlt /> {job.location}</span>}
-                {job.presence === 'Online' && <span className="tag-item"><FaGlobe /> Online</span>}
-                {job.presence === 'Physical' && <span className="tag-item"><FaBuilding /> On-Site</span>}
-                {job.presence === 'Both' && <span className="tag-item"><FaGlobe />/<FaBuilding /> Hybrid</span>}
+              <span className="tag-item category-tag">{job.category}</span>
+              {job.location && <span className="tag-item"><FaMapMarkerAlt /> {job.location}</span>}
+              {job.presence === 'Online' && <span className="tag-item"><FaGlobe /> {t('jobFeed.card.online')}</span>}
+              {job.presence === 'Physical' && <span className="tag-item"><FaBuilding /> {t('jobFeed.card.onSite')}</span>}
+              {job.presence === 'Both' && <span className="tag-item"><FaGlobe />/<FaBuilding /> {t('jobFeed.card.hybrid')}</span>}
             </div>
 
             {job.description && <p className="job-card-description">{job.description}</p>}
 
             <div className="job-card-details-grid">
+              <div className="detail-item">
+                <strong>{t('jobFeed.card.totalPayment')}</strong>
+                <span>
+                  <FaEuroSign /> {job.payment_total != null ? Number(job.payment_total).toFixed(2) : t('jobFeed.card.notAvailable')}{' '}
+                  {job.payment_is_monthly && `(€${job.payment_monthly_amount != null ? Number(job.payment_monthly_amount).toFixed(2) : t('jobFeed.card.notAvailable')}${t('jobFeed.card.perMonth')})`}
+                </span>
+              </div>
+              <div className="detail-item">
+                <strong>{t('jobFeed.card.duration')}</strong>
+                <span>
+                  {formatDate(job.start_date)} {t('jobFeed.card.to')} {formatDate(job.end_date)}
+                </span>
+              </div>
+              <div className="detail-item">
+                <strong>{t('jobFeed.card.insurance')}</strong>
+                <span>
+                  {job.insurance ? (
+                    <><FaCheckCircle color="green" /> {t('jobFeed.card.included')}</>
+                  ) : (
+                    <><FaTimesCircle color="gray" /> {t('jobFeed.e.notIncluded')}</>
+                  )}
+                </span>
+              </div>
+              {job.application_deadline && (
                 <div className="detail-item">
-                    <strong>Total payment:</strong>
-                    <span><FaEuroSign /> {job.payment_total != null ? Number(job.payment_total).toFixed(2) : 'N/A'} {job.payment_is_monthly && `(€${job.payment_monthly_amount != null ? Number(job.payment_monthly_amount).toFixed(2) : 'N/A'}/month)`}</span>
-                    </div>
-                <div className="detail-item">
-                    <strong>Duration:</strong>
-                    <span>{formatDate(job.start_date)} to {formatDate(job.end_date)}</span>
+                  <strong>{t('jobFeed.card.applyBy')}</strong>
+                  <span><FaCalendarAlt /> {formatDate(job.application_deadline)}</span>
                 </div>
-                <div className="detail-item">
-                    <strong>Insurance:</strong>
-                    <span>{job.insurance ? <><FaCheckCircle color="green" /> Included</> : <><FaTimesCircle color="gray" /> Not Included</>}</span>
-                </div>
-                {job.application_deadline && <div className="detail-item">
-                    <strong>Apply by:</strong>
-                    <span><FaCalendarAlt /> {formatDate(job.application_deadline)}</span>
-                </div>}
+              )}
             </div>
-            
+
             {job.requirements && (
-                <div className="job-card-requirements">
-                    <h4>Requirements</h4>
-                    <ul>
-                        {job.requirements.experience_years && <li>Experience: <strong>{job.requirements.experience_years} years</strong></li>}
-                        {job.requirements.university_degree?.required && <li>Degree: <strong>{job.requirements.university_degree.details || 'Required'}</strong></li>}
-                        {job.requirements.military_service && job.requirements.military_service !== 'Not Applicable' && <li>Military Service: <strong>{job.requirements.military_service}</strong></li>}
-                        {job.requirements.foreign_languages && job.requirements.foreign_languages.length > 0 && (
-                            <li>Languages: {job.requirements.foreign_languages.map(l => `${l.language} (${l.certificate})`).join(', ')}</li>
-                        )}
-                    </ul>
-                </div>
+              <div className="job-card-requirements">
+                <h4>{t('jobFeed.card.requirements')}</h4>
+                <ul>
+                  {job.requirements.experience_years && <li>{t('jobFeed.card.experience')} <strong>{job.requirements.experience_years} {t('jobFeed.card.years')}</strong></li>}
+                  {job.requirements.university_degree?.required && <li>{t('jobFeed.card.degree')} <strong>{job.requirements.university_degree.details || t('jobFeed.card.required')}</strong></li>}
+                  {job.requirements.military_service && job.requirements.military_service !== 'Not Applicable' && <li>{t('jobFeed.card.militaryService')} <strong>{job.requirements.military_service}</strong></li>}
+                  {job.requirements.foreign_languages && job.requirements.foreign_languages.length > 0 && (
+                    <li>{t('jobFeed.card.languages')} {job.requirements.foreign_languages.map(l => `${l.language} (${l.certificate})`).join(', ')}</li>
+                  )}
+                </ul>
+              </div>
             )}
 
             {job.desired_keywords && (
-                <div className="job-card-keywords">
-                    <h4>Desired keywords</h4>
-                    <p>{job.desired_keywords}</p>
-                </div>
+              <div className="job-card-keywords">
+                <h4>{t('jobFeed.card.desiredKeywords')}</h4>
+                <p>{job.desired_keywords}</p>
+              </div>
             )}
-            
+
             {isArtist && (
               <div className="job-card-actions">
-                <button 
-                    onClick={() => handleApply(job.job_id)} 
-                    className="apply-button-detailed"
-                    disabled={appliedJobIds.has(job.job_id) || applyingToJobId === job.job_id}
+                <button
+                  onClick={() => handleApply(job.job_id)}
+                  className="apply-button-detailed"
+                  disabled={appliedJobIds.has(job.job_id) || applyingToJobId === job.job_id}
                 >
-                    {applyingToJobId === job.job_id ? 'Applying...' : appliedJobIds.has(job.job_id) ? 'Applied' : 'Apply Now'}
+                  {applyingToJobId === job.job_id
+                    ? t('jobFeed.actions.applying')
+                    : appliedJobIds.has(job.job_id)
+                    ? t('jobFeed.actions.applied')
+                    : t('jobFeed.actions.applyNow')}
                 </button>
               </div>
             )}
           </div>
         ))
       ) : (
-        <p className="no-jobs-message">No job postings match the current filters.</p>
+        <p className="no-jobs-message">{t('jobFeed.status.noJobs')}</p>
       )}
     </div>
   );

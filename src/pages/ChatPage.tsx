@@ -4,6 +4,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 import io, { Socket } from 'socket.io-client'; // Import socket.io-client
+// STEP 1: Import the useTranslation hook
+import { useTranslation } from 'react-i18next';
 import Navbar from '../components/Navbar';
 import { useUserContext } from '../context/UserContext';
 import '../styles/ChatPage.css';
@@ -31,6 +33,8 @@ interface Message {
 // ---
 
 const ChatPage = () => {
+    // STEP 2: Initialize the hook to get the 't' function
+    const { t } = useTranslation();
     const { userId: loggedInUserId } = useUserContext();
     const [searchParams] = useSearchParams();
 
@@ -104,14 +108,15 @@ const ChatPage = () => {
                     if(chatToOpen) setActiveChat(chatToOpen);
                 }
             } catch (err: any) {
-                setError(err.response?.data?.message || "Failed to load conversations.");
+                // MODIFIED LINE
+                setError(err.response?.data?.message || t('chatPage.errors.loadFailed'));
             } finally {
                 setLoadingChats(false);
             }
         };
 
         if (loggedInUserId) fetchUserChats();
-    }, [loggedInUserId, searchParams]);
+    }, [loggedInUserId, searchParams, t]);
 
     // Effect to fetch messages and JOIN the socket room when a chat becomes active
     useEffect(() => {
@@ -158,7 +163,10 @@ const ChatPage = () => {
             // The receiver will get this same message via the socket.
             setMessages(prev => [...prev, response.data.data]);
             setNewMessage('');
-        } catch (err) { alert("Failed to send message."); }
+        } catch (err) { 
+            // MODIFIED LINE
+            alert(t('chatPage.errors.sendFailed')); 
+        }
     };
     
     // getImageUrl function (no changes needed)
@@ -175,19 +183,19 @@ const ChatPage = () => {
             <div className="chat-page-layout">
                 {/* Sidebar */}
                 <aside className="chat-sidebar">
-                    <div className="sidebar-header"><h2>Conversations</h2></div>
+                    <div className="sidebar-header"><h2>{t('chatPage.sidebar.title')}</h2></div>
                     <div className="chat-list">
-                        {loadingChats ? <p>Loading chats...</p> :
+                        {loadingChats ? <p>{t('chatPage.sidebar.loading')}</p> :
                          error ? <p className="error-message">{error}</p> :
-                         chats.length === 0 ? <p className="no-chats-message">No conversations yet.</p> :
+                         chats.length === 0 ? <p className="no-chats-message">{t('chatPage.sidebar.noChats')}</p> :
                          chats.map(chat => (
                             <div key={chat.chat_id}
                                 className={`chat-list-item ${activeChat?.chat_id === chat.chat_id ? 'active' : ''}`}
                                 onClick={() => setActiveChat(chat)}>
-                                <img src={getImageUrl(chat.otherUser?.profile_picture)} alt={chat.otherUser?.fullname} className="avatar" />
+                                <img src={getImageUrl(chat.otherUser?.profile_picture)} alt={chat.otherUser?.fullname || t('chatPage.sidebar.item.unknownUser')} className="avatar" />
                                 <div className="chat-item-details">
-                                    <p className="chat-item-name">{chat.otherUser?.fullname || 'Unknown User'}</p>
-                                    <p className="chat-item-preview">Click to view messages</p>
+                                    <p className="chat-item-name">{chat.otherUser?.fullname || t('chatPage.sidebar.item.unknownUser')}</p>
+                                    <p className="chat-item-preview">{t('chatPage.sidebar.item.preview')}</p>
                                 </div>
                             </div>
                         ))}
@@ -199,11 +207,11 @@ const ChatPage = () => {
                     {activeChat ? (
                         <>
                             <header className="chat-window-header">
-                                <h3>{activeChat.otherUser?.fullname || 'Chat'}</h3>
-                                <Link to={`/user-profile/${activeChat.otherUser?.user_id}`}>View profile</Link>
+                                <h3>{activeChat.otherUser?.fullname || t('chatPage.main.header.fallbackTitle')}</h3>
+                                <Link to={`/user-profile/${activeChat.otherUser?.user_id}`}>{t('chatPage.main.header.viewProfile')}</Link>
                             </header>
                             <div className="messages-container">
-                                {loadingMessages ? <p>Loading messages...</p> : (
+                                {loadingMessages ? <p>{t('chatPage.main.messages.loading')}</p> : (
                                     messages.map(msg => (
                                         <div key={msg.message_id} className={`message-bubble ${msg.sender_id === loggedInUserId ? 'sent' : 'received'}`}>
                                             <p>{msg.message}</p>
@@ -213,13 +221,13 @@ const ChatPage = () => {
                                 <div ref={messagesEndRef} />
                             </div>
                             <form onSubmit={handleSendMessage} className="message-input-area">
-                                <input type="text" placeholder="Type a message..." value={newMessage} onChange={(e) => setNewMessage(e.target.value)} />
-                                <button type="submit" disabled={!newMessage.trim()}>Send</button>
+                                <input type="text" placeholder={t('chatPage.main.input.placeholder')} value={newMessage} onChange={(e) => setNewMessage(e.target.value)} />
+                                <button type="submit" disabled={!newMessage.trim()}>{t('chatPage.main.input.sendButton')}</button>
                             </form>
                         </>
                     ) : (
                         <div className="no-chat-selected">
-                            <p>Select a conversation from the left to start chatting.</p>
+                            <p>{t('chatPage.main.placeholder.prompt')}</p>
                         </div>
                     )}
                 </main>

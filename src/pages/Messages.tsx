@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../styles/Messages.css";
+import { useTranslation } from "react-i18next";
+
 
 // ✅ Read API URL from environment variables
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:50001";
@@ -18,6 +20,7 @@ const Messages: React.FC<{ userId: number }> = ({ userId }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -56,16 +59,16 @@ const Messages: React.FC<{ userId: number }> = ({ userId }) => {
   return (
     <div className="messages-page">
       <header className="messages-header">
-        <div className="logo">Logo</div>
+        <div className="logo">{t('messagesPage.logo')}</div>
         <ul className="nav-menu">
-          <li><Link to="/main">Dashboard</Link></li>
-          <li><Link to="/profile">Profile</Link></li>
-          <li><button className="logout-button" onClick={handleLogout}>Logout</button></li>
+          <li><Link to="/main">{t('messagesPage.nav.dashboard')}</Link></li>
+          <li><Link to="/profile">{t('messagesPage.nav.profile')}</Link></li>
+          <li><button className="logout-button" onClick={handleLogout}>{t('messagesPage.nav.logout')}</button></li>
         </ul>
       </header>
 
       <div className="messages-container">
-        <h2>Chat Messages</h2>
+        <h2>{t('messagesPage.title')}</h2>
         {messages.length > 0 ? (
           messages.map((message) => (
             <div key={message.id} className="message">
@@ -77,7 +80,7 @@ const Messages: React.FC<{ userId: number }> = ({ userId }) => {
             </div>
           ))
         ) : (
-          <p className="no-messages">No messages available.</p>
+          <p className="no-messages">{t('messagesPage.status.noMessages')}</p>
         )}
       </div>
     </div>

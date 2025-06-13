@@ -5,6 +5,8 @@ import axios from "axios";
 import { FaHome, FaUserAlt, FaBell, FaMapMarkerAlt } from "react-icons/fa";
 import { useUserContext } from '../context/UserContext'; // Import your custom context hook
 import '../styles/Navbar.css'; // Make sure you have this CSS file
+import { useTranslation } from "react-i18next";
+
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "https://artepovera2.vercel.app";
 
@@ -15,6 +17,7 @@ const Navbar = () => {
   const [loadingNotifications, setLoadingNotifications] = useState(true);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
 
   // Get user details and setters from your global context
   const { userId, userType, setUserId, setArtistId, setEmployerId, setUserType } = useUserContext();
@@ -124,14 +127,14 @@ const Navbar = () => {
   return (
     <nav className="navbar">
       <Link to={isLoggedIn ? "/main" : "/"} className="logo-link">
-        <img src="/images/logo2.png" alt="Artepovera Home" className="logo-image" />
+        <img src="/images/logo2.png" alt={t('navbar.altText.logo')} className="logo-image" />
       </Link>
       
       <div className={`hamburger ${isMenuOpen ? "open" : ""}`} onClick={toggleMenu}>
-  <span></span>
-  <span></span>
-  <span></span>
-</div>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
 
       <ul className={`nav-links ${isMenuOpen ? "open" : ""}`}>
         {isLoggedIn ? (
@@ -140,30 +143,30 @@ const Navbar = () => {
             <li>
               <NavLink to="/main" className={({ isActive }) => (isActive ? "active" : "")} onClick={() => setIsMenuOpen(false)}>
                 <FaHome className="nav-icon" />
-                <span className="nav-text">Home</span>
+                <span className="nav-text">{t('navbar.links.home')}</span>
               </NavLink>
             </li>
 
             <li>
               <NavLink to="/map" className={({ isActive }) => (isActive ? "active" : "")} onClick={() => setIsMenuOpen(false)}>
                 <FaMapMarkerAlt className="nav-icon" />
-                <span className="nav-text">Map</span>
+                <span className="nav-text">{t('navbar.links.map')}</span>
               </NavLink>
             </li>
 
             <li>
               <NavLink 
-                to={profilePath} // <<< USE THE DYNAMIC profilePath VARIABLE
+                to={profilePath}
                 className={({ isActive }) => (isActive ? "active" : "")} 
                 onClick={() => setIsMenuOpen(false)}
               >
                 <FaUserAlt className="nav-icon" />
-                <span className="nav-text">My profile</span>
+                <span className="nav-text">{t('navbar.links.profile')}</span>
               </NavLink>
             </li>
 
             <li className="notifications">
-  <button className="notifications-button" onClick={toggleDropdown}>
+              <button className="notifications-button" onClick={toggleDropdown}>
                 <FaBell className="bell-icon" />
                 {notifications.filter(n => !n.read_status).length > 0 && (
                   <span className="notification-badge">{notifications.filter(n => !n.read_status).length}</span>
@@ -172,7 +175,7 @@ const Navbar = () => {
 
               {showDropdown && (
                 <div className="notifications-dropdown">
-                   {loadingNotifications ? ( <p>Loading...</p> )
+                   {loadingNotifications ? ( <p>{t('navbar.notifications.loading')}</p> )
                    : error ? ( <p className="error">{error}</p> )
                    : notifications.length > 0 ? (
                     <ul>
@@ -182,37 +185,56 @@ const Navbar = () => {
                             <div dangerouslySetInnerHTML={{ __html: notif.message }} />
                             <div className="timestamp">{new Date(notif.created_at).toLocaleString()}</div>
                             <div className="notification-actions">
-                              {!notif.read_status && ( <button className="mark-read-btn" onClick={() => markAsRead(notif.notification_id)}> Mark as Read </button> )}
-                              <button className="delete-notif-btn" onClick={() => deleteNotification(notif.notification_id)}> Delete </button>
+                              {!notif.read_status && ( <button className="mark-read-btn" onClick={() => markAsRead(notif.notification_id)}>{t('navbar.notifications.markAsRead')}</button> )}
+                              <button className="delete-notif-btn" onClick={() => deleteNotification(notif.notification_id)}>{t('navbar.notifications.delete')}</button>
                             </div>
                           </div>
                         </li>
                       ))}
                     </ul>
-                  ) : ( <p>No new notifications</p> )}
+                  ) : ( <p>{t('navbar.notifications.none')}</p> )}
                 </div>
               )}
             </li>
             <li>
               <button onClick={() => {handleLogout(); setIsMenuOpen(false);}} className="logout-button">
-                Logout
+                {t('navbar.actions.logout')}
               </button>
+            </li>
+            {/* Language Switcher */}
+            <li className="language-switcher">
+              <button onClick={() => i18n.changeLanguage('en')} className={i18n.language === 'en' ? 'active' : ''}>{t('navbar.language.en')}</button>
+              <span>/</span>
+              <button onClick={() => i18n.changeLanguage('el')} className={i18n.language === 'el' ? 'active' : ''}>{t('navbar.language.el')}</button>
             </li>
           </>
         ) : (
           <>
             {/* --- LOGGED-OUT LINKS --- */}
             <li>
-              <NavLink to="/login" className="nav-link">Login</NavLink>
+              <NavLink to="/login" className="nav-link">{t('navbar.actions.login')}</NavLink>
             </li>
             <li>
-              <NavLink to="/register" className="nav-button register-button">Register</NavLink>
+              <NavLink to="/register" className="nav-button register-button">{t('navbar.actions.register')}</NavLink>
+            </li>
+            {/* Language Switcher */}
+            <li className="language-switcher">
+              <button onClick={() => i18n.changeLanguage('en')} className={i18n.language === 'en' ? 'active' : ''}>{t('navbar.language.en')}</button>
+              <span>/</span>
+              <button onClick={() => i18n.changeLanguage('el')} className={i18n.language === 'el' ? 'active' : ''}>{t('navbar.language.el')}</button>
             </li>
           </>
         )}
       </ul>
     </nav>
   );
+
+
+
+
+
+
+
 };
 
 export default Navbar;

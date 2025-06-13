@@ -1,4 +1,6 @@
 // src/pages/Portfolio.tsx
+import { useTranslation } from "react-i18next";
+
 
 import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
@@ -35,7 +37,7 @@ const getItemTypeFromUrl = (url: string): 'image' | 'pdf' | 'video' | 'other' =>
 
 const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewedArtistName }) => {
   const { artistId: loggedInUserArtistId } = useUserContext();
-  // --- NEW DEBUGGING BLOCK ---
+  const { t } = useTranslation();
   console.log("--- isOwner Calculation ---");
   console.log("Prop (from router) -> viewingArtistId:", viewingArtistId, "| type:", typeof viewingArtistId);
   console.log("Context -> loggedInUserArtistId:", loggedInUserArtistId, "| type:", typeof loggedInUserArtistId);
@@ -176,35 +178,35 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewed
       <Navbar />
       <div className="portfolio-page">
         <div className="portfolio-header">
-            <h2>{isOwner ? "My portfolio" : (viewedArtistName ? `${viewedArtistName}'s Portfolio` : "Artist Portfolio")}</h2>
+            <h2>{isOwner ? t('portfolioPage.header.myPortfolio') : t('portfolioPage.header.artistsPortfolio', { name: viewedArtistName || t('portfolioPage.header.genericArtist') })}</h2>
             {isOwner && !showAddForm && (
                 <button onClick={() => {setShowAddForm(true); setError(null);}} className="add-item-button">
-                    + Add new work
+                    {t('portfolioPage.header.addNew')}
                 </button>
             )}
         </div>
 
         {isOwner && showAddForm && (
           <form onSubmit={handleUpload} className="portfolio-upload-form card-style">
-            <h3>Upload new work</h3>
+            <h3>{t('portfolioPage.form.title')}</h3>
             <div className="form-group">
-              <label htmlFor="portfolioFile">Select file (Image, PDF, video)*</label>
+              <label htmlFor="portfolioFile">{t('portfolioPage.form.fileLabel')}</label>
               <input id="portfolioFile" type="file" name="image" accept="image/png, image/jpeg, image/gif, application/pdf, video/mp4, video/quicktime, video/webm, video/x-matroska, video/x-msvideo" onChange={handleFileChange} />
             </div>
             <div className="form-group">
-              <label htmlFor="portfolioDesc">Description*</label>
-              <textarea id="portfolioDesc" placeholder="Describe your work, CV content, or video..." value={description} onChange={(e) => setDescription(e.target.value)} rows={4} />
+              <label htmlFor="portfolioDesc">{t('portfolioPage.form.descriptionLabel')}</label>
+              <textarea id="portfolioDesc" placeholder={t('portfolioPage.form.descriptionPlaceholder')} value={description} onChange={(e) => setDescription(e.target.value)} rows={4} />
             </div>
             <div className="form-actions">
-              <button type="submit" disabled={uploading || !selectedFile || !description.trim()} className="submit-btn">{uploading ? "Uploading..." : "Upload to Portfolio"}</button>
-              <button type="button" onClick={() => { setShowAddForm(false); setSelectedFile(null); setDescription(''); setError(null); }} className="cancel-btn">Cancel</button>
+              <button type="submit" disabled={uploading || !selectedFile || !description.trim()} className="submit-btn">{uploading ? t('portfolioPage.form.uploadingButton') : t('portfolioPage.form.uploadButton')}</button>
+              <button type="button" onClick={() => { setShowAddForm(false); setSelectedFile(null); setDescription(''); setError(null); }} className="cancel-btn">{t('portfolioPage.form.cancelButton')}</button>
             </div>
           </form>
         )}
 
         <div className="portfolio-grid">
           {!loading && items.length === 0 && !showAddForm && (
-            <p className="no-items-message">{isOwner ? "Your portfolio is empty. Click 'Add new work' to get started!" : "This artist hasn't added any portfolio items yet."}</p>
+            <p className="no-items-message">{isOwner ? t('portfolioPage.status.emptyOwner') : t('portfolioPage.status.emptyViewer')}</p>
           )}
           {items.map((item) => {
             const itemType = item.item_type || getItemTypeFromUrl(item.image_url);
@@ -212,23 +214,23 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewed
 
             return (
               <div key={item.portfolio_id} className={`portfolio-item card-style item-type-${itemType} ${isEditingThis ? 'editing' : ''}`}>
-                 {itemType === 'image' && (<button onClick={() => handleOpenModal(item.image_url)} className="portfolio-image-button"><img src={item.image_url} alt={item.description || 'Portfolio image'} className="portfolio-media portfolio-image" loading="lazy"/></button>)}
-                 {itemType === 'pdf' && (<div className="portfolio-media portfolio-pdf-item"><span className="file-icon pdf-icon" role="img" aria-label="PDF document">📄</span><p className="file-name">{(item.description || 'Document').substring(0, 25)}{item.description && item.description.length > 25 ? '...' : ''}</p><a href={item.image_url} target="_blank" rel="noopener noreferrer" className="view-file-link button-style">View PDF</a></div>)}
-                 {itemType === 'video' && (<div className="portfolio-media portfolio-video-item"><video controls width="100%" preload="metadata" className="portfolio-video-player"><source src={item.image_url} type={selectedFile && item.image_url === URL.createObjectURL(selectedFile) ? selectedFile.type : 'video/mp4'} />Your browser does not support the video tag.</video></div>)}
-                 {itemType === 'other' && (<div className="portfolio-media portfolio-other-item"><span className="file-icon" role="img" aria-label="File">📎</span><p className="file-name">{(item.description || 'File').substring(0,25)}{item.description.length > 25 ? '...' : ''}</p><a href={item.image_url} target="_blank" rel="noopener noreferrer" className="view-file-link button-style">Open File</a></div>)}
+                 {itemType === 'image' && (<button onClick={() => handleOpenModal(item.image_url)} className="portfolio-image-button"><img src={item.image_url} alt={item.description || t('portfolioPage.item.imageAlt')} className="portfolio-media portfolio-image" loading="lazy"/></button>)}
+                 {itemType === 'pdf' && (<div className="portfolio-media portfolio-pdf-item"><span className="file-icon pdf-icon" role="img" aria-label={t('portfolioPage.item.pdfAriaLabel')}>📄</span><p className="file-name">{(item.description || t('portfolioPage.item.pdfDefaultName')).substring(0, 25)}{item.description && item.description.length > 25 ? '...' : ''}</p><a href={item.image_url} target="_blank" rel="noopener noreferrer" className="view-file-link button-style">{t('portfolioPage.item.viewPdf')}</a></div>)}
+                 {itemType === 'video' && (<div className="portfolio-media portfolio-video-item"><video controls width="100%" preload="metadata" className="portfolio-video-player"><source src={item.image_url} type={selectedFile && item.image_url === URL.createObjectURL(selectedFile) ? selectedFile.type : 'video/mp4'} />{t('portfolioPage.item.videoError')}</video></div>)}
+                 {itemType === 'other' && (<div className="portfolio-media portfolio-other-item"><span className="file-icon" role="img" aria-label={t('portfolioPage.item.otherAriaLabel')}>📎</span><p className="file-name">{(item.description || t('portfolioPage.item.otherDefaultName')).substring(0,25)}{item.description.length > 25 ? '...' : ''}</p><a href={item.image_url} target="_blank" rel="noopener noreferrer" className="view-file-link button-style">{t('portfolioPage.item.openFile')}</a></div>)}
                 <div className="portfolio-item-content">
-                  {isEditingThis ? (<textarea value={editDescription} onChange={(e) => setEditDescription(e.target.value)} className="edit-description-input" rows={3} autoFocus/>) : (<p className="portfolio-description">{item.description || "No description."}</p>)}
+                  {isEditingThis ? (<textarea value={editDescription} onChange={(e) => setEditDescription(e.target.value)} className="edit-description-input" rows={3} autoFocus/>) : (<p className="portfolio-description">{item.description || t('portfolioPage.status.noDescription')}</p>)}
                   {isOwner && (
                     <div className="portfolio-actions">
-                      {isEditingThis ? (<> <button onClick={() => handleSaveEdit(item.portfolio_id)} className="action-btn save" disabled={uploading}>Save</button> <button onClick={cancelEditing} className="action-btn cancel" disabled={uploading}>Cancel</button> </>) : (<button onClick={() => startEditing(item)} className="action-btn edit" disabled={uploading || showAddForm}>Edit desc</button>)}
-                      <button onClick={() => handleDelete(item.portfolio_id)} className="action-btn delete" disabled={uploading || showAddForm}>Delete</button>
+                      {isEditingThis ? (<> <button onClick={() => handleSaveEdit(item.portfolio_id)} className="action-btn save" disabled={uploading}>{t('portfolioPage.item.saveButton')}</button> <button onClick={cancelEditing} className="action-btn cancel" disabled={uploading}>{t('portfolioPage.form.cancelButton')}</button> </>) : (<button onClick={() => startEditing(item)} className="action-btn edit" disabled={uploading || showAddForm}>{t('portfolioPage.item.editButton')}</button>)}
+                      <button onClick={() => handleDelete(item.portfolio_id)} className="action-btn delete" disabled={uploading || showAddForm}>{t('portfolioPage.item.deleteButton')}</button>
                     </div>
                   )}
                 </div>
               </div>
             );
           })}
-        {modalImage && ( <div className="portfolio-modal-overlay" onClick={handleCloseModal}><div className="portfolio-modal-content" onClick={(e) => e.stopPropagation()}><img src={modalImage} alt="Enlarged portfolio view" /><button onClick={handleCloseModal} className="close-modal-button">×</button></div></div>)}
+        {modalImage && ( <div className="portfolio-modal-overlay" onClick={handleCloseModal}><div className="portfolio-modal-content" onClick={(e) => e.stopPropagation()}><img src={modalImage} alt={t('portfolioPage.modal.enlargedViewAlt')} /><button onClick={handleCloseModal} className="close-modal-button">{t('portfolioPage.modal.closeButton')}</button></div></div>)}
         </div>
       </div>
     </>

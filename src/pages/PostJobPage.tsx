@@ -5,6 +5,10 @@ import axios from 'axios';
 import Navbar from '../components/Navbar';
 import { useUserContext } from '../context/UserContext';
 import '../styles/PostJobPage.css';
+import { useTranslation } from "react-i18next";
+
+
+
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:50001";
 
@@ -17,7 +21,7 @@ const PostJobPage: React.FC = () => {
     const { userType } = useUserContext();
     const { job_id } = useParams<{ job_id: string }>();
     const isEditMode = Boolean(job_id);
-
+    const { t } = useTranslation();
     // --- Form State ---
     const [title, setTitle] = useState('');
     const [category, setCategory] = useState('');
@@ -183,150 +187,150 @@ const PostJobPage: React.FC = () => {
             <Navbar />
             <div className="post-job-page-container">
                 <form onSubmit={handleSubmit} className="post-job-form">
-                    <h1>{isEditMode ? 'Edit Job Posting' : 'Create a new job posting'}</h1>
-                    <p className="form-subtitle">{isEditMode ? 'Update the details for your job listing.' : 'Provide details about the opportunity to attract the right artists.'}</p>
-
+                    <h1>{isEditMode ? t('postJobPage.title.edit') : t('postJobPage.title.create')}</h1>
+                    <p className="form-subtitle">{isEditMode ? t('postJobPage.subtitle.edit') : t('postJobPage.subtitle.create')}</p>
+    
                     <fieldset>
-                        <legend>Core Details</legend>
+                        <legend>{t('postJobPage.sections.coreDetails')}</legend>
                         <div className="form-group">
-                            <label htmlFor="job-title">Job title*</label>
-                            <input id="job-title" type="text" value={title} onChange={e => setTitle(e.target.value)} required placeholder="e.g., Mural Artist for Downtown Cafe"/>
+                            <label htmlFor="job-title">{t('postJobPage.labels.jobTitle')}</label>
+                            <input id="job-title" type="text" value={title} onChange={e => setTitle(e.target.value)} required placeholder={t('postJobPage.placeholders.title')}/>
                         </div>
                         <div className="form-group">
-                            <label htmlFor="job-category">Category*</label>
+                            <label htmlFor="job-category">{t('postJobPage.labels.category')}</label>
                             <select id="job-category" value={category} onChange={e => setCategory(e.target.value)} required>
-                                <option value="" disabled>Select a category...</option>
+                                <option value="" disabled>{t('postJobPage.options.selectCategory')}</option>
                                 {artistCategories.map(cat => (<option key={cat} value={cat}>{cat}</option>))}
-                                <option value="Other">Other (Please specify)</option>
+                                <option value="Other">{t('postJobPage.options.otherCategory')}</option>
                             </select>
                         </div>
                         {category === 'Other' && (
                             <div className="form-group fade-in">
-                                <label htmlFor="custom-category">Please specify category*</label>
-                                <input id="custom-category" type="text" value={customCategory} onChange={e => setCustomCategory(e.target.value)} placeholder="e.g., VFX Artist, Puppet Master" required />
+                                <label htmlFor="custom-category">{t('postJobPage.labels.customCategory')}</label>
+                                <input id="custom-category" type="text" value={customCategory} onChange={e => setCustomCategory(e.target.value)} placeholder={t('postJobPage.placeholders.customCategory')} required />
                             </div>
                         )}
                         <div className="form-group">
-                            <label htmlFor="job-description">Description</label>
-                            <textarea id="job-description" value={description} onChange={e => setDescription(e.target.value)} rows={4} placeholder="Briefly describe the project, the artist's role, and key deliverables."/>
+                            <label htmlFor="job-description">{t('postJobPage.labels.description')}</label>
+                            <textarea id="job-description" value={description} onChange={e => setDescription(e.target.value)} rows={4} placeholder={t('postJobPage.placeholders.description')}/>
                         </div>
                     </fieldset>
-
+    
                     <fieldset>
-                        <legend>Logistics</legend>
+                        <legend>{t('postJobPage.sections.logistics')}</legend>
                         <div className="form-group">
-                            <label htmlFor="job-location">Location</label>
-                            <input id="job-location" type="text" value={location} onChange={e => setLocation(e.target.value)} placeholder="e.g., Athens, Greece" />
+                            <label htmlFor="job-location">{t('postJobPage.labels.location')}</label>
+                            <input id="job-location" type="text" value={location} onChange={e => setLocation(e.target.value)} placeholder={t('postJobPage.placeholders.location')} />
                         </div>
                         <div className="form-group">
-                            <label htmlFor="job-presence">Work presence*</label>
+                            <label htmlFor="job-presence">{t('postJobPage.labels.workPresence')}</label>
                             <select id="job-presence" value={presence} onChange={e => setPresence(e.target.value as any)}>
-                                <option value="Physical">Physical / On-site</option>
-                                <option value="Online">Online / Remote</option>
-                                <option value="Both">Both / Hybrid</option>
+                                <option value="Physical">{t('postJobPage.options.presencePhysical')}</option>
+                                <option value="Online">{t('postJobPage.options.presenceOnline')}</option>
+                                <option value="Both">{t('postJobPage.options.presenceBoth')}</option>
                             </select>
                         </div>
                         <div className="form-row">
                             <div className="form-group">
-                                <label htmlFor="start-date">Approx. start date</label>
+                                <label htmlFor="start-date">{t('postJobPage.labels.startDate')}</label>
                                 <input id="start-date" type="date" value={startDate} onChange={e => setStartDate(e.target.value)} />
                             </div>
                             <div className="form-group">
-                                <label htmlFor="end-date">Approx. end date</label>
+                                <label htmlFor="end-date">{t('postJobPage.labels.endDate')}</label>
                                 <input id="end-date" type="date" value={endDate} onChange={e => setEndDate(e.target.value)} />
                             </div>
                         </div>
                         <div className="form-group">
-                            <label htmlFor="deadline">Application deadline</label>
+                            <label htmlFor="deadline">{t('postJobPage.labels.deadline')}</label>
                             <input id="deadline" type="date" value={deadline} onChange={e => setDeadline(e.target.value)} />
                         </div>
                     </fieldset>
                     
                     <fieldset>
-                        <legend>Compensation</legend>
+                        <legend>{t('postJobPage.sections.compensation')}</legend>
                         <div className="form-group">
-                            <label>Payment structure*</label>
+                            <label>{t('postJobPage.labels.paymentStructure')}</label>
                             <div className="radio-group">
                                 <label className={paymentType === 'total' ? 'active' : ''}>
                                     <input type="radio" value="total" name="paymentType" checked={paymentType === 'total'} onChange={() => setPaymentType('total')} />
-                                    Total project compensation
+                                    {t('postJobPage.options.paymentTotal')}
                                 </label>
                                 <label className={paymentType === 'monthly' ? 'active' : ''}>
                                     <input type="radio" value="monthly" name="paymentType" checked={paymentType === 'monthly'} onChange={() => setPaymentType('monthly')} />
-                                    Monthly salary
+                                    {t('postJobPage.options.paymentMonthly')}
                                 </label>
                             </div>
                         </div>
                         {paymentType === 'total' && (
                             <div className="form-group fade-in">
-                                <label htmlFor="total-payment">Total payment (EUR)*</label>
-                                <input id="total-payment" type="number" value={totalPayment} onChange={e => setTotalPayment(Number(e.target.value))} required min="0" placeholder="e.g., 1500" />
+                                <label htmlFor="total-payment">{t('postJobPage.labels.totalPayment')}</label>
+                                <input id="total-payment" type="number" value={totalPayment} onChange={e => setTotalPayment(Number(e.target.value))} required min="0" placeholder={t('postJobPage.placeholders.totalPayment')} />
                             </div>
                         )}
                         {paymentType === 'monthly' && (
                             <div className="form-row fade-in">
                                 <div className="form-group">
-                                    <label htmlFor="monthly-payment">Monthly wage (EUR)*</label>
-                                    <input id="monthly-payment" type="number" value={monthlyPayment} onChange={e => setMonthlyPayment(Number(e.target.value))} required min="0" placeholder="e.g., 500" />
+                                    <label htmlFor="monthly-payment">{t('postJobPage.labels.monthlyWage')}</label>
+                                    <input id="monthly-payment" type="number" value={monthlyPayment} onChange={e => setMonthlyPayment(Number(e.target.value))} required min="0" placeholder={t('postJobPage.placeholders.monthlyPayment')} />
                                 </div>
                                 <div className="form-group">
-                                    <label htmlFor="num-months">Number of months*</label>
-                                    <input id="num-months" type="number" value={numberOfMonths} onChange={e => setNumberOfMonths(Number(e.target.value))} required min="1" placeholder="e.g., 3" />
+                                    <label htmlFor="num-months">{t('postJobPage.labels.numMonths')}</label>
+                                    <input id="num-months" type="number" value={numberOfMonths} onChange={e => setNumberOfMonths(Number(e.target.value))} required min="1" placeholder={t('postJobPage.placeholders.numMonths')} />
                                 </div>
                             </div>
                         )}
                         <div className="form-checkbox-group">
                             <input type="checkbox" id="insurance" checked={insurance} onChange={e => setInsurance(e.target.checked)} />
-                            <label htmlFor="insurance">Insurance is included</label>
+                            <label htmlFor="insurance">{t('postJobPage.labels.insurance')}</label>
                         </div>
                     </fieldset>
-
+    
                     <fieldset>
-                        <legend>Requirements & desired skills</legend>
+                        <legend>{t('postJobPage.sections.requirements')}</legend>
                         <div className="form-group">
-                            <label htmlFor="experience">Years of experience required</label>
+                            <label htmlFor="experience">{t('postJobPage.labels.experience')}</label>
                             <select id="experience" value={experience} onChange={e => setExperience(e.target.value as any)}>
-                                {experienceLevels.map(level => (<option key={level} value={level}>{level} years</option>))}
+                                {experienceLevels.map(level => (<option key={level} value={level}>{level} {t('postJobPage.options.yearsSuffix')}</option>))}
                             </select>
                         </div>
                         <div className="form-checkbox-group">
                             <input type="checkbox" id="degreeRequired" checked={degreeRequired} onChange={e => setDegreeRequired(e.target.checked)} />
-                            <label htmlFor="degreeRequired">University degree is a requirement</label>
+                            <label htmlFor="degreeRequired">{t('postJobPage.labels.degreeRequired')}</label>
                         </div>
                         {degreeRequired && 
                             <div className="form-group fade-in">
-                                <label htmlFor="degree-details">Specify degree</label>
-                                <input id="degree-details" type="text" value={degreeDetails} onChange={e => setDegreeDetails(e.target.value)} placeholder="e.g., Bachelor's in Fine Arts" />
+                                <label htmlFor="degree-details">{t('postJobPage.labels.degreeDetails')}</label>
+                                <input id="degree-details" type="text" value={degreeDetails} onChange={e => setDegreeDetails(e.target.value)} placeholder={t('postJobPage.placeholders.degreeDetails')} />
                             </div>
                         }
                         <div className="form-group">
-                            <label htmlFor="military-service">Military service status</label>
+                            <label htmlFor="military-service">{t('postJobPage.labels.militaryService')}</label>
                             <select id="military-service" value={militaryService} onChange={e => setMilitaryService(e.target.value as any)}>
-                                <option value="Not Applicable">Not applicable</option>
-                                <option value="Completed">Completed</option>
-                                <option value="Not Required">Not required</option>
+                                <option value="Not Applicable">{t('postJobPage.options.militaryNotApplicable')}</option>
+                                <option value="Completed">{t('postJobPage.options.militaryCompleted')}</option>
+                                <option value="Not Required">{t('postJobPage.options.militaryNotRequired')}</option>
                             </select>
                         </div>
                         <div className="language-section">
-                            <h4>Language Certificates</h4>
+                            <h4>{t('postJobPage.labels.languages')}</h4>
                             {languages.map((lang, index) => (
                                 <div key={index} className="language-entry">
-                                    <input type="text" placeholder="Language (e.g., English)" value={lang.language} onChange={e => handleLanguageChange(index, 'language', e.target.value)} />
-                                    <input type="text" placeholder="Certificate (e.g., C2 Proficiency)" value={lang.certificate} onChange={e => handleLanguageChange(index, 'certificate', e.target.value)} />
+                                    <input type="text" placeholder={t('postJobPage.placeholders.language')} value={lang.language} onChange={e => handleLanguageChange(index, 'language', e.target.value)} />
+                                    <input type="text" placeholder={t('postJobPage.placeholders.certificate')} value={lang.certificate} onChange={e => handleLanguageChange(index, 'certificate', e.target.value)} />
                                     {languages.length > 1 && <button type="button" onClick={() => handleRemoveLanguage(index)} className="remove-btn">-</button>}
                                 </div>
                             ))}
-                            <button type="button" onClick={handleAddLanguage} className="add-btn">+ Add language</button>
+                            <button type="button" onClick={handleAddLanguage} className="add-btn">{t('postJobPage.buttons.addLanguage')}</button>
                         </div>
                         <div className="form-group">
-                            <label htmlFor="keywords">Desired keywords</label>
-                            <textarea id="keywords" value={desiredKeywords} onChange={e => setDesiredKeywords(e.target.value)} rows={2} placeholder="e.g., vibrant, abstract, digital illustration, large-scale" />
+                            <label htmlFor="keywords">{t('postJobPage.labels.keywords')}</label>
+                            <textarea id="keywords" value={desiredKeywords} onChange={e => setDesiredKeywords(e.target.value)} rows={2} placeholder={t('postJobPage.placeholders.keywords')} />
                         </div>
                     </fieldset>
-
+    
                     {error && <p className="error-message">{error}</p>}
                     <button type="submit" disabled={isSubmitting} className="submit-job-btn">
-                        {isSubmitting ? 'Saving...' : isEditMode ? 'Save changes' : 'Post this job'}
+                        {isSubmitting ? t('postJobPage.buttons.saving') : isEditMode ? t('postJobPage.buttons.saveChanges') : t('postJobPage.buttons.postJob')}
                     </button>
                 </form>
             </div>
