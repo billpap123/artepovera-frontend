@@ -847,6 +847,13 @@
           "userTypes": {
   "Artist": "Καλλιτέχνης",
   "Employer": "Εργοδότης"
+},
+"notifications": {
+  "newMatch": "Έχετε ένα νέο match με τον/την {{name}}! <a href=\"{{chatLink}}\">Ξεκινήστε τη συνομιλία</a>",
+  "newApplication": "Ο/Η {{name}} έκανε αίτηση στην αγγελία σας για '{{jobTitle}}'.",
+  "newLike": "Στον/ην {{name}} άρεσε το προφίλ σας."
+
+
 }
         
 }

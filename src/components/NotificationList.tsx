@@ -3,15 +3,18 @@ import axios from "axios";
 import "../styles/Notifications.css";
 import { useTranslation } from "react-i18next";
 
-
-
+// --- UPDATED TYPE DEFINITION ---
+// This now matches the data structure from your backend,
+// allowing for both old (message) and new (message_key) notifications.
 type Notification = {
   notification_id: number;
   user_id: number;
-  message: string;      // HTML or text stored in your DB
+  message: string | null; // Kept for backward compatibility
+  message_key: string | null; // NEW: The key for i18next
+  message_params: any | null; // NEW: The variables for the key
   read_status: boolean;
   created_at: string;
-  sender_name: string;  // Fetched from the backend (the name of the sender)
+  sender_name: string;
 };
 
 const NotificationList: React.FC = () => {
@@ -19,22 +22,23 @@ const NotificationList: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const { t } = useTranslation();
-  // 1) Grab the user & token from localStorage
+
   const user = JSON.parse(localStorage.getItem("user") || "{}");
   const token = localStorage.getItem("token");
-
-  // ✅ Use your Vite environment variable, fallback to localhost for dev
   const BACKEND_URL = import.meta.env.VITE_API_URL || "http://localhost:50001";
 
   useEffect(() => {
     const fetchNotifications = async () => {
+      if (!user?.user_id || !token) {
+        setLoading(false);
+        setError("No user or token found. Please log in.");
+        return;
+      }
+      
       try {
-        // 2) Request the user’s notifications
         const response = await axios.get(
           `${BACKEND_URL}/api/notifications/${user.user_id}`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
+          { headers: { Authorization: `Bearer ${token}` } }
         );
         setNotifications(response.data.notifications || []);
       } catch (err) {
@@ -45,25 +49,16 @@ const NotificationList: React.FC = () => {
       }
     };
 
-    if (user?.user_id && token) {
-      fetchNotifications();
-    } else {
-      setLoading(false);
-      setError("No user or token found. Please log in.");
-    }
+    fetchNotifications();
   }, [user.user_id, token, BACKEND_URL]);
 
-  // 3) Mark notification as read
   const handleMarkAsRead = async (notificationId: number) => {
     try {
       await axios.put(
         `${BACKEND_URL}/api/notifications/${notificationId}`,
         {},
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
-      // Update state so the notification is marked as read
       setNotifications((prev) =>
         prev.map((notif) =>
           notif.notification_id === notificationId
@@ -77,13 +72,11 @@ const NotificationList: React.FC = () => {
     }
   };
 
-  // 4) Delete a notification
   const handleDelete = async (notificationId: number) => {
     try {
       await axios.delete(`${BACKEND_URL}/api/notifications/${notificationId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      // Remove it from state
       setNotifications((prev) =>
         prev.filter((notif) => notif.notification_id !== notificationId)
       );
@@ -93,7 +86,7 @@ const NotificationList: React.FC = () => {
     }
   };
 
-  if (loading) return <div>Loading notifications...</div>;
+  if (loading) return <div>{t('notificationList.status.loading')}</div>;
   if (error) return <div style={{ color: "red" }}>{error}</div>;
 
   return (
@@ -110,8 +103,17 @@ const NotificationList: React.FC = () => {
               style={{ marginBottom: "15px" }}
             >
               <div>
-                <strong>{notif.sender_name}</strong>:{" "}
-                <span dangerouslySetInnerHTML={{ __html: notif.message }} />
+                {/* --- THIS IS THE FIX --- */}
+                {/* It now checks if a message_key exists. If so, it translates it. */}
+                {/* If not, it falls back to displaying the old message string. */}
+                <span dangerouslySetInnerHTML={{ 
+                  __html: notif.message_key 
+                    ? t(notif.message_key, { 
+                        name: notif.sender_name, 
+                        ...(notif.message_params || {})
+                      })
+                    : notif.message || ''
+                }} />
               </div>
 
               <small

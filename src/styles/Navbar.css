@@ -288,3 +288,50 @@
       order: 10; /* Ensures it appears at the bottom of the list */
   }
 }
+
+/* --- Language Switcher Styles --- */
+.language-switcher {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-left: 15px; /* Adds some space from the logout button */
+}
+
+.language-switcher button {
+  background: none;
+  border: none;
+  color: #ccc; /* A slightly dimmer color for non-active */
+  cursor: pointer;
+  font-family: inherit; /* Use the same font as the navbar */
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 5px;
+  transition: color 0.2s ease-in-out;
+}
+
+.language-switcher button:hover {
+  color: white;
+}
+
+/* This style applies to the currently selected language button */
+.language-switcher button.active {
+  color: white;
+  font-weight: 800;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+}
+
+.language-switcher span {
+  color: #666; /* Color for the "/" separator */
+  font-size: 1rem;
+}
+
+/* --- Responsive adjustments for the switcher --- */
+@media (max-width: 768px) {
+  .nav-links.open .language-switcher {
+    margin-top: 15px;
+    padding-bottom: 15px;
+    justify-content: center; /* Center it in the mobile menu */
+  }
+}
