@@ -4,16 +4,16 @@ import "../styles/Notifications.css";
 import { useTranslation } from "react-i18next";
 
 // --- UPDATED TYPE DEFINITION ---
-// This now matches the data structure from your backend,
+// This now matches the data structure from your backend controller,
 // allowing for both old (message) and new (message_key) notifications.
 type Notification = {
   notification_id: number;
   user_id: number;
-  message: string | null; // Kept for backward compatibility
-  message_key: string | null; // NEW: The key for i18next
-  message_params: any | null; // NEW: The variables for the key
+  message: string | null;
+  message_key: string | null;
+  message_params: any | null;
   read_status: boolean;
-  created_at: string;
+  createdAt: string; // Corrected to camelCase to match backend
   sender_name: string;
 };
 
@@ -31,7 +31,7 @@ const NotificationList: React.FC = () => {
     const fetchNotifications = async () => {
       if (!user?.user_id || !token) {
         setLoading(false);
-        setError("No user or token found. Please log in.");
+        setError(t('notificationList.errors.loginRequired'));
         return;
       }
       
@@ -42,7 +42,7 @@ const NotificationList: React.FC = () => {
         );
         setNotifications(response.data.notifications || []);
       } catch (err) {
-        setError("Failed to fetch notifications.");
+        setError(t('notificationList.errors.fetchFailed'));
         console.error("❌ Error fetching notifications:", err);
       } finally {
         setLoading(false);
@@ -50,7 +50,7 @@ const NotificationList: React.FC = () => {
     };
 
     fetchNotifications();
-  }, [user.user_id, token, BACKEND_URL]);
+  }, [user.user_id, token, BACKEND_URL, t]);
 
   const handleMarkAsRead = async (notificationId: number) => {
     try {
@@ -67,7 +67,7 @@ const NotificationList: React.FC = () => {
         )
       );
     } catch (err) {
-      setError("Failed to mark notification as read.");
+      setError(t('notificationList.errors.markAsReadFailed'));
       console.error("❌ Error marking as read:", err);
     }
   };
@@ -81,7 +81,7 @@ const NotificationList: React.FC = () => {
         prev.filter((notif) => notif.notification_id !== notificationId)
       );
     } catch (err) {
-      setError("Failed to delete notification.");
+      setError(t('notificationList.errors.deleteFailed'));
       console.error("❌ Error deleting notification:", err);
     }
   };
@@ -103,9 +103,7 @@ const NotificationList: React.FC = () => {
               style={{ marginBottom: "15px" }}
             >
               <div>
-                {/* --- THIS IS THE FIX --- */}
-                {/* It now checks if a message_key exists. If so, it translates it. */}
-                {/* If not, it falls back to displaying the old message string. */}
+                {/* This block now correctly handles both formats */}
                 <span dangerouslySetInnerHTML={{ 
                   __html: notif.message_key 
                     ? t(notif.message_key, { 
@@ -119,7 +117,8 @@ const NotificationList: React.FC = () => {
               <small
                 style={{ display: "block", marginTop: "5px", color: "#555" }}
               >
-                {new Date(notif.created_at).toLocaleString()}
+                {/* Using the corrected 'createdAt' property */}
+                {new Date(notif.createdAt).toLocaleString()}
               </small>
 
               <div style={{ marginTop: "8px" }}>
