@@ -36,6 +36,8 @@
   padding: 25px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  position: relative; /* Added for ::before positioning */
+  overflow: hidden; /* Ensures pseudo-elements don't spill out */
 }
 
 .dashboard-card:hover {
@@ -50,11 +52,29 @@
   justify-content: center;
   align-items: center;
   text-align: center;
-  background: linear-gradient(rgba(44, 62, 80, 0.7), rgba(44, 62, 80, 0.7)), url('/images/jobs.png'); /* Add a generic map background image to your /public/images folder */
   background-size: cover;
   background-position: center;
   color: white;
+}
 
+/* Specific background for stat cards */
+.stat-card {
+    background-image: url('/images/jobs.png');
+}
+
+/* Dark overlay for stat cards */
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(44, 62, 80, 0.75);
+  z-index: 1;
+}
+
+/* Ensures stat card content is on top of the overlay */
+.stat-card > * {
+    position: relative;
+    z-index: 2;
 }
 
 .stat-icon {
@@ -66,25 +86,25 @@
 .stat-card div h3 {
   margin: 0 0 4px 0;
   font-size: 1.2rem;
-  color: #34495e;
+  color: #ffffff; /* Text should be white to be visible */
 }
 
 .stat-card div p {
   margin: 0;
-  color: #95a5a6;
+  color: #e0e0e0; /* Lighter grey for subtitle */
   font-size: 0.9rem;
 }
 
 /* Styling for the large job feed card */
 .job-feed-card {
   grid-column: 1 / -1; /* Make it span the full width */
-  background-color: #fdfdfd; /* Slightly different background if needed */
+  background-color: #fdfdfd; 
 }
 
 @media (min-width: 992px) {
   .job-feed-card {
-    grid-column: span 2; /* On larger screens, span 2 columns */
-    grid-row: span 2; /* And span 2 rows */
+    grid-column: span 2; 
+    grid-row: span 2;
   }
 }
 
@@ -95,54 +115,80 @@
   margin-bottom: 20px;
 }
 
-/* Styling for the Map discovery card */
-.map-card {
+
+/* --- THIS IS THE FIX --- */
+/* Base styles for all cards with background images */
+.image-link-card,
+.image-link-card2 {
+  min-height: 180px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   text-align: center;
-  background: linear-gradient(rgba(44, 62, 80, 0.7), rgba(44, 62, 80, 0.7)), url('/images/map-background.jpg'); /* Add a generic map background image to your /public/images folder */
+  padding: 20px;
+  color: white;
   background-size: cover;
   background-position: center;
-  color: white;
 }
 
-.map-card h3 {
-  margin-top: 0;
+/* Set specific background images */
+.image-link-card {
+  background-image: url('/images/map-background.jpg');
+}
+.image-link-card2 {
+  background-image: url('/images/jobs.png');
+}
+
+/* Shared overlay for both image card types */
+.image-link-card::before,
+.image-link-card2::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(44, 62, 80, 0.75);
+  z-index: 1;
+  transition: background-color 0.3s ease;
+}
+
+/* Shared hover effect for both image card types */
+.image-link-card:hover::before,
+.image-link-card2:hover::before {
+  background-color: rgba(44, 62, 80, 0.65);
+}
+
+/* Shared content wrapper for both image card types */
+.image-link-card div,
+.image-link-card2 div {
+  position: relative;
+  z-index: 2;
+}
+
+/* Shared text styles for both image card types */
+.image-link-card h3,
+.image-link-card2 h3 {
   font-size: 1.5rem;
+  margin-bottom: 8px;
+  color: #fff;
 }
 
-.map-card p {
+.image-link-card p,
+.image-link-card2 p {
   font-size: 1rem;
-  margin-bottom: 20px;
-  max-width: 250px;
+  color: #f0f0f0;
+  opacity: 0.9;
+  margin: 0;
 }
+/* --- END OF FIX --- */
 
-.action-button {
-  background-color: #fff;
-  color: #C96A50;
-  padding: 12px 25px;
-  border-radius: 50px;
-  text-decoration: none;
-  font-weight: 600;
-  transition: all 0.2s ease-in-out;
-  display: inline-flex;
-  align-items: center;
-}
-
-.action-button:hover {
-  background-color: #f1f1f1;
-  transform: scale(1.05);
-}
 
 .admin-card {
-  background-color: #f8d7da; /* A distinct background color for admin cards */
+  background-color: #f8d7da;
   border: 1px solid #f5c6cb;
 }
 
 .admin-card .stat-icon {
-  color: #721c24; /* A color that contrasts with the background */
+  color: #721c24;
 }
 
 .admin-card:hover {
@@ -150,95 +196,14 @@
 }
 
 .admin-overview-card {
-  grid-column: 1 / -1; /* Make it span the full width */
+  grid-column: 1 / -1;
   text-align: center;
   font-size: 1.1rem;
   color: #444;
 }
 
-
-.image-link-card {
-  min-height: 180px; /* A good height for these cards */
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  padding: 20px;
-  overflow: hidden;
-  color: white;
-  
-  /* --- IMPORTANT: Use the same map background image --- */
-  background-image: url('/images/map-background.jpg'); /* <-- Make sure this path is correct */
-  background-size: cover;
-  background-position: center;
-}
-.image-link-card2 {
-  min-height: 180px; /* A good height for these cards */
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  padding: 20px;
-  overflow: hidden;
-  color: white;
-  
-  /* --- IMPORTANT: Use the same map background image --- */
-  background-image: url('/images/jobs.png'); /* <-- Make sure this path is correct */
-  background-size: cover;
-  background-position: center;
-}
-
-
-/* This creates the dark overlay so the white text is readable */
-.image-link-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(44, 62, 80, 0.75); /* The dark, semi-transparent overlay */
-  z-index: 1;
-  transition: background-color 0.3s ease;
-}
-
-.stat-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(44, 62, 80, 0.75); /* The dark, semi-transparent overlay */
-  z-index: 1;
-  transition: background-color 0.3s ease;
-}
-
-/* Make the overlay slightly lighter on hover */
-.image-link-card:hover::before {
-  background-color: rgba(44, 62, 80, 0.65);
-}
-
-/* Make sure the text appears on top of the overlay */
-.image-link-card div {
-  position: relative;
-  z-index: 2;
-}
-
-/* Style the text to match the old design */
-.image-link-card h3 {
-  font-size: 1.5rem;
-  margin-bottom: 8px;
-  color: #fff; /* Ensure heading is white */
-}
-
-.image-link-card p {
-  font-size: 1rem;
-  color: #f0f0f0; /* A slightly off-white for the subtitle */
-  opacity: 0.9;
-  margin: 0;
+hr.filter-divider {
+  border: none;
+  border-top: 1px solid #e9ecef;
+  margin: 20px 0;
 }
