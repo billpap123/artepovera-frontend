@@ -1,81 +1,103 @@
+/* src/styles/Register.css */
+
 .register-container {
-    width: 100%;
-    max-width: 500px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  .register-form {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .register-form label {
-    margin-bottom: 8px;
-    font-weight: bold;
-  }
-  
-  .register-form input,
-  .register-form select {
-    padding: 10px;
-    margin-bottom: 20px;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-  }
-  
-  .register-form button {
-    padding: 12px;
-    background-color: #3498db;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  
-  .register-form button:hover {
-    background-color: #2980b9;
-  }
-  
-  /* Styles for the logo on Auth Pages (Login/Register) */
-/* Add or update these styles in your relevant CSS file */
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
 
+.register-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.register-form label {
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+/* General styles for text inputs and select dropdowns */
+.register-form input[type="text"],
+.register-form input[type="email"],
+.register-form input[type="password"],
+.register-form input[type="tel"],
+.register-form select {
+  padding: 10px;
+  margin-bottom: 20px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  width: 100%; /* Ensure they take up full width */
+}
+
+.register-form button {
+  padding: 12px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.register-form button:hover {
+  background-color: #2980b9;
+}
+
+/* --- THIS IS THE FIX --- */
+/* Style the container for the checkbox and its label */
+.checkbox-group {
+display: flex;
+align-items: center; /* Vertically align the box and the text */
+margin-bottom: 20px; /* Keep consistent spacing below the group */
+}
+
+/* Override the default input styles specifically for checkboxes */
+.checkbox-group input[type="checkbox"] {
+width: auto; /* Let the checkbox have its natural size */
+margin: 0; /* Remove any inherited margins */
+margin-right: 10px; /* Add space between the box and the label */
+flex-shrink: 0; /* Prevent the checkbox from being squashed */
+}
+
+/* Style the label next to the checkbox */
+.checkbox-group .checkbox-label {
+margin-bottom: 0; /* Remove the bottom margin that pushes it down */
+font-weight: normal; /* Checkbox labels are typically not bold */
+}
+/* --- END OF FIX --- */
+
+/* Styles for the logo on Auth Pages (Login/Register) */
 .auth-logo-container {
-  margin-bottom: 30px; /* Existing - adjust as needed */
-  text-align: center;
+margin-bottom: 30px; 
+text-align: center;
 }
 
-/* Style the <Link> component that wraps both text and image */
 .auth-logo-container a {
-  display: inline-flex; /* Aligns text and image on the same line and allows vertical alignment */
-  align-items: center;   /* Vertically aligns the text and image */
-  text-decoration: none; /* Removes the default link underline */
-  color: var(--text-medium, #654321); /* Earthy text color (e.g., Deep Brown) */
-  font-weight: 600;
-  font-size: 0.95rem;    /* Adjust size as needed */
-  transition: color 0.2s ease;
+display: inline-flex;
+align-items: center;
+text-decoration: none;
+color: var(--text-medium, #654321);
+font-weight: 600;
+font-size: 0.95rem;
+transition: color 0.2s ease;
 }
 
-/* Hover effect for the link (text and image together) */
 .auth-logo-container a:hover {
-  color: var(--accent-primary, #A0522D); /* Sienna or your primary accent on hover */
-  /* text-decoration: underline; */ /* Optional: add underline on hover if you like */
+color: var(--accent-primary, #A0522D);
 }
 
-/* Adjust the logo image when it's part of this link */
 .auth-logo-container .auth-logo {
-  height: 158px;   /* Smaller height to fit well with the text - ADJUST AS NEEDED */
-  width: auto;    /* Maintain aspect ratio */
-  margin-left: 8px; /* Space between "Back to main page" text and the logo image */
-                  /* If you want logo first: remove margin-left, add margin-right to text, and reorder in JSX */
-  display: inline-block; /* Or block, ensure good alignment */
-  vertical-align: middle; /* Another way to help align with text */
-  transition: transform 0.3s ease; /* Keep your hover effect for the image */
+height: 158px;
+width: auto;
+margin-left: 8px;
+display: inline-block;
+vertical-align: middle;
+transition: transform 0.3s ease;
 }
 
-/* Optional: If you want only the image to have the scale effect on link hover */
 .auth-logo-container a:hover .auth-logo {
-  transform: scale(1.05);
+transform: scale(1.05);
 }

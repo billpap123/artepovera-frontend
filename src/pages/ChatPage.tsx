@@ -200,7 +200,7 @@ const ChatPage = () => {
                         <>
                             <header className="chat-window-header">
                                 <h3>{activeChat.otherUser?.fullname || 'Chat'}</h3>
-                                <Link to={`/user-profile/${activeChat.otherUser?.user_id}`}>View Profile</Link>
+                                <Link to={`/user-profile/${activeChat.otherUser?.user_id}`}>View profile</Link>
                             </header>
                             <div className="messages-container">
                                 {loadingMessages ? <p>Loading messages...</p> : (

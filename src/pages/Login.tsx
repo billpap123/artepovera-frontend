@@ -68,7 +68,7 @@ const Login = () => {
 
             <div className="login-container auth-form-container">
                 <form onSubmit={handleSubmit} className="login-form auth-form">
-                    <h2 className="login-title">Login to Your Account</h2>
+                    <h2 className="login-title">Login to your account</h2>
                     <div className="form-group">
                         <label htmlFor="login-email">Email:</label>
                         <input

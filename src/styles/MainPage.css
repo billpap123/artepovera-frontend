@@ -50,9 +50,9 @@
 }
 
 /* --- THIS IS THE FIX --- */
+
 /* Base styling for simple stat cards (no background image) */
 .stat-card {
-  /* No background image or overlay here */
   flex-direction: row; /* Keep the icon and text side-by-side */
 }
 
@@ -74,9 +74,12 @@
   font-size: 0.9rem;
 }
 
-/* Base styles for cards that WILL have background images */
-.image-link-card,
-.image-link-card2 {
+
+/* --- Styles for Cards with Background Images --- */
+
+/* This is the main class for any card that needs a background image. */
+/* It provides the text styling and the dark overlay. */
+.image-link-card {
   min-height: 180px;
   display: flex;
   flex-direction: column;
@@ -90,17 +93,8 @@
   text-decoration: none; /* Remove underline from links */
 }
 
-/* Set specific background images */
-.image-link-card {
-  background-image: url('/images/map-background.jpg');
-}
-.image-link-card2 {
-  background-image: url('/images/jobs.png');
-}
-
-/* Shared overlay for both image card types */
-.image-link-card::before,
-.image-link-card2::before {
+/* This class applies the dark overlay effect */
+.image-link-card::before {
   content: '';
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
@@ -109,34 +103,40 @@
   transition: background-color 0.3s ease;
 }
 
-/* Shared hover effect for both image card types */
-.image-link-card:hover::before,
-.image-link-card2:hover::before {
+/* Hover effect for the overlay */
+.image-link-card:hover::before {
   background-color: rgba(44, 62, 80, 0.65);
 }
 
-/* Shared content wrapper for both image card types */
-.image-link-card div,
-.image-link-card2 div {
+/* This wrapper ensures the text and icons are on top of the overlay */
+.image-link-card div {
   position: relative;
   z-index: 2;
 }
 
-/* Shared text styles for both image card types */
-.image-link-card h3,
-.image-link-card2 h3 {
+/* Text styling for the image cards */
+.image-link-card h3 {
   font-size: 1.5rem;
   margin-bottom: 8px;
   color: #fff;
 }
 
-.image-link-card p,
-.image-link-card2 p {
+.image-link-card p {
   font-size: 1rem;
   color: #f0f0f0;
   opacity: 0.9;
   margin: 0;
 }
+
+/* Use these specific classes to set the background image */
+.card-bg-map {
+  background-image: url('/images/map-background.jpg');
+}
+
+.card-bg-jobs {
+  background-image: url('/images/jobs.png');
+}
+
 /* --- END OF FIX --- */
 
 

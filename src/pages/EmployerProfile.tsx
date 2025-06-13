@@ -350,7 +350,7 @@ const EmployerProfile: React.FC = () => {
                   <span className="no-rating">No project reviews yet</span>
                 )}
             </div>
-            {!isEditing && (<button className="edit-btn" onClick={handleEditToggle}>Edit Profile</button>)}
+            {!isEditing && (<button className="edit-btn" onClick={handleEditToggle}>Edit profile</button>)}
           </div>
         </div>
 
@@ -369,7 +369,7 @@ const EmployerProfile: React.FC = () => {
                 </div>
               </div>
               <div className="reviews-section profile-section">
-                <h4>Project Reviews ({completedReviews.length})</h4>
+                <h4>Project reviews ({completedReviews.length})</h4>
                 {reviewsLoading ? (<p>Loading reviews...</p>)
                   : completedReviews.length > 0 ? (
                     <div className="reviews-list">
@@ -394,7 +394,7 @@ const EmployerProfile: React.FC = () => {
 
               {/* --- FIX: Interaction Feedback Section --- */}
               <div className="reviews-section profile-section">
-                <h4>Interaction Feedback ({interactionReviews.length})</h4>
+                <h4>Interaction feedback ({interactionReviews.length})</h4>
                  {reviewsLoading ? (<p>Loading feedback...</p>)
                   : interactionReviews.length > 0 ? (
                     <div className="reviews-list">

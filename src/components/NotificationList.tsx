@@ -126,7 +126,7 @@ const NotificationList: React.FC = () => {
                     onClick={() => handleMarkAsRead(notif.notification_id)}
                     style={{ marginRight: "8px" }}
                   >
-                    Mark as Read
+                    Mark as read
                   </button>
                 )}
                 <button onClick={() => handleDelete(notif.notification_id)}>

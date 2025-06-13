@@ -127,13 +127,13 @@ const MainPage = () => {
               <Link to="/chat" className="dashboard-card stat-card"><FaCommentDots size={24} className="stat-icon" /><div><h3>My messages</h3><p>Check your conversations</p></div></Link>
               <Link to="/my-applications" className="dashboard-card image-link-card2">
                 <div>
-                  <h3>My Applications</h3>
+                  <h3>My applications</h3>
                   <p>Track your job applications</p>
                 </div>
               </Link>
               <Link to="/map" className="dashboard-card image-link-card">
                 <div>
-                  <h3>Community Map</h3>
+                  <h3>Community map</h3>
                   <p>Discover artists & employers</p>
                 </div>
               </Link>
@@ -146,16 +146,17 @@ const MainPage = () => {
               <Link to="/employer-profile/edit" className="dashboard-card stat-card"><FaUserEdit size={24} className="stat-icon" /><div><h3>Edit my profile</h3><p>Update your bio and photo</p></div></Link>
               <Link to="/post-job" className="dashboard-card stat-card"><FaPlusCircle size={24} className="stat-icon" /><div><h3>Post a new job</h3><p>Find the perfect artist</p></div></Link>
               <Link to="/chat" className="dashboard-card stat-card"><FaCommentDots size={24} className="stat-icon" /><div><h3>My messages</h3><p>Check applicant conversations</p></div></Link>
-              <Link to="/my-jobs" className="dashboard-card stat-card">
-                <FaClipboardList />
+              <Link to="/my-jobs" className="dashboard-card image-link-card card-bg-jobs">
+
+<FaClipboardList />
                 <div>
-                  <h3>My Job Postings</h3>
+                  <h3>My job postings</h3>
                   <p>Manage your active listings</p>
                 </div>
               </Link>
               <Link to="/map" className="dashboard-card image-link-card">
                 <div>
-                  <h3>Community Map</h3>
+                  <h3>Community map</h3>
                   <p>Discover artists & employers</p>
                 </div>
               </Link>

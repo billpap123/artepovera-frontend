@@ -340,7 +340,7 @@ const ArtistProfile: React.FC = () => {
                         </>
                     ) : ( <span className="no-rating">No project reviews yet</span> )}
                 </div>
-                 {!isEditing && ( <button className="edit-btn" onClick={handleEditToggle}> Edit Profile </button> )}
+                 {!isEditing && ( <button className="edit-btn" onClick={handleEditToggle}> Edit profile </button> )}
             </div>
         </div>
 
