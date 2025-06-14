@@ -141,7 +141,6 @@
 
 /* Use these specific classes to set the background image */
 .card-bg-map {
-  background-blend-mode:lighten;
   min-height: 180px; /* A good height for these cards */
   position: relative;
   display: flex;
