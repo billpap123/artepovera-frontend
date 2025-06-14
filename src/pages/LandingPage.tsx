@@ -306,16 +306,32 @@ const landingPageStyles = `
     }
 
 `;
-// --- End Embedded CSS ---
+const LanguageSwitcher: React.FC = () => {
+  const { i18n } = useTranslation();
 
+  const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    i18n.changeLanguage(e.target.value);
+  };
+
+  return (
+    <div style={{ position: 'absolute', top: 20, right: 20 }}>
+      <select onChange={handleLanguageChange} defaultValue={i18n.language}>
+        <option value="en">EN</option>
+        <option value="el">ΕL</option>
+      </select>
+    </div>
+  );
+};
 
 const LandingPage: React.FC = () => {
   const { t } = useTranslation();
-
+  
+  
   return (
     <>
       <style>{landingPageStyles}</style>
       <div className="landing-page-container">
+      <LanguageSwitcher /> {/* 👈 Προστέθηκε εδώ */}
 
         <header className="hero-section">
           <video className="hero-video-background" autoPlay loop muted playsInline>
