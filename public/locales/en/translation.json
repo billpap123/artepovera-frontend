@@ -646,8 +646,8 @@
     },
     "header": {
       "studentBadge": " (student)",
-      "reviews_one": "{{count}} review",
-      "reviews_other": "{{count}} reviews"
+      "reviews_one": "{{count}} project review",
+      "reviews_other": "{{count}} project reviews"
     },
     "actions": {
       "like": "Like",

@@ -646,8 +646,8 @@
     },
     "header": {
       "studentBadge": " (φοιτητής)",
-      "reviews_one": "{{count}} αξιολόγηση",
-      "reviews_other": "{{count}} αξιολογήσεις"
+      "reviews_one": "{{count}} αξιολόγηση έργων",
+      "reviews_other": "{{count}} αξιολογήσεις έργων"
     },
     "actions": {
       "like": "Μου αρέσει",
