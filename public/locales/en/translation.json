@@ -860,5 +860,19 @@
   "newApplication": "{{artistName}} has applied for your job posting titled \"{{jobTitle}}\". <a href=\"{{artistProfileLink}}\">View profile</a>"
 
 
+},
+"myJobPostingsPage":{
+  "title": "My job postings",
+  "postNewJob":"Post a new job",
+  "card" : {
+    "category" : "Category",
+    "postedOn" :"Posted on"
+
+  },
+  "actions" :{
+    "edit": "Edit job posting",
+    "delete" :"Delete"
+  }
+
 }
 }
