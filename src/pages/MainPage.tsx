@@ -150,7 +150,6 @@ const MainPage = () => {
               <Link to="/post-job" className="dashboard-card stat-card"><FaPlusCircle size={24} className="stat-icon" /><div><h3>{t('mainPage.employer.postJob')}</h3><p>{t('mainPage.employer.postJobDesc')}</p></div></Link>
               <Link to="/chat" className="dashboard-card stat-card"><FaCommentDots size={24} className="stat-icon" /><div><h3>{t('mainPage.employer.messages')}</h3><p>{t('mainPage.employer.messagesDesc')}</p></div></Link>
               <Link to="/my-jobs" className="dashboard-card  card-bg-jobs">
-                <FaClipboardList />
                 <div>
                   <h3>{t('mainPage.employer.jobPostings')}</h3>
                   <p>{t('mainPage.employer.jobPostingsDesc')}</p>
