@@ -95,13 +95,22 @@
 }
 
 /* This class applies the dark overlay effect */
-.image-link-card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background-color: rgba(44, 62, 80, 0.75);
-  z-index: 1;
-  transition: background-color 0.3s ease;
+.image-link-card {
+  min-height: 180px; /* A good height for these cards */
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 20px;
+  overflow: hidden;
+  color: white;
+  
+  /* --- IMPORTANT: Use the same map background image --- */
+  background-image: url('/images/map-background.jpg'); /* <-- Make sure this path is correct */
+  background-size: cover;
+  background-position: center;
 }
 
 /* Hover effect for the overlay */
