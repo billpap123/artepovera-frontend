@@ -151,10 +151,9 @@
   text-align: center;
   padding: 20px;
   overflow: hidden;
-  color: rgb(255, 193, 8);
+  color: #95a5a6;
   
-  /* --- IMPORTANT: Use the same map background image --- */
-  background-image: url('/images/map-background.jpg'); /* <-- Make sure this path is correct */
+  background-image: url('frontend/public/images/map-background.jpg'); /* <-- Make sure this path is correct */
   background-size: cover;
   background-position: center;}
 
