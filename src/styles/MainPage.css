@@ -32,21 +32,17 @@
 }
 
 .dashboard-card {
-  min-height: 180px; /* A good height for these cards */
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  position: relative; 
   overflow: hidden;
-  color: rgb(255, 193, 8);
-  
-  /* --- IMPORTANT: Use the same map background image --- */
-  background-image: url('/images/jobs.png'); /* <-- Make sure this path is correct */
-  background-size: cover;
-  background-position: center;
+  display: flex; /* Using flex for alignment */
+  flex-direction: row; /* Default to row layout */
+  align-items: center; /* Vertically center content */
+  gap: 20px;
 }
 
 .dashboard-card:hover {
