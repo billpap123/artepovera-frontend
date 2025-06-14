@@ -141,13 +141,29 @@
 
 /* Use these specific classes to set the background image */
 .card-bg-map {
-  background-image: url('/images/map-background.jpg');
-}
+  background-blend-mode:lighten;
+  min-height: 180px; /* A good height for these cards */
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 20px;
+  overflow: hidden;
+  color: rgb(255, 193, 8);
+  
+  /* --- IMPORTANT: Use the same map background image --- */
+  background-image: url('/images/map-background.jpg'); /* <-- Make sure this path is correct */
+  background-size: cover;
+  background-position: center;}
 
 .card-bg-jobs {
   background-image: url('/images/job.png');
   background-repeat: no-repeat;
   background-position: right;
+  background-size:contain;
+  color: #95a5a6;
 }
 
 /* --- END OF FIX --- */

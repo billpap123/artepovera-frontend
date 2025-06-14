@@ -134,7 +134,7 @@ const MainPage = () => {
                   <p>{t('mainPage.artist.applicationsDesc')}</p>
                 </div>
               </Link>
-              <Link to="/map" className="dashboard-card image-link-card">
+              <Link to="/map" className="dashboard-card card-bg-map">
                 <div>
                   <h3>{t('mainPage.artist.map')}</h3>
                   <p>{t('mainPage.artist.mapDesc')}</p>
@@ -149,7 +149,7 @@ const MainPage = () => {
               <Link to="/employer-profile/edit" className="dashboard-card stat-card"><FaUserEdit size={24} className="stat-icon" /><div><h3>{t('mainPage.employer.editProfile')}</h3><p>{t('mainPage.employer.editProfileDesc')}</p></div></Link>
               <Link to="/post-job" className="dashboard-card stat-card"><FaPlusCircle size={24} className="stat-icon" /><div><h3>{t('mainPage.employer.postJob')}</h3><p>{t('mainPage.employer.postJobDesc')}</p></div></Link>
               <Link to="/chat" className="dashboard-card stat-card"><FaCommentDots size={24} className="stat-icon" /><div><h3>{t('mainPage.employer.messages')}</h3><p>{t('mainPage.employer.messagesDesc')}</p></div></Link>
-              <Link to="/my-jobs" className="dashboard-card image-link-card card-bg-jobs">
+              <Link to="/my-jobs" className="dashboard-card  card-bg-jobs">
                 <FaClipboardList />
                 <div>
                   <h3>{t('mainPage.employer.jobPostings')}</h3>
