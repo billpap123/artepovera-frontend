@@ -18,6 +18,7 @@
   margin-bottom: 30px;
   padding-bottom: 20px;
   border-bottom: 1px solid #e9ecef;
+  gap:30px;
 }
 
 .portfolio-header h2 {
@@ -329,113 +330,47 @@
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes zoomIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
-
-/* Button Color Scheme:
-  - GREEN (#28a745): Constructive actions (Add, Post, Update, Save, Submit, Apply).
-  - RED (#dc3545): Destructive actions (Delete, Remove, Cancel, Logout, Clear, Close).
-  - ORANGE (#fd7e14): Modification actions (Edit, Upload).
-  - TERRACOTTA (#C96A50): Neutral/Theme actions (View Details, Primary Calls-to-Action).
-*/
-
-/* --- GENERIC/PRIMARY BUTTONS (Constructive - GREEN) --- */
-.save-btn,
-.upload-cv-btn,
-.submit-btn,
-.submit-job-btn,
-.apply-button-large,
-.apply-button-detailed,
-.action-button.save, /* <-- Added .action-btn.save */
-.add-item-button { /* <-- Added .add-item-button */
-  background-color: #28a745 !important; /* GREEN */
-  color: white !important;
+/* Base style for action buttons inside the portfolio card */
+.action-btn {
+  border: none;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  color: white !important; /* All buttons will have white text */
 }
 
-.save-btn:hover:not(:disabled),
-.upload-cv-btn:hover:not(:disabled),
-.submit-btn:hover:not(:disabled),
-.submit-job-btn:hover:not(:disabled),
-.apply-button-large:hover:not(:disabled),
-.apply-button-detailed:hover:not(:disabled),
-.action-button.save:hover:not(:disabled), /* <-- Added .action-button.save */
-.add-item-button:hover:not(:disabled) { /* <-- Added .add-item-button */
-  background-color: #218838 !important; /* Darker Green */
+.action-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
+/* --- Specific button colors based on function --- */
 
-/* --- DESTRUCTIVE/NEGATIVE BUTTONS (RED) --- */
-.logout-button,
-.cancel-btn,
-.delete-btn,
-.remove-btn,
-.delete-cv-btn,
-.clear-filters-button,
-.confirm-delete-btn,
-.action-button.delete,  /* <-- Added .action-btn.delete */
-.close-modal-button {  /* <-- Added .close-modal-button */
-  background-color: #dc3545 !important; /* RED */
-  color: white !important;
+/* EDIT button = ORANGE */
+.action-btn.edit {
+  background-color: #fd7e14 !important;
 }
-
-.logout-button:hover:not(:disabled),
-.cancel-btn:hover:not(:disabled),
-.delete-btn:hover:not(:disabled),
-.remove-btn:hover:not(:disabled),
-.delete-cv-btn:hover:not(:disabled),
-.clear-filters-button:hover:not(:disabled),
-.confirm-delete-btn:hover:not(:disabled),
-.action-button.delete:hover:not(:disabled), /* <-- Added .action-btn.delete */
-.close-modal-button:hover:not(:disabled) { /* <-- Added .close-modal-button */
-  background-color: #c82333 !important; /* Darker Red */
-}
-
-
-/* --- MODIFICATION BUTTONS (ORANGE) --- */
-.edit-btn,
-.cv-upload-label,
-.action-btn { /* <-- Added base .action-btn here */
-  background-color: #fd7e14 !important; /* ORANGE */
-  color: white !important;
-}
-
-.edit-btn:hover:not(:disabled),
-.cv-upload-label:hover:not(:disabled),
-.action-btn:hover:not(:disabled) { /* <-- Added base .action-btn here */
+.action-btn.edit:hover:not(:disabled) {
   background-color: #e67311 !important; /* Darker Orange */
 }
 
-
-/* --- NEUTRAL/THEME BUTTONS (TERRACOTTA) --- */
-.view-job-button,
-.btn-primary,
-.view-file-link { /* <-- Added .view-file-link */
-  background-color: #C96A50 !important; /* TERRACOTTA */
-  color: white !important;
+/* DELETE and CANCEL buttons = RED */
+.action-btn.delete,
+.action-btn.cancel {
+  background-color: #dc3545 !important;
+}
+.action-btn.delete:hover:not(:disabled),
+.action-btn.cancel:hover:not(:disabled) {
+  background-color: #c82333 !important; /* Darker Red */
 }
 
-.view-job-button:hover:not(:disabled),
-.btn-primary:hover:not(:disabled),
-.view-file-link:hover:not(:disabled) { /* <-- Added .view-file-link */
-  background-color: #b05c46 !important; /* Darker Terracotta */
+/* SAVE button = GREEN */
+.action-btn.save {
+  background-color: #28a745 !important;
 }
-
-
-/* --- SECONDARY/NEUTRAL BUTTONS (Outlined) --- */
-.add-btn {
-  background-color: white !important;
-  color: #28a745 !important; /* GREEN text */
-  border: 1px solid #28a745 !important;
-}
-
-.add-btn:hover {
-  background-color: #f0fff4 !important;
-}
-
-/* --- Default 'button' tag --- */
-/* This will apply to any <button> that doesn't have a more specific class. */
-button {
-    background-color: #333333 !important; /* Charcoal Gray */
-    color: white !important;
-}
-button:hover:not(:disabled) {
-    background-color: #444444 !important; /* Dark Gray */
+.action-btn.save:hover:not(:disabled) {
+  background-color: #218838 !important; /* Darker Green */
 }

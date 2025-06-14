@@ -5,7 +5,7 @@
 /* --- Page Layout & Main Card --- */
 
 .user-profile-page {
-
+width: 90%;
   padding-top: 200px !important;
 
   max-width: 900px;
@@ -439,7 +439,6 @@
 .review-item:last-child,
 .comment-item:last-child {
 
-  border-bottom: none;
 
   padding-bottom: 0;
 
