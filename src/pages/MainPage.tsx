@@ -128,7 +128,7 @@ const MainPage = () => {
               <Link to="/artist-profile/edit" className="dashboard-card stat-card"><FaUserEdit size={24} className="stat-icon" /><div><h3>{t('mainPage.artist.editProfile')}</h3><p>{t('mainPage.artist.editProfileDesc')}</p></div></Link>
               <Link to="/portfolio" className="dashboard-card stat-card"><FaImages size={24} className="stat-icon" /><div><h3>{t('mainPage.artist.editPortfolio')}</h3><p>{t('mainPage.artist.editPortfolioDesc')}</p></div></Link>
               <Link to="/chat" className="dashboard-card stat-card"><FaCommentDots size={24} className="stat-icon" /><div><h3>{t('mainPage.artist.messages')}</h3><p>{t('mainPage.artist.messagesDesc')}</p></div></Link>
-              <Link to="/my-applications" className="dashboard-card image-link-card2">
+              <Link to="/my-applications" className="dashboard-card card-bg-jobs">
                 <div>
                   <h3>{t('mainPage.artist.applications')}</h3>
                   <p>{t('mainPage.artist.applicationsDesc')}</p>

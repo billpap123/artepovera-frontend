@@ -99,7 +99,7 @@
 }
 
 /* This class applies the dark overlay effect */
-.image-link-card2 {
+.image-link-card {
   min-height: 180px; /* A good height for these cards */
   position: relative;
   display: flex;
