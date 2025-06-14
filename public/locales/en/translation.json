@@ -872,6 +872,9 @@
   "actions" :{
     "edit": "Edit job posting",
     "delete" :"Delete"
+  },
+  "status" :{
+    "loading" :"Loading job postings..."
   }
 
 }
