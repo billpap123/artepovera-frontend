@@ -151,8 +151,8 @@
   padding: 20px;
   overflow: hidden;
   color: #95a5a6;
-  
-  background-image: url('frontend/public/images/map-background.jpg'); /* <-- Make sure this path is correct */
+  background-blend-mode:darken;
+  background-image: url('images/map-background.jpg'); /* <-- Make sure this path is correct */
   background-size: cover;
   background-position: center;}
 
