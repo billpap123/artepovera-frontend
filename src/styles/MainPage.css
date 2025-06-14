@@ -150,6 +150,10 @@
 }
 
 @media (min-width: 992px) {
+
+
+  .main-page-container {
+  width: 80%;}
   .job-feed-card {
     grid-column: span 2; 
     grid-row: span 2;
