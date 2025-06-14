@@ -10,7 +10,9 @@ import {
   FaMapMarkerAlt, FaGlobe, FaTimes, FaBuilding
 } from 'react-icons/fa'; // Make sure FaHeart is imported
 import { useTranslation } from "react-i18next";
+import ReactMarkdown from 'react-markdown';
 
+import remarkGfm from 'remark-gfm';
 
 
 
@@ -670,7 +672,12 @@ const UserProfilePage: React.FC = () => {
           </div>
 
           <div className="profile-content-public">
-            <div className="profile-section-public"><h4>{t('userProfilePage.content.bio')}</h4><p className="user-bio">{bio || t('userProfilePage.content.noBio')}</p></div>
+            <div className="profile-section-public"><h4>{t('userProfilePage.content.bio')}</h4>                <div className="bio-text markdown-content">
+                              <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                {bio || t('employerProfile.noBio')}
+                              </ReactMarkdown>
+                            </div>
+            </div>
 
             {isArtistProfile && cvUrl && (
               <div className="profile-section-public cv-section">

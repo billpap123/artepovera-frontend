@@ -12,7 +12,7 @@ import { useTranslation } from "react-i18next";
 
 import "../styles/EmployerProfile.css"; // Ensure this file exists and has styles
 
-// --- Review Interface ---
+// --- Review Interface---
 interface Reviewer {
   user_id: number;
   fullname: string;
