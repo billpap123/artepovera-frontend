@@ -36,8 +36,15 @@
 
 /* --- Main Content Styling --- */
 .job-detail-header {
-    margin-bottom: 2rem;
-}
+  background-color: rgb(255, 255, 255);
+  margin-bottom: 20px;
+  box-shadow: rgba(0, 0, 0, 0.06) 0px 2px 8px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: rgb(233, 236, 239);
+  border-image: initial;
+  border-radius: 12px;
+  padding: 20px;}
 .job-detail-header h1 {
     font-size: 2.8rem;
     margin: 0 0 8px 0;
@@ -102,7 +109,17 @@
     padding: 0;
     margin-bottom: 2rem;
 }
-.employer-link { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; }
+.employer-link { 
+  background-color: rgb(255, 255, 255);
+  margin-bottom: 20px;
+  box-shadow: rgba(0, 0, 0, 0.06) 0px 2px 8px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: rgb(233, 236, 239);
+  border-image: initial;
+  border-radius: 12px;
+  padding: 20px;
+} 
 .employer-link:hover .employer-name { color: #754106; }
 .employer-link img { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; }
 .posted-by-label { display: block; font-size: 0.9rem; color: #6c757d; }
