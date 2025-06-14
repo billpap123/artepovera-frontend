@@ -156,7 +156,7 @@ const MainPage = () => {
                   <p>{t('mainPage.employer.jobPostingsDesc')}</p>
                 </div>
               </Link>
-              <Link to="/map" className="dashboard-card image-link-card">
+              <Link to="/map" className="dashboard-card card-bg-map">
                 <div>
                   <h3>{t('mainPage.employer.map')}</h3>
                   <p>{t('mainPage.employer.mapDesc')}</p>
