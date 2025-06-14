@@ -3,8 +3,8 @@
     "studentBadge": "Student artist",
     "editProfile": "Edit profile",
     "loadingRating": "Loading rating...",
-    "projectReviews": "{{count}} project review",
-    "projectReviews_plural": "{{count}} project reviews",
+    "projectReviews": " Project reviews ({{count}}) ",
+    "projectReviews_plural": "Project reviews ({{count}})",
     "noProjectReviews": "No project reviews yet",
     "shortDescription": "Short description:",
     "noBio": "*No bio provided yet.*",
@@ -130,8 +130,8 @@
     "remove": "Remove",
     "removing": "Removing...",
     "loadingRating": "Loading rating...",
-    "projectReviews": "{{count}} project review",
-    "projectReviews_plural": "{{count}} project reviews",
+    "projectReviews": "Project reviews ({{count}})",
+    "projectReviews_plural": "Project reviews ({{count}})",
     "noProjectReviews": "No project reviews yet",
     "editProfile": "Edit profile",
     "shortDescription": "Short description",
@@ -855,7 +855,7 @@
 }
 ,
 "notifications": {
-  "newMatch": "You have a new match with {{name}}! <a href=\"{{chatLink}}\">Start Chatting</a>",
+  "newMatch": "You have a new match with {{name}}! <a href=\"{{chatLink}}\">Start chatting</a>",
   "newApplication": "{{name}} applied to your job posting for '{{jobTitle}}'.",
   "newLike": "{{name}} liked your profile."
 
