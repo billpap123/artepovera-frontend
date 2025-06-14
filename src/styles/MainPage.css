@@ -147,12 +147,12 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  text-align: center;
+  text-align: left;
   padding: 20px;
   overflow: hidden;
   color: #95a5a6;
   background-blend-mode:darken;
-  background-image: url('images/map-background.jpg'); /* <-- Make sure this path is correct */
+  background-image: url('/images/map-background.jpg'); /* <-- Make sure this path is correct */
   background-size: cover;
   background-position: center;}
 
