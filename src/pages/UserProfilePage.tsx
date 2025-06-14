@@ -360,7 +360,37 @@ const UserProfilePage: React.FC = () => {
       setLiked(true);
     } catch (err: any) { console.error('Error liking user:', err); alert(err.response?.data?.message || 'Failed to like user.'); }
   };
+  const handleCvDownload = async (url: string | null, artistName: string) => {
+    if (!url) {
+      alert('No CV available to download.');
+      return;
+    }
+    try {
+      // Fetch the file as a blob from the provided URL
+      const response = await axios.get(url, {
+        responseType: 'blob',
+      });
 
+      // Create a temporary link element
+      const link = document.createElement('a');
+      link.href = window.URL.createObjectURL(new Blob([response.data]));
+
+      // Create a user-friendly filename and force download as .pdf
+      const filename = `CV_${artistName.replace(/\s+/g, '_') || 'Artist'}.pdf`;
+      link.setAttribute('download', filename);
+
+      // Append to the document, trigger the click, and then remove it
+      document.body.appendChild(link);
+      link.click();
+      
+      // Clean up by removing the link and revoking the object URL
+      link.parentNode?.removeChild(link);
+      window.URL.revokeObjectURL(link.href);
+    } catch (error) {
+      console.error("CV Download Error:", error);
+      alert("Could not download the CV. Please try again later.");
+    }
+  };
   useEffect(() => {
     const storedUserString = localStorage.getItem('user');
     if (storedUserString) {
@@ -647,7 +677,9 @@ const UserProfilePage: React.FC = () => {
                 <h4>{t('userProfilePage.content.cv')}</h4>
                 <div className="cv-display">
                   <FaFilePdf className="pdf-icon" />
-                  <a href={cvUrl} target="_blank" rel="noopener noreferrer" className="cv-link">{t('userProfilePage.content.downloadCv')}</a>
+                  <button onClick={() => handleCvDownload(cvUrl, profile.fullname)} className="cv-link">
+  {t('userProfilePage.content.downloadCv')}
+</button>
                 </div>
               </div>
             )}
