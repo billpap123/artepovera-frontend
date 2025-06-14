@@ -1,12 +1,10 @@
-// src/components/Navbar.tsx
 import React, { useState, useEffect } from "react";
 import { NavLink, useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import { FaHome, FaUserAlt, FaBell, FaMapMarkerAlt } from "react-icons/fa";
-import { useUserContext } from '../context/UserContext'; // Import your custom context hook
-import '../styles/Navbar.css'; // Make sure you have this CSS file
+import { useUserContext } from '../context/UserContext';
+import '../styles/Navbar.css';
 import { useTranslation } from "react-i18next";
-
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "https://artepovera2.vercel.app";
 
@@ -17,16 +15,17 @@ const Navbar = () => {
   const [loadingNotifications, setLoadingNotifications] = useState(true);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+
+  // --- THIS IS THE FIX ---
+  // Ensure you get both `t` and `i18n` from the hook.
+  // The `i18n` object is what controls the language.
   const { t, i18n } = useTranslation();
 
-  // Get user details and setters from your global context
   const { userId, userType, setUserId, setArtistId, setEmployerId, setUserType } = useUserContext();
-  
-  const token = localStorage.getItem('token'); // Still needed for API authorization headers
+  const token = localStorage.getItem('token');
 
   useEffect(() => {
     const fetchNotifications = async () => {
-      // Use userId from context for dependency and fetching
       if (!token || !userId) {
         setLoadingNotifications(false);
         return;
@@ -41,15 +40,15 @@ const Navbar = () => {
         setError("");
       } catch (err) {
         console.error("Error fetching notifications:", err);
-        setError("Failed to fetch notifications.");
+        setError(t('navbar.errors.fetchNotifications'));
       } finally {
         setLoadingNotifications(false);
       }
     };
-    if (userId) { // Fetch only if userId from context exists
+    if (userId) {
         fetchNotifications();
     }
-  }, [userId, token, API_BASE_URL]);
+  }, [userId, token, API_BASE_URL, t]);
 
   const toggleMenu = () => setIsMenuOpen((prev) => !prev);
   const toggleDropdown = () => setShowDropdown((prev) => !prev);
@@ -87,14 +86,12 @@ const Navbar = () => {
   };
 
   const handleLogout = () => {
-    if (window.confirm("Are you sure you want to log out?")) {
-      // Use context setters to clear global state
+    if (window.confirm(t('navbar.alerts.logoutConfirm'))) {
       setUserId(null);
       setArtistId(null);
       setEmployerId(null);
       setUserType(null);
       
-      // Clear all storage
       localStorage.clear();
       sessionStorage.clear();
       document.cookie.split(";").forEach((c) => {
@@ -103,26 +100,28 @@ const Navbar = () => {
           .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
       });
 
-      // Navigate to login or landing page
       window.location.href = '/login'; 
     }
   };
 
-  const isLoggedIn = !!userId; // A simple boolean to check if a user is logged in
+  const isLoggedIn = !!userId;
 
-  // --- DYNAMICALLY DETERMINE THE PROFILE PATH ---
-  let profilePath = "/"; // A safe fallback
+  let profilePath = "/";
   if (isLoggedIn) {
     if (userType === 'Artist') {
-      profilePath = "/artist-profile/edit"; // Your route for ArtistProfile.tsx
+      profilePath = "/artist-profile/edit";
     } else if (userType === 'Employer') {
-      profilePath = "/employer-profile/edit"; // Your route for EmployerProfile.tsx
+      profilePath = "/employer-profile/edit";
     } else {
-      // Fallback for a logged-in user with no type, goes to their public profile
       profilePath = `/user-profile/${userId}`; 
     }
   }
-  // --- END DYNAMIC PATH LOGIC ---
+
+  // --- LANGUAGE SWITCHER LOGIC ---
+  const changeLanguage = (lng: 'en' | 'el') => {
+    i18n.changeLanguage(lng);
+    setIsMenuOpen(false); // Close mobile menu on language change
+  };
 
   return (
     <nav className="navbar">
@@ -139,7 +138,6 @@ const Navbar = () => {
       <ul className={`nav-links ${isMenuOpen ? "open" : ""}`}>
         {isLoggedIn ? (
           <>
-            {/* --- LOGGED-IN LINKS --- */}
             <li>
               <NavLink to="/main" className={({ isActive }) => (isActive ? "active" : "")} onClick={() => setIsMenuOpen(false)}>
                 <FaHome className="nav-icon" />
@@ -201,40 +199,30 @@ const Navbar = () => {
                 {t('navbar.actions.logout')}
               </button>
             </li>
-            {/* Language Switcher */}
             <li className="language-switcher">
-              <button onClick={() => i18n.changeLanguage('en')} className={i18n.language === 'en' ? 'active' : ''}>{t('navbar.language.en')}</button>
+              <button onClick={() => changeLanguage('en')} className={i18n.language === 'en' ? 'active' : ''}>{t('navbar.language.en')}</button>
               <span>/</span>
-              <button onClick={() => i18n.changeLanguage('el')} className={i18n.language === 'el' ? 'active' : ''}>{t('navbar.language.el')}</button>
+              <button onClick={() => changeLanguage('el')} className={i18n.language === 'el' ? 'active' : ''}>{t('navbar.language.el')}</button>
             </li>
           </>
         ) : (
           <>
-            {/* --- LOGGED-OUT LINKS --- */}
             <li>
               <NavLink to="/login" className="nav-link">{t('navbar.actions.login')}</NavLink>
             </li>
             <li>
               <NavLink to="/register" className="nav-button register-button">{t('navbar.actions.register')}</NavLink>
             </li>
-            {/* Language Switcher */}
             <li className="language-switcher">
-              <button onClick={() => i18n.changeLanguage('en')} className={i18n.language === 'en' ? 'active' : ''}>{t('navbar.language.en')}</button>
+              <button onClick={() => changeLanguage('en')} className={i18n.language === 'en' ? 'active' : ''}>{t('navbar.language.en')}</button>
               <span>/</span>
-              <button onClick={() => i18n.changeLanguage('el')} className={i18n.language === 'el' ? 'active' : ''}>{t('navbar.language.el')}</button>
+              <button onClick={() => changeLanguage('el')} className={i18n.language === 'el' ? 'active' : ''}>{t('navbar.language.el')}</button>
             </li>
           </>
         )}
       </ul>
     </nav>
   );
-
-
-
-
-
-
-
 };
 
 export default Navbar;
