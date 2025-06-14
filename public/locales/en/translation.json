@@ -856,8 +856,9 @@
 ,
 "notifications": {
   "newMatch": "You have a new match with {{name}}! <a href=\"{{chatLink}}\">Start chatting</a>",
-  "newApplication": "{{name}} applied to your job posting for '{{jobTitle}}'.",
-  "newLike": "{{name}} liked your profile."
+  "newLike": "{{name}} liked your profile.",
+  "newApplication": "{{artistName}} has applied for your job posting titled \"{{jobTitle}}\". <a href=\"{{artistProfileLink}}\">View profile</a>"
+
 
 }
 }

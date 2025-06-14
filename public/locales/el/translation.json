@@ -139,7 +139,7 @@
     "loadingReviews": "Φόρτωση αξιολογήσεων...",
     "anonymous": "Ανώνυμος",
     "noProjectReviewsReceived": "Δεν έχετε λάβει ακόμη αξιολογήσεις έργων.",
-    "interactionFeedback": "Αξιολόγηση αλληλεπίδρασης ",
+    "interactionFeedback": "Aξιολογήσεις αλληλεπίδρασης ",
     "loadingFeedback": "Φόρτωση αξιολόγησης...",
     "reason": "Αιτία:",
     "comment": "Σχόλιο:",
@@ -850,8 +850,9 @@
 },
 "notifications": {
   "newMatch": "Έχετε ένα νέο match με τον/την {{name}}! <a href=\"{{chatLink}}\">Ξεκινήστε τη συνομιλία</a>",
-  "newApplication": "Ο/Η {{name}} έκανε αίτηση στην αγγελία σας για '{{jobTitle}}'.",
-  "newLike": "Στον/ην {{name}} άρεσε το προφίλ σας."
+  "newLike": "Στον/ην {{name}} άρεσε το προφίλ σας.",
+  "newApplication": "Ο/Η {{artistName}} έκανε αίτηση στην αγγελία σας για '{{jobTitle}}'. <a href=\"{{artistProfileLink}}\">Προβολή προφίλ</a>"
+
 
 
 }
