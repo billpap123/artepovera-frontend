@@ -153,7 +153,7 @@ body {
   font-size: 1rem;
   color: var(--dark-gray);
   margin-bottom: 15px;
-  text-align: center;
+  text-align: left;
   min-height: 60px;
 }
 
