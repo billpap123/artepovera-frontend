@@ -96,6 +96,7 @@
 
 /* This class applies the dark overlay effect */
 .image-link-card {
+  background-blend-mode:lighten;
   min-height: 180px; /* A good height for these cards */
   position: relative;
   display: flex;
@@ -128,12 +129,12 @@
 .image-link-card h3 {
   font-size: 1.5rem;
   margin-bottom: 8px;
-  color: #fff;
+  color: #34495e;
 }
 
 .image-link-card p {
   font-size: 1rem;
-  color: #f0f0f0;
+  color: #95a5a6;
   opacity: 0.9;
   margin: 0;
 }
@@ -144,7 +145,9 @@
 }
 
 .card-bg-jobs {
-  background-image: url('/images/jobs.png');
+  background-image: url('/images/job.png');
+  background-repeat: no-repeat;
+  background-position: right;
 }
 
 /* --- END OF FIX --- */
