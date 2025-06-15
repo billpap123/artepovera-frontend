@@ -180,6 +180,8 @@
   overflow-y: auto;
   box-shadow: var(--box-shadow);
   z-index: 999;
+  padding: 20px;
+
 }
 
 .notifications-dropdown ul {
@@ -298,6 +300,8 @@
       border-radius: 8px;
       max-height: none;
       order: 10; /* Ensures it appears at the bottom of the list */
+      padding: 20px;
+
   }
 }
 
