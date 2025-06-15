@@ -5,6 +5,7 @@ import { FaHome, FaUserAlt, FaBell, FaMapMarkerAlt } from "react-icons/fa";
 import { useUserContext } from '../context/UserContext';
 import '../styles/Navbar.css';
 import { useTranslation } from "react-i18next";
+import { Trans } from 'react-i18next';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "https://artepovera2.vercel.app";
 
@@ -180,7 +181,15 @@ const Navbar = () => {
                       {notifications.map((notif) => (
                         <li key={notif.notification_id} className={notif.read_status ? "read" : "unread"}>
                           <div className="notification-item">
-                            <div dangerouslySetInnerHTML={{ __html: notif.message }} />
+                          <Trans
+  i18nKey={notif.message_key}
+  values={{
+    ...notif.message_params
+  }}
+  components={{
+    a: <a href={notif.message_params?.chatLink || notif.message_params?.artistProfileLink} target="_blank" rel="noopener noreferrer" />
+  }}
+/>
                             <div className="timestamp">{new Date(notif.created_at).toLocaleString()}</div>
                             <div className="notification-actions">
                               {!notif.read_status && ( <button className="mark-read-btn" onClick={() => markAsRead(notif.notification_id)}>{t('navbar.notifications.markAsRead')}</button> )}
