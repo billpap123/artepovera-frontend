@@ -682,7 +682,9 @@
       "postViewpoint": "Δημοσίευση άποψης",
       "posting": "Δημοσίευση...",
       "loadingViewpoints": "Φόρτωση απόψεων...",
-      "noViewpoints": "Δεν υπάρχουν ακόμη καλλιτεχνικές απόψεις για τον/την {{name}}."
+      "noViewpoints": "Δεν υπάρχουν ακόμη καλλιτεχνικές απόψεις για τον/την {{name}}.",
+      "avgRating": "μέση βαθμ."
+
     },
     "artistContent": {
       "portfolio": "Πορτφόλιο",

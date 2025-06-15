@@ -751,15 +751,21 @@ const UserProfilePage: React.FC = () => {
             )}
 
             <div className="reviews-section profile-section-public">
-              <h4>{t('userProfilePage.content.projectReviews', { count: completedReviews.length })}</h4>
 
-              {/* --- ADD THIS BLOCK TO DISPLAY THE AVERAGE RATING --- */}
-              {averageRating !== null && reviewCount > 0 && (
-                <div className="average-rating">
-                  <DisplayStars rating={averageRating} />
-                  <span>{averageRating.toFixed(1)} {t('userProfilePage.content.avgRating', 'avg rating')}</span>
-                </div>
-              )}
+              {/* --- This is the corrected header structure --- */}
+              <div className="section-header">
+                {/* The title is the first item inside the header */}
+                <h4>{t('userProfilePage.content.projectReviews', { count: completedReviews.length })}</h4>
+
+                {/* The rating display is the second item inside the header */}
+                {averageRating !== null && reviewCount > 0 && (
+                  <div className="average-rating">
+                    <DisplayStars rating={averageRating} />
+                    <span>{averageRating.toFixed(1)} {t('userProfilePage.content.avgRating')}</span>
+                  </div>
+                )}
+              </div>
+
               {reviewsLoading ? (
                 <p>{t('userProfilePage.content.loadingReviews')}</p>
               ) : completedReviews.length > 0 ? (

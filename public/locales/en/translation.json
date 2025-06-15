@@ -682,7 +682,9 @@
       "postViewpoint": "Post viewpoint",
       "posting": "Posting...",
       "loadingViewpoints": "Loading viewpoints...",
-      "noViewpoints": "No artistic viewpoints yet for {{name}}."
+      "noViewpoints": "No artistic viewpoints yet for {{name}}.",
+      "avgRating": "avg rating"
+
     },
     "artistContent": {
       "portfolio": "Portfolio",
