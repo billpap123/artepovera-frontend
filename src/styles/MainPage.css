@@ -160,20 +160,21 @@
 .card-bg-icon {
   color: #C96A50; /* Makes the icon pure white */
   flex-shrink: 0; /* Prevents the icon from shrinking */
-  
-  /* This adds a subtle shadow to the icon itself, making it pop */
-  filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.7));
-}
+  }
 
 /* We also need to adjust the layout for these specific cards */
 .card-bg-jobs {
-  flex-direction: column; /* Stack icon and text vertically */
-  align-items: center;   /* Center them horizontally */
-  justify-content: center; /* Center them vertically */
-  text-align: left;
-  gap: 15px; /* Add some space between the icon and the text */
+  flex-direction: row; /* Align items side-by-side */
+  align-items: center; /* Vertically center the icon and text block */
+  justify-content: flex-start; /* Align all content to the left */
+  text-align: left; /* Align the text itself to the left */
+  gap: 20px; /* Space between icon and text, matches other cards */
 }
-
+.card-bg-jobs h3 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
 /* Ensure the text inside is also white and has a shadow */
 .card-bg-jobs h3, .card-bg-jobs p {
   color: #FFFFFF;
