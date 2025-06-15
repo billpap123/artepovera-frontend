@@ -690,71 +690,7 @@ const UserProfilePage: React.FC = () => {
               </div>
             )}
 
-{isArtistProfile && (
-              <div className="artist-comments-section profile-section-public">
-                <div className="section-header">
-                  <h4>{t('userProfilePage.content.artisticViewpoints')} <FaCommentDots /> ({viewpointCount})</h4>
-                  {avgSupportRating !== null && (
-                    <div className="average-support-rating">
-                      <DisplayHearts rating={avgSupportRating} />
-                      <span>{avgSupportRating.toFixed(1)} {t('userProfilePage.content.avgSupport')}</span>
-                    </div>
-                  )}
-                </div>
 
-                {canLoggedInArtistInteractWithArtistProfile && (
-                  <>
-                    {isLoadingCommentStatus ? (
-                      <div className="comment-form-placeholder">
-                        <p>{t('userProfilePage.status.loading')}</p>
-                      </div>
-                    ) : hasCommented ? (
-                      <div className="comment-form-placeholder">
-                        <p>{t('userProfilePage.content.alreadyCommented')}</p>
-                      </div>
-                    ) : (
-                      <form onSubmit={handleCommentSubmit} className="comment-form">
-                        <div className="form-group">
-                          <label>{t('userProfilePage.content.commentFormLabel')}</label>
-                          <HeartRatingInput rating={supportRating} setRating={setSupportRating} />
-                        </div>
-                        <textarea
-                          placeholder={t('userProfilePage.content.commentFormPlaceholder', { name: profile.fullname })}
-                          value={newComment}
-                          onChange={(e) => setNewComment(e.target.value)}
-                          rows={3}
-                          disabled={isSubmittingComment}
-                        />
-                        <button type="submit" disabled={isSubmittingComment || !newComment.trim() || supportRating === 0}>
-                          {isSubmittingComment ? t('userProfilePage.content.posting') : t('userProfilePage.content.postViewpoint')}
-                        </button>
-                      </form>
-                    )}
-                  </>
-                )}
-
-                {isLoadingComments ? (<p>{t('userProfilePage.content.loadingViewpoints')}</p>) :
-                  profileComments.length > 0 ? (
-                    <div className="comments-list">
-                      {profileComments.map(comment => (
-                        <div key={comment.comment_id} className="comment-item artist-comment-item">
-                          <div className="comment-header">
-                            <img src={getImageUrl(comment.commenter?.profile_picture)} alt={comment.commenter?.fullname || t('userProfilePage.content.anonymous')} className="commenter-pic" />
-                            <div className="commenter-info">
-                              <strong>{comment.commenter?.fullname || t('userProfilePage.content.anonymous')}</strong>
-                              <span className="comment-date">{formatDate(comment.created_at)}</span>
-                            </div>
-                            <div className="comment-rating">
-                              <DisplayHearts rating={comment.support_rating} />
-                            </div>
-                          </div>
-                          <p className="comment-text">"{comment.comment_text}"</p>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (<p>{t('userProfilePage.content.noViewpoints', { name: profile.fullname })}</p>)}
-              </div>
-            )}
 
             {isArtistProfile ? (
               <div className="portfolio-section profile-section-public">
@@ -888,7 +824,71 @@ const UserProfilePage: React.FC = () => {
                   )}
               </div>
             )}
+{isArtistProfile && (
+              <div className="artist-comments-section profile-section-public">
+                <div className="section-header">
+                  <h4>{t('userProfilePage.content.artisticViewpoints')} <FaCommentDots /> ({viewpointCount})</h4>
+                  {avgSupportRating !== null && (
+                    <div className="average-support-rating">
+                      <DisplayHearts rating={avgSupportRating} />
+                      <span>{avgSupportRating.toFixed(1)} {t('userProfilePage.content.avgSupport')}</span>
+                    </div>
+                  )}
+                </div>
 
+                {canLoggedInArtistInteractWithArtistProfile && (
+                  <>
+                    {isLoadingCommentStatus ? (
+                      <div className="comment-form-placeholder">
+                        <p>{t('userProfilePage.status.loading')}</p>
+                      </div>
+                    ) : hasCommented ? (
+                      <div className="comment-form-placeholder">
+                        <p>{t('userProfilePage.content.alreadyCommented')}</p>
+                      </div>
+                    ) : (
+                      <form onSubmit={handleCommentSubmit} className="comment-form">
+                        <div className="form-group">
+                          <label>{t('userProfilePage.content.commentFormLabel')}</label>
+                          <HeartRatingInput rating={supportRating} setRating={setSupportRating} />
+                        </div>
+                        <textarea
+                          placeholder={t('userProfilePage.content.commentFormPlaceholder', { name: profile.fullname })}
+                          value={newComment}
+                          onChange={(e) => setNewComment(e.target.value)}
+                          rows={3}
+                          disabled={isSubmittingComment}
+                        />
+                        <button type="submit" disabled={isSubmittingComment || !newComment.trim() || supportRating === 0}>
+                          {isSubmittingComment ? t('userProfilePage.content.posting') : t('userProfilePage.content.postViewpoint')}
+                        </button>
+                      </form>
+                    )}
+                  </>
+                )}
+
+                {isLoadingComments ? (<p>{t('userProfilePage.content.loadingViewpoints')}</p>) :
+                  profileComments.length > 0 ? (
+                    <div className="comments-list">
+                      {profileComments.map(comment => (
+                        <div key={comment.comment_id} className="comment-item artist-comment-item">
+                          <div className="comment-header">
+                            <img src={getImageUrl(comment.commenter?.profile_picture)} alt={comment.commenter?.fullname || t('userProfilePage.content.anonymous')} className="commenter-pic" />
+                            <div className="commenter-info">
+                              <strong>{comment.commenter?.fullname || t('userProfilePage.content.anonymous')}</strong>
+                              <span className="comment-date">{formatDate(comment.created_at)}</span>
+                            </div>
+                            <div className="comment-rating">
+                              <DisplayHearts rating={comment.support_rating} />
+                            </div>
+                          </div>
+                          <p className="comment-text">"{comment.comment_text}"</p>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (<p>{t('userProfilePage.content.noViewpoints', { name: profile.fullname })}</p>)}
+              </div>
+            )}
             
           </div>
 
