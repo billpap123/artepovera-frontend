@@ -302,12 +302,12 @@
 }
 
 /* --- Language Switcher Styles --- */
-.language-switcher {
+.language-switcher2 {
   display: flex;
   align-items: center;
   gap: 5px;
   margin-left: 15px; /* Adds some space from the logout button */
-  position:  static !important;
+  position:  static ;
 }
 
 .language-switcher button {

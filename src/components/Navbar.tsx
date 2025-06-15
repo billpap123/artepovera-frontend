@@ -187,7 +187,7 @@ const Navbar = () => {
                 {t('navbar.actions.logout')}
               </button>
             </li>
-            <li className="language-switcher nav-link">
+            <li className="language-switcher2 nav-link">
               <button onClick={() => changeLanguage('en')} className={i18n.language === 'en' ? 'active' : ''}>{t('navbar.language.en')}</button>
               <span className="lang-separator"></span> 
               <button onClick={() => changeLanguage('el')} className={i18n.language === 'el' ? 'active' : ''}>{t('navbar.language.el')}</button>
@@ -201,7 +201,7 @@ const Navbar = () => {
             <li>
               <NavLink to="/register" className="nav-button register-button">{t('navbar.actions.register')}</NavLink>
             </li>
-            <li className="language-switcher nav-link">
+            <li className="language-switcher2 nav-link">
               <button onClick={() => changeLanguage('en')} className={i18n.language === 'en' ? 'active' : ''}>{t('navbar.language.en')}</button>
               <span className="lang-separator"></span>
               <button onClick={() => changeLanguage('el')} className={i18n.language === 'el' ? 'active' : ''}>{t('navbar.language.el')}</button>
