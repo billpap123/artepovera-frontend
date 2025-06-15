@@ -1,67 +1,55 @@
-/* src/styles/Navbar.css */
-
-/* --- CSS Variables and General Resets --- */
 :root {
-  --navbar-bg: #1a202c; /* A deep, dark blue-charcoal */
-  --navbar-text: #e2e8f0; /* A soft, off-white */
-  --navbar-accent: #4299e1; /* A vibrant, accessible blue */
+  --navbar-bg: #1a202c;
+  --navbar-text: #e2e8f0;
+  --navbar-accent: #4299e1;
   --navbar-accent-dark: #2b6cb0;
   --notification-unread-bg: #2d3748;
   --notification-border: #4a5568;
-  --notification-badge-bg: #e53e3e; /* A strong red for visibility */
+  --notification-badge-bg: #e53e3e;
   --box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
 }
 
 /* --- Main Navbar Container --- */
 .navbar {
   display: flex;
-  align-items: center; /* This stays */
-  background-color: var(--navbar-bg);
+  align-items: center;
   padding: 0.5rem 1.5rem;
   height: 70px;
+  background-color: var(--navbar-bg);
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
+  top: 0; left: 0; width: 100%;
   z-index: 1000;
   box-shadow: var(--box-shadow);
-  transition: background-color 0.3s ease;
 }
 
-/* --- Logo Styling --- */
-.logo-link {
-  flex-shrink: 0; /* Prevents the logo from shrinking */
-  z-index: 1002; /* Ensure logo is clickable above mobile menu overlay */
+.logo-link { flex-shrink: 0; }
+.logo-image { height: 50px; width: auto; }
+
+/* --- New Layout Container: Holds both link groups --- */
+.nav-menu-container {
+  display: flex;
+  justify-content: space-between; /* This is the key: pushes link groups apart */
+  align-items: center;
+  width: 100%;
+  margin-left: 1rem;
 }
 
-.logo-image {
-  height: 50px; /* A more controlled, standard height */
-  width: auto;
-  transition: transform 0.3s ease;
-}
-
-.logo-image:hover {
-  transform: scale(1.05);
-}
-
-/* --- Navigation Links (Desktop) --- */
-.nav-links {
+/* --- Two distinct groups for links --- */
+.nav-links, .nav-actions {
   list-style: none;
   display: flex;
   align-items: center;
-  gap: 1rem;
-  flex-grow: 1; /* <-- This is the key: tells the list to fill all available space */
+  gap: 0.75rem;
+  margin: 0; padding: 0;
 }
 
+/* --- General styling for all items --- */
+.nav-menu-container li {
+  display: flex; /* Helps with alignment */
+}
 
-.nav-links a,
-.nav-links button {
+.nav-menu-container a,
+.nav-menu-container button {
   color: var(--navbar-text);
   text-decoration: none;
   font-size: 0.95rem;
@@ -71,279 +59,89 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  position: relative;
   background: none;
   border: none;
   cursor: pointer;
-  transition: color 0.2s ease, background-color 0.2s ease;
+  transition: all 0.2s ease;
+  white-space: nowrap;
 }
 
-.nav-links a:hover,
-.nav-links button:hover,
-.nav-links a.active {
+.nav-menu-container a:hover,
+.nav-menu-container button:hover {
   color: white;
   background-color: rgba(66, 153, 225, 0.1);
 }
 
 .nav-links a.active {
-  font-weight: 600;
+  font-weight: 700;
   color: var(--navbar-accent);
 }
 
-.nav-links .register-button {
+.nav-button.register-button {
   background-color: var(--navbar-accent);
-  color: white;
+  color: white !important;
 }
-.nav-links .register-button:hover {
-  background-color: var(--navbar-accent-dark);
-}
-/* Add this to the end of your Navbar.css file */
+.nav-button.register-button:hover { background-color: var(--navbar-accent-dark); }
+.nav-icon { font-size: 1.1rem; }
 
-.lang-separator {
-  display: inline-block;
-  width: 3px;
-  height: 12px; /* Adjust height as needed */
-  background-color: rgba(255, 255, 255, 0.5); /* White with 50% opacity */
-  margin: 0 8px; /* Adds space around the line */
-  vertical-align: middle; /* Aligns it nicely with the buttons */
-}
-.nav-icon {
-  font-size: 1.1rem;
-}
-.nav-links .notifications {
-  margin-left: auto;
-}
-/* --- Hamburger Menu (Mobile) --- */
-.hamburger {
-  display: none;
-  cursor: pointer;
-  z-index: 1002; /* Must be on top of the mobile menu */
-  padding: 10px;
-}
+/* --- Hamburger Menu --- */
+.hamburger { display: none; cursor: pointer; z-index: 1002; }
+.hamburger span { display: block; width: 25px; height: 2px; background-color: var(--navbar-text); margin: 5px 0; transition: all 0.3s ease; }
+.hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.hamburger.open span:nth-child(2) { opacity: 0; }
+.hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
-.hamburger span {
-  display: block;
-  width: 25px;
-  height: 2px;
-  background-color: var(--navbar-text);
-  margin: 5px 0;
-  transition: transform 0.3s ease, opacity 0.3s ease;
-  border-radius: 2px;
-}
+/* --- Notifications --- */
+.notifications { position: relative; }
+.notifications-button .bell-icon { font-size: 1.3rem; }
+.notification-badge { position: absolute; top: 4px; right: 8px; width: 18px; height: 18px; background-color: var(--notification-badge-bg); color: white; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 0.7rem; font-weight: 700; border: 2px solid var(--navbar-bg); }
+.notifications-dropdown { position: absolute; top: calc(100% + 10px); right: 0; background-color: var(--navbar-bg); border: 1px solid var(--notification-border); border-radius: 8px; width: 350px; max-height: 400px; overflow-y: auto; box-shadow: var(--box-shadow); z-index: 999; }
+.notifications-dropdown ul { list-style: none; padding: 0; margin: 0; }
+.notifications-dropdown li { padding: 1rem; border-bottom: 1px solid var(--notification-border); }
+.notifications-dropdown li:last-child { border-bottom: none; }
+.notifications-dropdown .unread { background-color: var(--notification-unread-bg); }
+.notifications-dropdown .read { opacity: 0.7; }
+.notification-item { color: var(--navbar-text); font-size: 0.9rem; }
+.notification-item .timestamp { font-size: 0.75rem; color: #a0aec0; margin-top: 0.25rem; }
+.notification-actions { display: flex; gap: 0.5rem; margin-top: 0.75rem; }
+.notification-actions button { font-size: 0.8rem; padding: 0.25rem 0.5rem; }
 
-.hamburger.open span:nth-child(1) {
-  transform: translateY(7px) rotate(45deg);
-}
-.hamburger.open span:nth-child(2) {
-  opacity: 0;
-}
-.hamburger.open span:nth-child(3) {
-  transform: translateY(-7px) rotate(-45deg);
-}
+/* --- Language Switcher --- */
+.language-switcher { display: flex; align-items: center; }
+.language-switcher button { padding: 5px; color: #ccc; font-weight: 600; }
+.language-switcher button:hover { color: white; }
+.language-switcher button.active { color: var(--navbar-accent); text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 4px; }
+.lang-separator { display: inline-block; width: 2px; height: 14px; background-color: rgba(255, 255, 255, 0.3); margin: 0 5px; }
 
+/* --- Responsive Design (Mobile) --- */
+@media screen and (max-width: 992px) {
+  .nav-menu-container { display: none; }
+  .hamburger { display: block; margin-left: auto; }
 
-/* --- Notifications Bell & Dropdown --- */
-.notifications {
-  position: relative;
-}
-
-.notifications-button .bell-icon {
-  font-size: 1.3rem;
-}
-
-.notification-badge {
-  position: absolute;
-  top: 4px;
-  right: 8px;
-  width: 18px;
-  height: 18px;
-  background-color: var(--notification-badge-bg);
-  color: white;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 0.7rem;
-  font-weight: 700;
-  border: 2px solid var(--navbar-bg);
-}
-
-.notifications-dropdown {
-  position: absolute;
-  top: calc(100% + 10px);
-  right: 0;
-  background-color: var(--navbar-bg);
-  border: 1px solid var(--notification-border);
-  border-radius: 8px;
-  width: 350px;
-  max-height: 400px;
-  overflow-y: auto;
-  box-shadow: var(--box-shadow);
-  z-index: 999;
-}
-
-.notifications-dropdown ul {
-  list-style: none;
-}
-
-.notifications-dropdown li {
-  padding: 1rem;
-  border-bottom: 1px solid var(--notification-border);
-  font-size: 0.9rem;
-  transition: background-color 0.2s ease;
-}
-
-.notifications-dropdown li:last-child {
-  border-bottom: none;
-}
-
-.notifications-dropdown li:hover {
-  background-color: #2d3748;
-}
-
-.notifications-dropdown .unread {
-  background-color: var(--notification-unread-bg);
-}
-.notifications-dropdown .read {
-  opacity: 0.7;
-}
-
-.notification-item {
-  color: var(--navbar-text);
-}
-
-.notification-item .timestamp {
-  font-size: 0.75rem;
-  color: #a0aec0;
-  margin-top: 0.25rem;
-}
-
-.notification-actions {
-  display: flex;
-  gap: 0.5rem;
-  margin-top: 0.75rem;
-}
-
-.notification-actions button {
-  font-size: 0.8rem;
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
-}
-
-.mark-read-btn {
-  background-color: var(--navbar-accent);
-  color: white;
-}
-.mark-read-btn:hover {
-  background-color: var(--navbar-accent-dark);
-}
-
-.delete-notif-btn {
-  background-color: #4a5568;
-}
-.delete-notif-btn:hover {
-  background-color: #718096;
-}
-
-/* --- Responsive Design --- */
-@media screen and (max-width: 768px) {
-  /* Add padding to the top of the body to push content down */
-  body {
-    padding-top: 170px; /* This should match your navbar height */
-  }
-
-  /* On mobile, the navbar remains a flex row, but we hide the desktop links */
-  .navbar .nav-links {
-      display: none;
-  }
-
-  /* The hamburger menu icon is now visible */
-  .hamburger {
-      display: block;
-  }
-
-  /* This styles the full-screen OVERLAY that appears ONLY when the menu is open */
-  .nav-links.open {
-      display: flex; /* This makes the overlay visible */
+  /* Full-screen Overlay */
+  .nav-menu-container.open {
+      display: flex;
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100vh;
+      top: 0; left: 0; width: 100%; height: 100vh;
       background-color: var(--navbar-bg);
       flex-direction: column;
       justify-content: center;
       align-items: center;
       gap: 1.5rem;
+      margin-left: 0; /* Reset margin for overlay */
   }
-
-  /* Style the links inside the overlay */
-  .nav-links.open a,
-  .nav-links.open button {
+  
+  /* In mobile, stack the two groups vertically */
+  .nav-menu-container.open .nav-links,
+  .nav-menu-container.open .nav-actions {
+      flex-direction: column;
+      gap: 1rem;
+      width: 100%;
+  }
+  .nav-menu-container.open a,
+  .nav-menu-container.open button {
       font-size: 1.2rem;
       width: 80%;
       justify-content: center;
-  }
-
-  /* Special handling for notifications list inside the mobile overlay */
-  .notifications {
-      display: contents;
-  }
-  .notifications-dropdown {
-      position: static;
-      width: 90%;
-      max-width: 400px;
-      margin-top: 1rem;
-      box-shadow: none;
-      border-radius: 8px;
-      max-height: none;
-      order: 10; /* Ensures it appears at the bottom of the list */
-  }
-}
-
-/* --- Language Switcher Styles --- */
-.language-switcher {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  margin-left: 15px; /* Adds some space from the logout button */
-}
-
-.language-switcher button {
-  background: none;
-  border: none;
-  color: #ccc; /* A slightly dimmer color for non-active */
-  cursor: pointer;
-  font-family: inherit; /* Use the same font as the navbar */
-  font-size: 0.95rem;
-  font-weight: 600;
-  padding: 5px;
-  transition: color 0.2s ease-in-out;
-}
-
-.language-switcher button:hover {
-  color: white;
-}
-
-/* This style applies to the currently selected language button */
-.language-switcher button.active {
-  color: white;
-  font-weight: 800;
-  text-decoration: underline;
-  text-decoration-thickness: 2px;
-  text-underline-offset: 4px;
-}
-
-.language-switcher span {
-  color: #666; /* Color for the "/" separator */
-  font-size: 1rem;
-}
-
-/* --- Responsive adjustments for the switcher --- */
-@media (max-width: 768px) {
-  .nav-links.open .language-switcher {
-    margin-top: 15px;
-    padding-bottom: 15px;
-    justify-content: center; /* Center it in the mobile menu */
   }
 }
