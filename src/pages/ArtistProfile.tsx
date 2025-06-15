@@ -11,7 +11,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Upload, Trash2 } from 'lucide-react';
 
-// --- Interfaces and Helper Components (No changes needed here) ---
+// --- Interfaces and Helper Components ---
 interface Reviewer { user_id: number; fullname: string; profile_picture: string | null; }
 interface ReviewData { review_id: number; overall_rating: number | null; specific_answers?: { dealMade?: 'yes' | 'no'; noDealPrimaryReason?: string; comment?: string; }; created_at: string; reviewer?: Reviewer; }
 const DisplayStars = ({ rating }: { rating: number | null }) => {
@@ -43,8 +43,8 @@ const formatDate = (dateString: string | undefined | null): string => {
 const ArtistProfile: React.FC = () => {
   const { t } = useTranslation();
   const { userId, setUserId, artistId, setArtistId, setUserType, setFullname } = useUserContext();
-  
-  // State variables (No changes needed to the definitions)
+
+  // State
   const [bio, setBio] = useState("");
   const [profilePicture, setProfilePicture] = useState<string | null>(null);
   const [isStudent, setIsStudent] = useState(false);
@@ -57,6 +57,7 @@ const ArtistProfile: React.FC = () => {
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
+  const [passwordForEmail, setPasswordForEmail] = useState(""); // <-- NEW STATE for email change confirmation
   const [accountActionLoading, setAccountActionLoading] = useState(false);
   const [cvUrl, setCvUrl] = useState<string | null>(null);
   const [newCvFile, setNewCvFile] = useState<File | null>(null);
@@ -73,6 +74,7 @@ const ArtistProfile: React.FC = () => {
 
   const navigate = useNavigate();
   const BACKEND_URL = import.meta.env.VITE_API_URL || "http://localhost:50001";
+  
   const getImageUrl = (path?: string | null): string => {
     if (!path) return '/default-profile.png';
     if (path.startsWith('http')) return path;
@@ -80,7 +82,6 @@ const ArtistProfile: React.FC = () => {
   };
 
   useEffect(() => {
-    // ... your existing useEffect for fetching data (no changes needed)
     let isMounted = true;
     const fetchProfileAndData = async () => {
       setLoading(true); setReviewsLoading(true); setErrorState(null);
@@ -100,7 +101,7 @@ const ArtistProfile: React.FC = () => {
           setIsStudent(!!artist.is_student);
           setNewBio(artist.bio || "");
           setCvUrl(artist.cv_url || null);
-        } else { console.warn("Logged in user does not have an associated artist profile."); }
+        }
         const profileOwnerUserId = user_id;
         if (profileOwnerUserId) {
           const ratingPromise = axios.get(`${BACKEND_URL}/api/users/${profileOwnerUserId}/average-rating`);
@@ -111,7 +112,7 @@ const ArtistProfile: React.FC = () => {
             setReviewCount(ratingResponse.data.reviewCount);
             setReviews(reviewsResponse.data.reviews || []);
           }
-        } else { if (isMounted) { setAverageRating(null); setReviewCount(0); setReviews([]); } }
+        }
       } catch (fetchError: any) {
         console.error("Error fetching profile or related data:", fetchError);
         if (isMounted) setErrorState(fetchError.response?.data?.message || "Failed to load profile data.");
@@ -123,9 +124,12 @@ const ArtistProfile: React.FC = () => {
     return () => { isMounted = false; };
   }, [userId, setUserId, setArtistId, navigate]);
 
-  // --- UPDATED ACCOUNT ACTION HANDLERS ---
   const handleEmailChange = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!passwordForEmail) {
+      alert(t('artistProfile.account.currentPasswordRequired'));
+      return;
+    }
     if (newEmail !== confirmEmail) {
       alert(t('artistProfile.account.emailMatchError'));
       return;
@@ -135,13 +139,14 @@ const ArtistProfile: React.FC = () => {
     try {
       const response = await axios.put(
         `${BACKEND_URL}/api/users/update-email`,
-        { newEmail }, // Backend will require current password, which we are not asking for here yet.
+        { currentPassword: passwordForEmail, newEmail: newEmail },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       alert(response.data.message);
       setCurrentEmail(newEmail);
       setNewEmail("");
       setConfirmEmail("");
+      setPasswordForEmail("");
     } catch (err: any) {
       console.error("Email change error:", err);
       alert(err.response?.data?.message || "Failed to update email.");
@@ -188,19 +193,14 @@ const ArtistProfile: React.FC = () => {
         setAccountActionLoading(true);
         const token = localStorage.getItem('token');
         try {
-          // Note: Your backend expects password in the body for DELETE
           const response = await axios.delete(`${BACKEND_URL}/api/users/me`, {
             headers: { Authorization: `Bearer ${token}` },
             data: { password: password } 
           });
-
           alert(response.data.message);
-          
-          // Log out completely
           setUserId(null); setUserType(null); setFullname(null); setArtistId(null);
           localStorage.clear();
           navigate('/');
-
         } catch (err: any) {
           console.error("Account deletion error:", err);
           alert(err.response?.data?.message || "Failed to delete account.");
@@ -211,7 +211,7 @@ const ArtistProfile: React.FC = () => {
     }
   };
 
-  // ... other handlers like handleEditToggle, handleSaveChanges, etc. (no changes needed) ...
+
   const handleEditToggle = () => {
     setIsEditing(!isEditing);
     if (isEditing) { setNewBio(bio); setNewProfilePicFile(null); setNewCvFile(null); setErrorState(null); }
@@ -226,7 +226,6 @@ const ArtistProfile: React.FC = () => {
   };
 
   const handleSaveChanges = async () => {
-    console.log("[SAVE ARTIST - 1] handleSaveChanges (Bio/Pic) called");
     setErrorState(null);
     try {
       setSaving(true);
@@ -243,13 +242,6 @@ const ArtistProfile: React.FC = () => {
         setProfilePicture(updatedArtistData.profile_picture || null);
         setNewBio(updatedArtistData.bio || "");
         if (updatedArtistData.cv_url !== undefined) setCvUrl(updatedArtistData.cv_url || null);
-      } else {
-        setBio(newBio);
-        if (newProfilePicFile) {
-          const meResponse = await axios.get(`${BACKEND_URL}/api/users/me`, { headers: { Authorization: `Bearer ${token}` } });
-          setProfilePicture(meResponse.data?.artist?.profile_picture || null);
-          if (meResponse.data?.artist?.cv_url !== undefined) setCvUrl(meResponse.data.artist.cv_url || null);
-        }
       }
       setNewProfilePicFile(null);
       alert("Profile changes (Bio/Photo) saved successfully!");
@@ -350,8 +342,8 @@ const ArtistProfile: React.FC = () => {
   const completedReviews = useMemo(() => reviews.filter((r: ReviewData) => r.specific_answers?.dealMade !== 'no' && r.overall_rating), [reviews]);
   const interactionReviews = useMemo(() => reviews.filter((r: ReviewData) => r.specific_answers?.dealMade === 'no'), [reviews]);
 
-
   if (loading) { return (<> <Navbar /> <div className="profile-container artist-profile-container loading-profile"> <p>Loading artist profile...</p> </div> </>); }
+  
   if (error && !isEditing && !saving && !deleting && !cvProcessing) {
     return (
       <>
@@ -363,12 +355,11 @@ const ArtistProfile: React.FC = () => {
     );
   }
 
-  // JSX for the component (no changes needed here, it's already set up)
   return (
     <>
       <Navbar />
       <div className="profile-container artist-profile-container">
-        {/* ... existing JSX for header and content ... */}
+
         <div className="profile-header">
             <div className="profile-picture-wrapper">
               <img src={getImageUrl(profilePicture)} alt="Artist profile" className="profile-picture" />
@@ -521,6 +512,7 @@ const ArtistProfile: React.FC = () => {
                         <label className="account-form-label"><FaEnvelope /> {t('artistProfile.account.changeEmail')}</label>
                         <p className="current-email-display">{t('artistProfile.account.currentEmail')}: <strong>{currentEmail}</strong></p>
                         <div className="form-field-group">
+                            <input type="password" placeholder={t('artistProfile.account.currentPasswordPlaceholder')} value={passwordForEmail} onChange={(e) => setPasswordForEmail(e.target.value)} required />
                             <input type="email" placeholder={t('artistProfile.account.newEmailPlaceholder')} value={newEmail} onChange={(e) => setNewEmail(e.target.value)} required />
                             <input type="email" placeholder={t('artistProfile.account.confirmEmailPlaceholder')} value={confirmEmail} onChange={(e) => setConfirmEmail(e.target.value)} required />
                         </div>

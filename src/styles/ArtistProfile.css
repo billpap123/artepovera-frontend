@@ -268,7 +268,7 @@ body {
 }
 
 .action-btn.danger {
-  background-color: #d9534f;
+  background-color: #d9534f !important;
   color: white;
 }
 
