@@ -119,14 +119,18 @@ const AppContent = () => {
   );
 };
 
+// This is the new, corrected App component
 const App = () => {
   return (
-    <UserProvider> {/* UserProvider wraps AppContent, so useUserContext works inside */}
-      <AppContent />
-      <AccessibilityMenu /> {/* <-- ADD IT HERE, inside UserProvider, but outside AppContent */}
+    <UserProvider>
+      {/* This wrapper will contain everything we want to apply the filter to */}
+      <div className="main-app-container">
+        <AppContent />
+      </div>
 
+      {/* The AccessibilityMenu stays OUTSIDE the wrapper */}
+      <AccessibilityMenu />
     </UserProvider>
-    
   );
 };
 

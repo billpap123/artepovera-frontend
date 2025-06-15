@@ -170,17 +170,15 @@ footer a:hover {
 /* Add this to src/styles/Global.css */
 
 /* --- High Contrast Mode --- */
-body.high-contrast {
-    /* Inverts all colors and then flips hue back to normal. A common trick for high contrast. */
+/* This is the new, corrected code */
+body.high-contrast .main-app-container {
     filter: invert(1) hue-rotate(180deg);
   }
   
-  /* Exclude images/videos from being inverted in high contrast mode */
-  body.high-contrast img,
-  body.high-contrast video {
+  body.high-contrast .main-app-container img,
+  body.high-contrast .main-app-container video {
     filter: invert(1) hue-rotate(180deg);
-  }
-  
+  }  
   
   /* --- Highlight Links Mode --- */
   body.links-highlighted a {
