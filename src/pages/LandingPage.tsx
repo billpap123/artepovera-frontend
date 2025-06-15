@@ -382,16 +382,20 @@ const LanguageSwitcher: React.FC = () => {
 
 const LandingPage: React.FC = () => {
   const { t } = useTranslation();
-  
-  
+
   return (
     <>
       <style>{landingPageStyles}</style>
-      <LanguageSwitcher /> {/* 👈 Προστέθηκε εδώ */}
 
+      {/* The main container remains the same */}
       <div className="landing-page-container">
-
+        
+        {/* The hero section now contains the language switcher */}
         <header className="hero-section">
+          
+          {/* --- MOVE THE SWITCHER HERE --- */}
+          <LanguageSwitcher />
+
           <video className="hero-video-background" autoPlay loop muted playsInline>
               <source src="/images/video.mp4" type="video/mp4" />
               {t('landingPage.hero.videoError')}
@@ -408,6 +412,7 @@ const LandingPage: React.FC = () => {
           </div>
         </header>
 
+        {/* The rest of your page content stays the same */}
         <section className="landing-section category-showcase-section">
           <h2>{t('landingPage.categories.title')}</h2>
           <p className="section-intro">{t('landingPage.categories.intro')}</p>
@@ -442,13 +447,13 @@ const LandingPage: React.FC = () => {
       </div>
     </>
   );
-
-
-
-
-
-
-
 };
+
+
+
+
+
+
+
 
 export default LandingPage;

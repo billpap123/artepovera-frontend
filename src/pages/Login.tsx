@@ -6,6 +6,7 @@ import { useUserContext } from '../context/UserContext'; // <-- 1. IMPORT THE HO
 import '../styles/Global.css';
 import '../styles/Login.css';
 import { useTranslation } from "react-i18next";
+import LanguageSwitcher from '../components/LanguageSwitcher'; // <-- IMPORT THE NEW COMPONENT
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:50001';
 
@@ -61,6 +62,8 @@ const Login = () => {
 
     return (
         <div className="auth-page-container">
+                        <LanguageSwitcher /> {/* <-- ADD THE COMPONENT HERE */}
+
             <div className="auth-logo-container">
                 <Link to="/">
                     <img src="/images/logo2.png" alt={t('loginPage.altText.logo')} className="auth-logo" />
