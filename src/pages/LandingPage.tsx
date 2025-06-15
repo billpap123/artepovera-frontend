@@ -16,29 +16,8 @@ const landingPageStyles = `
     line-height: 1.6;
     background-color: #fdfbf7; /* Off-white base background */
   }
-   
-  
-  /* --- Font and Cursor --- */
-  font-family: 'Nunito', sans-serif;
-  font-size: 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
-  
-  /* --- Removing Default OS Styling --- */
-  outline: none;
-  -webkit-appearance: none; /* Removes default Safari/Chrome styling */
-  -moz-appearance: none;    /* Removes default Firefox styling */
-  appearance: none;         /* Removes default styling */
 
-  /* --- Custom Dropdown Arrow --- */
-  background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23FFFFFF%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22/%3E%3C/svg%3E');
-  background-repeat: no-repeat;
-  background-position: right 10px top 50%;
-  background-size: 10px auto;
-  
-  transition: background-color 0.2s ease;
-}
-
+  /* Note: The Language Switcher CSS has been removed from here because it now lives in your global CSS file. */
 
   /* --- Hero Section --- */
   .hero-section {
@@ -50,7 +29,6 @@ const landingPageStyles = `
     justify-content: center;
     text-align: center;
     color: white;
-    /* Background handled by <video> tag */
     background-color: #654321; /* Fallback: Dark Brown */
     overflow: hidden;
   }
@@ -90,8 +68,6 @@ const landingPageStyles = `
     margin-bottom: 0.5em;
     letter-spacing: 1px;
     text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.6);
-     /* CSS text-transform can override inline text if needed */
-     /* text-transform: uppercase; */ /* Example */
   }
 
   .hero-subtitle {
@@ -99,7 +75,6 @@ const landingPageStyles = `
     font-weight: 600;
     margin-bottom: 1em;
     opacity: 0.95;
-     /* Capitalization handled inline */
   }
 
   .hero-description {
@@ -109,7 +84,6 @@ const landingPageStyles = `
     margin-left: auto;
     margin-right: auto;
     opacity: 0.9;
-     /* Standard sentence case */
   }
   .hero-description em {
       font-style: normal;
@@ -133,11 +107,10 @@ const landingPageStyles = `
     transition: all 0.3s ease;
     border: 2px solid white;
     background-color: white;
-    color: #4d4033; /* Dark brown text */
-     /* Capitalization handled inline */
+    color: #4d4033;
   }
    .hero-btn:hover {
-       background-color: rgba(255, 255, 255, 0.15); /* Transparent white */
+       background-color: rgba(255, 255, 255, 0.15);
        color: white;
        transform: translateY(-2px);
    }
@@ -151,7 +124,6 @@ const landingPageStyles = `
         color: #4d4033;
     }
 
-
   /* --- Section Base Styles --- */
   .landing-section {
       padding: 70px 20px;
@@ -160,21 +132,19 @@ const landingPageStyles = `
    .landing-section h2 {
        font-size: 2.5rem;
        font-weight: 700;
-       color: #654321; /* Deep Brown Heading */
+       color: #654321;
        margin-bottom: 25px;
-        /* Capitalization handled inline */
    }
     .landing-section .section-intro {
         font-size: 1.15rem;
-        color: #7d746b; /* Warm Grey */
+        color: #7d746b;
         max-width: 750px;
         margin: 0 auto 50px auto;
-         /* Standard sentence case */
     }
 
   /* --- Category Showcase Section --- */
   .category-showcase-section {
-    background-color: #f5f0e8; /* Light Beige background */
+    background-color: #f5f0e8;
   }
 
   .category-grid {
@@ -189,7 +159,7 @@ const landingPageStyles = `
     background-color: #fff;
     border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 5px 20px rgba(101, 67, 33, 0.1); /* Brownish shadow */
+    box-shadow: 0 5px 20px rgba(101, 67, 33, 0.1);
     text-align: center;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     padding-bottom: 30px;
@@ -210,9 +180,8 @@ const landingPageStyles = `
   .category-card h3 {
     font-size: 1.6rem;
     font-weight: 700;
-    color: #A0522D; /* Sienna */
+    color: #A0522D;
     margin: 25px 15px 10px 15px;
-     /* Capitalization handled inline */
   }
 
   .category-card p {
@@ -221,7 +190,6 @@ const landingPageStyles = `
     padding: 0 25px;
     margin-bottom: 25px;
     min-height: 60px;
-     /* Standard sentence case */
   }
 
   .category-link {
@@ -229,23 +197,22 @@ const landingPageStyles = `
     padding: 9px 22px;
     border-radius: 20px;
     background-color: transparent;
-    color: #A0522D; /* Sienna */
+    color: #A0522D;
     text-decoration: none;
     font-weight: 600;
-    border: 2px solid #dcd3c7; /* Light brown border */
+    border: 2px solid #dcd3c7;
     transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
-     /* Capitalization handled inline */
   }
 
   .category-link:hover {
-    background-color: #A0522D; /* Sienna */
+    background-color: #A0522D;
     color: white;
     border-color: #A0522D;
   }
 
    /* --- Features Section --- */
   .features-section {
-      background-color: #fdfbf7; /* Off-white */
+      background-color: #fdfbf7;
   }
    .features-grid {
        display: grid;
@@ -262,7 +229,7 @@ const landingPageStyles = `
    }
    .feature-icon {
        font-size: 2.2rem;
-       color: #CC7722; /* Ochre icon color */
+       color: #CC7722;
        margin-top: 3px;
        flex-shrink: 0;
    }
@@ -270,30 +237,26 @@ const landingPageStyles = `
        margin: 0 0 8px 0;
        font-size: 1.25rem;
        font-weight: 700;
-       color: #654321; /* Deep brown */
-       /* Capitalization handled inline */
+       color: #654321;
    }
    .feature-item p {
        margin: 0;
        color: #7d746b;
        font-size: 1rem;
-        /* Standard sentence case */
    }
 
   /* --- Call to Action Section --- */
   .cta-section {
-    background-color: #654321; /* Deep Brown background */
-    color: #fdfbf7; /* Off-white text */
+    background-color: #654321;
+    color: #fdfbf7;
   }
   .cta-section h2 {
       color: #fff;
       margin-bottom: 20px;
-       /* Capitalization handled inline */
   }
   .cta-section p {
-      color: rgba(253, 251, 247, 0.85); /* Off-white transparent */
+      color: rgba(253, 251, 247, 0.85);
       margin-bottom: 35px;
-       /* Standard sentence case */
   }
   .cta-button {
     padding: 15px 40px;
@@ -302,14 +265,13 @@ const landingPageStyles = `
     font-weight: 700;
     font-size: 1.15rem;
     transition: all 0.3s ease;
-    background-color: #A0522D; /* Sienna */
+    background-color: #A0522D;
     color: white;
     border: 2px solid #A0522D;
     box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
-     /* Capitalization handled inline */
   }
   .cta-button:hover {
-    background-color: #804123; /* Darker Sienna */
+    background-color: #804123;
     border-color: #804123;
     transform: scale(1.03);
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
@@ -328,8 +290,8 @@ const landingPageStyles = `
          .hero-cta-buttons { flex-direction: column; }
          .hero-btn { width: 80%; margin: 5px auto; }
     }
-
 `;
+
 
 const LandingPage: React.FC = () => {
   const { t } = useTranslation();
