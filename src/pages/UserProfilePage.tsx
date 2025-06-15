@@ -752,6 +752,14 @@ const UserProfilePage: React.FC = () => {
 
             <div className="reviews-section profile-section-public">
               <h4>{t('userProfilePage.content.projectReviews', { count: completedReviews.length })}</h4>
+
+              {/* --- ADD THIS BLOCK TO DISPLAY THE AVERAGE RATING --- */}
+              {averageRating !== null && reviewCount > 0 && (
+                <div className="average-rating">
+                  <DisplayStars rating={averageRating} />
+                  <span>{averageRating.toFixed(1)} {t('userProfilePage.content.avgRating', 'avg rating')}</span>
+                </div>
+              )}
               {reviewsLoading ? (
                 <p>{t('userProfilePage.content.loadingReviews')}</p>
               ) : completedReviews.length > 0 ? (
@@ -824,7 +832,7 @@ const UserProfilePage: React.FC = () => {
                   )}
               </div>
             )}
-{isArtistProfile && (
+            {isArtistProfile && (
               <div className="artist-comments-section profile-section-public">
                 <div className="section-header">
                   <h4>{t('userProfilePage.content.artisticViewpoints')} <FaCommentDots /> ({viewpointCount})</h4>
@@ -889,7 +897,7 @@ const UserProfilePage: React.FC = () => {
                   ) : (<p>{t('userProfilePage.content.noViewpoints', { name: profile.fullname })}</p>)}
               </div>
             )}
-            
+
           </div>
 
           {isGalleryOpen && portfolio.length > 0 && (

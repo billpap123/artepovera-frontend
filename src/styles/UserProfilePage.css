@@ -444,6 +444,30 @@ width: 90%;
 
 }
 
+/* Add this new block to your UserProfilePage.css */
+
+/* This rule makes the section title and the rating display side-by-side */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap; /* Allows items to wrap on very small screens */
+  gap: 15px;
+  margin-bottom: 20px; /* Adds some space below the header */
+}
+
+/* This styles BOTH the star rating and heart rating containers */
+.average-rating, .average-support-rating {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  color: #555;
+  background-color: #f7f7f7;
+  padding: 5px 10px;
+  border-radius: 20px;
+}
+
 
 
 .comment-header {

@@ -1,91 +1,42 @@
-import React, { useState, useEffect } from "react";
-import { NavLink, useNavigate, Link } from "react-router-dom";
+import React, { useState } from "react";
+import { NavLink, Link } from "react-router-dom";
 import axios from "axios";
 import { FaHome, FaUserAlt, FaBell, FaMapMarkerAlt } from "react-icons/fa";
 import { useUserContext } from '../context/UserContext';
 import '../styles/Navbar.css';
 import { useTranslation, Trans } from 'react-i18next';
-import { io, Socket } from 'socket.io-client'; // <-- Import Socket.IO client
 
+// No longer need socket.io-client imported here
+// const API_BASE_URL = import.meta.env.VITE_API_URL || "https://artepovera2.vercel.app";
 const API_BASE_URL = import.meta.env.VITE_API_URL || "https://artepovera2.vercel.app";
+
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [notifications, setNotifications] = useState<any[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
-  const [loadingNotifications, setLoadingNotifications] = useState(true);
-  const [error, setError] = useState("");
-  const navigate = useNavigate();
   const { t, i18n } = useTranslation();
 
-  const { userId, userType, setUserId, setArtistId, setEmployerId, setUserType } = useUserContext();
+  // --- 1. Get notifications and the setter from the global context ---
+  const { 
+    userId, 
+    userType, 
+    notifications, 
+    setNotifications,
+    setUserId, 
+    setArtistId, 
+    setEmployerId, 
+    setUserType 
+  } = useUserContext();
+  
   const token = localStorage.getItem('token');
 
-  // --- REAL-TIME NOTIFICATION LOGIC ---
-  const [socket, setSocket] = useState<Socket | null>(null);
-
-  // Effect 1: Connect and disconnect the socket based on user login status
-  useEffect(() => {
-    if (userId) {
-      const newSocket = io(API_BASE_URL);
-      setSocket(newSocket);
-      newSocket.emit('add_user', userId);
-
-      return () => {
-        newSocket.disconnect();
-      };
-    } else {
-      if (socket) {
-        socket.disconnect();
-        setSocket(null);
-      }
-    }
-  }, [userId]);
-
-  // Effect 2: Listen for real-time notifications from the server
-  useEffect(() => {
-    if (socket) {
-      socket.on('new_notification', (newNotification) => {
-        setNotifications((prev) => [newNotification, ...prev]);
-      });
-
-      return () => {
-        socket.off('new_notification');
-      };
-    }
-  }, [socket]);
-  // --- END OF REAL-TIME LOGIC ---
-
-  // Fetches initial notifications on load
-  useEffect(() => {
-    const fetchNotifications = async () => {
-      if (!token || !userId) {
-        setLoadingNotifications(false);
-        return;
-      }
-      setLoadingNotifications(true);
-      try {
-        const response = await axios.get(
-          `${API_BASE_URL}/api/notifications/${userId}`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        setNotifications(response.data.notifications || []);
-        setError("");
-      } catch (err) {
-        console.error("Error fetching notifications:", err);
-        setError(t('navbar.errors.fetchNotifications'));
-      } finally {
-        setLoadingNotifications(false);
-      }
-    };
-    if (userId) {
-      fetchNotifications();
-    }
-  }, [userId, token, t]);
+  // --- 2. ALL local state and useEffects for notifications and sockets are now DELETED from this file. ---
+  // The UserContext handles everything.
 
   const toggleMenu = () => setIsMenuOpen((prev) => !prev);
   const toggleDropdown = () => setShowDropdown((prev) => !prev);
 
+  // This function now updates the GLOBAL state via the context's setNotifications
   const markAsRead = async (notificationId: number) => {
     try {
       await axios.put(
@@ -105,6 +56,7 @@ const Navbar = () => {
     }
   };
 
+  // This function also updates the GLOBAL state
   const deleteNotification = async (notificationId: number) => {
     try {
       await axios.delete(`${API_BASE_URL}/api/notifications/${notificationId}`, {
@@ -124,6 +76,8 @@ const Navbar = () => {
       setArtistId(null);
       setEmployerId(null);
       setUserType(null);
+      // We also clear the notifications on logout
+      setNotifications([]);
       
       localStorage.clear();
       sessionStorage.clear();
@@ -175,14 +129,12 @@ const Navbar = () => {
                 <span className="nav-text">{t('navbar.links.home')}</span>
               </NavLink>
             </li>
-
             <li>
               <NavLink to="/map" className={({ isActive }) => (isActive ? "active" : "")} onClick={() => setIsMenuOpen(false)}>
                 <FaMapMarkerAlt className="nav-icon" />
                 <span className="nav-text">{t('navbar.links.map')}</span>
               </NavLink>
             </li>
-
             <li>
               <NavLink 
                 to={profilePath}
@@ -204,9 +156,8 @@ const Navbar = () => {
 
               {showDropdown && (
                 <div className="notifications-dropdown">
-                   {loadingNotifications ? ( <p>{t('navbar.notifications.loading')}</p> )
-                   : error ? ( <p className="error">{error}</p> )
-                   : notifications.length > 0 ? (
+                  {/* We can remove the loading/error state as the context handles it */}
+                   {notifications.length > 0 ? (
                     <ul>
                       {notifications.map((notif) => (
                         <li key={notif.notification_id} className={notif.read_status ? "read" : "unread"}>
@@ -238,7 +189,6 @@ const Navbar = () => {
             </li>
             <li className="language-switcher">
               <button onClick={() => changeLanguage('en')} className={i18n.language === 'en' ? 'active' : ''}>{t('navbar.language.en')}</button>
-              {/* This span will be our vertical line */}
               <span className="lang-separator"></span> 
               <button onClick={() => changeLanguage('el')} className={i18n.language === 'el' ? 'active' : ''}>{t('navbar.language.el')}</button>
             </li>
@@ -253,7 +203,6 @@ const Navbar = () => {
             </li>
             <li className="language-switcher">
               <button onClick={() => changeLanguage('en')} className={i18n.language === 'en' ? 'active' : ''}>{t('navbar.language.en')}</button>
-               {/* This span will be our vertical line */}
               <span className="lang-separator"></span>
               <button onClick={() => changeLanguage('el')} className={i18n.language === 'el' ? 'active' : ''}>{t('navbar.language.el')}</button>
             </li>

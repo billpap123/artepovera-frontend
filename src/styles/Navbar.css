@@ -100,7 +100,7 @@
 
 .lang-separator {
   display: inline-block;
-  width: 1px;
+  width: 3px;
   height: 12px; /* Adjust height as needed */
   background-color: rgba(255, 255, 255, 0.5); /* White with 50% opacity */
   margin: 0 8px; /* Adds space around the line */
@@ -109,7 +109,9 @@
 .nav-icon {
   font-size: 1.1rem;
 }
-
+.nav-links .notifications {
+  margin-left: auto;
+}
 /* --- Hamburger Menu (Mobile) --- */
 .hamburger {
   display: none;

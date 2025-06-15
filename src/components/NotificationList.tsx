@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import axios from "axios";
 import "../styles/Notifications.css";
 import { useTranslation, Trans } from "react-i18next";
-import { Link } from "react-router-dom"; // <-- The required import
+import { Link } from "react-router-dom";
+import { useUserContext } from '../context/UserContext'; // <-- 1. Get the context
 
+// The Notification type definition remains the same
 type Notification = {
   notification_id: number;
   user_id: number;
@@ -16,39 +18,16 @@ type Notification = {
 };
 
 const NotificationList: React.FC = () => {
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  // --- 2. Get the global state and setter from the context ---
+  // We no longer need local useState for notifications, loading, or error.
+  const { notifications, setNotifications } = useUserContext();
   const { t } = useTranslation();
-
-  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  
   const token = localStorage.getItem("token");
   const BACKEND_URL = import.meta.env.VITE_API_URL || "http://localhost:50001";
 
-  useEffect(() => {
-    const fetchNotifications = async () => {
-      if (!user?.user_id || !token) {
-        setLoading(false);
-        setError(t('notificationList.errors.loginRequired'));
-        return;
-      }
-
-      try {
-        const response = await axios.get(
-          `${BACKEND_URL}/api/notifications/${user.user_id}`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        setNotifications(response.data.notifications || []);
-      } catch (err) {
-        setError(t('notificationList.errors.fetchFailed'));
-        console.error("❌ Error fetching notifications:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchNotifications();
-  }, [user.user_id, token, BACKEND_URL, t]);
+  // --- 3. DELETE the entire useEffect for fetching notifications. ---
+  // The UserContext now handles all fetching and real-time updates.
 
   const handleMarkAsRead = async (notificationId: number) => {
     try {
@@ -57,6 +36,7 @@ const NotificationList: React.FC = () => {
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
+      // This now updates the GLOBAL notifications list
       setNotifications((prev) =>
         prev.map((notif) =>
           notif.notification_id === notificationId
@@ -65,8 +45,7 @@ const NotificationList: React.FC = () => {
         )
       );
     } catch (err) {
-      setError(t('notificationList.errors.markAsReadFailed'));
-      console.error("❌ Error marking as read:", err);
+      console.error("Error marking as read:", err);
     }
   };
 
@@ -75,18 +54,17 @@ const NotificationList: React.FC = () => {
       await axios.delete(`${BACKEND_URL}/api/notifications/${notificationId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
+      // This now updates the GLOBAL notifications list
       setNotifications((prev) =>
         prev.filter((notif) => notif.notification_id !== notificationId)
       );
     } catch (err) {
-      setError(t('notificationList.errors.deleteFailed'));
-      console.error("❌ Error deleting notification:", err);
+      console.error("Error deleting notification:", err);
     }
   };
 
-  if (loading) return <div>{t('notificationList.status.loading')}</div>;
-  if (error) return <div style={{ color: "red" }}>{error}</div>;
-
+  // We no longer need the 'loading' or 'error' checks here.
+  // The context provides the list as soon as you log in.
   return (
     <div className="notification-list">
       <h2>{t('notificationList.title')}</h2>
@@ -106,8 +84,7 @@ const NotificationList: React.FC = () => {
                     i18nKey={notif.message_key}
                     values={{ ...notif.message_params }}
                     components={{
-                      // This is the only change: <a> to <Link>
-                      a: <Link to={notif.message_params.artistProfileLink || notif.message_params.chatLink || '#'} />,
+                      a: <Link to={notif.message_params.profileLink || notif.message_params.chatLink || '#'} />,
                     }}
                   />
                 ) : (

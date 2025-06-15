@@ -1,17 +1,17 @@
 // src/components/NotificationItem.tsx
 import React from "react";
 import { Trans } from "react-i18next";
-import { Link } from "react-router-dom"; // <-- STEP 1: Import Link
+import { Link } from "react-router-dom";
 
-// This defines what a 'notification' looks like now.
-// It can handle both old and new types.
+// Update the interface to include the generic 'profileLink'
 interface NotificationItemProps {
   notif: {
-    message?: string; // For old notifications
-    message_key?: string; // For new notifications
-    message_params?: { // The data for new notifications
+    message?: string;
+    message_key?: string;
+    message_params?: {
       artistProfileLink?: string;
       chatLink?: string;
+      profileLink?: string; // <-- Add this new property
       [key: string]: any;
     };
   };
@@ -21,20 +21,19 @@ const NotificationItem: React.FC<NotificationItemProps> = ({ notif }) => {
   return (
     <div className="notification-item" style={{ marginBottom: "10px" }}>
       
-      {/* If the notification has a 'message_key', use the new safe way */}
       {notif.message_key ? (
         <Trans
           i18nKey={notif.message_key} 
           values={notif.message_params}
           components={{
-            // --- STEP 2: Change <a> to <Link> and href to 'to' ---
+            // --- This is the only line that changes ---
+            // Update the link to check for all possible link types
             a: (
-              <Link to={notif.message_params?.artistProfileLink || notif.message_params?.chatLink || '#'} />
+              <Link to={notif.message_params?.chatLink || notif.message_params?.profileLink || notif.message_params?.artistProfileLink || '#'} />
             ),
           }}
         />
       ) : (
-        /* Otherwise, just show the old message as plain, safe text */
         <span>{notif.message}</span>
       )}
     </div>
