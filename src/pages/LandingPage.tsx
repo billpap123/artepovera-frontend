@@ -16,26 +16,7 @@ const landingPageStyles = `
     line-height: 1.6;
     background-color: #fdfbf7; /* Off-white base background */
   }
-    /*
-  ADD THIS ENTIRE BLOCK TO YOUR landingPageStyles
-*/
-
-/* --- Language Switcher Styles --- */
-
-.language-switcher {
-  position: absolute;
-  top: 25px;
-  right: 25px;
-  z-index: 10; /* Ensure it's on top of other content */
-}
-
-.language-switcher-select {
-  /* --- Appearance and Colors --- */
-  background-color: rgba(255, 255, 255, 0.15); /* Semi-transparent white */
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  border-radius: 8px;
-  padding: 8px 30px 8px 12px; /* Top, Right, Bottom, Left padding */
+   
   
   /* --- Font and Cursor --- */
   font-family: 'Nunito', sans-serif;
@@ -58,15 +39,6 @@ const landingPageStyles = `
   transition: background-color 0.2s ease;
 }
 
-.language-switcher-select:hover {
-  background-color: rgba(255, 255, 255, 0.25); /* Slightly more opaque on hover */
-}
-
-/* Styling for the dropdown options themselves */
-.language-switcher-select option {
-  background-color: #4d4033; /* Dark brown background for the dropdown list */
-  color: white;
-}
 
   /* --- Hero Section --- */
   .hero-section {
