@@ -80,101 +80,78 @@
 
 /* This is the main class for any card that needs a background image. */
 /* It provides the text styling and the dark overlay. */
-.image-link-card {
-  min-height: 180px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  padding: 20px;
-  color: white;
-  background-size: cover;
-  background-position: center;
-  text-decoration: none; /* Remove underline from links */
-}
 
-/* This class applies the dark overlay effect */
-.image-link-card {
-  background-blend-mode:lighten;
-  min-height: 180px; /* A good height for these cards */
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  padding: 20px;
-  overflow: hidden;
-  color: rgb(255, 193, 8);
-  
-  /* --- IMPORTANT: Use the same map background image --- */
-  background-image: url('/images/map-background.jpg'); /* <-- Make sure this path is correct */
-  background-size: cover;
-  background-position: center;
-}
-
-/* Hover effect for the overlay */
-.image-link-card:hover::before {
-  background-color: rgba(44, 62, 80, 0.65);
-}
-
-/* This wrapper ensures the text and icons are on top of the overlay */
-.image-link-card div {
-  position: relative;
-  z-index: 2;
-}
-
-/* Text styling for the image cards */
-.image-link-card h3 {
-  font-size: 1.5rem;
-  margin-bottom: 8px;
-  color: #34495e;
-}
-
-.image-link-card p {
-  font-size: 1rem;
-  color: #95a5a6;
-  opacity: 0.9;
-  margin: 0;
-}
-
-/* Use these specific classes to set the background image */
-/* Step 1: Update your existing class */
-.card-bg-map {
-  min-height: 180px;
-  position: relative; /* This is required for the overlay */
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: baseline;
-  text-align: left;
-  padding: 20px;
-  overflow: hidden;
-  color: #FFF; /* Use pure white for max contrast */
-  background-image: url(/images/map-xta.png);
-  background-size: cover;
-  background-position: center;
-  z-index: 1; /* Make sure the text is on top of the overlay */
-}
-
-/* Step 2: Add this new block to create the overlay */
-.card-bg-map::before {
-  content: ''; /* Required for pseudo-elements */
-  position: absolute; /* Position it relative to the .card-bg-map */
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.4); /* The dark overlay (40% black) */
-  z-index: 0; /* Place the overlay behind the text */
-}
 
 .card-bg-jobs {
   background-color: white;
   color: #95a5a6;
 }
 
+/* PASTE THIS ENTIRE BLOCK INTO YOUR MainPage.css FILE */
+
+/* Main container for the map card */
+.card-bg-map {
+  min-height: 180px;
+  position: relative; /* This is essential for the overlay to work */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: baseline; /* Aligns text to the left */
+  text-align: left;
+  padding: 25px;
+  overflow: hidden;
+  border-radius: 12px; /* To match your other cards */
+  
+  /* Set the background image */
+  background-image: url(/images/map-xta.png);
+  background-size: cover;
+  background-position: center;
+  
+  /* We will set text styles on the text elements directly */
+  z-index: 1; /* This keeps the content on top of the overlay */
+}
+
+/* This creates the dark overlay on top of the image */
+.card-bg-map::before {
+  content: ''; /* This is required */
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  
+  /* The dark layer. 45% black. Adjust the last number (0.45) to make it darker or lighter. */
+  background-color: rgba(0, 0, 0, 0.45);
+  
+  z-index: -1; /* Place the overlay BEHIND the text */
+  transition: background-color 0.3s ease; /* Adds a nice hover effect */
+}
+
+/* Make the overlay a little darker when you hover over the card */
+.card-bg-map:hover::before {
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+/* --- Styling for the text itself --- */
+
+/* This targets BOTH the h3 and p tags inside the map card */
+.card-bg-map h3, .card-bg-map p {
+  color: #FFFFFF; /* Force text to be pure white */
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7); /* Add a strong shadow to lift text off the background */
+}
+
+/* Style the main title */
+.card-bg-map h3 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+/* Style the subtitle */
+.card-bg-map p {
+  font-size: 1.1rem;
+  margin: 0;
+}
 /* --- END OF FIX --- */
 
 
