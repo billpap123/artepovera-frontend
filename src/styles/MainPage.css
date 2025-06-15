@@ -158,7 +158,7 @@
   This styles the new icons on the cards with background images
 */
 .card-bg-icon {
-  color: #FFFFFF; /* Makes the icon pure white */
+  color: #C96A50; /* Makes the icon pure white */
   flex-shrink: 0; /* Prevents the icon from shrinking */
   
   /* This adds a subtle shadow to the icon itself, making it pop */
@@ -170,7 +170,7 @@
   flex-direction: column; /* Stack icon and text vertically */
   align-items: center;   /* Center them horizontally */
   justify-content: center; /* Center them vertically */
-  text-align: center;
+  text-align: left;
   gap: 15px; /* Add some space between the icon and the text */
 }
 
