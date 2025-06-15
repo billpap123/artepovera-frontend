@@ -4,6 +4,8 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { UserProvider, useUserContext } from "./context/UserContext"; // Correct import
 
 // Page imports
+import ScrollToTop from './components/ScrollToTop';
+
 import EditJobPage from './pages/EditJobPage'; // <--- IMPORT THE NEW PAGE
 import JobDetailPage from './pages/JobDetailPage'; // Make sure this page is imported
 import MyApplicationsPage from './pages/MyApplicationsPage';
@@ -45,6 +47,9 @@ const AppContent = () => {
   const loggedInUserIdForRoutes = contextLoggedInUserId; // Type: number | null
 
   return (
+    <>
+      <ScrollToTop />
+
     <Routes>
       {/* Initial navigation based on token presence */}
       <Route
@@ -109,6 +114,7 @@ const AppContent = () => {
         element={<Navigate to={token ? "/main" : "/"} replace />} // Navigate to landing if no token, else to main
       />
     </Routes>
+    </>
   );
 };
 
@@ -117,6 +123,7 @@ const App = () => {
     <UserProvider> {/* UserProvider wraps AppContent, so useUserContext works inside */}
       <AppContent />
     </UserProvider>
+    
   );
 };
 
