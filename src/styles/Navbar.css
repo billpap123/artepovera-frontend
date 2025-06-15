@@ -307,6 +307,7 @@
   align-items: center;
   gap: 5px;
   margin-left: 15px; /* Adds some space from the logout button */
+  position: static;
 }
 
 .language-switcher button {
