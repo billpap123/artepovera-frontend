@@ -2,6 +2,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from "react-i18next";
+import LanguageSwitcher from '../components/LanguageSwitcher';
 
 
 // --- Embedded CSS Styles for LandingPage (Earthy Tones) ---
@@ -357,28 +358,6 @@ const landingPageStyles = `
     }
 
 `;
-const LanguageSwitcher: React.FC = () => {
-  const { i18n } = useTranslation();
-
-  const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    i18n.changeLanguage(e.target.value);
-  };
-
-  return (
-    // Use a class for positioning
-    <div className="language-switcher">
-      {/* Add a class to the select element for styling */}
-      <select 
-        className="language-switcher-select" 
-        onChange={handleLanguageChange} 
-        defaultValue={i18n.language}
-      >
-        <option value="en">EN</option>
-        <option value="el">ΕL</option>
-      </select>
-    </div>
-  );
-};
 
 const LandingPage: React.FC = () => {
   const { t } = useTranslation();
@@ -386,14 +365,10 @@ const LandingPage: React.FC = () => {
   return (
     <>
       <style>{landingPageStyles}</style>
-
-      {/* The main container remains the same */}
+      
       <div className="landing-page-container">
-        
-        {/* The hero section now contains the language switcher */}
         <header className="hero-section">
-          
-          {/* --- MOVE THE SWITCHER HERE --- */}
+          {/* Use the new, imported LanguageSwitcher component */}
           <LanguageSwitcher />
 
           <video className="hero-video-background" autoPlay loop muted playsInline>
@@ -412,7 +387,6 @@ const LandingPage: React.FC = () => {
           </div>
         </header>
 
-        {/* The rest of your page content stays the same */}
         <section className="landing-section category-showcase-section">
           <h2>{t('landingPage.categories.title')}</h2>
           <p className="section-intro">{t('landingPage.categories.intro')}</p>
@@ -448,12 +422,5 @@ const LandingPage: React.FC = () => {
     </>
   );
 };
-
-
-
-
-
-
-
 
 export default LandingPage;

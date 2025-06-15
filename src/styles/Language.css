@@ -9,7 +9,7 @@
   
   .language-switcher-select {
     /* --- Appearance for Light Backgrounds --- */
-    background-color: #f5f0e8; /* Light beige */
+    background-color: #C96A50; /* Light beige */
     color: #4d4033; /* Dark brown text */
     border: 1px solid #dcd3c7; /* Light brown border */
     border-radius: 8px;
@@ -37,7 +37,8 @@
   }
   
   .language-switcher-select:hover {
-    background-color: #ede6da; /* Slightly darker beige on hover */
+      background-color: #C96A50; /* Light beige */
+    ; /* Slightly darker beige on hover */
   }
   
   /* Styling for the dropdown options */
