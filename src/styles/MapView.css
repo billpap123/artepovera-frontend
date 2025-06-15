@@ -137,3 +137,18 @@
   background-color: var(--accent-primary-dark, #804123);
   transform: scale(1.03);
 }
+
+/* --- ADDED: Responsive Adjustments --- */
+@media (max-width: 768px) {
+  .map-controls {
+    padding: 12px 15px; /* Reduce padding on mobile */
+  }
+
+  .map-title {
+    font-size: 1.2rem; /* Make the title smaller on mobile */
+  }
+
+  .leaflet-popup-content {
+    min-width: 180px; /* Allow popups to be a bit narrower on mobile */
+  }
+}

@@ -7,7 +7,7 @@ import { useUserContext } from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import "../styles/ArtistProfile.css";
-import { FaFilePdf } from 'react-icons/fa';
+import { FaFilePdf, FaEnvelope, FaKey, FaExclamationTriangle } from 'react-icons/fa';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Upload, Trash2 } from 'lucide-react';
@@ -67,17 +67,27 @@ const formatDate = (dateString: string | undefined | null): string => {
 const ArtistProfile: React.FC = () => {
   // STEP 2: Initialize the hook to get the 't' function
   const { t } = useTranslation();
-  const { userId, setUserId, artistId, setArtistId } = useUserContext();
+  const { userId, setUserId, artistId, setArtistId, setUserType, setFullname } = useUserContext();
 
   // Profile State
   const [bio, setBio] = useState("");
   const [profilePicture, setProfilePicture] = useState<string | null>(null);
   const [isStudent, setIsStudent] = useState(false);
   const [profileUserName, setProfileUserName] = useState("");
+  const [currentEmail, setCurrentEmail] = useState("");
 
   // Editing State
   const [newBio, setNewBio] = useState("");
   const [newProfilePicFile, setNewProfilePicFile] = useState<File | null>(null);
+
+  // --- NEW: Account Settings State ---
+  const [newEmail, setNewEmail] = useState("");
+  const [confirmEmail, setConfirmEmail] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [accountActionLoading, setAccountActionLoading] = useState(false);
+
 
   // CV State
   const [cvUrl, setCvUrl] = useState<string | null>(null);
@@ -114,8 +124,9 @@ const ArtistProfile: React.FC = () => {
         if (!token) { alert("Authentication required."); if (isMounted) navigate("/login"); return; }
         const profileResponse = await axios.get(`${BACKEND_URL}/api/users/me`, { headers: { Authorization: `Bearer ${token}` } });
         if (!isMounted) return;
-        const { user_id, artist, fullname } = profileResponse.data;
+        const { user_id, artist, fullname, email } = profileResponse.data;
         setProfileUserName(fullname || "");
+        setCurrentEmail(email || "");
         if (!userId) setUserId(user_id);
         if (artist && artist.artist_id) {
           setArtistId(artist.artist_id);
@@ -146,6 +157,56 @@ const ArtistProfile: React.FC = () => {
     fetchProfileAndData();
     return () => { isMounted = false; };
   }, [userId, setUserId, setArtistId, BACKEND_URL, navigate]);
+
+  // --- NEW: Account Action Handlers ---
+  const handleEmailChange = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newEmail !== confirmEmail) {
+      alert(t('artistProfile.account.emailMatchError'));
+      return;
+    }
+    setAccountActionLoading(true);
+    // TODO: Implement backend endpoint for this
+    console.log("Attempting to change email to:", newEmail);
+    alert(t('artistProfile.account.featureNotImplemented'));
+    setAccountActionLoading(false);
+  };
+  
+  const handlePasswordChange = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newPassword !== confirmNewPassword) {
+      alert(t('artistProfile.account.passwordMatchError'));
+      return;
+    }
+    if (newPassword.length < 6) {
+        alert(t('artistProfile.account.passwordLengthError'));
+        return;
+    }
+    setAccountActionLoading(true);
+    // TODO: Implement backend endpoint for this
+    console.log("Attempting to change password.");
+    alert(t('artistProfile.account.featureNotImplemented'));
+    setAccountActionLoading(false);
+  };
+  
+  const handleDeleteAccount = async () => {
+    const confirmationText = t('artistProfile.account.deleteConfirmText');
+    if (window.confirm(confirmationText)) {
+      const password = prompt(t('artistProfile.account.deletePasswordPrompt'));
+      if (password) {
+        setAccountActionLoading(true);
+        // TODO: Implement backend endpoint for this
+        console.log("Attempting to delete account.");
+        alert(t('artistProfile.account.featureNotImplemented'));
+        // On success, you would clear context and local storage, then navigate
+        // setUserId(null); setUserType(null); setFullname(null); etc.
+        // localStorage.clear();
+        // navigate('/');
+        setAccountActionLoading(false);
+      }
+    }
+  };
+
 
   const handleEditToggle = () => {
     setIsEditing(!isEditing);
@@ -244,27 +305,24 @@ const ArtistProfile: React.FC = () => {
     }
   };
   
-  // --- NEW: CV Download Handler ---
   const handleCvDownload = async (url: string | null) => {
     if (!url) return;
     try {
       const response = await axios.get(url, {
-        responseType: 'blob', // Important to get the file as a blob
+        responseType: 'blob',
       });
-      // Create a link element, set the download attribute, and trigger a click
       const link = document.createElement('a');
       link.href = window.URL.createObjectURL(new Blob([response.data]));
-      link.setAttribute('download', 'artist-cv.pdf'); // Set the desired file name
+      link.setAttribute('download', 'artist-cv.pdf');
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      window.URL.revokeObjectURL(link.href); // Clean up the object URL
+      window.URL.revokeObjectURL(link.href);
     } catch (error) {
       console.error("Error downloading CV:", error);
       alert("Could not download the CV. Please try again.");
     }
   };
-  // --- END: CV Download Handler ---
 
   const handleCvDelete = async () => {
     if (!cvUrl) { alert("No CV to remove."); return; }
@@ -289,9 +347,19 @@ const ArtistProfile: React.FC = () => {
   const interactionReviews = useMemo(() => reviews.filter((r: ReviewData) => r.specific_answers?.dealMade === 'no'), [reviews]);
 
   if (loading) { return (<> <Navbar /> <div className="profile-container artist-profile-container loading-profile"> <p>Loading artist profile...</p> </div> </>); }
+  
+  // --- THIS IS THE FIX ---
   if (error && !isEditing && !saving && !deleting && !cvProcessing) {
-    return (<> <Navbar /> <div className="profile-container artist-profile-container error-profile"> <p className="error-message">{error}</p> </div> </>);
+    return (
+      <>
+        <Navbar />
+        <div className="profile-container artist-profile-container error-profile">
+          <p className="error-message">{error}</p>
+        </div>
+      </>
+    );
   }
+  // --- END OF FIX ---
 
   return (
     <>
@@ -340,7 +408,6 @@ const ArtistProfile: React.FC = () => {
                         <>
                             <DisplayStars rating={averageRating} />
                             <span className="rating-value">{averageRating.toFixed(1)}</span>
-                            {/* Pluralization handled by i18next */}
                             <span className="review-count">({t('artistProfile.projectReviews', { count: completedReviews.length })})</span>
                         </>
                     ) : ( <span className="no-rating">{t('artistProfile.noProjectReviews')}</span> )}
@@ -424,30 +491,61 @@ const ArtistProfile: React.FC = () => {
 
           ) : (
             <div className="edit-form">
-              <div className="form-field-group"> <label htmlFor="artistBio">{t('artistProfile.shortDescription')}</label> <textarea id="artistBio" value={newBio} onChange={(e) => setNewBio(e.target.value)} rows={5} className="bio-input" /> </div>
-              <div className="form-field-group cv-edit-section">
-                <label htmlFor="cvUpload" className="cv-section-title">{t('artistProfile.updateCvTitle')}</label>
-                <label htmlFor="cvUpload" className="cv-upload-label action-btn">
-                  {newCvFile ? `Selected: ${newCvFile.name.substring(0, 25)}${newCvFile.name.length > 25 ? '...' : ''}` : (cvUrl ? t('artistProfile.changeCvFile') : t('artistProfile.chooseCvFile'))}
-                </label>
-                <input id="cvUpload" type="file" accept="application/pdf" onChange={handleCvFileChange} style={{ display: 'none' }} className="file-input-hidden" />
-                {newCvFile && (<button type="button" onClick={handleCvUpload} disabled={cvProcessing || saving || deleting} className="action-btn upload-cv-btn" style={{ marginTop: '10px' }}> {cvProcessing ? t('artistProfile.uploadingCv') : t('artistProfile.uploadSelectedCv')} </button>)}
-                {cvUrl && (
-                  <div className="current-cv-display">
-                    <span>{t('artistProfile.currentCv')} <FaFilePdf className="pdf-icon-inline" /> 
-                      <button onClick={() => handleCvDownload(cvUrl)} className="cv-link-inline">
-                        Download
-                      </button>
-                    </span>
-                    {!newCvFile && (<button type="button" onClick={handleCvDelete} disabled={cvProcessing || saving || deleting} className="action-btn delete-cv-btn danger"> {cvProcessing ? t('artistProfile.removingCv') : t('artistProfile.removeCv')} </button>)}
-                  </div>
-                )}
-                {!cvUrl && !newCvFile && <p className="no-cv-message-edit">{t('artistProfile.noCvEdit')}</p>}
-              </div>
-              <div className="btn-row form-actions">
-                <button className="save-btn submit-btn" onClick={handleSaveChanges} disabled={saving || deleting || cvProcessing}> {saving ? t('artistProfile.savingProfile') : t('artistProfile.saveChanges')} </button>
-                <button type="button" className="cancel-btn" onClick={handleEditToggle} disabled={saving || deleting || cvProcessing}> {t('artistProfile.doneEditing')} </button>
-              </div>
+                {/* --- PROFILE EDITING --- */}
+                <div className="form-field-group">
+                    <label htmlFor="artistBio">{t('artistProfile.shortDescription')}</label>
+                    <textarea id="artistBio" value={newBio} onChange={(e) => setNewBio(e.target.value)} rows={5} className="bio-input" />
+                </div>
+                <div className="form-field-group cv-edit-section">
+                    <label htmlFor="cvUpload" className="cv-section-title">{t('artistProfile.updateCvTitle')}</label>
+                    <label htmlFor="cvUpload" className="cv-upload-label action-btn">{newCvFile ? `Selected: ${newCvFile.name.substring(0, 25)}${newCvFile.name.length > 25 ? '...' : ''}` : (cvUrl ? t('artistProfile.changeCvFile') : t('artistProfile.chooseCvFile'))}</label>
+                    <input id="cvUpload" type="file" accept="application/pdf" onChange={handleCvFileChange} style={{ display: 'none' }} className="file-input-hidden" />
+                    {newCvFile && (<button type="button" onClick={handleCvUpload} disabled={cvProcessing || saving || deleting} className="action-btn upload-cv-btn" style={{ marginTop: '10px' }}> {cvProcessing ? t('artistProfile.uploadingCv') : t('artistProfile.uploadSelectedCv')} </button>)}
+                    {cvUrl && (<div className="current-cv-display"><span>{t('artistProfile.currentCv')} <FaFilePdf className="pdf-icon-inline" /><button onClick={() => handleCvDownload(cvUrl)} className="cv-link-inline">Download</button></span>{!newCvFile && (<button type="button" onClick={handleCvDelete} disabled={cvProcessing || saving || deleting} className="action-btn delete-cv-btn danger"> {cvProcessing ? t('artistProfile.removingCv') : t('artistProfile.removeCv')} </button>)}</div>)}
+                    {!cvUrl && !newCvFile && <p className="no-cv-message-edit">{t('artistProfile.noCvEdit')}</p>}
+                </div>
+                <div className="btn-row form-actions">
+                    <button className="save-btn submit-btn" onClick={handleSaveChanges} disabled={saving || deleting || cvProcessing || accountActionLoading}> {saving ? t('artistProfile.savingProfile') : t('artistProfile.saveChanges')} </button>
+                </div>
+
+                {/* --- NEW ACCOUNT SETTINGS SECTION --- */}
+                <div className="account-settings-section">
+                    <hr className="section-divider" />
+                    <h4>{t('artistProfile.account.title')}</h4>
+
+                    {/* Change Email Form */}
+                    <form onSubmit={handleEmailChange} className="account-form">
+                        <label className="account-form-label"><FaEnvelope /> {t('artistProfile.account.changeEmail')}</label>
+                        <p className="current-email-display">{t('artistProfile.account.currentEmail')}: <strong>{currentEmail}</strong></p>
+                        <div className="form-field-group">
+                            <input type="email" placeholder={t('artistProfile.account.newEmailPlaceholder')} value={newEmail} onChange={(e) => setNewEmail(e.target.value)} required />
+                            <input type="email" placeholder={t('artistProfile.account.confirmEmailPlaceholder')} value={confirmEmail} onChange={(e) => setConfirmEmail(e.target.value)} required />
+                        </div>
+                        <button type="submit" className="action-btn" disabled={accountActionLoading || saving}>{t('artistProfile.account.updateEmailButton')}</button>
+                    </form>
+
+                    {/* Change Password Form */}
+                    <form onSubmit={handlePasswordChange} className="account-form">
+                        <label className="account-form-label"><FaKey /> {t('artistProfile.account.changePassword')}</label>
+                        <div className="form-field-group">
+                            <input type="password" placeholder={t('artistProfile.account.currentPasswordPlaceholder')} value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} required />
+                            <input type="password" placeholder={t('artistProfile.account.newPasswordPlaceholder')} value={newPassword} onChange={(e) => setNewPassword(e.target.value)} required />
+                            <input type="password" placeholder={t('artistProfile.account.confirmNewPasswordPlaceholder')} value={confirmNewPassword} onChange={(e) => setConfirmNewPassword(e.target.value)} required />
+                        </div>
+                        <button type="submit" className="action-btn" disabled={accountActionLoading || saving}>{t('artistProfile.account.updatePasswordButton')}</button>
+                    </form>
+                    
+                    {/* Delete Account Section */}
+                    <div className="account-form delete-account-section">
+                        <label className="account-form-label danger-text"><FaExclamationTriangle /> {t('artistProfile.account.dangerZone')}</label>
+                        <p>{t('artistProfile.account.deleteWarning')}</p>
+                        <button type="button" className="action-btn danger" onClick={handleDeleteAccount} disabled={accountActionLoading || saving}>{t('artistProfile.account.deleteAccountButton')}</button>
+                    </div>
+                </div>
+
+                <div className="btn-row form-actions">
+                    <button type="button" className="cancel-btn" onClick={handleEditToggle} disabled={saving || deleting || cvProcessing || accountActionLoading}> {t('artistProfile.doneEditing')} </button>
+                </div>
             </div>
           )}
         </div>

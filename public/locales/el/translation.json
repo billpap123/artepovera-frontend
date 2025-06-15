@@ -31,7 +31,29 @@
     "noCvEdit": "Δεν έχει ανέβει ακόμη βιογραφικό. επιλέξτε ένα παραπάνω.",
     "saveChanges": "Αποθήκευση αλλαγών",
     "savingProfile": "Αποθήκευση προφίλ...",
-    "doneEditing": "Τέλος επεξεργασίας"
+    "doneEditing": "Τέλος επεξεργασίας",
+    "account": {
+      "title": "Ρυθμίσεις Λογαριασμού",
+      "changeEmail": "Αλλαγή Email Λογαριασμού",
+      "currentEmail": "Τρέχον Email",
+      "newEmailPlaceholder": "Νέο Email",
+      "confirmEmailPlaceholder": "Επιβεβαίωση Νέου Email",
+      "updateEmailButton": "Ενημέρωση Email",
+      "emailMatchError": "Τα νέα email δεν ταιριάζουν.",
+      "changePassword": "Αλλαγή Κωδικού Πρόσβασης",
+      "currentPasswordPlaceholder": "Τρέχων Κωδικός",
+      "newPasswordPlaceholder": "Νέος Κωδικός (τουλάχιστον 6 χαρακτήρες)",
+      "confirmNewPasswordPlaceholder": "Επιβεβαίωση Νέου Κωδικού",
+      "updatePasswordButton": "Ενημέρωση Κωδικού",
+      "passwordMatchError": "Οι νέοι κωδικοί δεν ταιριάζουν.",
+      "passwordLengthError": "Ο κωδικός πρόσβασης πρέπει να έχει τουλάχιστον 6 χαρακτήρες.",
+      "dangerZone": "Επικίνδυνη Ζώνη",
+      "deleteWarning": "Αυτή η ενέργεια είναι μόνιμη και δεν μπορεί να αναιρεθεί. Όλα τα δεδομένα σας, συμπεριλαμβανομένων των αγγελιών εργασίας, θα διαγραφούν.",
+      "deleteAccountButton": "Διαγραφή του Λογαριασμού μου",
+      "deleteConfirmText": "Είστε απολύτως βέβαιοι ότι θέλετε να διαγράψετε τον λογαριασμό σας; Αυτό είναι μη αναστρέψιμο.",
+      "deletePasswordPrompt": "Για επιβεβαίωση, παρακαλώ εισάγετε τον τρέχοντα κωδικό σας:",
+      "featureNotImplemented": "Αυτή η λειτουργία δεν έχει υλοποιηθεί πλήρως ακόμα."
+    }
   },
   "chatPage": {
     "sidebar": {
@@ -147,7 +169,30 @@
     "bioLabel": "Σύντομη Περιγραφή:",
     "saveChanges": "Αποθήκευση αλλαγών",
     "saving": "Αποθήκευση...",
-    "cancel": "Άκυρο"
+    "cancel": "Άκυρο",
+    "account": {
+      "title": "Ρυθμίσεις Λογαριασμού",
+      "changeEmail": "Αλλαγή Email Λογαριασμού",
+      "currentEmail": "Τρέχον Email",
+      "newEmailPlaceholder": "Νέο Email",
+      "confirmEmailPlaceholder": "Επιβεβαίωση Νέου Email",
+      "updateEmailButton": "Ενημέρωση Email",
+      "emailMatchError": "Τα νέα email δεν ταιριάζουν.",
+      "changePassword": "Αλλαγή Κωδικού Πρόσβασης",
+      "currentPasswordPlaceholder": "Τρέχων Κωδικός",
+      "newPasswordPlaceholder": "Νέος Κωδικός (τουλάχιστον 6 χαρακτήρες)",
+      "confirmNewPasswordPlaceholder": "Επιβεβαίωση Νέου Κωδικού",
+      "updatePasswordButton": "Ενημέρωση Κωδικού",
+      "passwordMatchError": "Οι νέοι κωδικοί δεν ταιριάζουν.",
+      "passwordLengthError": "Ο κωδικός πρόσβασης πρέπει να έχει τουλάχιστον 6 χαρακτήρες.",
+      "dangerZone": "Επικίνδυνη Ζώνη",
+      "deleteWarning": "Αυτή η ενέργεια είναι μόνιμη και δεν μπορεί να αναιρεθεί. Όλα τα δεδομένα σας, συμπεριλαμβανομένων των αγγελιών εργασίας, θα διαγραφούν.",
+      "deleteAccountButton": "Διαγραφή του Λογαριασμού μου",
+      "deleteConfirmText": "Είστε απολύτως βέβαιοι ότι θέλετε να διαγράψετε τον λογαριασμό σας; Αυτό είναι μη αναστρέψιμο.",
+      "deletePasswordPrompt": "Για επιβεβαίωση, παρακαλώ εισάγετε τον τρέχοντα κωδικό σας:",
+      "featureNotImplemented": "Αυτή η λειτουργία δεν έχει υλοποιηθεί πλήρως ακόμα."
+    }
+  
   },
   "jobDetailPage": {
     "sidebar": {

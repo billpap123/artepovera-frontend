@@ -31,7 +31,30 @@
     "noCvEdit": "No CV uploaded yet. choose one above.",
     "saveChanges": "Save changes",
     "savingProfile": "Saving profile...",
-    "doneEditing": "Done editing"
+    "doneEditing": "Done editing",
+    "account": {
+      "title": "Ρυθμίσεις Λογαριασμού",
+      "changeEmail": "Αλλαγή Email Λογαριασμού",
+      "currentEmail": "Τρέχον Email",
+      "newEmailPlaceholder": "Νέο Email",
+      "confirmEmailPlaceholder": "Επιβεβαίωση Νέου Email",
+      "updateEmailButton": "Ενημέρωση Email",
+      "emailMatchError": "Τα νέα email δεν ταιριάζουν.",
+      "changePassword": "Αλλαγή Κωδικού Πρόσβασης",
+      "currentPasswordPlaceholder": "Τρέχων Κωδικός",
+      "newPasswordPlaceholder": "Νέος Κωδικός (τουλάχιστον 6 χαρακτήρες)",
+      "confirmNewPasswordPlaceholder": "Επιβεβαίωση Νέου Κωδικού",
+      "updatePasswordButton": "Ενημέρωση Κωδικού",
+      "passwordMatchError": "Οι νέοι κωδικοί δεν ταιριάζουν.",
+      "passwordLengthError": "Ο κωδικός πρόσβασης πρέπει να έχει τουλάχιστον 6 χαρακτήρες.",
+      "dangerZone": "Επικίνδυνη Ζώνη",
+      "deleteWarning": "Αυτή η ενέργεια είναι μόνιμη και δεν μπορεί να αναιρεθεί. Όλα τα δεδομένα σας, συμπεριλαμβανομένων των αγγελιών εργασίας, θα διαγραφούν.",
+      "deleteAccountButton": "Διαγραφή του Λογαριασμού μου",
+      "deleteConfirmText": "Είστε απολύτως βέβαιοι ότι θέλετε να διαγράψετε τον λογαριασμό σας; Αυτό είναι μη αναστρέψιμο.",
+      "deletePasswordPrompt": "Για επιβεβαίωση, παρακαλώ εισάγετε τον τρέχοντα κωδικό σας:",
+      "featureNotImplemented": "Αυτή η λειτουργία δεν έχει υλοποιηθεί πλήρως ακόμα."
+    }
+  
   },
   "chatPage": {
     "sidebar": {
@@ -147,7 +170,30 @@
     "bioLabel": "Short Description:",
     "saveChanges": "Save changes",
     "saving": "Saving...",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "account": {
+      "title": "Account Settings",
+      "changeEmail": "Change Account Email",
+      "currentEmail": "Current Email",
+      "newEmailPlaceholder": "New Email",
+      "confirmEmailPlaceholder": "Confirm New Email",
+      "updateEmailButton": "Update Email",
+      "emailMatchError": "The new emails do not match.",
+      "changePassword": "Change Password",
+      "currentPasswordPlaceholder": "Current Password",
+      "newPasswordPlaceholder": "New Password (min 6 characters)",
+      "confirmNewPasswordPlaceholder": "Confirm New Password",
+      "updatePasswordButton": "Update Password",
+      "passwordMatchError": "The new passwords do not match.",
+      "passwordLengthError": "Password must be at least 6 characters long.",
+      "dangerZone": "Danger Zone",
+      "deleteWarning": "This action is permanent and cannot be undone. All your data, including job postings, will be deleted.",
+      "deleteAccountButton": "Delete My Account",
+      "deleteConfirmText": "Are you absolutely sure you want to delete your account? This is irreversible.",
+      "deletePasswordPrompt": "To confirm, please enter your current password:",
+      "featureNotImplemented": "This feature is not yet fully implemented."
+    }
+  
   },
   "jobDetailPage": {
     "sidebar": {

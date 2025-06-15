@@ -7,9 +7,8 @@ import Navbar from "../components/Navbar";
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Upload, Trash2 } from 'lucide-react';
+import { FaEnvelope, FaKey, FaExclamationTriangle } from 'react-icons/fa'; // <-- CORRECTED IMPORT
 import { useTranslation } from "react-i18next";
-
-
 import "../styles/EmployerProfile.css"; // Ensure this file exists and has styles
 
 // --- Review Interface---
@@ -20,7 +19,7 @@ interface Reviewer {
 }
 interface ReviewData {
   review_id: number;
-  overall_rating: number | null; // Can be null for "no deal" reviews
+  overall_rating: number | null;
   specific_answers?: {
     dealMade?: 'yes' | 'no';
     noDealPrimaryReason?: string;
@@ -45,7 +44,7 @@ const formatDate = (dateString: string | undefined | null): string => {
 // --- Star Display Component ---
 const DisplayStars = ({ rating }: { rating: number | null }) => {
   if (rating === null || typeof rating !== 'number' || rating <= 0) {
-    return null; // Return null to hide stars when there's no rating
+    return null;
   }
   const fullStars = Math.floor(rating);
   const halfStar = Math.round(rating * 2) % 2 !== 0 ? 1 : 0;
@@ -66,17 +65,27 @@ const DisplayStars = ({ rating }: { rating: number | null }) => {
 
 const EmployerProfile: React.FC = () => {
   const { t } = useTranslation();
+  const { userId, setUserId, employerId, setEmployerId, setUserType, setFullname } = useUserContext();
 
-  const { userId, setUserId, employerId, setEmployerId } = useUserContext();
-
-  // State for displaying & editing
+  // Profile State
   const [bio, setBio] = useState("");
   const [profilePicture, setProfilePicture] = useState<string | null>(null);
   const [profileUserName, setProfileUserName] = useState("");
+  const [currentEmail, setCurrentEmail] = useState("");
+
 
   // Data for editing
   const [newBio, setNewBio] = useState("");
   const [newProfilePicFile, setNewProfilePicFile] = useState<File | null>(null);
+
+  // --- NEW: Account Settings State ---
+  const [newEmail, setNewEmail] = useState("");
+  const [confirmEmail, setConfirmEmail] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
+  const [currentPasswordForConfirm, setCurrentPasswordForConfirm] = useState(""); // Renamed for clarity
+  const [accountActionLoading, setAccountActionLoading] = useState(false);
+
 
   // Loading states
   const [loading, setLoading] = useState(true);
@@ -90,11 +99,9 @@ const EmployerProfile: React.FC = () => {
   const [reviews, setReviews] = useState<ReviewData[]>([]);
   const [reviewsLoading, setReviewsLoading] = useState<boolean>(true);
 
-
   const navigate = useNavigate();
   const BACKEND_URL = import.meta.env.VITE_API_URL || "http://localhost:50001";
 
-  // Fetch Profile AND Ratings
   useEffect(() => {
     let isMounted = true;
     const fetchProfileAndRatings = async () => {
@@ -104,41 +111,44 @@ const EmployerProfile: React.FC = () => {
         if (!token) { alert("Authentication required."); navigate("/login"); return; }
 
         const profileResponse = await axios.get(`${BACKEND_URL}/api/users/me`, { headers: { Authorization: `Bearer ${token}` }, });
-        const { user_id, employer, fullname } = profileResponse.data;
-        let currentEmployerId = null;
+        const { user_id, employer, fullname, email } = profileResponse.data;
 
         if (isMounted) {
           setProfileUserName(fullname || "");
+          setCurrentEmail(email || "");
           if (!userId) setUserId(user_id);
           if (employer && employer.employer_id) {
             setEmployerId(employer.employer_id);
-            currentEmployerId = employer.employer_id;
             setBio(employer.bio || "");
             setProfilePicture(employer.profile_picture || null);
             setNewBio(employer.bio || "");
           } else { console.warn("Logged in user does not have an associated employer profile."); }
+        
+            const profileOwnerUserId = user_id;
+            if (profileOwnerUserId) {
+                const ratingPromise = axios.get(`${BACKEND_URL}/api/users/${profileOwnerUserId}/average-rating`);
+                const reviewsPromise = axios.get(`${BACKEND_URL}/api/users/${profileOwnerUserId}/reviews`);
+                const [ratingResponse, reviewsResponse] = await Promise.all([ratingPromise, reviewsPromise]);
+                if (isMounted) {
+                    setAverageRating(ratingResponse.data.averageRating);
+                    setReviewCount(ratingResponse.data.reviewCount);
+                    setReviews(reviewsResponse.data.reviews || []);
+                }
+            }
         }
-
-        const profileOwnerUserId = user_id;
-        if (profileOwnerUserId && isMounted) {
-          const ratingPromise = axios.get(`${BACKEND_URL}/api/users/${profileOwnerUserId}/average-rating`);
-          const reviewsPromise = axios.get(`${BACKEND_URL}/api/users/${profileOwnerUserId}/reviews`);
-          const [ratingResponse, reviewsResponse] = await Promise.all([ratingPromise, reviewsPromise]);
-          if (isMounted) {
-            setAverageRating(ratingResponse.data.averageRating);
-            setReviewCount(ratingResponse.data.reviewCount);
-            setReviews(reviewsResponse.data.reviews || []);
-          }
-        } else if (isMounted) { setAverageRating(null); setReviewCount(0); setReviews([]); }
-      } catch (error) { console.error("Error fetching profile or ratings:", error); /* setError("Failed to load profile data."); */ }
+      } catch (error) { console.error("Error fetching profile or ratings:", error); }
       finally { if (isMounted) { setLoading(false); setReviewsLoading(false); } }
     };
     fetchProfileAndRatings();
     return () => { isMounted = false; };
-  }, [userId, setUserId, setEmployerId, BACKEND_URL, navigate]);
+  }, [userId, setUserId, setEmployerId, navigate]);
 
+  const getImageUrl = (path?: string | null): string => {
+    if (!path) return '/default-profile.png';
+    if (path.startsWith('http')) return path;
+    return `${BACKEND_URL}/${path.replace(/^uploads\/uploads\//, 'uploads/')}`;
+  };
 
-  // --- Handler Functions ---
   const handleEditToggle = () => {
     setIsEditing(!isEditing);
     if (isEditing) { setNewBio(bio); setNewProfilePicFile(null); }
@@ -148,145 +158,108 @@ const EmployerProfile: React.FC = () => {
     const file = e.target.files ? e.target.files[0] : null;
     if (file && (file.type === "image/png" || file.type === "image/jpeg")) {
       setNewProfilePicFile(file);
-      console.log("[PIC CHANGE] New file selected:", file.name);
     } else {
       alert("Please upload a valid image file (PNG or JPG).");
       e.target.value = "";
     }
   };
 
-  // --- UPDATED handleSaveChanges with LOGS ---
   const handleSaveChanges = async () => {
-    console.log("[SAVE EMPLOYER - 1] handleSaveChanges called");
+    setSaving(true);
     try {
-      console.log("[SAVE EMPLOYER - 2] Setting saving = true");
-      setSaving(true);
       const token = localStorage.getItem("token");
-      console.log("[SAVE EMPLOYER - 3] Token fetched:", token ? "Exists" : "MISSING");
-      if (!token) {
-        alert("Authentication token not found.");
-        setSaving(false);
-        console.log("[SAVE EMPLOYER - !] Exiting: No token found");
-        return;
-      }
+      if (!token) { alert("Authentication token not found."); setSaving(false); return; }
 
       const formData = new FormData();
-      console.log("[SAVE EMPLOYER - 4] FormData created");
       formData.append("bio", newBio);
-      console.log("[SAVE EMPLOYER - 5] Appended bio:", newBio);
-
       if (newProfilePicFile) {
         formData.append("profile_picture", newProfilePicFile);
-        console.log("[SAVE EMPLOYER - 6] Appended profile picture file:", newProfilePicFile.name);
-      } else {
-        console.log("[SAVE EMPLOYER - 6] No new profile picture file selected.");
       }
 
-      const url = `${BACKEND_URL}/api/employers/profile`; // Correct Employer endpoint
-      console.log(`[SAVE EMPLOYER - 7] Preparing to POST to ${url}`);
-
+      const url = `${BACKEND_URL}/api/employers/profile`;
       const response = await axios.post(url, formData, { headers: { Authorization: `Bearer ${token}` } });
-
-      console.log("[SAVE EMPLOYER - 8] axios.post successful, response data:", response.data);
-      const updatedEmployerData = response.data?.employer; // Use 'employer' key
+      const updatedEmployerData = response.data?.employer;
 
       if (updatedEmployerData) {
-        console.log("[SAVE EMPLOYER - 9a] Updating state from response data");
         setBio(updatedEmployerData.bio || "");
         setProfilePicture(updatedEmployerData.profile_picture || null);
         setNewBio(updatedEmployerData.bio || "");
-      } else {
-        console.log("[SAVE EMPLOYER - 9b] Response missing employer data, using local state/re-fetching");
-        setBio(newBio);
-        if (newProfilePicFile) {
-          console.log("[SAVE EMPLOYER - 9c] Re-fetching user data after pic upload...");
-          const meResponse = await axios.get(`${BACKEND_URL}/api/users/me`, { headers: { Authorization: `Bearer ${token}` } });
-          setProfilePicture(meResponse.data?.employer?.profile_picture || null);
-        }
       }
       setNewProfilePicFile(null);
       alert("Profile updated successfully!");
       setIsEditing(false);
-      console.log("[SAVE EMPLOYER - 10] Success steps completed");
-
     } catch (error: any) {
-      console.error("[SAVE EMPLOYER - !!!] Error in handleSaveChanges catch block:", error);
-      if (error.response) {
-        console.error("[!!!] Axios Response Error Data:", error.response.data);
-        console.error("[!!!] Axios Response Error Status:", error.response.status);
-      } else if (error.request) {
-        console.error("[!!!] Axios Request Error (No Response):", error.request);
-      } else {
-        console.error('[!!!] Axios Error Message:', error.message);
-      }
-      const message = error.response?.data?.message || "Something went wrong saving profile.";
-      alert(message);
+      console.error("Error saving profile changes:", error);
+      alert(error.response?.data?.message || "Something went wrong saving profile.");
     } finally {
-      console.log("[SAVE EMPLOYER - 11] Entering finally block, setting saving = false");
       setSaving(false);
     }
   };
-  // --- END UPDATED handleSaveChanges ---
 
-  // --- UPDATED handleDeletePicture with LOGS ---
   const handleDeletePicture = async () => {
-    console.log("[DELETE EMPLOYER PIC - 1] handleDeletePicture called");
-    if (!window.confirm("Are you sure you want to delete your profile picture?")) {
-      console.log("[DELETE EMPLOYER PIC - !] User cancelled deletion.");
-      return;
-    }
-
-    console.log("[DELETE EMPLOYER PIC - 2] Setting deleting = true");
+    if (!window.confirm("Are you sure you want to delete your profile picture?")) return;
     setDeleting(true);
     try {
       const token = localStorage.getItem("token");
-      console.log("[DELETE EMPLOYER PIC - 3] Token fetched:", token ? "Exists" : "MISSING");
-      if (!token) {
-        alert("Authentication token not found.");
-        setDeleting(false);
-        console.log("[DELETE EMPLOYER PIC - !] Exiting: No token found");
-        return;
-      }
-
-      const url = `${BACKEND_URL}/api/employers/profile/picture`; // Correct Employer endpoint
-      console.log(`[DELETE EMPLOYER PIC - 4] Sending DELETE to ${url}`);
-
+      if (!token) { alert("Authentication token not found."); setDeleting(false); return; }
+      const url = `${BACKEND_URL}/api/employers/profile/picture`;
       await axios.delete(url, { headers: { Authorization: `Bearer ${token}` } });
-
-      console.log("[DELETE EMPLOYER PIC - 5] axios.delete successful");
-      setProfilePicture(null); // Set state to null
-      setNewProfilePicFile(null); // Clear any staged file
+      setProfilePicture(null);
+      setNewProfilePicFile(null);
       alert("Profile picture deleted successfully.");
-      console.log("[DELETE EMPLOYER PIC - 6] Success steps completed");
-
     } catch (error: any) {
-      console.error("[DELETE EMPLOYER PIC - !!!] Error deleting profile picture:", error);
-      if (error.response) {
-        console.error("[!!!] Axios Response Error Data:", error.response.data);
-        console.error("[!!!] Axios Response Error Status:", error.response.status);
-      } else if (error.request) {
-        console.error("[!!!] Axios Request Error (No Response):", error.request);
-      } else {
-        console.error('[!!!] Axios Error Message:', error.message);
-      }
-      const message = error.response?.data?.message || "Failed to delete profile picture.";
-      alert(message);
+      console.error("Error deleting profile picture:", error);
+      alert(error.response?.data?.message || "Failed to delete profile picture.");
     } finally {
-      console.log("[DELETE EMPLOYER PIC - 7] Entering finally block, setting deleting = false");
       setDeleting(false);
     }
   };
-  // --- END UPDATED handleDeletePicture ---
-  const completedReviews = useMemo(() => reviews.filter((r: ReviewData) => r.specific_answers?.dealMade !== 'no' && r.overall_rating), [reviews]);
-  const interactionReviews = useMemo(() => reviews.filter((r: ReviewData) => r.specific_answers?.dealMade === 'no'), [reviews]);
-
-  // --- FIX: Add getImageUrl helper function ---
-  const getImageUrl = (path?: string | null): string => {
-    if (!path) return '/default-profile.png';
-    if (path.startsWith('http')) return path;
-    return `${BACKEND_URL}/${path.replace(/^uploads\/uploads\//, 'uploads/')}`;
+  
+  // --- NEW: Account Action Handlers ---
+  const handleEmailChange = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newEmail !== confirmEmail) {
+      alert(t('employerProfile.account.emailMatchError'));
+      return;
+    }
+    setAccountActionLoading(true);
+    console.log("Attempting to change email to:", newEmail);
+    alert(t('employerProfile.account.featureNotImplemented'));
+    setAccountActionLoading(false);
+  };
+  
+  const handlePasswordChange = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newPassword !== confirmNewPassword) {
+      alert(t('employerProfile.account.passwordMatchError'));
+      return;
+    }
+    if (newPassword.length < 6) {
+        alert(t('employerProfile.account.passwordLengthError'));
+        return;
+    }
+    setAccountActionLoading(true);
+    console.log("Attempting to change password.");
+    alert(t('employerProfile.account.featureNotImplemented'));
+    setAccountActionLoading(false);
+  };
+  
+  const handleDeleteAccount = async () => {
+    const confirmationText = t('employerProfile.account.deleteConfirmText');
+    if (window.confirm(confirmationText)) {
+      const password = prompt(t('employerProfile.account.deletePasswordPrompt'));
+      if (password) {
+        setAccountActionLoading(true);
+        console.log("Attempting to delete account.");
+        alert(t('employerProfile.account.featureNotImplemented'));
+        setAccountActionLoading(false);
+      }
+    }
   };
 
+
+  const completedReviews = useMemo(() => reviews.filter((r: ReviewData) => r.specific_answers?.dealMade !== 'no' && r.overall_rating), [reviews]);
+  const interactionReviews = useMemo(() => reviews.filter((r: ReviewData) => r.specific_answers?.dealMade === 'no'), [reviews]);
 
   if (loading) {
     return (
@@ -317,20 +290,9 @@ const EmployerProfile: React.FC = () => {
                   <Upload size={16} />
                   {t('employerProfile.change')}
                 </label>
-                <input
-                  id="profilePicUpload"
-                  type="file"
-                  accept="image/png, image/jpeg"
-                  onChange={handleProfilePictureChange}
-                  className="hidden"
-                />
+                <input id="profilePicUpload" type="file" accept="image/png, image/jpeg" onChange={handleProfilePictureChange} className="hidden" />
                 {profilePicture && (
-                  <button
-                    type="button"
-                    className="flex items-center gap-2 delete-btn bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200 ease-in-out transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
-                    onClick={handleDeletePicture}
-                    disabled={deleting || saving}
-                  >
+                  <button type="button" className="flex items-center gap-2 delete-btn bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200 ease-in-out transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed" onClick={handleDeletePicture} disabled={deleting || saving}>
                     <Trash2 size={16} />
                     {deleting ? t('employerProfile.removing') : t('employerProfile.remove')}
                   </button>
@@ -355,7 +317,6 @@ const EmployerProfile: React.FC = () => {
             {!isEditing && (<button className="edit-btn" onClick={handleEditToggle}>{t('employerProfile.editProfile')}</button>)}
           </div>
         </div>
-
 
         {/* Main Profile Content */}
         <div className="profile-content">
@@ -389,9 +350,7 @@ const EmployerProfile: React.FC = () => {
                         </div>
                       ))}
                     </div>
-                  ) : (
-                    <p className="no-reviews">{t('employerProfile.noProjectReviewsReceived')}</p>
-                  )}
+                  ) : ( <p className="no-reviews">{t('employerProfile.noProjectReviewsReceived')}</p> )}
               </div>
 
               <div className="reviews-section profile-section">
@@ -409,21 +368,13 @@ const EmployerProfile: React.FC = () => {
                             </div>
                           </div>
                           <div className="review-comment">
-                            {review.specific_answers?.noDealPrimaryReason && (
-                              <p className="interaction-reason">
-                                <strong>{t('employerProfile.reason')}</strong> {review.specific_answers.noDealPrimaryReason}
-                              </p>
-                            )}
-                            {review.specific_answers?.comment && (
-                              <p><strong>{t('employerProfile.comment')}</strong> "{review.specific_answers.comment}"</p>
-                            )}
+                            {review.specific_answers?.noDealPrimaryReason && ( <p className="interaction-reason"><strong>{t('employerProfile.reason')}</strong> {review.specific_answers.noDealPrimaryReason}</p> )}
+                            {review.specific_answers?.comment && ( <p><strong>{t('employerProfile.comment')}</strong> "{review.specific_answers.comment}"</p> )}
                           </div>
                         </div>
                       ))}
                     </div>
-                  ) : (
-                    <p className="no-reviews">{t('employerProfile.noInteractionFeedback')}</p>
-                  )}
+                  ) : ( <p className="no-reviews">{t('employerProfile.noInteractionFeedback')}</p> )}
               </div>
             </>
           ) : (
@@ -434,8 +385,43 @@ const EmployerProfile: React.FC = () => {
                 <textarea id="employerBio" value={newBio} onChange={(e) => setNewBio(e.target.value)} rows={5} className="bio-input" />
               </div>
               <div className="btn-row form-actions">
-                <button className="save-btn submit-btn" onClick={handleSaveChanges} disabled={saving || deleting}> {saving ? t('employerProfile.saving') : t('employerProfile.saveChanges')} </button>
-                <button type="button" className="cancel-btn" onClick={handleEditToggle} disabled={saving || deleting}> {t('employerProfile.cancel')} </button>
+                <button className="save-btn submit-btn" onClick={handleSaveChanges} disabled={saving || deleting || accountActionLoading}> {saving ? t('employerProfile.saving') : t('employerProfile.saveChanges')} </button>
+              </div>
+              
+              {/* --- NEW ACCOUNT SETTINGS SECTION --- */}
+              <div className="account-settings-section">
+                  <hr className="section-divider" />
+                  <h4>{t('employerProfile.account.title')}</h4>
+
+                  <form onSubmit={handleEmailChange} className="account-form">
+                      <label className="account-form-label"><FaEnvelope /> {t('employerProfile.account.changeEmail')}</label>
+                      <p className="current-email-display">{t('employerProfile.account.currentEmail')}: <strong>{currentEmail}</strong></p>
+                      <div className="form-field-group">
+                          <input type="email" placeholder={t('employerProfile.account.newEmailPlaceholder')} value={newEmail} onChange={(e) => setNewEmail(e.target.value)} required />
+                          <input type="email" placeholder={t('employerProfile.account.confirmEmailPlaceholder')} value={confirmEmail} onChange={(e) => setConfirmEmail(e.target.value)} required />
+                      </div>
+                      <button type="submit" className="action-btn" disabled={accountActionLoading || saving}>{t('employerProfile.account.updateEmailButton')}</button>
+                  </form>
+
+                  <form onSubmit={handlePasswordChange} className="account-form">
+                      <label className="account-form-label"><FaKey /> {t('employerProfile.account.changePassword')}</label>
+                      <div className="form-field-group">
+                          <input type="password" placeholder={t('employerProfile.account.currentPasswordPlaceholder')} value={currentPasswordForConfirm} onChange={(e) => setCurrentPasswordForConfirm(e.target.value)} required />
+                          <input type="password" placeholder={t('employerProfile.account.newPasswordPlaceholder')} value={newPassword} onChange={(e) => setNewPassword(e.target.value)} required />
+                          <input type="password" placeholder={t('employerProfile.account.confirmNewPasswordPlaceholder')} value={confirmNewPassword} onChange={(e) => setConfirmNewPassword(e.target.value)} required />
+                      </div>
+                      <button type="submit" className="action-btn" disabled={accountActionLoading || saving}>{t('employerProfile.account.updatePasswordButton')}</button>
+                  </form>
+                  
+                  <div className="account-form delete-account-section">
+                      <label className="account-form-label danger-text"><FaExclamationTriangle /> {t('employerProfile.account.dangerZone')}</label>
+                      <p>{t('employerProfile.account.deleteWarning')}</p>
+                      <button type="button" className="action-btn danger" onClick={handleDeleteAccount} disabled={accountActionLoading || saving}>{t('employerProfile.account.deleteAccountButton')}</button>
+                  </div>
+              </div>
+
+              <div className="btn-row form-actions">
+                  <button type="button" className="cancel-btn" onClick={handleEditToggle} disabled={saving || deleting || accountActionLoading}> {t('employerProfile.cancel')} </button>
               </div>
             </div>
           )}
@@ -443,14 +429,6 @@ const EmployerProfile: React.FC = () => {
       </div>
     </>
   );
-
-
-
-
-
-
-
 };
 
 export default EmployerProfile;
-
