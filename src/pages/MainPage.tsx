@@ -129,6 +129,8 @@ const MainPage = () => {
               <Link to="/portfolio" className="dashboard-card stat-card"><FaImages size={24} className="stat-icon" /><div><h3>{t('mainPage.artist.editPortfolio')}</h3><p>{t('mainPage.artist.editPortfolioDesc')}</p></div></Link>
               <Link to="/chat" className="dashboard-card stat-card"><FaCommentDots size={24} className="stat-icon" /><div><h3>{t('mainPage.artist.messages')}</h3><p>{t('mainPage.artist.messagesDesc')}</p></div></Link>
               <Link to="/my-applications" className="dashboard-card card-bg-jobs">
+              <FaClipboardList size={32} className="card-bg-icon" />
+
                 <div>
                   <h3>{t('mainPage.artist.applications')}</h3>
                   <p>{t('mainPage.artist.applicationsDesc')}</p>
@@ -150,6 +152,8 @@ const MainPage = () => {
               <Link to="/post-job" className="dashboard-card stat-card"><FaPlusCircle size={24} className="stat-icon" /><div><h3>{t('mainPage.employer.postJob')}</h3><p>{t('mainPage.employer.postJobDesc')}</p></div></Link>
               <Link to="/chat" className="dashboard-card stat-card"><FaCommentDots size={24} className="stat-icon" /><div><h3>{t('mainPage.employer.messages')}</h3><p>{t('mainPage.employer.messagesDesc')}</p></div></Link>
               <Link to="/my-jobs" className="dashboard-card  card-bg-jobs">
+              <FaThList size={32} className="card-bg-icon" />
+
                 <div>
                   <h3>{t('mainPage.employer.jobPostings')}</h3>
                   <p>{t('mainPage.employer.jobPostingsDesc')}</p>

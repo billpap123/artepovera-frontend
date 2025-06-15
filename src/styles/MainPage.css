@@ -154,7 +154,31 @@
 }
 /* --- END OF FIX --- */
 
+/*
+  This styles the new icons on the cards with background images
+*/
+.card-bg-icon {
+  color: #FFFFFF; /* Makes the icon pure white */
+  flex-shrink: 0; /* Prevents the icon from shrinking */
+  
+  /* This adds a subtle shadow to the icon itself, making it pop */
+  filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.7));
+}
 
+/* We also need to adjust the layout for these specific cards */
+.card-bg-jobs {
+  flex-direction: column; /* Stack icon and text vertically */
+  align-items: center;   /* Center them horizontally */
+  justify-content: center; /* Center them vertically */
+  text-align: center;
+  gap: 15px; /* Add some space between the icon and the text */
+}
+
+/* Ensure the text inside is also white and has a shadow */
+.card-bg-jobs h3, .card-bg-jobs p {
+  color: #FFFFFF;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
+}
 /* Styling for the large job feed card */
 .job-feed-card {
   grid-column: 1 / -1; 
@@ -163,46 +187,62 @@
   align-items: stretch;
 }
 
-@media (min-width: 992px) {
+/* ==========================================================================
+   RESPONSIVE STYLES
+   ========================================================================== */
 
-
-  .main-page-container {
-  width: 80%;}
+/* --- For Large Laptops --- */
+@media (min-width: 1200px) {
   .job-feed-card {
     grid-column: span 2; 
     grid-row: span 2;
   }
 }
 
-.job-feed-card h2 {
-  margin-top: 0;
-  padding-bottom: 15px;
-  border-bottom: 1px solid #eee;
-  margin-bottom: 20px;
+/* --- For Tablets (e.g., iPads) --- */
+@media (max-width: 992px) {
+  .main-page-container {
+    width: 95%; /* Use more of the screen width */
+    padding-top: 80px;
+  }
+
+  .main-page-header h1 {
+    font-size: 2.2rem; /* Slightly smaller title */
+  }
+
+  .dashboard-grid {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Allow cards to be a bit smaller */
+    gap: 20px;
+  }
 }
 
-.admin-card {
-  background-color: #f8d7da;
-  border: 1px solid #f5c6cb;
-}
+/* --- For Mobile Phones --- */
+@media (max-width: 767px) {
+  .main-page-header h1 {
+    font-size: 1.8rem; /* Even smaller title for mobile */
+  }
+  
+  .main-page-header p {
+    font-size: 1rem;
+  }
 
-.admin-card .stat-icon {
-  color: #721c24;
-}
+  .dashboard-grid {
+    /* Stack all cards in a single column on mobile */
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
 
-.admin-card:hover {
-  background-color: #f1c6c9;
-}
-
-.admin-overview-card {
-  grid-column: 1 / -1;
-  text-align: center;
-  font-size: 1.1rem;
-  color: #444;
-}
-
-hr.filter-divider {
-  border: none;
-  border-top: 1px solid #e9ecef;
-  margin: 20px 0;
+  .dashboard-card {
+    padding: 20px;
+    flex-direction: column; /* Stack icon and text vertically */
+    text-align: center;
+  }
+  
+  .stat-card, .card-bg-map {
+    align-items: center; /* Center align all items in the card */
+  }
+  
+  .card-bg-map {
+    text-align: center; /* Center text on map card for mobile */
+  }
 }
