@@ -209,7 +209,8 @@
   font-size: 1.8rem;
   font-weight: 700;
   margin-bottom: 5px;
-  color: (52, 73, 94);
+  color:rgb(52, 73, 94) !important;
+
 }
 
 /* Ensure the text inside is also white and has a shadow */

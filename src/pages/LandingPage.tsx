@@ -15,6 +15,57 @@ const landingPageStyles = `
     line-height: 1.6;
     background-color: #fdfbf7; /* Off-white base background */
   }
+    /*
+  ADD THIS ENTIRE BLOCK TO YOUR landingPageStyles
+*/
+
+/* --- Language Switcher Styles --- */
+
+.language-switcher {
+  position: absolute;
+  top: 25px;
+  right: 25px;
+  z-index: 10; /* Ensure it's on top of other content */
+}
+
+.language-switcher-select {
+  /* --- Appearance and Colors --- */
+  background-color: rgba(255, 255, 255, 0.15); /* Semi-transparent white */
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 8px;
+  padding: 8px 30px 8px 12px; /* Top, Right, Bottom, Left padding */
+  
+  /* --- Font and Cursor --- */
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  
+  /* --- Removing Default OS Styling --- */
+  outline: none;
+  -webkit-appearance: none; /* Removes default Safari/Chrome styling */
+  -moz-appearance: none;    /* Removes default Firefox styling */
+  appearance: none;         /* Removes default styling */
+
+  /* --- Custom Dropdown Arrow --- */
+  background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23FFFFFF%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22/%3E%3C/svg%3E');
+  background-repeat: no-repeat;
+  background-position: right 10px top 50%;
+  background-size: 10px auto;
+  
+  transition: background-color 0.2s ease;
+}
+
+.language-switcher-select:hover {
+  background-color: rgba(255, 255, 255, 0.25); /* Slightly more opaque on hover */
+}
+
+/* Styling for the dropdown options themselves */
+.language-switcher-select option {
+  background-color: #4d4033; /* Dark brown background for the dropdown list */
+  color: white;
+}
 
   /* --- Hero Section --- */
   .hero-section {
@@ -314,8 +365,14 @@ const LanguageSwitcher: React.FC = () => {
   };
 
   return (
-    <div style={{ position: 'absolute', top: 20, right: 20 }}>
-      <select onChange={handleLanguageChange} defaultValue={i18n.language}>
+    // Use a class for positioning
+    <div className="language-switcher">
+      {/* Add a class to the select element for styling */}
+      <select 
+        className="language-switcher-select" 
+        onChange={handleLanguageChange} 
+        defaultValue={i18n.language}
+      >
         <option value="en">EN</option>
         <option value="el">ΕL</option>
       </select>
