@@ -387,8 +387,9 @@ const LandingPage: React.FC = () => {
   return (
     <>
       <style>{landingPageStyles}</style>
-      <div className="landing-page-container">
       <LanguageSwitcher /> {/* 👈 Προστέθηκε εδώ */}
+
+      <div className="landing-page-container">
 
         <header className="hero-section">
           <video className="hero-video-background" autoPlay loop muted playsInline>

@@ -88,11 +88,12 @@ const Navbar = () => {
 
   const handleLogout = () => {
     if (window.confirm(t('navbar.alerts.logoutConfirm'))) {
+      // All of this cleanup logic is correct
       setUserId(null);
       setArtistId(null);
       setEmployerId(null);
       setUserType(null);
-
+  
       localStorage.clear();
       sessionStorage.clear();
       document.cookie.split(";").forEach((c) => {
@@ -100,11 +101,11 @@ const Navbar = () => {
           .replace(/^ +/, "")
           .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
       });
-
-      window.location.href = '/login';
+  
+      // This is the only line that needs to be changed
+      window.location.href = '/'; 
     }
   };
-
   const isLoggedIn = !!userId;
 
   let profilePath = "/";
