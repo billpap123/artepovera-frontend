@@ -384,7 +384,7 @@ const UserProfilePage: React.FC = () => {
       // Append to the document, trigger the click, and then remove it
       document.body.appendChild(link);
       link.click();
-      
+
       // Clean up by removing the link and revoking the object URL
       link.parentNode?.removeChild(link);
       window.URL.revokeObjectURL(link.href);
@@ -673,100 +673,24 @@ const UserProfilePage: React.FC = () => {
 
           <div className="profile-content-public">
             <div className="profile-section-public"><h4>{t('userProfilePage.content.bio')}</h4>                <div className="bio-text markdown-content">
-                              <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                                {bio || t('employerProfile.noBio')}
-                              </ReactMarkdown>
-                            </div>
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                {bio || t('employerProfile.noBio')}
+              </ReactMarkdown>
+            </div>
             </div>
 
             {isArtistProfile && cvUrl && (
               <div className="profile-section-public cv-section">
                 <h4>{t('userProfilePage.content.cv')}</h4>
                 <div className="cv-display">
-                  <FaFilePdf className="pdf-icon" />
                   <button onClick={() => handleCvDownload(cvUrl, profile.fullname)} className="cv-link">
-  {t('userProfilePage.content.downloadCv')}
-</button>
+                    {t('userProfilePage.content.downloadCv')}
+                  </button>
                 </div>
               </div>
             )}
 
-            <div className="reviews-section profile-section-public">
-              <h4>{t('userProfilePage.content.projectReviews', { count: completedReviews.length })}</h4>
-              {reviewsLoading ? (
-                <p>{t('userProfilePage.content.loadingReviews')}</p>
-              ) : completedReviews.length > 0 ? (
-                <div className="reviews-list">
-                  {completedReviews.map((review) => {
-                    const reviewerProfilePic = review.reviewer?.profile_picture || null;
-                    return (
-                      <div key={review.review_id} className="review-item">
-                        <div className="review-header">
-                          <img
-                            src={getImageUrl(reviewerProfilePic)}
-                            alt={review.reviewer?.fullname || t('userProfilePage.content.anonymous')}
-                            className="reviewer-pic"
-                          />
-                          <div className="reviewer-info">
-                            <strong>{review.reviewer?.fullname || t('userProfilePage.content.anonymous')}</strong>
-                            <span className="review-date">{formatDate(review.created_at)}</span>
-                          </div>
-                          <div className="review-stars"><DisplayStars rating={review.overall_rating} /></div>
-                        </div>
-                        {review.specific_answers?.comment && <p className="review-comment">"{review.specific_answers.comment}"</p>}
-                      </div>
-                    );
-                  })}
-                </div>
-              ) : (
-                <p className="no-reviews">{t('userProfilePage.content.noProjectReviews')}</p>
-              )}
-            </div>
-
-            {interactionReviews.length > 0 && (
-              <div className="interaction-feedback-section profile-section-public">
-                <h4>{t('userProfilePage.content.interactionFeedback', { count: interactionReviews.length })}</h4>
-                {reviewsLoading ? (<p>{t('userProfilePage.content.loadingFeedback')}</p>)
-                  : interactionReviews.length > 0 ? (
-                    <div className="reviews-list">
-                      {interactionReviews.map((review) => {
-                        const primaryReason = review.specific_answers?.noDealPrimaryReason;
-                        const comment = review.specific_answers?.comment;
-
-                        return (
-                          <div key={review.review_id} className="review-item interaction-review-item">
-                            <div className="review-header">
-                              <img src={getImageUrl(review.reviewer?.profile_picture)} alt={review.reviewer?.fullname || t('userProfilePage.content.anonymous')} className="reviewer-pic" />
-                              <div className="reviewer-info">
-                                <strong>{review.reviewer?.fullname || t('userProfilePage.content.anonymous')}</strong>
-                                <span className="review-date">{formatDate(review.created_at)}</span>
-                              </div>
-                              <span className="interaction-tag">{t('userProfilePage.content.noDealTag')}</span>
-                            </div>
-
-                            <div className="review-comment">
-                              {primaryReason && (
-                                <p className="interaction-reason">
-                                  <strong>{t('userProfilePage.content.reason')}</strong> {primaryReason}
-                                </p>
-                              )}
-                              {comment && (
-                                <p>
-                                  <strong>{t('userProfilePage.content.comment')}</strong> "{comment}"
-                                </p>
-                              )}
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  ) : (
-                    <p className="no-reviews">{t('userProfilePage.content.noInteractionFeedback')}</p>
-                  )}
-              </div>
-            )}
-
-            {isArtistProfile && (
+{isArtistProfile && (
               <div className="artist-comments-section profile-section-public">
                 <div className="section-header">
                   <h4>{t('userProfilePage.content.artisticViewpoints')} <FaCommentDots /> ({viewpointCount})</h4>
@@ -889,8 +813,85 @@ const UserProfilePage: React.FC = () => {
                 )}
               </div>
             )}
+
+            <div className="reviews-section profile-section-public">
+              <h4>{t('userProfilePage.content.projectReviews', { count: completedReviews.length })}</h4>
+              {reviewsLoading ? (
+                <p>{t('userProfilePage.content.loadingReviews')}</p>
+              ) : completedReviews.length > 0 ? (
+                <div className="reviews-list">
+                  {completedReviews.map((review) => {
+                    const reviewerProfilePic = review.reviewer?.profile_picture || null;
+                    return (
+                      <div key={review.review_id} className="review-item">
+                        <div className="review-header">
+                          <img
+                            src={getImageUrl(reviewerProfilePic)}
+                            alt={review.reviewer?.fullname || t('userProfilePage.content.anonymous')}
+                            className="reviewer-pic"
+                          />
+                          <div className="reviewer-info">
+                            <strong>{review.reviewer?.fullname || t('userProfilePage.content.anonymous')}</strong>
+                            <span className="review-date">{formatDate(review.created_at)}</span>
+                          </div>
+                          <div className="review-stars"><DisplayStars rating={review.overall_rating} /></div>
+                        </div>
+                        {review.specific_answers?.comment && <p className="review-comment">"{review.specific_answers.comment}"</p>}
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <p className="no-reviews">{t('userProfilePage.content.noProjectReviews')}</p>
+              )}
+            </div>
+
+            {interactionReviews.length > 0 && (
+              <div className="interaction-feedback-section profile-section-public">
+                <h4>{t('userProfilePage.content.interactionFeedback', { count: interactionReviews.length })}</h4>
+                {reviewsLoading ? (<p>{t('userProfilePage.content.loadingFeedback')}</p>)
+                  : interactionReviews.length > 0 ? (
+                    <div className="reviews-list">
+                      {interactionReviews.map((review) => {
+                        const primaryReason = review.specific_answers?.noDealPrimaryReason;
+                        const comment = review.specific_answers?.comment;
+
+                        return (
+                          <div key={review.review_id} className="review-item interaction-review-item">
+                            <div className="review-header">
+                              <img src={getImageUrl(review.reviewer?.profile_picture)} alt={review.reviewer?.fullname || t('userProfilePage.content.anonymous')} className="reviewer-pic" />
+                              <div className="reviewer-info">
+                                <strong>{review.reviewer?.fullname || t('userProfilePage.content.anonymous')}</strong>
+                                <span className="review-date">{formatDate(review.created_at)}</span>
+                              </div>
+                              <span className="interaction-tag">{t('userProfilePage.content.noDealTag')}</span>
+                            </div>
+
+                            <div className="review-comment">
+                              {primaryReason && (
+                                <p className="interaction-reason">
+                                  <strong>{t('userProfilePage.content.reason')}</strong> {primaryReason}
+                                </p>
+                              )}
+                              {comment && (
+                                <p>
+                                  <strong>{t('userProfilePage.content.comment')}</strong> "{comment}"
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <p className="no-reviews">{t('userProfilePage.content.noInteractionFeedback')}</p>
+                  )}
+              </div>
+            )}
+
+            
           </div>
-          
+
           {isGalleryOpen && portfolio.length > 0 && (
             <div className="gallery-overlay" onClick={closeGallery}>
               <button className="gallery-close-btn" onClick={closeGallery} aria-label={t('userProfilePage.gallery.close')}>

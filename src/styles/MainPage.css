@@ -156,10 +156,7 @@
   background-position: center;}
 
 .card-bg-jobs {
-  background-image: url('/images/job.png');
-  background-repeat: no-repeat;
-  background-position: right;
-  background-size:contain;
+  background-color: white;
   color: #95a5a6;
 }
 

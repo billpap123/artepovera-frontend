@@ -366,7 +366,6 @@ const ArtistProfile: React.FC = () => {
                 <h4>{t('artistProfile.cvTitle')}</h4>
                 {cvUrl ? (
                   <div className="cv-display">
-                    <FaFilePdf className="pdf-icon" />
                     <button onClick={() => handleCvDownload(cvUrl)} className="cv-link">
                       {t('artistProfile.downloadCv')}
                     </button>
