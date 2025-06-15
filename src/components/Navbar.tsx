@@ -4,8 +4,8 @@ import axios from "axios";
 import { FaHome, FaUserAlt, FaBell, FaMapMarkerAlt } from "react-icons/fa";
 import { useUserContext } from '../context/UserContext';
 import '../styles/Navbar.css';
-import { useTranslation } from "react-i18next";
-import { Trans } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next';
+import { io, Socket } from 'socket.io-client'; // <-- Import Socket.IO client
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "https://artepovera2.vercel.app";
 
@@ -16,15 +16,47 @@ const Navbar = () => {
   const [loadingNotifications, setLoadingNotifications] = useState(true);
   const [error, setError] = useState("");
   const navigate = useNavigate();
-
-  // --- THIS IS THE FIX ---
-  // Ensure you get both `t` and `i18n` from the hook.
-  // The `i18n` object is what controls the language.
   const { t, i18n } = useTranslation();
 
   const { userId, userType, setUserId, setArtistId, setEmployerId, setUserType } = useUserContext();
   const token = localStorage.getItem('token');
 
+  // --- REAL-TIME NOTIFICATION LOGIC ---
+  const [socket, setSocket] = useState<Socket | null>(null);
+
+  // Effect 1: Connect and disconnect the socket based on user login status
+  useEffect(() => {
+    if (userId) {
+      const newSocket = io(API_BASE_URL);
+      setSocket(newSocket);
+      newSocket.emit('add_user', userId);
+
+      return () => {
+        newSocket.disconnect();
+      };
+    } else {
+      if (socket) {
+        socket.disconnect();
+        setSocket(null);
+      }
+    }
+  }, [userId]);
+
+  // Effect 2: Listen for real-time notifications from the server
+  useEffect(() => {
+    if (socket) {
+      socket.on('new_notification', (newNotification) => {
+        setNotifications((prev) => [newNotification, ...prev]);
+      });
+
+      return () => {
+        socket.off('new_notification');
+      };
+    }
+  }, [socket]);
+  // --- END OF REAL-TIME LOGIC ---
+
+  // Fetches initial notifications on load
   useEffect(() => {
     const fetchNotifications = async () => {
       if (!token || !userId) {
@@ -49,7 +81,7 @@ const Navbar = () => {
     if (userId) {
       fetchNotifications();
     }
-  }, [userId, token, API_BASE_URL, t]);
+  }, [userId, token, t]);
 
   const toggleMenu = () => setIsMenuOpen((prev) => !prev);
   const toggleDropdown = () => setShowDropdown((prev) => !prev);
@@ -88,12 +120,11 @@ const Navbar = () => {
 
   const handleLogout = () => {
     if (window.confirm(t('navbar.alerts.logoutConfirm'))) {
-      // All of this cleanup logic is correct
       setUserId(null);
       setArtistId(null);
       setEmployerId(null);
       setUserType(null);
-  
+      
       localStorage.clear();
       sessionStorage.clear();
       document.cookie.split(";").forEach((c) => {
@@ -101,13 +132,12 @@ const Navbar = () => {
           .replace(/^ +/, "")
           .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
       });
-  
-      // This is the only line that needs to be changed
+
       window.location.href = '/'; 
     }
   };
-  const isLoggedIn = !!userId;
 
+  const isLoggedIn = !!userId;
   let profilePath = "/";
   if (isLoggedIn) {
     if (userType === 'Artist') {
@@ -115,14 +145,13 @@ const Navbar = () => {
     } else if (userType === 'Employer') {
       profilePath = "/employer-profile/edit";
     } else {
-      profilePath = `/user-profile/${userId}`;
+      profilePath = `/user-profile/${userId}`; 
     }
   }
 
-  // --- LANGUAGE SWITCHER LOGIC ---
   const changeLanguage = (lng: 'en' | 'el') => {
     i18n.changeLanguage(lng);
-    setIsMenuOpen(false); // Close mobile menu on language change
+    setIsMenuOpen(false);
   };
 
   return (
@@ -130,7 +159,7 @@ const Navbar = () => {
       <Link to={isLoggedIn ? "/main" : "/"} className="logo-link">
         <img src="/images/logo2.png" alt={t('navbar.altText.logo')} className="logo-image" />
       </Link>
-
+      
       <div className={`hamburger ${isMenuOpen ? "open" : ""}`} onClick={toggleMenu}>
         <span></span>
         <span></span>
@@ -155,9 +184,9 @@ const Navbar = () => {
             </li>
 
             <li>
-              <NavLink
+              <NavLink 
                 to={profilePath}
-                className={({ isActive }) => (isActive ? "active" : "")}
+                className={({ isActive }) => (isActive ? "active" : "")} 
                 onClick={() => setIsMenuOpen(false)}
               >
                 <FaUserAlt className="nav-icon" />
@@ -175,43 +204,42 @@ const Navbar = () => {
 
               {showDropdown && (
                 <div className="notifications-dropdown">
-                  {loadingNotifications ? (<p>{t('navbar.notifications.loading')}</p>)
-                    : error ? (<p className="error">{error}</p>)
-                      : notifications.length > 0 ? (
-                        <ul>
-                          {notifications.map((notif) => (
-                            <li key={notif.notification_id} className={notif.read_status ? "read" : "unread"}>
-                              <div className="notification-item">
-                                <Trans
-                                  i18nKey={notif.message_key}
-                                  values={{ ...notif.message_params }}
-                                  components={{
-                                    a: <Link to={notif.message_params?.chatLink || notif.message_params?.profileLink || notif.message_params?.artistProfileLink || '#'} />
-
-                                  }}
-                                />
-                                <div className="timestamp">{new Date(notif.createdAt).toLocaleString()}</div>
-                                <div className="notification-actions">
-                                  {!notif.read_status && (<button className="mark-read-btn" onClick={() => markAsRead(notif.notification_id)}>{t('navbar.notifications.markAsRead')}</button>)}
-                                  <button className="delete-notif-btn" onClick={() => deleteNotification(notif.notification_id)}>{t('navbar.notifications.delete')}</button>
-                                </div>
-                              </div>
-
-                            </li>
-                          ))}
-                        </ul>
-                      ) : (<p>{t('navbar.notifications.none')}</p>)}
+                   {loadingNotifications ? ( <p>{t('navbar.notifications.loading')}</p> )
+                   : error ? ( <p className="error">{error}</p> )
+                   : notifications.length > 0 ? (
+                    <ul>
+                      {notifications.map((notif) => (
+                        <li key={notif.notification_id} className={notif.read_status ? "read" : "unread"}>
+                          <div className="notification-item">
+                            <Trans
+                              i18nKey={notif.message_key}
+                              values={{ ...notif.message_params }}
+                              components={{
+                                a: <Link to={notif.message_params?.chatLink || notif.message_params?.profileLink || notif.message_params?.artistProfileLink || '#'} />
+                              }}
+                            />
+                            <div className="timestamp">{new Date(notif.createdAt).toLocaleString()}</div>
+                            <div className="notification-actions">
+                              {!notif.read_status && ( <button className="mark-read-btn" onClick={() => markAsRead(notif.notification_id)}>{t('navbar.notifications.markAsRead')}</button> )}
+                              <button className="delete-notif-btn" onClick={() => deleteNotification(notif.notification_id)}>{t('navbar.notifications.delete')}</button>
+                            </div>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : ( <p>{t('navbar.notifications.none')}</p> )}
                 </div>
               )}
             </li>
             <li>
-              <button onClick={() => { handleLogout(); setIsMenuOpen(false); }} className="logout-button">
+              <button onClick={() => {handleLogout(); setIsMenuOpen(false);}} className="logout-button">
                 {t('navbar.actions.logout')}
               </button>
             </li>
             <li className="language-switcher">
               <button onClick={() => changeLanguage('en')} className={i18n.language === 'en' ? 'active' : ''}>{t('navbar.language.en')}</button>
-              <span>/</span>
+              {/* This span will be our vertical line */}
+              <span className="lang-separator"></span> 
               <button onClick={() => changeLanguage('el')} className={i18n.language === 'el' ? 'active' : ''}>{t('navbar.language.el')}</button>
             </li>
           </>
@@ -225,7 +253,8 @@ const Navbar = () => {
             </li>
             <li className="language-switcher">
               <button onClick={() => changeLanguage('en')} className={i18n.language === 'en' ? 'active' : ''}>{t('navbar.language.en')}</button>
-              <span>/</span>
+               {/* This span will be our vertical line */}
+              <span className="lang-separator"></span>
               <button onClick={() => changeLanguage('el')} className={i18n.language === 'el' ? 'active' : ''}>{t('navbar.language.el')}</button>
             </li>
           </>

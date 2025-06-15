@@ -96,7 +96,16 @@
 .nav-links .register-button:hover {
   background-color: var(--navbar-accent-dark);
 }
+/* Add this to the end of your Navbar.css file */
 
+.lang-separator {
+  display: inline-block;
+  width: 1px;
+  height: 12px; /* Adjust height as needed */
+  background-color: rgba(255, 255, 255, 0.5); /* White with 50% opacity */
+  margin: 0 8px; /* Adds space around the line */
+  vertical-align: middle; /* Aligns it nicely with the buttons */
+}
 .nav-icon {
   font-size: 1.1rem;
 }
