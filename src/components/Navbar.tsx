@@ -182,16 +182,13 @@ const Navbar = () => {
                             <li key={notif.notification_id} className={notif.read_status ? "read" : "unread"}>
                               <div className="notification-item">
                                 <Trans
-                                  i18nKey={notif.message_key} // Uses the key from the backend (e.g., "notifications.newApplication")
-                                  values={{
-                                    ...notif.message_params // Passes all dynamic data like 'artistName' and 'jobTitle'
-                                  }}
+                                  i18nKey={notif.message_key}
+                                  values={{ ...notif.message_params }}
                                   components={{
-                                    // Safely maps the <a> tag in your translation file to a real React Link component
-                                    a: <a href={notif.message_params?.chatLink || notif.message_params?.artistProfileLink} target="_blank" rel="noopener noreferrer" />
+                                    a: <Link to={notif.message_params?.chatLink || notif.message_params?.artistProfileLink || '#'} />
                                   }}
                                 />
-                                <div className="timestamp">{new Date(notif.created_at).toLocaleString()}</div>
+                                <div className="timestamp">{new Date(notif.createdAt).toLocaleString()}</div>
                                 <div className="notification-actions">
                                   {!notif.read_status && (<button className="mark-read-btn" onClick={() => markAsRead(notif.notification_id)}>{t('navbar.notifications.markAsRead')}</button>)}
                                   <button className="delete-notif-btn" onClick={() => deleteNotification(notif.notification_id)}>{t('navbar.notifications.delete')}</button>

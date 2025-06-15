@@ -2,10 +2,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "../styles/Notifications.css";
 import { useTranslation, Trans } from "react-i18next";
+import { Link } from "react-router-dom"; // <-- The required import
 
-// --- UPDATED TYPE DEFINITION ---
-// This now matches the data structure from your backend controller,
-// allowing for both old (message) and new (message_key) notifications.
 type Notification = {
   notification_id: number;
   user_id: number;
@@ -13,7 +11,7 @@ type Notification = {
   message_key: string | null;
   message_params: any | null;
   read_status: boolean;
-  createdAt: string; // Corrected to camelCase to match backend
+  createdAt: string;
   sender_name: string;
 };
 
@@ -103,28 +101,23 @@ const NotificationList: React.FC = () => {
               style={{ marginBottom: "15px" }}
             >
               <div>
-                {/* --- CORRECTED IMPLEMENTATION --- */}
-                {/* Logic to handle both new and old notification formats safely */}
                 {notif.message_key && notif.message_params ? (
-                  // NEW FORMAT: Use <Trans> for safe, component-aware translation
                   <Trans
                     i18nKey={notif.message_key}
                     values={{ ...notif.message_params }}
                     components={{
-                      a: <a href={notif.message_params.artistProfileLink || notif.message_params.chatLink} />,
+                      // This is the only change: <a> to <Link>
+                      a: <Link to={notif.message_params.artistProfileLink || notif.message_params.chatLink || '#'} />,
                     }}
                   />
                 ) : (
-                  // OLD FORMAT: Render the legacy message string as plain text (safest)
                   <span>{notif.message}</span>
                 )}
               </div>
 
-
               <small
                 style={{ display: "block", marginTop: "5px", color: "#555" }}
               >
-                {/* Using the corrected 'createdAt' property */}
                 {new Date(notif.createdAt).toLocaleString()}
               </small>
 

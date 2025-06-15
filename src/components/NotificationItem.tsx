@@ -1,9 +1,7 @@
 // src/components/NotificationItem.tsx
-
-// PASTE ALL OF THIS CODE INTO YOUR FILE
-
 import React from "react";
-import { Trans } from "react-i18next"; // You need to import this
+import { Trans } from "react-i18next";
+import { Link } from "react-router-dom"; // <-- STEP 1: Import Link
 
 // This defines what a 'notification' looks like now.
 // It can handle both old and new types.
@@ -23,17 +21,15 @@ const NotificationItem: React.FC<NotificationItemProps> = ({ notif }) => {
   return (
     <div className="notification-item" style={{ marginBottom: "10px" }}>
       
-      {/* --- This is the new logic --- */}
-
       {/* If the notification has a 'message_key', use the new safe way */}
       {notif.message_key ? (
         <Trans
-          i18nKey={notif.message_key} // The translation key, e.g., "notifications.newApplication"
-          values={notif.message_params} // The data, e.g., { artistName: "Maria" }
+          i18nKey={notif.message_key} 
+          values={notif.message_params}
           components={{
-            // This makes the <a> tag in your translation file a real, clickable link
+            // --- STEP 2: Change <a> to <Link> and href to 'to' ---
             a: (
-              <a href={notif.message_params?.artistProfileLink || notif.message_params?.chatLink} />
+              <Link to={notif.message_params?.artistProfileLink || notif.message_params?.chatLink || '#'} />
             ),
           }}
         />
