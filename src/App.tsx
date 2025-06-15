@@ -2,6 +2,7 @@
 import React from "react"; // useEffect might be needed if you add context loading check
 import { Routes, Route, Navigate } from "react-router-dom";
 import { UserProvider, useUserContext } from "./context/UserContext"; // Correct import
+import AccessibilityMenu from './components/AccessibilityMenu';
 
 // Page imports
 import ScrollToTop from './components/ScrollToTop';
@@ -122,6 +123,8 @@ const App = () => {
   return (
     <UserProvider> {/* UserProvider wraps AppContent, so useUserContext works inside */}
       <AppContent />
+      <AccessibilityMenu /> {/* <-- ADD IT HERE, inside UserProvider, but outside AppContent */}
+
     </UserProvider>
     
   );

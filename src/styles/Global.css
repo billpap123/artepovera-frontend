@@ -165,3 +165,27 @@ footer a:hover {
         flex-direction: column;
     }
 }
+
+
+/* Add this to src/styles/Global.css */
+
+/* --- High Contrast Mode --- */
+body.high-contrast {
+    /* Inverts all colors and then flips hue back to normal. A common trick for high contrast. */
+    filter: invert(1) hue-rotate(180deg);
+  }
+  
+  /* Exclude images/videos from being inverted in high contrast mode */
+  body.high-contrast img,
+  body.high-contrast video {
+    filter: invert(1) hue-rotate(180deg);
+  }
+  
+  
+  /* --- Highlight Links Mode --- */
+  body.links-highlighted a {
+    text-decoration: underline !important;
+    background-color: yellow !important;
+    color: black !important;
+    padding: 2px 4px;
+  }
