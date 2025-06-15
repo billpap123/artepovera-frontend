@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "../styles/Notifications.css";
-import { useTranslation } from "react-i18next";
+import { useTranslation, Trans } from "react-i18next";
 
 // --- UPDATED TYPE DEFINITION ---
 // This now matches the data structure from your backend controller,
@@ -34,7 +34,7 @@ const NotificationList: React.FC = () => {
         setError(t('notificationList.errors.loginRequired'));
         return;
       }
-      
+
       try {
         const response = await axios.get(
           `${BACKEND_URL}/api/notifications/${user.user_id}`,
@@ -103,16 +103,23 @@ const NotificationList: React.FC = () => {
               style={{ marginBottom: "15px" }}
             >
               <div>
-                {/* This block now correctly handles both formats */}
-                <span dangerouslySetInnerHTML={{ 
-                  __html: notif.message_key 
-                    ? t(notif.message_key, { 
-                        name: notif.sender_name, 
-                        ...(notif.message_params || {})
-                      })
-                    : notif.message || ''
-                }} />
+                {/* --- CORRECTED IMPLEMENTATION --- */}
+                {/* Logic to handle both new and old notification formats safely */}
+                {notif.message_key && notif.message_params ? (
+                  // NEW FORMAT: Use <Trans> for safe, component-aware translation
+                  <Trans
+                    i18nKey={notif.message_key}
+                    values={{ ...notif.message_params }}
+                    components={{
+                      a: <a href={notif.message_params.artistProfileLink || notif.message_params.chatLink} />,
+                    }}
+                  />
+                ) : (
+                  // OLD FORMAT: Render the legacy message string as plain text (safest)
+                  <span>{notif.message}</span>
+                )}
               </div>
+
 
               <small
                 style={{ display: "block", marginTop: "5px", color: "#555" }}

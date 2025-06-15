@@ -47,7 +47,7 @@ const Navbar = () => {
       }
     };
     if (userId) {
-        fetchNotifications();
+      fetchNotifications();
     }
   }, [userId, token, API_BASE_URL, t]);
 
@@ -92,7 +92,7 @@ const Navbar = () => {
       setArtistId(null);
       setEmployerId(null);
       setUserType(null);
-      
+
       localStorage.clear();
       sessionStorage.clear();
       document.cookie.split(";").forEach((c) => {
@@ -101,7 +101,7 @@ const Navbar = () => {
           .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
       });
 
-      window.location.href = '/login'; 
+      window.location.href = '/login';
     }
   };
 
@@ -114,7 +114,7 @@ const Navbar = () => {
     } else if (userType === 'Employer') {
       profilePath = "/employer-profile/edit";
     } else {
-      profilePath = `/user-profile/${userId}`; 
+      profilePath = `/user-profile/${userId}`;
     }
   }
 
@@ -129,7 +129,7 @@ const Navbar = () => {
       <Link to={isLoggedIn ? "/main" : "/"} className="logo-link">
         <img src="/images/logo2.png" alt={t('navbar.altText.logo')} className="logo-image" />
       </Link>
-      
+
       <div className={`hamburger ${isMenuOpen ? "open" : ""}`} onClick={toggleMenu}>
         <span></span>
         <span></span>
@@ -154,9 +154,9 @@ const Navbar = () => {
             </li>
 
             <li>
-              <NavLink 
+              <NavLink
                 to={profilePath}
-                className={({ isActive }) => (isActive ? "active" : "")} 
+                className={({ isActive }) => (isActive ? "active" : "")}
                 onClick={() => setIsMenuOpen(false)}
               >
                 <FaUserAlt className="nav-icon" />
@@ -174,37 +174,39 @@ const Navbar = () => {
 
               {showDropdown && (
                 <div className="notifications-dropdown">
-                   {loadingNotifications ? ( <p>{t('navbar.notifications.loading')}</p> )
-                   : error ? ( <p className="error">{error}</p> )
-                   : notifications.length > 0 ? (
-                    <ul>
-                      {notifications.map((notif) => (
-                        <li key={notif.notification_id} className={notif.read_status ? "read" : "unread"}>
-                          <div className="notification-item">
-                          <Trans
-  i18nKey={notif.message_key}
-  values={{
-    ...notif.message_params
-  }}
-  components={{
-    a: <a href={notif.message_params?.chatLink || notif.message_params?.artistProfileLink} target="_blank" rel="noopener noreferrer" />
-  }}
-/>
-                            <div className="timestamp">{new Date(notif.created_at).toLocaleString()}</div>
-                            <div className="notification-actions">
-                              {!notif.read_status && ( <button className="mark-read-btn" onClick={() => markAsRead(notif.notification_id)}>{t('navbar.notifications.markAsRead')}</button> )}
-                              <button className="delete-notif-btn" onClick={() => deleteNotification(notif.notification_id)}>{t('navbar.notifications.delete')}</button>
-                            </div>
-                          </div>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : ( <p>{t('navbar.notifications.none')}</p> )}
+                  {loadingNotifications ? (<p>{t('navbar.notifications.loading')}</p>)
+                    : error ? (<p className="error">{error}</p>)
+                      : notifications.length > 0 ? (
+                        <ul>
+                          {notifications.map((notif) => (
+                            <li key={notif.notification_id} className={notif.read_status ? "read" : "unread"}>
+                              <div className="notification-item">
+                                <Trans
+                                  i18nKey={notif.message_key} // Uses the key from the backend (e.g., "notifications.newApplication")
+                                  values={{
+                                    ...notif.message_params // Passes all dynamic data like 'artistName' and 'jobTitle'
+                                  }}
+                                  components={{
+                                    // Safely maps the <a> tag in your translation file to a real React Link component
+                                    a: <a href={notif.message_params?.chatLink || notif.message_params?.artistProfileLink} target="_blank" rel="noopener noreferrer" />
+                                  }}
+                                />
+                                <div className="timestamp">{new Date(notif.created_at).toLocaleString()}</div>
+                                <div className="notification-actions">
+                                  {!notif.read_status && (<button className="mark-read-btn" onClick={() => markAsRead(notif.notification_id)}>{t('navbar.notifications.markAsRead')}</button>)}
+                                  <button className="delete-notif-btn" onClick={() => deleteNotification(notif.notification_id)}>{t('navbar.notifications.delete')}</button>
+                                </div>
+                              </div>
+
+                            </li>
+                          ))}
+                        </ul>
+                      ) : (<p>{t('navbar.notifications.none')}</p>)}
                 </div>
               )}
             </li>
             <li>
-              <button onClick={() => {handleLogout(); setIsMenuOpen(false);}} className="logout-button">
+              <button onClick={() => { handleLogout(); setIsMenuOpen(false); }} className="logout-button">
                 {t('navbar.actions.logout')}
               </button>
             </li>

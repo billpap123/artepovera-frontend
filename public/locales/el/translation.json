@@ -849,13 +849,10 @@
   "Employer": "Εργοδότης"
 },
 "notifications": {
-  "newMatch": "Έχετε ένα νέο match με τον/την {{name}}! <a href=\"{{chatLink}}\">Ξεκινήστε τη συνομιλία</a>",
-  "newLike": "Στον/ην {{name}} άρεσε το προφίλ σας.",
-  "newApplication":"Ο/Η {{artistName}} έκανε αίτηση στην αγγελία σας για '{{jobTitle}}'. <a>Προβολή προφίλ</a>"
-
-
-
-},
+    "newApplication": "Ο/Η {{artistName}} έκανε αίτηση στην αγγελία σας για '{{jobTitle}}'. <a>Προβολή προφίλ</a>",
+    "newMatch": "Έχετε ένα νέο match με τον/την {{name}}! <a>Ξεκινήστε τη συνομιλία</a>",
+    "newLike": "Στον/ην {{name}} άρεσε το προφίλ σας."
+  },
 "myJobPostingsPage":{
   "title": "Οι αγγελίες μου",
   "postNewJob":"Δημοσίευση νέας αγγελίας",

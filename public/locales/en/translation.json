@@ -855,12 +855,10 @@
 }
 ,
 "notifications": {
-  "newMatch": "You have a new match with {{name}}! <a href=\"{{chatLink}}\">Start chatting</a>",
-  "newLike": "{{name}} liked your profile.",
-  "newApplication": "{{artistName}} has applied for your job posting titled \"{{jobTitle}}\". <a href=\"{{artistProfileLink}}\">View profile</a>"
-
-
-},
+    "newApplication": "{{artistName}} has applied for your job posting titled \"{{jobTitle}}\". <a>View profile</a>",
+    "newMatch": "You have a new match with {{name}}! <a>Start chatting</a>",
+    "newLike": "{{name}} liked your profile."},
+    
 "myJobPostingsPage":{
   "title": "My job postings",
   "postNewJob":"Post a new job",
