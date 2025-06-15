@@ -155,6 +155,8 @@ const ArtistProfile: React.FC = () => {
     }
   };
   
+
+  
   const handlePasswordChange = async (e: React.FormEvent) => {
     e.preventDefault();
     if (newPassword !== confirmNewPassword) {
