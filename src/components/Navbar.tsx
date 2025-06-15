@@ -185,7 +185,8 @@ const Navbar = () => {
                                   i18nKey={notif.message_key}
                                   values={{ ...notif.message_params }}
                                   components={{
-                                    a: <Link to={notif.message_params?.chatLink || notif.message_params?.artistProfileLink || '#'} />
+                                    a: <Link to={notif.message_params?.chatLink || notif.message_params?.profileLink || notif.message_params?.artistProfileLink || '#'} />
+
                                   }}
                                 />
                                 <div className="timestamp">{new Date(notif.createdAt).toLocaleString()}</div>

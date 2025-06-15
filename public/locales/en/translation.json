@@ -857,7 +857,7 @@
 "notifications": {
     "newApplication": "{{artistName}} has applied for your job posting titled \"{{jobTitle}}\". <a>View profile</a>",
     "newMatch": "You have a new match with {{name}}! <a>Start chatting</a>",
-    "newLike": "{{name}} liked your profile."},
+"newLike": "{{name}} liked your profile. <a>View profile</a>"},
     
 "myJobPostingsPage":{
   "title": "My job postings",

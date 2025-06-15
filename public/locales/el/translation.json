@@ -849,9 +849,9 @@
   "Employer": "Εργοδότης"
 },
 "notifications": {
-    "newApplication": "Ο/Η {{artistName}} έκανε αίτηση στην αγγελία σας για '{{jobTitle}}'. <a>Προβολή προφίλ</a>",
+    "newApplication": "Ο/Η {{artistName}} έκανε αίτηση στην αγγελία σας '{{jobTitle}}'. <a>Προβολή προφίλ</a>",
     "newMatch": "Έχετε ένα νέο match με τον/την {{name}}! <a>Ξεκινήστε τη συνομιλία</a>",
-    "newLike": "Στον/ην {{name}} άρεσε το προφίλ σας."
+    "newLike": "Στον/ην {{name}} άρεσε το προφίλ σας. <a>Προβολή προφίλ</a>"
   },
 "myJobPostingsPage":{
   "title": "Οι αγγελίες μου",
