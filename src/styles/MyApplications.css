@@ -3,7 +3,7 @@
     max-width: 900px;
     margin: 0 auto;
     padding: 2rem;
-    padding-top: 120px; /* Add padding to account for fixed navbar */
+    padding-top: 70px; /* Add padding to account for fixed navbar */
   }
   
   .page-header {

@@ -31,7 +31,7 @@
     "noCvEdit": "No CV uploaded yet. choose one above.",
     "saveChanges": "Save changes",
     "savingProfile": "Saving profile...",
-    "doneEditing": "Done editing",
+    "doneEditing": "Close",
     "account": {
       "title": "Account settings",
       "changeEmail": "Change Account Email",
@@ -538,7 +538,7 @@
       "otherDefaultName": "File",
       "openFile": "Open file",
       "saveButton": "Save",
-      "editButton": "Edit desc",
+      "editButton": "Edit descr",
       "deleteButton": "Delete"
     },
     "modal": {
