@@ -56,17 +56,17 @@ const Login = () => {
 
     return (
         <div className="auth-page-container">
+            {/* These components are now direct children of the main container */}
+            {/* The CSS will position them correctly in the corners */}
             <LanguageSwitcher />
-
-            {/* The logo is now absolutely positioned by the CSS */}
             <div className="auth-logo-corner">
                 <Link to="/">
-                    {/* The text span has been removed */}
                     <img src="/images/logo2.png" alt={t('loginPage.altText.logo')} className="auth-logo" />
                 </Link>
             </div>
     
-            <div className="login-container auth-form-container">
+            {/* The white form container is now separate */}
+            <div className="auth-form-container">
                 <form onSubmit={handleSubmit} className="login-form auth-form">
                     <h2 className="login-title">{t('loginPage.title')}</h2>
                     <div className="form-group">
