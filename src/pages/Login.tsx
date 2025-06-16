@@ -2,11 +2,11 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
-import { useUserContext } from '../context/UserContext'; // <-- 1. IMPORT THE HOOK
+import { useUserContext } from '../context/UserContext';
 import '../styles/Global.css';
-import '../styles/Login.css';
+import '../styles/Login.css'; // We will replace the content of this file
 import { useTranslation } from "react-i18next";
-import LanguageSwitcher from '../components/LanguageSwitcher'; // <-- IMPORT THE NEW COMPONENT
+import LanguageSwitcher from '../components/LanguageSwitcher';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:50001';
 
@@ -16,9 +16,6 @@ const Login = () => {
     const [error, setError] = useState('');
     const navigate = useNavigate();
     const { t } = useTranslation();
-
-    // --- THIS IS THE FIX (PART 1) ---
-    // Get the setFullname function from your context as well.
     const { setUserId, setUserType, setArtistId, setEmployerId, setFullname } = useUserContext();
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -29,19 +26,15 @@ const Login = () => {
                 email,
                 password,
             });
-
             const { token, user } = response.data;
 
             localStorage.setItem('token', token);
             localStorage.setItem('user', JSON.stringify(user));
             
-            // --- THIS IS THE FIX (PART 2) ---
-            // Update all relevant user data in the global context *before* navigating.
             setUserId(user.user_id);
             setUserType(user.user_type);
-            setFullname(user.fullname); // This is the critical line you were missing.
+            setFullname(user.fullname);
 
-            // Check for nested profile objects to set the correct ID
             if (user.user_type === 'Artist' && user.artistProfile) {
                 setArtistId(user.artistProfile.artist_id);
             } else if (user.user_type === 'Employer' && user.employerProfile) {
@@ -49,7 +42,6 @@ const Login = () => {
             }
             
             navigate('/main');
-
         } catch (err: any) {
             console.error('Login error:', err);
             if (axios.isAxiosError(err) && err.response) {
@@ -62,17 +54,20 @@ const Login = () => {
 
     return (
         <div className="auth-page-container">
-                        <LanguageSwitcher /> {/* <-- ADD THE COMPONENT HERE */}
-
-            <div className="auth-logo-container">
-                <Link to="/">
-                    <img src="/images/logo2.png" alt={t('loginPage.altText.logo')} className="auth-logo" />
-                </Link>
-            </div>
+            {/* These elements are positioned relative to the full page */}
+            <LanguageSwitcher />
+            <Link to="/" className="auth-logo-corner">
+                <img src="/images/logo2.png" alt={t('loginPage.altText.logo')} />
+            </Link>
     
-            <div className="login-container auth-form-container">
-                <form onSubmit={handleSubmit} className="login-form auth-form">
-                    <h2 className="login-title">{t('loginPage.title')}</h2>
+            {/* This is the centered white form box */}
+            <div className="auth-form-container">
+                <div className="auth-form-header">
+                     <img src="/images/logo2.png" alt={t('loginPage.altText.logo')} className="auth-form-logo" />
+                     <h2 className="login-title">{t('loginPage.title')}</h2>
+                </div>
+
+                <form onSubmit={handleSubmit} className="auth-form">
                     <div className="form-group">
                         <label htmlFor="login-email">{t('loginPage.emailLabel')}</label>
                         <input
@@ -81,7 +76,7 @@ const Login = () => {
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
-                            className="login-input"
+                            className="form-input"
                         />
                     </div>
                     <div className="form-group">
@@ -92,14 +87,14 @@ const Login = () => {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
-                            className="login-input"
+                            className="form-input"
                         />
                     </div>
-                    <button type="submit" className="login-button auth-button">{t('loginPage.loginButton')}</button>
-                    {error && <p className="login-error error-message">{error}</p>}
+                    <button type="submit" className="auth-button">{t('loginPage.loginButton')}</button>
+                    {error && <p className="error-message">{error}</p>}
                 </form>
     
-                <p className="register-link auth-switch-link">
+                <p className="auth-switch-link">
                     {t('loginPage.registerPrompt')}{' '}
                     <Link to="/register">
                         {t('loginPage.registerLink')}
