@@ -16,7 +16,7 @@ top: 0;
 
 .auth-logo-corner {
   position: absolute;
-  top: 30px;
+  top: 10px;
   left: 30px;
   z-index: 2;
 }

@@ -18,13 +18,13 @@ top: 0;
 /* Positions the logo in the top-left corner of the page */
 .auth-logo-corner {
   position: absolute;
-  top: 30px;
+  top: 10px;
   left: 30px;
   z-index: 2; /* Ensures it's above other content */
 }
 
 .auth-logo-corner img {
-  height: 50px;
+  height: 80px;
   width: auto;
   transition: transform 0.2s ease;
 }

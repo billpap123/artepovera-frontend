@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { useUserContext } from '../context/UserContext';
-import '../styles/Global.css';
 import '../styles/Login.css'; // We will replace the content of this file
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from '../components/LanguageSwitcher';
