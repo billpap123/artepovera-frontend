@@ -1,27 +1,61 @@
-/* Login Page Container */
-.login-container {
+/* Add/Update these rules in your Login.css or a relevant global stylesheet */
+
+/* This container for the whole page needs to be a positioning reference */
+.auth-page-container {
+    position: relative; /* This is crucial for positioning the logo */
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    margin-top: 50px;
+    background-color: var(--bg-page, #fdfbf7);
     padding: 20px;
-    background-color: var(--pure-white);
+}
+
+/* New styles for the corner logo */
+.auth-logo-corner {
+  position: absolute;
+  top: 25px;
+  left: 25px;
+}
+
+.auth-logo-corner .auth-logo {
+  height: 50px; /* A good size for a corner logo */
+  width: auto;
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+.auth-logo-corner .auth-logo:hover {
+  transform: scale(1.05);
+}
+
+
+/* Your existing styles for the main form container */
+.auth-form-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background-color: var(--pure-white, #fff);
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     width: 100%;
     max-width: 400px;
 }
 
-/* Login Title */
+.auth-form {
+    width: 100%;
+}
+
 .login-title {
     font-size: 2rem;
-    color: var(--charcoal-gray);
+    color: var(--charcoal-gray, #333);
     margin-bottom: 20px;
     text-align: center;
 }
 
-/* Form Group */
 .form-group {
     margin-bottom: 15px;
     width: 100%;
@@ -32,98 +66,53 @@
     display: block;
     font-weight: bold;
     margin-bottom: 5px;
-    color: var(--charcoal-gray);
+    color: var(--charcoal-gray, #333);
 }
 
-/* Input Fields */
 .login-input {
     width: 100%;
     padding: 10px;
     font-size: 1rem;
     border: 1px solid #ccc;
     border-radius: 5px;
-    margin-bottom: 10px;
 }
 
-/* Login Button */
-.login-button {
-    background-color: var(--terracotta-red);
-    color: var(--pure-white);
+.auth-button {
+    width: 100%;
+    background-color: var(--terracotta-red, #c04a29);
+    color: var(--pure-white, #fff);
     border: none;
-    padding: 10px 15px;
+    padding: 12px 15px;
     border-radius: 5px;
     cursor: pointer;
     font-size: 1rem;
+    font-weight: 600;
     transition: background-color 0.3s ease;
 }
 
-.login-button:hover {
+.auth-button:hover {
     background-color: #a5533b;
 }
 
-/* Error Message */
-.login-error {
-    color: var(--terracotta-red);
-    margin-top: 10px;
+.error-message {
+    color: var(--terracotta-red, #c04a29);
+    margin-top: 15px;
     font-size: 0.9rem;
+    text-align: center;
 }
 
-/* Register Link */
-.register-link {
+.auth-switch-link {
     margin-top: 20px;
     font-size: 1rem;
-    color: var(--charcoal-gray);
+    color: var(--charcoal-gray, #333);
 }
 
-.register-link-text {
-    color: var(--terracotta-red);
+.auth-switch-link a {
+    color: var(--terracotta-red, #c04a29);
     text-decoration: none;
     font-weight: bold;
-    transition: color 0.3s ease;
 }
 
-.register-link-text:hover {
-    color: #a5533b;
+.auth-switch-link a:hover {
+    text-decoration: underline;
 }
-
-/* Styles for the logo on Auth Pages (Login/Register) */
-/* Add or update these styles in your relevant CSS file */
-
-.auth-logo-container {
-    margin-bottom: 30px; /* Existing - adjust as needed */
-    text-align: center;
-  }
-  
-  /* Style the <Link> component that wraps both text and image */
-  .auth-logo-container a {
-    display: inline-flex; /* Aligns text and image on the same line and allows vertical alignment */
-    align-items: center;   /* Vertically aligns the text and image */
-    text-decoration: none; /* Removes the default link underline */
-    color: var(--text-medium, #654321); /* Earthy text color (e.g., Deep Brown) */
-    font-weight: 600;
-    font-size: 0.95rem;    /* Adjust size as needed */
-    transition: color 0.2s ease;
-  }
-  
-  /* Hover effect for the link (text and image together) */
-  .auth-logo-container a:hover {
-    color: var(--accent-primary, #A0522D); /* Sienna or your primary accent on hover */
-    /* text-decoration: underline; */ /* Optional: add underline on hover if you like */
-  }
-  
-  /* Adjust the logo image when it's part of this link */
-  .auth-logo-container .auth-logo {
-    height: 158px;   /* Smaller height to fit well with the text - ADJUST AS NEEDED */
-    width: auto;    /* Maintain aspect ratio */
-    margin-left: 8px; /* Space between "Back to main page" text and the logo image */
-                    /* If you want logo first: remove margin-left, add margin-right to text, and reorder in JSX */
-    display: inline-block; /* Or block, ensure good alignment */
-    vertical-align: middle; /* Another way to help align with text */
-    transition: transform 0.3s ease; /* Keep your hover effect for the image */
-  }
-  
-  /* Optional: If you want only the image to have the scale effect on link hover */
-  .auth-logo-container a:hover .auth-logo {
-    transform: scale(1.05);
-  }
-  
