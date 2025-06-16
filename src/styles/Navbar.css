@@ -56,8 +56,7 @@
   display: flex;
   align-items: center;
   gap: 1rem;
-  margin-left: auto; /* <-- ADD THIS LINE */
-
+  margin-left: auto;
 }
 
 .nav-links a,
@@ -97,22 +96,19 @@
 .nav-links .register-button:hover {
   background-color: var(--navbar-accent-dark);
 }
-/* Add this to the end of your Navbar.css file */
 
 .lang-separator {
   display: inline-block;
   width: 3px;
-  height: 12px; /* Adjust height as needed */
-  background-color: rgba(255, 255, 255, 0.5); /* White with 50% opacity */
-  margin: 0 8px; /* Adds space around the line */
-  vertical-align: middle; /* Aligns it nicely with the buttons */
+  height: 12px;
+  background-color: rgba(255, 255, 255, 0.5);
+  margin: 0 8px;
+  vertical-align: middle;
 }
 .nav-icon {
   font-size: 1.1rem;
 }
-.nav-links .notifications {
-  margin-left: auto;
-}
+
 /* --- Hamburger Menu (Mobile) --- */
 .hamburger {
   display: none;
@@ -181,7 +177,6 @@
   box-shadow: var(--box-shadow);
   z-index: 999;
   padding: 20px;
-
 }
 
 .notifications-dropdown ul {
@@ -247,79 +242,21 @@
   background-color: #718096;
 }
 
-/* --- Responsive Design --- */
-@media screen and (max-width: 768px) {
-  /* Add padding to the top of the body to push content down */
-  body {
-    padding-top: 170px; /* This should match your navbar height */
-  }
-
-  /* On mobile, the navbar remains a flex row, but we hide the desktop links */
-  .navbar .nav-links {
-      display: none;
-  }
-
-  /* The hamburger menu icon is now visible */
-  .hamburger {
-      display: block;
-  }
-
-  /* This styles the full-screen OVERLAY that appears ONLY when the menu is open */
-  .nav-links.open {
-      display: flex; /* This makes the overlay visible */
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100vh;
-      background-color: var(--navbar-bg);
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      gap: 1.5rem;
-  }
-
-  /* Style the links inside the overlay */
-  .nav-links.open a,
-  .nav-links.open button {
-      font-size: 1.2rem;
-      width: 80%;
-      justify-content: center;
-  }
-
-  /* Special handling for notifications list inside the mobile overlay */
-  .notifications {
-      display: contents;
-  }
-  .notifications-dropdown {
-      position: static;
-      width: 90%;
-      max-width: 400px;
-      margin-top: 1rem;
-      box-shadow: none;
-      border-radius: 8px;
-      max-height: none;
-      order: 10; /* Ensures it appears at the bottom of the list */
-      padding: 20px;
-
-  }
-}
-
 /* --- Language Switcher Styles --- */
 .language-switcher2 {
   display: flex;
   align-items: center;
   gap: 5px;
-  margin-left: 15px; /* Adds some space from the logout button */
-  position:  static ;
+  margin-left: 15px;
+  position: static;
 }
 
 .language-switcher button {
   background: none;
   border: none;
-  color: #ccc; /* A slightly dimmer color for non-active */
+  color: #ccc;
   cursor: pointer;
-  font-family: inherit; /* Use the same font as the navbar */
+  font-family: inherit;
   font-size: 0.95rem;
   font-weight: 600;
   padding: 5px;
@@ -330,7 +267,6 @@
   color: white;
 }
 
-/* This style applies to the currently selected language button */
 .language-switcher button.active {
   color: white;
   font-weight: 800;
@@ -340,15 +276,81 @@
 }
 
 .language-switcher span {
-  color: #666; /* Color for the "/" separator */
+  color: #666;
   font-size: 1rem;
 }
 
-/* --- Responsive adjustments for the switcher --- */
-@media (max-width: 768px) {
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+@media screen and (max-width: 768px) {
+  /* Add padding to the top of the body to push content down */
+  body {
+    padding-top: 70px; /* Match the navbar height */
+  }
+
+  /* On mobile, make the navbar a flex row with space between logo and hamburger */
+  .navbar {
+    justify-content: space-between;
+  }
+
+  .navbar .nav-links {
+    display: none; /* Hide desktop links by default */
+  }
+
+  /* The hamburger menu icon is now visible */
+  .hamburger {
+    display: block;
+    order: 3; /* Ensure it comes after the logo */
+  }
+
+  /* Styles for the full-screen OVERLAY when the menu is open */
+  .nav-links.open {
+    display: flex;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: var(--navbar-bg);
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  /* Hide icons inside the mobile overlay, showing only text */
+  .nav-links.open .nav-icon {
+    display: none;
+  }
+
+  /* Style the links inside the overlay */
+  .nav-links.open a,
+  .nav-links.open button {
+    font-size: 1.2rem;
+    width: 80%;
+    justify-content: center;
+  }
+
+  /* Special handling for notifications list inside the mobile overlay */
+  .notifications {
+    display: contents; /* Allows dropdown to be part of the flex layout */
+  }
+  .notifications-dropdown {
+    position: static;
+    width: 90%;
+    max-width: 400px;
+    margin-top: 1rem;
+    box-shadow: none;
+    border-radius: 8px;
+    max-height: none;
+    order: 10; /* Ensures it appears at the bottom */
+    padding: 20px;
+  }
+  
   .nav-links.open .language-switcher {
     margin-top: 15px;
     padding-bottom: 15px;
-    justify-content: center; /* Center it in the mobile menu */
+    justify-content: center;
   }
 }
