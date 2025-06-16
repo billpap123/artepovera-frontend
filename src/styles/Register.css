@@ -169,6 +169,7 @@ top: 0;
 @media (max-width: 640px) {
   .auth-form-container.register-container {
     padding: 30px 25px;
+    padding-top: 100px !important;
   }
   .form-row {
     flex-direction: column;
