@@ -38,10 +38,10 @@ const landingPageStyles = `
     color: #4d4033;
     border: 1px solid #dcd3c7;
     border-radius: 8px;
-    padding: 8px 30px 8px 12px;
+    padding: 8px 30px 8px 12px !important;
     font-family: Nunito, sans-serif;
     font-size: .9rem;
-    font-weight: 600;
+    font-weight: 700 !important;
     cursor: pointer;
     outline: none;
     -webkit-appearance: none;
