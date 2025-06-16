@@ -6,6 +6,8 @@
     left: 0;
     width: 100%;
     height: 100%;
+    background-color: #fdfbf7; /* Off-white / yellow background */
+  
   }
   
   /* Positions the logo in the top-left corner of the page */
@@ -17,7 +19,7 @@
   }
   
   .auth-logo-corner img {
-    height: 80px;
+    height: 50px;
     width: auto;
     transition: transform 0.2s ease;
   }
