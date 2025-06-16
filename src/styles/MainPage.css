@@ -5,9 +5,8 @@
    ========================================================================== */
 
    .main-page-container {
-    width: 95%;
-    /* Using a more constrained max-width for better layout control on very large screens */
-    max-width: 1400px; 
+    /* CORE CHANGE: Set a fixed width for desktop screens */
+    width: 1200px; 
     margin: 0 auto;
     padding: 100px 1.5rem;
     box-sizing: border-box;
@@ -36,7 +35,7 @@
   
   .dashboard-grid {
     display: grid;
-    /* CORE FIX: We define an explicit 2-column grid for desktop.
+    /* We define an explicit 2-column grid for desktop.
       This creates a stable 2x3 layout for your six cards.
     */
     grid-template-columns: repeat(2, 1fr);
@@ -220,6 +219,14 @@
   /* ==========================================================================
      RESPONSIVE STYLES
      ========================================================================== */
+  
+  /* NEW BREAKPOINT: For screens smaller than our fixed container width */
+  @media (max-width: 1200px) {
+    .main-page-container {
+      /* Revert to a fluid width to prevent horizontal scrolling */
+      width: 95%;
+    }
+  }
   
   /* For Tablets (e.g., iPads) */
   @media (max-width: 992px) {
