@@ -7,9 +7,9 @@ import Navbar from '../components/Navbar';
 import JobFeed from './JobFeed';
 import JobFilters, { Filters } from '../components/JobFilters';
 import '../styles/MainPage.css';
-import { 
-  FaEye, FaBriefcase, FaUserEdit, FaMapMarkedAlt, 
-  FaPlusCircle, FaCommentDots, FaImages, FaUsersCog, FaThList, FaClipboardList 
+import {
+  FaEye, FaBriefcase, FaUserEdit, FaMapMarkedAlt,
+  FaPlusCircle, FaCommentDots, FaImages, FaUsersCog, FaThList, FaClipboardList
 } from 'react-icons/fa';
 import { useTranslation } from "react-i18next";
 
@@ -17,18 +17,18 @@ import { useTranslation } from "react-i18next";
 
 // Define the Job interface here or import it from a shared types file
 interface JobRequirements {
-    military_service?: 'Completed' | 'Not Required' | 'Not Applicable';
-    university_degree?: { required: boolean; details?: string; };
-    foreign_languages?: { language: string; certificate: string; }[];
-    experience_years?: '0-3' | '4-7' | '7-10' | '>10';
+  military_service?: 'Completed' | 'Not Required' | 'Not Applicable';
+  university_degree?: { required: boolean; details?: string; };
+  foreign_languages?: { language: string; certificate: string; }[];
+  experience_years?: '0-3' | '4-7' | '7-10' | '>10';
 }
 interface Job {
-    job_id: number; title: string; category: string; description?: string | null; location?: string | null;
-    presence: 'Physical' | 'Online' | 'Both'; start_date?: string | null; end_date?: string | null;
-    application_deadline?: string | null; payment_total: number; payment_is_monthly?: boolean;
-    payment_monthly_amount?: number | null; insurance?: boolean | null; desired_keywords?: string | null;
-    requirements?: JobRequirements | null; createdAt: string;
-    employer?: { user?: { user_id: number; fullname: string; profile_picture: string | null; } }
+  job_id: number; title: string; category: string; description?: string | null; location?: string | null;
+  presence: 'Physical' | 'Online' | 'Both'; start_date?: string | null; end_date?: string | null;
+  application_deadline?: string | null; payment_total: number; payment_is_monthly?: boolean;
+  payment_monthly_amount?: number | null; insurance?: boolean | null; desired_keywords?: string | null;
+  requirements?: JobRequirements | null; createdAt: string;
+  employer?: { user?: { user_id: number; fullname: string; profile_picture: string | null; } }
 }
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:50001";
@@ -43,7 +43,7 @@ const MainPage = () => {
   const [filters, setFilters] = useState<Filters | null>(null);
   const [isLoadingJobs, setIsLoadingJobs] = useState(true);
   const [jobsError, setJobsError] = useState<string | null>(null);
-  
+
   // --- THIS IS THE FIX ---
   // Local state to hold the welcome name, ensuring it reacts to context changes.
   const [welcomeName, setWelcomeName] = useState('');
@@ -76,39 +76,39 @@ const MainPage = () => {
         setIsLoadingJobs(false);
       }
     };
-    
+
     if (userType && userType !== 'Admin') {
-        fetchAllJobs();
+      fetchAllJobs();
     } else {
-        setIsLoadingJobs(false);
+      setIsLoadingJobs(false);
     }
   }, [userType]);
 
   const handleFilterChange = (newFilters: Filters) => {
     setFilters(newFilters);
   };
-  
+
   const filteredJobs = useMemo(() => {
     if (!filters) return allJobs;
 
     return allJobs.filter(job => {
-        if (filters.keywords) {
-            const searchString = filters.keywords.toLowerCase();
-            const inTitle = job.title.toLowerCase().includes(searchString);
-            const inDescription = job.description?.toLowerCase().includes(searchString) || false;
-            const inKeywords = job.desired_keywords?.toLowerCase().includes(searchString) || false;
-            if (!inTitle && !inDescription && !inKeywords) return false;
-        }
-        if (filters.location && !job.location?.toLowerCase().includes(filters.location.toLowerCase())) return false;
-        if (filters.minPayment !== '' && job.payment_total < filters.minPayment) return false;
-        if (filters.maxPayment !== '' && job.payment_total > filters.maxPayment) return false;
-        if (filters.category && job.category !== filters.category) return false;
-        if (filters.presence && job.presence !== filters.presence) return false;
-        if (filters.experience && job.requirements?.experience_years !== filters.experience) return false;
-        if (filters.insurance === 'yes' && job.insurance !== true) return false;
-        if (filters.insurance === 'no' && job.insurance === true) return false;
+      if (filters.keywords) {
+        const searchString = filters.keywords.toLowerCase();
+        const inTitle = job.title.toLowerCase().includes(searchString);
+        const inDescription = job.description?.toLowerCase().includes(searchString) || false;
+        const inKeywords = job.desired_keywords?.toLowerCase().includes(searchString) || false;
+        if (!inTitle && !inDescription && !inKeywords) return false;
+      }
+      if (filters.location && !job.location?.toLowerCase().includes(filters.location.toLowerCase())) return false;
+      if (filters.minPayment !== '' && job.payment_total < filters.minPayment) return false;
+      if (filters.maxPayment !== '' && job.payment_total > filters.maxPayment) return false;
+      if (filters.category && job.category !== filters.category) return false;
+      if (filters.presence && job.presence !== filters.presence) return false;
+      if (filters.experience && job.requirements?.experience_years !== filters.experience) return false;
+      if (filters.insurance === 'yes' && job.insurance !== true) return false;
+      if (filters.insurance === 'no' && job.insurance === true) return false;
 
-        return true;
+      return true;
     });
   }, [allJobs, filters]);
 
@@ -129,7 +129,7 @@ const MainPage = () => {
               <Link to="/portfolio" className="dashboard-card stat-card"><FaImages size={24} className="stat-icon" /><div><h3>{t('mainPage.artist.editPortfolio')}</h3><p>{t('mainPage.artist.editPortfolioDesc')}</p></div></Link>
               <Link to="/chat" className="dashboard-card stat-card"><FaCommentDots size={24} className="stat-icon" /><div><h3>{t('mainPage.artist.messages')}</h3><p>{t('mainPage.artist.messagesDesc')}</p></div></Link>
               <Link to="/my-applications" className="dashboard-card card-bg-jobs">
-              <FaClipboardList size={32} className="card-bg-icon" />
+                <FaClipboardList size={32} className="card-bg-icon" />
 
                 <div>
                   <h3>{t('mainPage.artist.applications')}</h3>
@@ -152,7 +152,7 @@ const MainPage = () => {
               <Link to="/post-job" className="dashboard-card stat-card"><FaPlusCircle size={24} className="stat-icon" /><div><h3>{t('mainPage.employer.postJob')}</h3><p>{t('mainPage.employer.postJobDesc')}</p></div></Link>
               <Link to="/chat" className="dashboard-card stat-card"><FaCommentDots size={24} className="stat-icon" /><div><h3>{t('mainPage.employer.messages')}</h3><p>{t('mainPage.employer.messagesDesc')}</p></div></Link>
               <Link to="/my-jobs" className="dashboard-card  card-bg-jobs">
-              <FaThList size={32} className="card-bg-icon" />
+                <FaThList size={32} className="card-bg-icon" />
 
                 <div>
                   <h3>{t('mainPage.employer.jobPostings')}</h3>
@@ -177,7 +177,7 @@ const MainPage = () => {
 
           {userType !== 'Admin' && (
             <>
-              <div className="dashboard-card job-feed-card">
+              <div id="job-feed" className="dashboard-card job-feed-card">
                 <h2>{t('mainPage.jobFeed.title')}</h2>
                 <JobFilters onFilterChange={handleFilterChange} />
                 <hr className="filter-divider" />
@@ -185,7 +185,7 @@ const MainPage = () => {
               </div>
             </>
           )}
-          
+
           {userType === 'Admin' && (
             <div className="dashboard-card admin-overview-card">
               <h2>{t('mainPage.admin.overviewTitle')}</h2>

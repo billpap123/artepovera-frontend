@@ -82,8 +82,8 @@ const MyApplicationsPage: React.FC = () => {
                         <FaBriefcase size={60} className="empty-state-icon" />
                         <h2>{t('myApplicationsPage.status.noApplicationsTitle')}</h2>
                         <p>{t('myApplicationsPage.status.noApplicationsDesc')}</p>
-                        <Link to="/main" className="btn-primary">{t('myApplicationsPage.actions.browseJobs')}</Link>
-                    </div>
+                        <Link to="/main#job-feed" className="btn-primary">{t('myApplicationsPage.actions.browseJobs')}</Link>
+                        </div>
                 ) : (
                     <div className="applications-list">
                         {applications.map((app) => (
