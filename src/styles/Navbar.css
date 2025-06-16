@@ -252,7 +252,7 @@
   position: static;
 }
 
-.language-switcher button {
+.language-switcher2 button {
   background: none;
   border: none;
   color: #ccc;
@@ -264,11 +264,11 @@
   transition: color 0.2s ease-in-out;
 }
 
-.language-switcher button:hover {
+.language-switcher2 button:hover {
   color: white;
 }
 
-.language-switcher button.active {
+.language-switcher2 button.active {
   color: white;
   font-weight: 800;
   text-decoration: underline;
@@ -276,7 +276,7 @@
   text-underline-offset: 4px;
 }
 
-.language-switcher span {
+.language-switcher2 span {
   color: #666;
   font-size: 1rem;
 }
@@ -355,7 +355,7 @@
     padding: 20px;
   }
   
-  .nav-links.open .language-switcher {
+  .nav-links.open .language-switcher2 {
     margin-top: 15px;
     padding-bottom: 15px;
     justify-content: center;
