@@ -6,7 +6,7 @@
   margin: 40px auto;
   padding: 20px 40px;
   font-family: 'Nunito', sans-serif;
-  padding-top:200px;
+  padding-top:50px;
   min-height: calc(100vh - 120px); /* Adjust based on your navbar/footer height */
 }
 
@@ -373,4 +373,56 @@
 }
 .action-btn.save:hover:not(:disabled) {
   background-color: #218838 !important; /* Darker Green */
+}
+
+
+/* For Tablets */
+@media (max-width: 992px) {
+  .portfolio-page {
+    padding: 20px 30px;
+  }
+  .portfolio-grid {
+    gap: 20px;
+  }
+}
+
+/* For Mobile Phones */
+@media (max-width: 767px) {
+  .portfolio-page {
+    padding: 15px 15px;
+    margin-top: 20px;
+  }
+
+  .portfolio-header {
+    flex-direction: column;
+    align-items: stretch; /* Make items take full width */
+    text-align: center;
+  }
+
+  .portfolio-header h2 {
+    font-size: 1.8rem;
+  }
+
+  .portfolio-upload-form.card-style {
+    padding: 20px;
+  }
+
+  .portfolio-grid {
+    /* Adjust minmax to allow smaller cards on mobile */
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 15px;
+  }
+
+  .portfolio-item-content {
+    padding: 15px;
+  }
+
+  .form-actions {
+    flex-direction: column;
+    align-items: stretch; /* Buttons take full width */
+  }
+
+  .submit-btn, .cancel-btn {
+    width: 100%;
+  }
 }

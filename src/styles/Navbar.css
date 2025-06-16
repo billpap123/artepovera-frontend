@@ -41,7 +41,7 @@
 }
 
 .logo-image {
-  height: 50px; /* A more controlled, standard height */
+  height: 90px; /* A more controlled, standard height */
   width: auto;
   transition: transform 0.3s ease;
 }

@@ -5,14 +5,12 @@
 /* --- Page Layout & Main Card --- */
 
 .user-profile-page {
-width: 100%;
-  padding-top: 200px !important;
+width: 700px;
 
   max-width: 900px;
 
-  margin: 40px auto;
-
-  padding: 30px 40px;
+  padding: 120px;
+    margin: 120px;
 
   background-color: #ffffff;
 
@@ -386,7 +384,7 @@ width: 100%;
 
 .profile-section-public h4 {
 
-  font-size: 1.4rem;
+  font-size: 1.5rem;
 
   color: #343a40;
 
@@ -1480,3 +1478,74 @@ button:hover:not(:disabled),
   background-color: #444444 !important;
   /* Dark Gray */
 }
+
+
+
+
+/* ==========================================================================
+   RESPONSIVE STYLES
+   ========================================================================== */
+   @media (min-width: 768px) {
+    .profile-header-public {
+      flex-direction: row;
+      text-align: left;
+    }
+    .profile-summary-public {
+      align-items: flex-start;
+    }
+    .profile-actions {
+      justify-content: flex-start;
+    }
+  }
+  
+  @media (max-width: 767px) {
+    .user-profile-page {
+      padding: 20px;
+      margin: 80px 10px 20px 10px;
+    }
+  
+    .user-profile-img {
+      width: 120px;
+      height: 120px;
+    }
+  
+    .user-fullname {
+      font-size: 1.8rem;
+    }
+  
+    .profile-section-public h4 {
+      font-size: 1.3rem;
+    }
+  
+    .profile-actions {
+      flex-direction: column;
+      align-items: stretch;
+      width: 100%;
+    }
+  
+    .like-button, .rate-user-button, .support-button, .interaction-button, .message-button {
+      justify-content: center;
+      padding: 12px;
+    }
+  
+    .review-comment, .comment-text {
+      padding-left: 0;
+    }
+  
+    .comment-header {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 15px;
+    }
+  
+    .commenter-info .comment-date {
+      display: inline-block; /* Display next to name on mobile */
+      margin-left: 8px;
+    }
+    
+    .comment-rating, .review-stars {
+      margin-left: 0;
+      margin-top: 5px;
+    }
+  }

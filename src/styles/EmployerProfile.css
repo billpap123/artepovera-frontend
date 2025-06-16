@@ -372,7 +372,6 @@ button:hover {
 }
 
 .reviews-section h4 {
-  font-size: 1.3rem; /* Heading for the section */
   color: var(--terracotta-red); /* Use accent color */
   margin-bottom: 15px;
 }
