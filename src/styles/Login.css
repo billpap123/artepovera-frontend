@@ -1,3 +1,4 @@
+
 /* This is the main full-page container with the yellow background */
 .auth-page-container {
     position: relative; /* This is essential for positioning children */
@@ -48,10 +49,8 @@
     margin-bottom: 30px;
   }
   
-  .auth-form-logo {
-    height: 60px;
-    margin-bottom: 15px;
-  }
+  /* The logo inside the form has been removed, so this style is no longer needed */
+  /* .auth-form-logo { ... } */
   
   .login-title {
     font-size: 1.8rem;

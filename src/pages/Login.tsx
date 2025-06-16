@@ -1,4 +1,3 @@
-// src/pages/Login.tsx
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
@@ -63,7 +62,7 @@ const Login = () => {
             {/* This is the centered white form box */}
             <div className="auth-form-container">
                 <div className="auth-form-header">
-                     <img src="/images/logo2.png" alt={t('loginPage.altText.logo')} className="auth-form-logo" />
+                     {/* The logo inside the white box has been removed for a cleaner look */}
                      <h2 className="login-title">{t('loginPage.title')}</h2>
                 </div>
 
