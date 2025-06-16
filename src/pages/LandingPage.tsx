@@ -20,15 +20,43 @@ const landingPageStyles = `
   /* These rules are a special override ONLY for the Landing Page.
      They make the global switcher component look good on a dark background. */
   .language-switcher-select {
-    background-color: rgba(255, 255, 255, 0.15) !important; /* Semi-transparent white */
-    color: white !important;
-    border: 1px solid rgba(255, 255, 255, 0.5) !important;
-    /* Custom WHITE dropdown arrow */
-    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23FFFFFF%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22/%3E%3C/svg%3E') !important;
+    /* --- Appearance for Light Backgrounds --- */
+    background-color: #C96A50; /* Light beige */
+    color: #4d4033; /* Dark brown text */
+    border: 1px solid #dcd3c7; /* Light brown border */
+    border-radius: 8px;
+    padding: 8px 30px 8px 12px;
+    
+    /* --- Font and Cursor --- */
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    
+    /* --- Removing Default OS Styling --- */
+    outline: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+  
+    /* --- Custom Dropdown Arrow (Dark Version) --- */
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%234D4033%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22/%3E%3C/svg%3E');
+    background-repeat: no-repeat;
+    background-position: right 10px top 50%;
+    background-size: 10px auto;
+    
+    transition: background-color 0.2s ease;
   }
-
+  
   .language-switcher-select:hover {
-    background-color: rgba(255, 255, 255, 0.25) !important;
+      background-color: #C96A50; /* Light beige */
+    ; /* Slightly darker beige on hover */
+  }
+  
+  /* Styling for the dropdown options */
+  .language-switcher-select option {
+    background-color: #4d4033;
+    color: white;
   }
 
   /* --- END OF FIX --- */
@@ -173,11 +201,13 @@ const landingPageStyles = `
         .hero-subtitle { font-size: 1.2rem; }
         .landing-section h2 { font-size: 2rem; }
         .category-grid { grid-template-columns: 1fr; }
+        .hero-overlay{padding-top:0px !important;}
    }
     @media (max-width: 480px) {
          .hero-title { font-size: 2.2rem; }
          .hero-cta-buttons { flex-direction: column; }
          .hero-btn { width: 80%; margin: 5px auto; }
+         .hero-overlay{padding-top:0px !important;}
     }
 `;
 
