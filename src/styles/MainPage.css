@@ -1,253 +1,259 @@
-/* src/styles/MainPage.css */
-
-.main-page-container {
-  width: 95%; /* Keep it wide */
-  max-width: 1800px; /* Allow it to be very wide */
-  margin: 0 auto;
-  padding: 100px 1.5rem;
-  box-sizing: border-box;
-  background-color: floralwhite;
-}
-
-.main-page-header {
-  margin-bottom: 30px;
-}
-
-.main-page-header h1 {
-  font-size: 2.5rem;
-  font-weight: 700;
-  color: #2c3e50;
-  margin: 0 0 5px 0;
-}
-
-.main-page-header p {
-  font-size: 1.1rem;
-  color: #7f8c8d;
-}
-
-.dashboard-grid {
-  display: grid;
-  /* --- THIS IS THE FIX --- */
-  /* We make the minimum width smaller to give the cards more flexibility */
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 25px;
-}
-
-.dashboard-card {
-  background-color: #ffffff;
-  border-radius: 12px;
-  padding: 25px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-  position: relative;
-  overflow: hidden;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 20px;
-  text-decoration: none;
-}
-
-.dashboard-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-}
-
-.stat-card div {
-  /* This is the key fix. 
-    flex: 1 allows the div to grow and shrink to fill available space 
-    without forcing its parent card to widen.
-  */
-  flex: 1;
-
-  /* This is a safeguard that allows the flex item to shrink smaller 
-    than its content's intrinsic width, preventing overflow.
-  */
-  min-width: 0;
-}
-
-/* Add word-break to handle long words that might still try to overflow,
-  which is a good practice for internationalization.
-*/
-.stat-card div h3,
-.stat-card div p {
-  word-break: break-word;
-}
-
-/* Base styling for simple stat cards (no background image) */
-.stat-card {
-  flex-direction: row;
-}
-
-.stat-icon {
-  color: #C96A50;
-  font-size: 24px;
-  flex-shrink: 0;
-}
-
-.stat-card div h3 {
-  margin: 0 0 4px 0;
-  font-size: 1.2rem;
-  color: #34495e;
-}
-
-.stat-card div p {
-  margin: 0;
-  color: #95a5a6;
-  font-size: 0.9rem;
-}
-
-/* Main container for the map card */
-.card-bg-map {
-  min-height: 180px;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: baseline;
-  text-align: left;
-  padding: 25px;
-  overflow: hidden;
-  border-radius: 12px;
-  background-image: url(/images/map-xta.png);
-  background-size: cover;
-  background-position: center;
-  z-index: 1;
-}
-
-/* Dark overlay on the map card */
-.card-bg-map::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.45);
-  z-index: -1;
-  transition: background-color 0.3s ease;
-}
-
-.card-bg-map:hover::before {
-  background-color: rgba(0, 0, 0, 0.6);
-}
-
-.card-bg-map h3,
-.card-bg-map p {
-  color: #FFFFFF;
-  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7);
-}
-
-.card-bg-map h3 {
-  font-size: 1.8rem;
-  font-weight: 700;
-  margin-bottom: 5px;
-}
-
-.card-bg-map p {
-  font-size: 1.1rem;
-  margin: 0;
-}
-
-/* Icon on cards with backgrounds */
-.card-bg-icon {
-  color: #34495e;
-  flex-shrink: 0;
-}
-
-/* Layout for "My Jobs" / "My Applications" cards */
-.card-bg-jobs {
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-start;
-  text-align: left;
-  gap: 20px;
-  background-color: #f0f4f8;
-}
-
-.card-bg-jobs h3 {
-  font-size: 1.8rem;
-  font-weight: 700;
-  margin-bottom: 5px;
-  color: #2c3e50;
-}
-
-.card-bg-jobs p {
-  color: #7f8c8d;
-}
-
-/* Large job feed card */
-.job-feed-card {
-  grid-column: 1 / -1; 
-  background-color: #fdfdfd; 
-  flex-direction: column;
-  align-items: stretch;
-}
-
-.job-feed-card h2 {
-  margin-top: 0;
-  padding-bottom: 15px;
-  border-bottom: 1px solid #eee;
-  margin-bottom: 20px;
-}
-
-/* Admin specific cards */
-.admin-card {
-  background-color: #f8d7da;
-  border: 1px solid #f5c6cb;
-}
-.admin-card .stat-icon { color: #721c24; }
-.admin-card:hover { background-color: #f1c6c9; }
-.admin-overview-card {
-  grid-column: 1 / -1;
-  text-align: center;
-  font-size: 1.1rem;
-  color: #444;
-}
-
-hr.filter-divider {
-  border: none;
-  border-top: 1px solid #e9ecef;
-  margin: 20px 0;
-}
-
+/* src/styles/MainPage.css - Refactored for Stable Layout */
 
 /* ==========================================================================
-   RESPONSIVE STYLES
+   MAIN CONTAINER & HEADER
    ========================================================================== */
 
-@media (min-width: 1200px) {
-  .job-feed-card {
-    grid-column: span 2; 
-    grid-row: span 2;
-  }
-}
-
-@media (max-width: 992px) {
-  .main-page-container {
+   .main-page-container {
     width: 95%;
+    /* Using a more constrained max-width for better layout control on very large screens */
+    max-width: 1400px; 
+    margin: 0 auto;
+    padding: 100px 1.5rem;
+    box-sizing: border-box;
+    background-color: floralwhite;
   }
-  .main-page-header h1 { font-size: 2.2rem; }
+  
+  .main-page-header {
+    margin-bottom: 30px;
+  }
+  
+  .main-page-header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin: 0 0 5px 0;
+  }
+  
+  .main-page-header p {
+    font-size: 1.1rem;
+    color: #7f8c8d;
+  }
+  
+  /* ==========================================================================
+     DASHBOARD GRID - THE CORE FIX
+     ========================================================================== */
+  
   .dashboard-grid {
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    display: grid;
+    /* CORE FIX: We define an explicit 3-column grid for desktop.
+      This creates a stable, predictable structure that will not change
+      based on the width of the text inside the cards.
+    */
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+  }
+  
+  
+  /* ==========================================================================
+     GENERAL CARD STYLING
+     ========================================================================== */
+  
+  .dashboard-card {
+    background-color: #ffffff;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    text-decoration: none;
+    
+    /* Flexbox is still essential for aligning content inside the card */
+    display: flex;
+    flex-direction: row;
+    align-items: center;
     gap: 20px;
   }
-}
-
-@media (max-width: 767px) {
-  .main-page-header h1 { font-size: 1.8rem; }
-  .main-page-header p { font-size: 1rem; }
-  .dashboard-grid {
-    grid-template-columns: 1fr;
-    gap: 15px;
+  
+  .dashboard-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
   }
-  .dashboard-card {
-    padding: 20px;
+  
+  /* CONTENT WRAPPING FIX: This is the second critical part of the solution.
+    This rule targets the direct child 'div' inside any card arranged as a row.
+  */
+  .dashboard-card > div {
+    /* It allows the div to grow and shrink to fill the available space
+       within its fixed grid cell, forcing the text to wrap. */
+    flex: 1;
+  
+    /* This overrides the browser's default behavior, allowing the item to
+       shrink smaller than its content's natural width. */
+    min-width: 0;
+  }
+  
+  /* A safety measure to break long words and prevent overflow. */
+  .dashboard-card h3, .dashboard-card p {
+    word-break: break-word;
+  }
+  
+  
+  /* ==========================================================================
+     SPECIFIC CARD TYPE STYLING
+     ========================================================================== */
+  
+  /* --- Simple Stat Cards --- */
+  .stat-icon {
+    color: #C96A50;
+    font-size: 24px;
+    flex-shrink: 0; /* Prevents the icon from shrinking */
+  }
+  
+  .stat-card h3 {
+    margin: 0 0 4px 0;
+    font-size: 1.2rem;
+    color: #34495e;
+  }
+  
+  .stat-card p {
+    margin: 0;
+    color: #95a5a6;
+    font-size: 0.9rem;
+  }
+  
+  
+  /* --- Cards with Backgrounds ("My Jobs", "Map") --- */
+  .card-bg-icon {
+    color: #34495e;
+    flex-shrink: 0;
+  }
+  
+  .card-bg-jobs {
+    background-color: #f0f4f8;
+  }
+  
+  .card-bg-jobs h3 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+    color: #2c3e50;
+  }
+  
+  .card-bg-jobs p {
+    color: #7f8c8d;
+  }
+  
+  /* --- Map Card --- */
+  .card-bg-map {
+    min-height: 180px;
+    display: flex;
     flex-direction: column;
-    text-align: center;
+    justify-content: center;
+    align-items: baseline;
+    text-align: left;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    background-image: url(/images/map-xta.png);
+    background-size: cover;
+    background-position: center;
   }
-  .stat-card, .card-bg-map, .card-bg-jobs {
-    align-items: center;
-    text-align: center;
+  
+  .card-bg-map::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.45);
+    z-index: -1;
+    transition: background-color 0.3s ease;
   }
-}
+  
+  .card-bg-map:hover::before {
+    background-color: rgba(0, 0, 0, 0.6);
+  }
+  
+  .card-bg-map h3,
+  .card-bg-map p {
+    color: #FFFFFF;
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7);
+  }
+  
+  .card-bg-map h3 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+  }
+  
+  .card-bg-map p {
+    font-size: 1.1rem;
+    margin: 0;
+  }
+  
+  
+  /* --- Large Job Feed & Admin Cards --- */
+  .job-feed-card, .admin-overview-card {
+    /* This rule makes the card span across all available columns in the grid. */
+    grid-column: 1 / -1; 
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .job-feed-card h2 {
+    margin-top: 0;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 20px;
+  }
+  
+  hr.filter-divider {
+    border: none;
+    border-top: 1px solid #e9ecef;
+    margin: 20px 0;
+  }
+  
+  /* Admin specific cards */
+  .admin-card {
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+  }
+  .admin-card .stat-icon { color: #721c24; }
+  .admin-card:hover { background-color: #f1c6c9; }
+  .admin-overview-card {
+    text-align: center;
+    font-size: 1.1rem;
+    color: #444;
+  }
+  
+  
+  /* ==========================================================================
+     RESPONSIVE STYLES
+     ========================================================================== */
+  
+  /* For Tablets (e.g., iPads) */
+  @media (max-width: 992px) {
+    .main-page-header h1 { font-size: 2.2rem; }
+    
+    .dashboard-grid {
+      /* Switch to a stable 2-column layout for tablets */
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+  }
+  
+  /* For Mobile Devices */
+  @media (max-width: 767px) {
+    .main-page-header h1 { font-size: 1.8rem; }
+    .main-page-header p { font-size: 1rem; }
+  
+    .dashboard-grid {
+      /* Stack all cards in a single column on mobile */
+      grid-template-columns: 1fr;
+      gap: 15px;
+    }
+    
+    .dashboard-card {
+      /* For better readability on mobile, stack content vertically */
+      padding: 20px;
+      flex-direction: column;
+      text-align: center;
+    }
+  
+    .card-bg-map {
+      /* Ensure background cards also center their content on mobile */
+      align-items: center;
+    }
+  }
+  
