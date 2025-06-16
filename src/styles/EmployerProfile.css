@@ -461,10 +461,16 @@ button:hover {
     border-bottom: 1px solid #eee;
 }
 .profile-summary {
-    flex-grow: 1;
-    padding-top: 5px; /* Adjust vertical alignment if needed */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Aligns children to the left */
+  flex-grow: 1;
+  padding-top: 5px;
 }
 
+.profile-name {
+  white-space: nowrap; /* Prevents the name from wrapping */
+}
 /* Adjustments for buttons in edit mode if needed */
 .edit-form .delete-btn {
     align-self: flex-start; /* Align button left */
