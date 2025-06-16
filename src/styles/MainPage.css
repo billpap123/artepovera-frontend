@@ -1,9 +1,10 @@
+/* src/styles/MainPage.css */
 
 .main-page-container {
-  width: 98%; /* Use more of the available screen width */
-  max-width: 1800px; /* Allow the container to be much wider on large screens */
+  width: 95%; /* Keep it wide */
+  max-width: 1800px; /* Allow it to be very wide */
   margin: 0 auto;
-  padding: 100px 1.5rem; /* Adjust padding */
+  padding: 100px 1.5rem;
   box-sizing: border-box;
   background-color: floralwhite;
 }
@@ -26,7 +27,9 @@
 
 .dashboard-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  /* --- THIS IS THE FIX --- */
+  /* We make the minimum width smaller to give the cards more flexibility */
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 25px;
 }
 
@@ -42,7 +45,7 @@
   flex-direction: row;
   align-items: center;
   gap: 20px;
-  text-decoration: none; /* Ensure link cards don't have underlines */
+  text-decoration: none;
 }
 
 .dashboard-card:hover {
@@ -128,7 +131,7 @@
 
 /* Icon on cards with backgrounds */
 .card-bg-icon {
-  color: #34495e; /* Match stat-card text color */
+  color: #34495e;
   flex-shrink: 0;
 }
 
@@ -139,7 +142,7 @@
   justify-content: flex-start;
   text-align: left;
   gap: 20px;
-  background-color: #f0f4f8; /* A light, clean background color */
+  background-color: #f0f4f8;
 }
 
 .card-bg-jobs h3 {
