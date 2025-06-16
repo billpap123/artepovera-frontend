@@ -12,7 +12,6 @@ const landingPageStyles = `
   .landing-page-container {
     font-family: 'Nunito', sans-serif;
     color: #4d4033;
-    line-height: 1.6;
     background-color: #fdfbf7;
   }
   
@@ -30,7 +29,7 @@ const landingPageStyles = `
     /* --- Font and Cursor --- */
     font-family: 'Nunito', sans-serif;
     font-size: 0.9rem;
-    font-weight: 600;
+    font-weight: 700;
     cursor: pointer;
     
     /* --- Removing Default OS Styling --- */
