@@ -2,22 +2,22 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from "react-i18next";
-import LanguageSwitcher from '../components/LanguageSwitcher';
+import LanguageSwitcher from '../components/LanguageSwitcher'; // Import the reusable component
 
-
-// --- Embedded CSS Styles for LandingPage (Earthy Tones) ---
+// --- Embedded CSS Styles for LandingPage ---
 const landingPageStyles = `
   /* Import Font */
   @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap');
 
   .landing-page-container {
     font-family: 'Nunito', sans-serif;
-    color: #4d4033; /* Dark Brown for default text */
+    color: #4d4033;
     line-height: 1.6;
-    background-color: #fdfbf7; /* Off-white base background */
+    background-color: #fdfbf7;
   }
-
-  /* Note: The Language Switcher CSS has been removed from here because it now lives in your global CSS file. */
+  
+  /* --- The local CSS for the language switcher has been removed. --- */
+  /* It now correctly uses the styles from your Global.css file. */
 
   /* --- Hero Section --- */
   .hero-section {
@@ -29,29 +29,24 @@ const landingPageStyles = `
     justify-content: center;
     text-align: center;
     color: white;
-    background-color: #654321; /* Fallback: Dark Brown */
+    background-color: #654321;
     overflow: hidden;
   }
 
   .hero-video-background {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    min-width: 100%;
-    min-height: 100%;
-    width: auto;
-    height: auto;
+    top: 50%; left: 50%;
+    min-width: 100%; min-height: 100%;
+    width: auto; height: auto;
     z-index: 1;
     transform: translate(-50%, -50%);
   }
 
   .hero-overlay {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(77, 64, 51, 0.6); /* Dark Brown Overlay */
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(77, 64, 51, 0.6);
     z-index: 2;
   }
 
@@ -66,7 +61,6 @@ const landingPageStyles = `
     font-size: 3.5rem;
     font-weight: 800;
     margin-bottom: 0.5em;
-    letter-spacing: 1px;
     text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.6);
   }
 
@@ -87,7 +81,7 @@ const landingPageStyles = `
   }
   .hero-description em {
       font-style: normal;
-      color: #E2725B; /* Terracotta accent */
+      color: #E2725B;
       font-weight: 600;
   }
 
@@ -124,7 +118,7 @@ const landingPageStyles = `
         color: #4d4033;
     }
 
-  /* --- Section Base Styles --- */
+  /* --- Other Page Sections --- */
   .landing-section {
       padding: 70px 20px;
       text-align: center;
@@ -142,140 +136,21 @@ const landingPageStyles = `
         margin: 0 auto 50px auto;
     }
 
-  /* --- Category Showcase Section --- */
-  .category-showcase-section {
-    background-color: #f5f0e8;
-  }
+  .category-showcase-section { background-color: #f5f0e8; }
+  .category-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 35px; max-width: 1100px; margin: 40px auto 0 auto; }
+  .category-card { background-color: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 5px 20px rgba(101, 67, 33, 0.1); text-align: center; transition: transform 0.3s ease, box-shadow 0.3s ease; padding-bottom: 30px; }
+  .category-card:hover { transform: translateY(-6px); box-shadow: 0 10px 25px rgba(101, 67, 33, 0.15); }
+  .category-card img { width: 100%; height: 210px; object-fit: cover; display: block; }
+  .category-card h3 { font-size: 1.6rem; font-weight: 700; color: #A0522D; margin: 25px 15px 10px 15px; }
+  .category-card p { font-size: 1rem; color: #7d746b; padding: 0 25px; margin-bottom: 25px; min-height: 60px; }
+  .category-link { display: inline-block; padding: 9px 22px; border-radius: 20px; background-color: transparent; color: #A0522D; text-decoration: none; font-weight: 600; border: 2px solid #dcd3c7; transition: all 0.2s ease; }
+  .category-link:hover { background-color: #A0522D; color: white; border-color: #A0522D; }
 
-  .category-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 35px;
-    max-width: 1100px;
-    margin: 40px auto 0 auto;
-  }
-
-  .category-card {
-    background-color: #fff;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 5px 20px rgba(101, 67, 33, 0.1);
-    text-align: center;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    padding-bottom: 30px;
-  }
-
-  .category-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 10px 25px rgba(101, 67, 33, 0.15);
-  }
-
-  .category-card img {
-    width: 100%;
-    height: 210px;
-    object-fit: cover;
-    display: block;
-  }
-
-  .category-card h3 {
-    font-size: 1.6rem;
-    font-weight: 700;
-    color: #A0522D;
-    margin: 25px 15px 10px 15px;
-  }
-
-  .category-card p {
-    font-size: 1rem;
-    color: #7d746b;
-    padding: 0 25px;
-    margin-bottom: 25px;
-    min-height: 60px;
-  }
-
-  .category-link {
-    display: inline-block;
-    padding: 9px 22px;
-    border-radius: 20px;
-    background-color: transparent;
-    color: #A0522D;
-    text-decoration: none;
-    font-weight: 600;
-    border: 2px solid #dcd3c7;
-    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
-  }
-
-  .category-link:hover {
-    background-color: #A0522D;
-    color: white;
-    border-color: #A0522D;
-  }
-
-   /* --- Features Section --- */
-  .features-section {
-      background-color: #fdfbf7;
-  }
-   .features-grid {
-       display: grid;
-       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-       gap: 35px;
-       max-width: 900px;
-       margin: 40px auto 0 auto;
-       text-align: left;
-   }
-   .feature-item {
-       display: flex;
-       align-items: flex-start;
-       gap: 18px;
-   }
-   .feature-icon {
-       font-size: 2.2rem;
-       color: #CC7722;
-       margin-top: 3px;
-       flex-shrink: 0;
-   }
-   .feature-item h4 {
-       margin: 0 0 8px 0;
-       font-size: 1.25rem;
-       font-weight: 700;
-       color: #654321;
-   }
-   .feature-item p {
-       margin: 0;
-       color: #7d746b;
-       font-size: 1rem;
-   }
-
-  /* --- Call to Action Section --- */
-  .cta-section {
-    background-color: #654321;
-    color: #fdfbf7;
-  }
-  .cta-section h2 {
-      color: #fff;
-      margin-bottom: 20px;
-  }
-  .cta-section p {
-      color: rgba(253, 251, 247, 0.85);
-      margin-bottom: 35px;
-  }
-  .cta-button {
-    padding: 15px 40px;
-    border-radius: 30px;
-    text-decoration: none;
-    font-weight: 700;
-    font-size: 1.15rem;
-    transition: all 0.3s ease;
-    background-color: #A0522D;
-    color: white;
-    border: 2px solid #A0522D;
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
-  }
-  .cta-button:hover {
-    background-color: #804123;
-    border-color: #804123;
-    transform: scale(1.03);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
-  }
+  .cta-section { background-color: #654321; color: #fdfbf7; }
+  .cta-section h2 { color: #fff; margin-bottom: 20px; }
+  .cta-section p { color: rgba(253, 251, 247, 0.85); margin-bottom: 35px; }
+  .cta-button { padding: 15px 40px; border-radius: 30px; text-decoration: none; font-weight: 700; font-size: 1.15rem; transition: all 0.3s ease; background-color: #A0522D; color: white; border: 2px solid #A0522D; box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1); }
+  .cta-button:hover { background-color: #804123; border-color: #804123; transform: scale(1.03); box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15); }
 
    /* Responsive Adjustments */
    @media (max-width: 768px) {
@@ -283,7 +158,6 @@ const landingPageStyles = `
         .hero-subtitle { font-size: 1.2rem; }
         .landing-section h2 { font-size: 2rem; }
         .category-grid { grid-template-columns: 1fr; }
-        .features-grid { grid-template-columns: 1fr; }
    }
     @media (max-width: 480px) {
          .hero-title { font-size: 2.2rem; }
@@ -292,7 +166,6 @@ const landingPageStyles = `
     }
 `;
 
-
 const LandingPage: React.FC = () => {
   const { t } = useTranslation();
 
@@ -300,11 +173,13 @@ const LandingPage: React.FC = () => {
     <>
       <style>{landingPageStyles}</style>
       
+      {/* THIS IS THE FIX: The LanguageSwitcher is now outside the main container */}
+      <LanguageSwitcher />
+
       <div className="landing-page-container">
         <header className="hero-section">
-          {/* Use the new, imported LanguageSwitcher component */}
-          <LanguageSwitcher />
-
+          {/* It has been removed from here */}
+          
           <video className="hero-video-background" autoPlay loop muted playsInline>
               <source src="/images/video.mp4" type="video/mp4" />
               {t('landingPage.hero.videoError')}
