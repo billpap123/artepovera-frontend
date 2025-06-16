@@ -290,6 +290,7 @@
     RESPONSIVE STYLING
 ─────────────────────────── */
 @media (max-width: 768px) {
+
   .hero-title {
     font-size: 2.5rem;
   }
@@ -299,7 +300,10 @@
   .hero-description {
     font-size: 1rem;
   }
-}
+  .landing-page-container {
+    margin: 0;
+    padding: 0;
+}}
 /* Creative Showcase Section */
 .creative-showcase-section {
   padding: 40px 20px;

@@ -574,7 +574,7 @@
       "coreDetails": "Core details",
       "logistics": "Logistics",
       "compensation": "Compensation",
-      "requirements": "Requirements & desired skills"
+      "requirements": "Required & desired skills"
     },
     "labels": {
       "jobTitle": "Job title*",
@@ -582,7 +582,7 @@
       "customCategory": "Please specify category*",
       "description": "Description",
       "location": "Employer's location",
-      "workPresence": "Work presence*",
+      "workPresence": "Presence*",
       "startDate": "Approx. start date",
       "endDate": "Approx. end date",
       "deadline": "Application deadline",

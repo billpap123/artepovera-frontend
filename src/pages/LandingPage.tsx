@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from '../components/LanguageSwitcher'; // Import the reusable component
 
-
 // --- Embedded CSS Styles for LandingPage ---
 const landingPageStyles = `
   /* Import Font */
@@ -17,8 +16,23 @@ const landingPageStyles = `
     background-color: #fdfbf7;
   }
   
-  /* --- The local CSS for the language switcher has been removed. --- */
-  /* It now correctly uses the styles from your Global.css file. */
+  /* --- THIS IS THE FIX --- */
+  /* These rules are a special override ONLY for the Landing Page.
+     They make the global switcher component look good on a dark background. */
+  .language-switcher-select {
+    background-color: rgba(255, 255, 255, 0.15) !important; /* Semi-transparent white */
+    color: white !important;
+    border: 1px solid rgba(255, 255, 255, 0.5) !important;
+    /* Custom WHITE dropdown arrow */
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23FFFFFF%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22/%3E%3C/svg%3E') !important;
+  }
+
+  .language-switcher-select:hover {
+    background-color: rgba(255, 255, 255, 0.25) !important;
+  }
+
+  /* --- END OF FIX --- */
+
 
   /* --- Hero Section --- */
   .hero-section {
@@ -33,26 +47,7 @@ const landingPageStyles = `
     background-color: #654321;
     overflow: hidden;
   }
-.language-switcher-select {
-    background-color: #c96a50;
-    color: #4d4033;
-    border: 1px solid #dcd3c7;
-    border-radius: 8px;
-    padding: 8px 30px 8px 12px !important;
-    font-family: Nunito, sans-serif;
-    font-size: .9rem;
-    font-weight: 700 !important;
-    cursor: pointer;
-    outline: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    background-image: url(data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%234D4033%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22/%3E%3C/svg%3E);
-    background-repeat: no-repeat;
-    background-position: right 10px top 50%;
-    background-size: 10px auto;
-    transition: background-color .2s ease;
-}
+
   .hero-video-background {
     position: absolute;
     top: 50%; left: 50%;
