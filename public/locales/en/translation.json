@@ -167,7 +167,7 @@
     "reason": "Reason:",
     "comment": "Comment:",
     "noInteractionFeedback": "No interaction feedback to show.",
-    "bioLabel": "Short Description:",
+    "bioLabel": "Short description:",
     "saveChanges": "Save changes",
     "saving": "Saving...",
     "cancel": "Cancel",
@@ -706,7 +706,7 @@
       "viewDetails": "View details"
     },
     "content": {
-      "bio": "Short Description",
+      "bio": "Short description",
       "noBio": "*No short description provided yet.*",
       "cv": "Curriculum vitae (CV)",
       "downloadCv": "Download CV",
