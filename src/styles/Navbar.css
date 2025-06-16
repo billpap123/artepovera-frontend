@@ -31,7 +31,7 @@
   width: 100%;
   z-index: 1000;
   box-shadow: var(--box-shadow);
-  flex-direction: row;
+  flex-direction: row !important;
   transition: background-color 0.3s ease;
 }
 
