@@ -1,13 +1,17 @@
 /* This uses the same base styles as Login.css for consistency */
 .auth-page-container {
-  position: relative;
+  position: absolute; /* This is essential for positioning children */
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #fdfbf7;
-  padding: 40px 20px; /* More padding for scroll on small screens */
+  padding: 20px;
   box-sizing: border-box;
+  width: 100%;
+height: 100%;
+top: 0;
+    left: 0;
+    background-color: #f7f0c9;
 }
 
 .auth-logo-corner {
