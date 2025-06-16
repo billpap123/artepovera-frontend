@@ -83,6 +83,18 @@ const MainPage = () => {
       setIsLoadingJobs(false);
     }
   }, [userType]);
+  useEffect(() => {
+    // We only try to scroll if the URL has the '#job-feed' anchor
+    // AND the jobs are no longer loading.
+    if (location.hash === '#job-feed' && !isLoadingJobs) {
+      const element = document.getElementById('job-feed');
+      if (element) {
+        // This command scrolls the element into view smoothly.
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+    // This effect runs when the page loads and when the job loading state changes.
+  }, [location.hash, isLoadingJobs]);
 
   const handleFilterChange = (newFilters: Filters) => {
     setFilters(newFilters);
