@@ -595,7 +595,8 @@
       "degreeRequired": "University degree is a requirement",
       "degreeDetails": "Specify degree",
       "militaryService": "Military service status",
-      "languages": "Language certificates"
+      "languages": "Language certificates",
+      "keywords":"Keywords (e.g., oil painting)"
     },
     "placeholders": {
       "title": "e.g., mural artist for downtown cafe",
@@ -920,7 +921,8 @@
     "delete" :"Delete"
   },
   "status" :{
-    "loading" :"Loading job postings..."
+    "loading" :"Loading job postings...",
+    "none":"No job postings to display."
   }
 
 }
