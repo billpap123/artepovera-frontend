@@ -1,11 +1,12 @@
+// src/pages/Login.tsx
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
-import { useUserContext } from '../context/UserContext';
+import { useUserContext } from '../context/UserContext'; // <-- 1. IMPORT THE HOOK
 import '../styles/Global.css';
 import '../styles/Login.css';
 import { useTranslation } from "react-i18next";
-import LanguageSwitcher from '../components/LanguageSwitcher';
+import LanguageSwitcher from '../components/LanguageSwitcher'; // <-- IMPORT THE NEW COMPONENT
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:50001';
 
@@ -15,6 +16,9 @@ const Login = () => {
     const [error, setError] = useState('');
     const navigate = useNavigate();
     const { t } = useTranslation();
+
+    // --- THIS IS THE FIX (PART 1) ---
+    // Get the setFullname function from your context as well.
     const { setUserId, setUserType, setArtistId, setEmployerId, setFullname } = useUserContext();
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -31,10 +35,13 @@ const Login = () => {
             localStorage.setItem('token', token);
             localStorage.setItem('user', JSON.stringify(user));
             
+            // --- THIS IS THE FIX (PART 2) ---
+            // Update all relevant user data in the global context *before* navigating.
             setUserId(user.user_id);
             setUserType(user.user_type);
-            setFullname(user.fullname);
+            setFullname(user.fullname); // This is the critical line you were missing.
 
+            // Check for nested profile objects to set the correct ID
             if (user.user_type === 'Artist' && user.artistProfile) {
                 setArtistId(user.artistProfile.artist_id);
             } else if (user.user_type === 'Employer' && user.employerProfile) {
@@ -55,20 +62,17 @@ const Login = () => {
 
     return (
         <div className="auth-page-container">
-            {/* These components are direct children of the main container,
-                allowing them to be positioned relative to the full page. */}
-            <LanguageSwitcher />
-            <Link to="/" className="auth-logo-corner">
-                <img src="/images/logo2.png" alt={t('loginPage.altText.logo')} className="auth-logo" />
-            </Link>
+                        <LanguageSwitcher /> {/* <-- ADD THE COMPONENT HERE */}
+
+            <div className="auth-logo-container">
+                <Link to="/">
+                    <img src="/images/logo2.png" alt={t('loginPage.altText.logo')} className="auth-logo" />
+                </Link>
+            </div>
     
-            {/* The white form container is now a separate, centered element */}
-            <div className="auth-form-container">
-                <div className="auth-form-header">
-                     <img src="/images/logo2.png" alt={t('loginPage.altText.logo')} className="auth-form-logo" />
-                     <h2 className="login-title">{t('loginPage.title')}</h2>
-                </div>
+            <div className="login-container auth-form-container">
                 <form onSubmit={handleSubmit} className="login-form auth-form">
+                    <h2 className="login-title">{t('loginPage.title')}</h2>
                     <div className="form-group">
                         <label htmlFor="login-email">{t('loginPage.emailLabel')}</label>
                         <input
@@ -92,10 +96,10 @@ const Login = () => {
                         />
                     </div>
                     <button type="submit" className="login-button auth-button">{t('loginPage.loginButton')}</button>
-                    {error && <p className="error-message">{error}</p>}
+                    {error && <p className="login-error error-message">{error}</p>}
                 </form>
     
-                <p className="auth-switch-link">
+                <p className="register-link auth-switch-link">
                     {t('loginPage.registerPrompt')}{' '}
                     <Link to="/register">
                         {t('loginPage.registerLink')}
