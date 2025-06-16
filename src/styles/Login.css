@@ -1,20 +1,19 @@
-/* This container for the whole page needs to be a positioning reference */
+/* Main page container with the yellow background */
 .auth-page-container {
     position: relative; /* This is crucial for positioning children */
     min-height: 100vh;
-    display: flex; /* We use flexbox to center the white form */
-    flex-direction: column;
+    display: flex;
     align-items: center;
     justify-content: center;
     background-color: var(--bg-page, #fdfbf7);
     padding: 20px;
 }
 
-/* Styles for the corner logo */
+/* Styles for the logo in the top-left corner */
 .auth-logo-corner {
   position: absolute; /* Position relative to .auth-page-container */
-  top: 25px;
-  left: 25px;
+  top: 30px;
+  left: 30px;
   z-index: 2; 
 }
 
@@ -30,7 +29,7 @@
 }
 
 
-/* --- UPDATED: The form container is now a centered box, not fullscreen --- */
+/* Centered white form container */
 .auth-form-container {
     display: flex;
     flex-direction: column;
@@ -38,44 +37,51 @@
     justify-content: center;
     padding: 40px;
     background-color: var(--pure-white, #fff);
-    
-    /* These properties make it a centered box */
     width: 100%;
-    max-width: 420px; /* Control the width of the box */
+    max-width: 450px; /* A good width for the form box */
     border-radius: 12px;
     box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-
-    /* The height is now determined by its content */
     height: auto; 
+    text-align: center;
 }
 
+/* New header inside the form box to hold the logo and title */
+.auth-form-header {
+    margin-bottom: 30px;
+}
+
+.auth-form-logo {
+    height: 60px; /* Logo inside the form */
+    margin-bottom: 15px;
+}
+
+.login-title {
+    font-size: 1.8rem;
+    color: var(--charcoal-gray, #333);
+    margin: 0;
+}
+
+/* Styles for the form itself */
 .auth-form {
     width: 100%;
 }
 
-.login-title {
-    font-size: 2rem;
-    color: var(--charcoal-gray, #333);
-    margin-bottom: 25px;
-    text-align: center;
-}
-
 .form-group {
-    margin-bottom: 20px; /* More space between form fields */
+    margin-bottom: 20px;
     width: 100%;
     text-align: left;
 }
 
 .form-group label {
     display: block;
-    font-weight: 600; /* Bolder label */
+    font-weight: 600;
     margin-bottom: 8px;
     color: var(--charcoal-gray, #333);
 }
 
 .login-input {
     width: 100%;
-    padding: 12px; /* Taller inputs */
+    padding: 12px;
     font-size: 1rem;
     border: 1px solid #ccc;
     border-radius: 5px;
@@ -102,7 +108,6 @@
     color: var(--terracotta-red, #c04a29);
     margin-top: 15px;
     font-size: 0.9rem;
-    text-align: center;
 }
 
 .auth-switch-link {

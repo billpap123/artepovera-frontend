@@ -1,4 +1,3 @@
-// src/pages/Login.tsx
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
@@ -56,19 +55,20 @@ const Login = () => {
 
     return (
         <div className="auth-page-container">
-            {/* These components are now direct children of the main container */}
-            {/* The CSS will position them correctly in the corners */}
+            {/* These components are direct children of the main container,
+                allowing them to be positioned relative to the full page. */}
             <LanguageSwitcher />
-            <div className="auth-logo-corner">
-                <Link to="/">
-                    <img src="/images/logo2.png" alt={t('loginPage.altText.logo')} className="auth-logo" />
-                </Link>
-            </div>
+            <Link to="/" className="auth-logo-corner">
+                <img src="/images/logo2.png" alt={t('loginPage.altText.logo')} className="auth-logo" />
+            </Link>
     
-            {/* The white form container is now separate */}
+            {/* The white form container is now a separate, centered element */}
             <div className="auth-form-container">
+                <div className="auth-form-header">
+                     <img src="/images/logo2.png" alt={t('loginPage.altText.logo')} className="auth-form-logo" />
+                     <h2 className="login-title">{t('loginPage.title')}</h2>
+                </div>
                 <form onSubmit={handleSubmit} className="login-form auth-form">
-                    <h2 className="login-title">{t('loginPage.title')}</h2>
                     <div className="form-group">
                         <label htmlFor="login-email">{t('loginPage.emailLabel')}</label>
                         <input
@@ -92,10 +92,10 @@ const Login = () => {
                         />
                     </div>
                     <button type="submit" className="login-button auth-button">{t('loginPage.loginButton')}</button>
-                    {error && <p className="login-error error-message">{error}</p>}
+                    {error && <p className="error-message">{error}</p>}
                 </form>
     
-                <p className="register-link auth-switch-link">
+                <p className="auth-switch-link">
                     {t('loginPage.registerPrompt')}{' '}
                     <Link to="/register">
                         {t('loginPage.registerLink')}
