@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { NavLink, Link } from "react-router-dom";
+import { NavLink, Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { FaHome, FaUserAlt, FaBell, FaMapMarkerAlt } from "react-icons/fa";
 import { useUserContext } from '../context/UserContext';
@@ -15,6 +15,7 @@ const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const { t, i18n } = useTranslation();
+  const navigate = useNavigate(); 
 
   // --- 1. Get notifications and the setter from the global context ---
   const { 
@@ -72,11 +73,11 @@ const Navbar = () => {
 
   const handleLogout = () => {
     if (window.confirm(t('navbar.alerts.logoutConfirm'))) {
+      // Clear all user state and storage first
       setUserId(null);
       setArtistId(null);
       setEmployerId(null);
       setUserType(null);
-      // We also clear the notifications on logout
       setNotifications([]);
       
       localStorage.clear();
@@ -87,7 +88,8 @@ const Navbar = () => {
           .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
       });
 
-      window.location.href = '/'; 
+      // 3. Use navigate for a smooth, client-side transition without a page reload
+      navigate('/');
     }
   };
 
