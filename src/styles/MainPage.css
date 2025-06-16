@@ -1,14 +1,13 @@
 /* src/styles/MainPage.css */
 
-  .main-page-container {
-    width: 95%; /* Use more of the available screen width */
-    max-width: 1600px; /* Allow the container to be much wider on large screens */
-    margin: 0 auto;
-    padding: 100px 2rem; /* Add slightly more side padding */
-    box-sizing: border-box;
-    background-color: floralwhite;
-  }
-  
+.main-page-container {
+  width: 98%; /* Use more of the available screen width */
+  max-width: 1800px; /* Allow the container to be much wider on large screens */
+  margin: 0 auto;
+  padding: 100px 1.5rem; /* Adjust padding */
+  box-sizing: border-box;
+  background-color: floralwhite;
+}
 
 
 .main-page-header {
