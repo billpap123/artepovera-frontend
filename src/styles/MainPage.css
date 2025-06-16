@@ -1,4 +1,3 @@
-/* src/styles/MainPage.css */
 
 .main-page-container {
   width: 98%; /* Use more of the available screen width */
@@ -9,7 +8,6 @@
   background-color: floralwhite;
 }
 
-
 .main-page-header {
   margin-bottom: 30px;
 }
@@ -18,14 +16,12 @@
   font-size: 2.5rem;
   font-weight: 700;
   color: #2c3e50;
-  /* A dark, professional blue/grey */
   margin: 0 0 5px 0;
 }
 
 .main-page-header p {
   font-size: 1.1rem;
   color: #7f8c8d;
-  /* A soft grey */
 }
 
 .dashboard-grid {
@@ -43,12 +39,10 @@
   position: relative;
   overflow: hidden;
   display: flex;
-  /* Using flex for alignment */
   flex-direction: row;
-  /* Default to row layout */
   align-items: center;
-  /* Vertically center content */
   gap: 20px;
+  text-decoration: none; /* Ensure link cards don't have underlines */
 }
 
 .dashboard-card:hover {
@@ -56,19 +50,15 @@
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
 }
 
-/* --- THIS IS THE FIX --- */
 
 /* Base styling for simple stat cards (no background image) */
 .stat-card {
   flex-direction: row;
-  /* Keep the icon and text side-by-side */
 }
 
 .stat-icon {
   color: #C96A50;
-  /* Your theme color */
   font-size: 24px;
-  /* Explicit size for the icon */
   flex-shrink: 0;
 }
 
@@ -76,217 +66,166 @@
   margin: 0 0 4px 0;
   font-size: 1.2rem;
   color: #34495e;
-  /* Dark color for text on white background */
 }
 
 .stat-card div p {
   margin: 0;
   color: #95a5a6;
-  /* Softer grey for subtitle */
   font-size: 0.9rem;
 }
-
-
-/* --- Styles for Cards with Background Images --- */
-
-/* This is the main class for any card that needs a background image. */
-/* It provides the text styling and the dark overlay. */
-
-
-.card-bg-jobs {
-  background-color: white;
-  color: #95a5a6;
-}
-
-/* PASTE THIS ENTIRE BLOCK INTO YOUR MainPage.css FILE */
 
 /* Main container for the map card */
 .card-bg-map {
   min-height: 180px;
   position: relative;
-  /* This is essential for the overlay to work */
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: baseline;
-  /* Aligns text to the left */
   text-align: left;
   padding: 25px;
   overflow: hidden;
   border-radius: 12px;
-  /* To match your other cards */
-
-  /* Set the background image */
   background-image: url(/images/map-xta.png);
   background-size: cover;
   background-position: center;
-
-  /* We will set text styles on the text elements directly */
   z-index: 1;
-  /* This keeps the content on top of the overlay */
 }
 
-/* This creates the dark overlay on top of the image */
+/* Dark overlay on the map card */
 .card-bg-map::before {
   content: '';
-  /* This is required */
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-
-  /* The dark layer. 45% black. Adjust the last number (0.45) to make it darker or lighter. */
   background-color: rgba(0, 0, 0, 0.45);
-
   z-index: -1;
-  /* Place the overlay BEHIND the text */
   transition: background-color 0.3s ease;
-  /* Adds a nice hover effect */
 }
 
-/* Make the overlay a little darker when you hover over the card */
 .card-bg-map:hover::before {
   background-color: rgba(0, 0, 0, 0.6);
 }
 
-/* --- Styling for the text itself --- */
-
-/* This targets BOTH the h3 and p tags inside the map card */
 .card-bg-map h3,
 .card-bg-map p {
   color: #FFFFFF;
-  /* Force text to be pure white */
   text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7);
-  /* Add a strong shadow to lift text off the background */
 }
 
-/* Style the main title */
 .card-bg-map h3 {
   font-size: 1.8rem;
   font-weight: 700;
   margin-bottom: 5px;
 }
 
-/* Style the subtitle */
 .card-bg-map p {
   font-size: 1.1rem;
   margin: 0;
 }
 
-/* --- END OF FIX --- */
-
-/*
-  This styles the new icons on the cards with background images
-*/
+/* Icon on cards with backgrounds */
 .card-bg-icon {
-  color: #C96A50;
-  /* Makes the icon pure white */
+  color: #34495e; /* Match stat-card text color */
   flex-shrink: 0;
-  /* Prevents the icon from shrinking */
 }
 
-/* We also need to adjust the layout for these specific cards */
+/* Layout for "My Jobs" / "My Applications" cards */
 .card-bg-jobs {
   flex-direction: row;
-  /* Align items side-by-side */
   align-items: center;
-  /* Vertically center the icon and text block */
   justify-content: flex-start;
-  /* Align all content to the left */
   text-align: left;
-  /* Align the text itself to the left */
   gap: 20px;
-  /* Space between icon and text, matches other cards */
+  background-color: #f0f4f8; /* A light, clean background color */
 }
 
 .card-bg-jobs h3 {
   font-size: 1.8rem;
   font-weight: 700;
   margin-bottom: 5px;
-  color:rgb(52, 73, 94) !important;
-
+  color: #2c3e50;
 }
 
-/* Ensure the text inside is also white and has a shadow */
 .card-bg-jobs p {
-  color: rgb(149, 165, 166);
-  ;
+  color: #7f8c8d;
 }
 
-/* Styling for the large job feed card */
+/* Large job feed card */
 .job-feed-card {
-  grid-column: 1 / -1;
-  background-color: #fdfdfd;
+  grid-column: 1 / -1; 
+  background-color: #fdfdfd; 
   flex-direction: column;
-  /* Override flex for this specific card */
   align-items: stretch;
 }
+
+.job-feed-card h2 {
+  margin-top: 0;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 20px;
+}
+
+/* Admin specific cards */
+.admin-card {
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+}
+.admin-card .stat-icon { color: #721c24; }
+.admin-card:hover { background-color: #f1c6c9; }
+.admin-overview-card {
+  grid-column: 1 / -1;
+  text-align: center;
+  font-size: 1.1rem;
+  color: #444;
+}
+
+hr.filter-divider {
+  border: none;
+  border-top: 1px solid #e9ecef;
+  margin: 20px 0;
+}
+
 
 /* ==========================================================================
    RESPONSIVE STYLES
    ========================================================================== */
 
-/* --- For Large Laptops --- */
 @media (min-width: 1200px) {
   .job-feed-card {
-    grid-column: span 2;
+    grid-column: span 2; 
     grid-row: span 2;
   }
 }
 
-/* --- For Tablets (e.g., iPads) --- */
 @media (max-width: 992px) {
   .main-page-container {
     width: 95%;
-    /* Use more of the screen width */
     padding-top: 80px;
   }
-
-  .main-page-header h1 {
-    font-size: 2.2rem;
-    /* Slightly smaller title */
-  }
-
+  .main-page-header h1 { font-size: 2.2rem; }
   .dashboard-grid {
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    /* Allow cards to be a bit smaller */
     gap: 20px;
   }
 }
 
-/* --- For Mobile Phones --- */
 @media (max-width: 767px) {
-  .main-page-header h1 {
-    font-size: 1.8rem;
-    /* Even smaller title for mobile */
-  }
-
-  .main-page-header p {
-    font-size: 1rem;
-  }
-
+  .main-page-header h1 { font-size: 1.8rem; }
+  .main-page-header p { font-size: 1rem; }
   .dashboard-grid {
-    /* Stack all cards in a single column on mobile */
     grid-template-columns: 1fr;
     gap: 15px;
   }
-
   .dashboard-card {
     padding: 20px;
     flex-direction: column;
-    /* Stack icon and text vertically */
     text-align: center;
   }
-
-  .stat-card,
-  .card-bg-map {
+  .stat-card, .card-bg-map, .card-bg-jobs {
     align-items: center;
-    /* Center align all items in the card */
-  }
-
-  .card-bg-map {
     text-align: center;
-    /* Center text on map card for mobile */
   }
 }
