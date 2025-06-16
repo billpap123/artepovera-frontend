@@ -117,7 +117,7 @@
   }
   
   .card-bg-jobs {
-    background-color: #f0f4f8;
+    background-color: #ffffff;
   }
   
   .card-bg-jobs h3 {
@@ -215,6 +215,70 @@
     color: #444;
   }
   
+  /* ==========================================================================
+     JOB FILTER STYLES (NEW)
+     ========================================================================== */
+  .job-filters h3 {
+    font-size: 1.3rem;
+    color: #34495e;
+    margin-top: 0;
+    margin-bottom: 15px;
+  }
+  
+  .filter-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    align-items: center;
+  }
+  
+  .filter-input, .filter-select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    background-color: #fff;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  
+  .filter-input:focus, .filter-select:focus {
+    outline: none;
+    border-color: #C96A50;
+    box-shadow: 0 0 0 3px rgba(201, 106, 80, 0.2);
+  }
+  
+  .keyword-filter {
+    grid-column: 1 / -1; /* Span the full width */
+  }
+  
+  .budget-filter-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .budget-filter-group span {
+    color: #7f8c8d;
+  }
+  
+  .clear-filters-button {
+    padding: 10px 15px;
+    border: 1px solid #e74c3c;
+    color: #e74c3c;
+    background-color: transparent;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.2s, color 0.2s;
+    justify-self: start;
+  }
+  
+  .clear-filters-button:hover {
+    background-color: #e74c3c;
+    color: #fff;
+  }
+  
   
   /* ==========================================================================
      RESPONSIVE STYLES
@@ -235,6 +299,10 @@
     .dashboard-grid {
       /* The 2-column layout from desktop is maintained. We just reduce the gap. */
       gap: 20px;
+    }
+  
+    .filter-grid {
+      grid-template-columns: repeat(2, 1fr); /* Switch to 2 columns */
     }
   }
   
@@ -259,6 +327,10 @@
     .card-bg-map {
       /* Ensure background cards also center their content on mobile */
       align-items: center;
+    }
+  
+    .filter-grid {
+      grid-template-columns: 1fr; /* Switch to 1 column */
     }
   }
   
