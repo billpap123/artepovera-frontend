@@ -53,6 +53,26 @@
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
 }
 
+.stat-card div {
+  /* This is the key fix. 
+    flex: 1 allows the div to grow and shrink to fill available space 
+    without forcing its parent card to widen.
+  */
+  flex: 1;
+
+  /* This is a safeguard that allows the flex item to shrink smaller 
+    than its content's intrinsic width, preventing overflow.
+  */
+  min-width: 0;
+}
+
+/* Add word-break to handle long words that might still try to overflow,
+  which is a good practice for internationalization.
+*/
+.stat-card div h3,
+.stat-card div p {
+  word-break: break-word;
+}
 
 /* Base styling for simple stat cards (no background image) */
 .stat-card {
