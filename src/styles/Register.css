@@ -1,103 +1,175 @@
-/* src/styles/Register.css */
-
-.register-container {
-  width: 100%;
-  max-width: 500px;
-  margin: 0 auto;
-  padding: 20px;
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.register-form {
+/* This uses the same base styles as Login.css for consistency */
+.auth-page-container {
+  position: relative;
+  min-height: 100vh;
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #fdfbf7;
+  padding: 40px 20px; /* More padding for scroll on small screens */
+  box-sizing: border-box;
 }
 
-.register-form label {
-  margin-bottom: 8px;
-  font-weight: bold;
+.auth-logo-corner {
+  position: absolute;
+  top: 30px;
+  left: 30px;
+  z-index: 2;
 }
 
-/* General styles for text inputs and select dropdowns */
-.register-form input[type="text"],
-.register-form input[type="email"],
-.register-form input[type="password"],
-.register-form input[type="tel"],
-.register-form select {
-  padding: 10px;
+.auth-logo-corner img {
+  height: 50px;
+  width: auto;
+  transition: transform 0.2s ease;
+}
+
+.auth-logo-corner img:hover {
+  transform: scale(1.05);
+}
+
+/* Centered white form container for Register */
+.auth-form-container.register-container {
+  padding: 40px 50px;
+  background-color: white;
+  width: 100%;
+  max-width: 650px; /* Wider for the 2-column layout */
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+  text-align: center;
+}
+
+.register-title {
+  font-size: 1.8rem;
+  color: #333;
+  font-weight: 700;
+  margin-bottom: 30px;
+}
+
+/* General form styles */
+.auth-form {
+  width: 100%;
+}
+
+.form-group {
   margin-bottom: 20px;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-  width: 100%; /* Ensure they take up full width */
+  text-align: left;
 }
 
-.register-form button {
-  padding: 12px;
-  background-color: #3498db;
-  color: white;
-  border: none;
-  border-radius: 4px;
+.form-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #555;
+  font-size: 0.9rem;
+}
+
+.form-input, 
+.auth-form select {
+  width: 100%;
+  padding: 12px 15px;
+  font-size: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background-color: #fff;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-input:focus,
+.auth-form select:focus {
+  outline: none;
+  border-color: #A0522D; /* Your theme's accent color */
+  box-shadow: 0 0 0 3px rgba(160, 82, 45, 0.1);
+}
+
+/* Two-column layout for some fields */
+.form-row {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+}
+
+.form-group.half-width {
+  flex: 1; /* Each takes up half the space */
+}
+
+/* Checkbox container */
+.checkbox-options {
+  display: flex;
+  gap: 25px;
+  margin-bottom: 25px;
+  justify-content: flex-start; /* Aligned to the left */
+  padding-top: 5px;
+}
+
+.checkbox-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.checkbox-group label {
+  margin-bottom: 0; /* Override default margin */
+  font-weight: 500;
+  cursor: pointer;
+  color: #333;
+}
+
+.checkbox-group input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
   cursor: pointer;
 }
 
-.register-form button:hover {
-  background-color: #2980b9;
+.auth-button {
+  width: 100%;
+  background-color: #A0522D;
+  color: white;
+  border: none;
+  padding: 12px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+  margin-top: 10px;
 }
 
-/* --- THIS IS THE FIX --- */
-/* Style the container for the checkbox and its label */
-.checkbox-group {
-display: flex;
-align-items: center; /* Vertically align the box and the text */
-margin-bottom: 20px; /* Keep consistent spacing below the group */
+.auth-button:hover {
+  background-color: #804123;
 }
 
-/* Override the default input styles specifically for checkboxes */
-.checkbox-group input[type="checkbox"] {
-width: auto; /* Let the checkbox have its natural size */
-margin: 0; /* Remove any inherited margins */
-margin-right: 10px; /* Add space between the box and the label */
-flex-shrink: 0; /* Prevent the checkbox from being squashed */
+.error-message {
+  color: #d9534f;
+  margin-top: 15px;
+  font-size: 0.9rem;
 }
 
-/* Style the label next to the checkbox */
-.checkbox-group .checkbox-label {
-margin-bottom: 0; /* Remove the bottom margin that pushes it down */
-font-weight: normal; /* Checkbox labels are typically not bold */
-}
-/* --- END OF FIX --- */
-
-/* Styles for the logo on Auth Pages (Login/Register) */
-.auth-logo-container {
-margin-bottom: 30px; 
-text-align: center;
+.auth-switch-link {
+  margin-top: 25px;
+  font-size: 0.95rem;
+  color: #555;
 }
 
-.auth-logo-container a {
-display: inline-flex;
-align-items: center;
-text-decoration: none;
-color: var(--text-medium, #654321);
-font-weight: 600;
-font-size: 0.95rem;
-transition: color 0.2s ease;
+.auth-switch-link a {
+  color: #A0522D;
+  text-decoration: none;
+  font-weight: 600;
 }
 
-.auth-logo-container a:hover {
-color: var(--accent-primary, #A0522D);
+.auth-switch-link a:hover {
+  text-decoration: underline;
 }
 
-.auth-logo-container .auth-logo {
-height: 158px;
-width: auto;
-margin-left: 8px;
-display: inline-block;
-vertical-align: middle;
-transition: transform 0.3s ease;
-}
-
-.auth-logo-container a:hover .auth-logo {
-transform: scale(1.05);
+/* Responsive adjustments for the form */
+@media (max-width: 640px) {
+  .auth-form-container.register-container {
+    padding: 30px 25px;
+  }
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+  .form-group {
+    margin-bottom: 15px;
+  }
 }

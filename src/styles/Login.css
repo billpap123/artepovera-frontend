@@ -1,132 +1,135 @@
 
 /* This is the main full-page container with the yellow background */
 .auth-page-container {
-    position: absolute;
-    top: 0;
+  position: absolute; /* This is essential for positioning children */
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  box-sizing: border-box;
+  width: 100%;
+height: 100%;
+top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: #fdfbf7; /* Off-white / yellow background */
-  
-  }
-  
-  /* Positions the logo in the top-left corner of the page */
-  .auth-logo-corner {
-    position: absolute;
-    top: 30px;
-    left: 30px;
-    z-index: 2; /* Ensures it's above other content */
-  }
-  
-  .auth-logo-corner img {
-    height: 50px;
-    width: auto;
-    transition: transform 0.2s ease;
-  }
-  
-  .auth-logo-corner img:hover {
-    transform: scale(1.05);
-  }
-  
-  /* This is the centered white box for the form */
-  .auth-form-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 40px 50px;
-    background-color: white;
-    width: 100%;
-    max-width: 450px;
-    border-radius: 12px;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
-    text-align: center;
-  }
-  
-  /* Header inside the white box */
-  .auth-form-header {
-    margin-bottom: 30px;
-  }
-  
-  /* The logo inside the form has been removed, so this style is no longer needed */
-  /* .auth-form-logo { ... } */
-  
-  .login-title {
-    font-size: 1.8rem;
-    color: #333;
-    font-weight: 700;
-    margin: 0;
-  }
-  
-  /* General form styles */
-  .auth-form {
-    width: 100%;
-  }
-  
-  .form-group {
-    margin-bottom: 20px;
-    text-align: left;
-  }
-  
-  .form-group label {
-    display: block;
-    font-weight: 600;
-    margin-bottom: 8px;
-    color: #555;
-    font-size: 0.9rem;
-  }
-  
-  .form-input {
-    width: 100%;
-    padding: 12px 15px;
-    font-size: 1rem;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
-  }
-  
-  .form-input:focus {
-    outline: none;
-    border-color: #A0522D; /* Your theme's accent color */
-    box-shadow: 0 0 0 3px rgba(160, 82, 45, 0.1);
-  }
-  
-  .auth-button {
-    width: 100%;
-    background-color: #A0522D;
-    color: white;
-    border: none;
-    padding: 12px 15px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 1rem;
-    font-weight: 600;
-    transition: background-color 0.2s ease;
-  }
-  
-  .auth-button:hover {
-    background-color: #804123; /* Darker accent */
-  }
-  
-  .error-message {
-    color: #d9534f;
-    margin-top: 15px;
-    font-size: 0.9rem;
-  }
-  
-  .auth-switch-link {
-    margin-top: 25px;
-    font-size: 0.95rem;
-    color: #555;
-  }
-  
-  .auth-switch-link a {
-    color: #A0522D;
-    text-decoration: none;
-    font-weight: 600;
-  }
-  
-  .auth-switch-link a:hover {
-    text-decoration: underline;
-  }
-  
+}
+
+/* Positions the logo in the top-left corner of the page */
+.auth-logo-corner {
+  position: absolute;
+  top: 30px;
+  left: 30px;
+  z-index: 2; /* Ensures it's above other content */
+}
+
+.auth-logo-corner img {
+  height: 50px;
+  width: auto;
+  transition: transform 0.2s ease;
+}
+
+.auth-logo-corner img:hover {
+  transform: scale(1.05);
+}
+
+/* This is the centered white box for the form */
+.auth-form-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 50px;
+  background-color: white;
+  width: 100%;
+  max-width: 450px;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+  text-align: center;
+}
+
+/* Header inside the white box */
+.auth-form-header {
+  margin-bottom: 30px;
+}
+
+/* The logo inside the form has been removed, so this style is no longer needed */
+/* .auth-form-logo { ... } */
+
+.login-title {
+  font-size: 1.8rem;
+  color: #333;
+  font-weight: 700;
+  margin: 0;
+}
+
+/* General form styles */
+.auth-form {
+  width: 100%;
+}
+
+.form-group {
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #555;
+  font-size: 0.9rem;
+}
+
+.form-input {
+  width: 100%;
+  padding: 12px 15px;
+  font-size: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #A0522D; /* Your theme's accent color */
+  box-shadow: 0 0 0 3px rgba(160, 82, 45, 0.1);
+}
+
+.auth-button {
+  width: 100%;
+  background-color: #A0522D;
+  color: white;
+  border: none;
+  padding: 12px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+}
+
+.auth-button:hover {
+  background-color: #804123; /* Darker accent */
+}
+
+.error-message {
+  color: #d9534f;
+  margin-top: 15px;
+  font-size: 0.9rem;
+}
+
+.auth-switch-link {
+  margin-top: 25px;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.auth-switch-link a {
+  color: #A0522D;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.auth-switch-link a:hover {
+  text-decoration: underline;
+}
