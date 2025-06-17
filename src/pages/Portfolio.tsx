@@ -24,7 +24,6 @@ export interface PortfolioProps {
   viewedArtistName?: string; // Name of the artist being viewed
 }
 
-// --- NEW: Formatting Function for the date ---
 const formatDate = (dateString: string | undefined) => {
     if (!dateString) return null;
     return new Date(dateString).toLocaleDateString(undefined, {
@@ -227,19 +226,25 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewed
                 <div className="portfolio-item-content">
                   {isEditingThis ? (<textarea value={editDescription} onChange={(e) => setEditDescription(e.target.value)} className="edit-description-input" rows={3} autoFocus/>) : (<p className="portfolio-description">{item.description || t('portfolioPage.status.noDescription')}</p>)}
                   
-                  {/* --- NEW: Date Display --- */}
-                  {formattedDate && (
-                    <div className="portfolio-item-footer">
+                  {/* --- MODIFIED: The footer and actions are now separated --- */}
+                  <div className="portfolio-item-footer">
+                    {formattedDate && (
                         <span className="posted-date">{t('portfolioPage.item.postedOn')}: {formattedDate}</span>
-                    </div>
-                  )}
-
-                  {isOwner && (
-                    <div className="portfolio-actions">
-                      {isEditingThis ? (<> <button onClick={() => handleSaveEdit(item.portfolio_id)} className="action-btn save" disabled={uploading}>{t('portfolioPage.item.saveButton')}</button> <button onClick={cancelEditing} className="action-btn cancel" disabled={uploading}>{t('portfolioPage.form.cancelButton')}</button> </>) : (<button onClick={() => startEditing(item)} className="action-btn edit" disabled={uploading || showAddForm}>{t('portfolioPage.item.editButton')}</button>)}
-                      <button onClick={() => handleDelete(item.portfolio_id)} className="action-btn delete" disabled={uploading || showAddForm}>{t('portfolioPage.item.deleteButton')}</button>
-                    </div>
-                  )}
+                    )}
+                    {isOwner && (
+                      <div className="portfolio-actions">
+                        {isEditingThis ? (
+                          <> 
+                            <button onClick={() => handleSaveEdit(item.portfolio_id)} className="action-btn save" disabled={uploading}>{t('portfolioPage.item.saveButton')}</button> 
+                            <button onClick={cancelEditing} className="action-btn cancel" disabled={uploading}>{t('portfolioPage.form.cancelButton')}</button> 
+                          </>
+                        ) : (
+                          <button onClick={() => startEditing(item)} className="action-btn edit" disabled={uploading || showAddForm}>{t('portfolioPage.item.editButton')}</button>
+                        )}
+                        <button onClick={() => handleDelete(item.portfolio_id)} className="action-btn delete" disabled={uploading || showAddForm}>{t('portfolioPage.item.deleteButton')}</button>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             );

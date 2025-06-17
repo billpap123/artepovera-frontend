@@ -2,7 +2,8 @@
 
 /* --- Page Layout --- */
 .portfolio-page {
-  max-width: 1400px;
+  width: 700px;
+  max-width: 700px;
   margin: 40px auto;
   padding: 20px 40px;
   font-family: 'Nunito', sans-serif;
@@ -427,11 +428,14 @@
   }
 }
 
+/* --- MODIFIED: Styles for Footer --- */
 .portfolio-item-footer {
-  margin-top: 15px;
-  padding-top: 10px;
+  display: flex; /* Makes this a flex container */
+  justify-content: space-between; /* Pushes items to opposite ends */
+  align-items: center; /* Vertically aligns them */
+  margin-top: auto; /* Pushes footer to the bottom of the card content */
+  padding-top: 15px;
   border-top: 1px solid #f1f3f5;
-  text-align: right;
 }
 .posted-date {
   font-size: 0.8rem;
@@ -439,3 +443,32 @@
   font-style: italic;
 }
 
+
+/* --- ADDED: Responsive Styles --- */
+@media (max-width: 768px) {
+  .portfolio-page {
+    padding: 20px 15px;
+  }
+  
+  .portfolio-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .portfolio-header h2 {
+    font-size: 1.8rem;
+  }
+  
+  .portfolio-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .form-actions {
+    flex-direction: column;
+  }
+  
+  .submit-btn, .cancel-btn {
+    width: 100%;
+  }
+}
