@@ -656,7 +656,8 @@
       "addLanguage": "+ add language",
       "saving": "Saving...",
       "saveChanges": "Save changes",
-      "postJob": "Post this job"
+      "postJob": "Post this job",
+      "cancel":"Cancel"
     },
     "status": {
       "loading": "Loading job details..."
