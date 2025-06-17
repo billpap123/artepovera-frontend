@@ -6,45 +6,39 @@
  .chat-page-layout {
   display: flex;
   background-color: #f8f9fa;
-  /* --- FIX: This set of rules makes the chat layout fill the entire viewport
-     below the navbar, ignoring any parent container's padding or max-width. --- */
+  /* --- THIS IS THE KEY FIX --- */
+  /* This makes the chat layout a full-screen view below the navbar,
+     ignoring any parent container's width restrictions. */
   position: fixed;
-  top: 70px; /* This must match your navbar's height */
+  top: 70px; /* Must match your navbar's height */
   left: 0;
   right: 0;
   bottom: 0;
-  /* The height/width are now controlled by the positioning properties above */
-  overflow: hidden; /* Prevent scrollbars during transitions */
+  overflow: hidden; /* Prevent extra scrollbars during transitions */
 }
 
 /* --- Sidebar (Chat List) --- */
 .chat-sidebar {
-  width: 320px; /* Slightly narrower for a better feel */
+  width: 350px;
   border-right: 1px solid #dee2e6;
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
   background-color: #fff;
-  transition: transform 0.3s ease-in-out; /* Added for mobile slide */
+  transition: transform 0.3s ease-in-out;
 }
-
 .sidebar-header {
   padding: 20px;
   border-bottom: 1px solid #dee2e6;
-  flex-shrink: 0;
 }
-
 .sidebar-header h2 {
   margin: 0;
   font-size: 1.5rem;
-  color: #343a40;
 }
-
 .chat-list {
   flex-grow: 1;
   overflow-y: auto;
 }
-
 .chat-list-item {
   display: flex;
   align-items: center;
@@ -53,16 +47,13 @@
   transition: background-color 0.2s ease;
   border-bottom: 1px solid #e9ecef;
 }
-
 .chat-list-item:hover {
-  background-color: #f1f3f5;
+  background-color: #e9ecef;
 }
-
 .chat-list-item.active {
   background-color: #007bff;
   color: white;
 }
-
 .avatar {
   width: 50px;
   height: 50px;
@@ -70,32 +61,25 @@
   object-fit: cover;
   margin-right: 15px;
 }
-
 .chat-item-details {
   overflow: hidden;
 }
-
 .chat-item-name {
   font-weight: 600;
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
-  color: #212529;
 }
-
 .chat-list-item.active .chat-item-name {
   color: white;
 }
-
 .chat-item-preview {
   font-size: 0.9rem;
   color: #6c757d;
 }
-
 .chat-list-item.active .chat-item-preview {
   color: #e0e0e0;
 }
-
 .no-chats-message {
   padding: 20px;
   text-align: center;
@@ -108,36 +92,35 @@
   display: flex;
   flex-direction: column;
   background-color: #ffffff;
-  transition: transform 0.3s ease-in-out; /* Added for mobile slide */
+  transition: transform 0.3s ease-in-out;
 }
-
 .chat-window-header {
-  display: flex; /* Changed from table-row */
+  display: flex; /* Changed from table-row to flex */
   align-items: center;
-  padding: 15px 20px;
+  padding: 15px 20px; /* Reduced padding slightly */
   border-bottom: 1px solid #dee2e6;
   background-color: #fff;
-  flex-shrink: 0;
 }
 
-.chat-header-info {
-  display: flex;
-  flex-direction: column;
+/* Hide back button on desktop */
+.back-to-chats-btn {
+  display: none;
+}
+
+.chat-window-header .chat-header-info {
   flex-grow: 1;
 }
 
 .chat-window-header h3 {
   margin: 0;
-  font-size: 1.2rem;
+  font-size: 1.1rem; /* Adjusted for consistency */
 }
-
 .chat-window-header a {
   text-decoration: none;
   color: #007bff;
   font-weight: 600;
   font-size: 0.85rem;
 }
-
 .messages-container {
   flex-grow: 1;
   padding: 20px;
@@ -146,38 +129,31 @@
   flex-direction: column;
   gap: 12px;
 }
-
 .message-bubble {
   padding: 10px 15px;
   border-radius: 18px;
-  max-width: 75%;
+  max-width: 70%;
   word-wrap: break-word;
 }
-
 .message-bubble p { margin: 0; }
-
 .message-bubble.sent {
   background-color: #007bff;
   color: white;
   align-self: flex-end;
   border-bottom-right-radius: 4px;
 }
-
 .message-bubble.received {
   background-color: #e9ecef;
   color: #212529;
   align-self: flex-start;
   border-bottom-left-radius: 4px;
 }
-
 .message-input-area {
   display: flex;
   padding: 15px 20px;
   border-top: 1px solid #dee2e6;
   background-color: #f8f9fa;
-  flex-shrink: 0;
 }
-
 .message-input-area input {
   flex-grow: 1;
   border: 1px solid #ced4da;
@@ -186,17 +162,15 @@
   margin-right: 10px;
   font-size: 1rem;
 }
-
 .message-input-area button {
   border: none;
   background-color: #007bff;
   color: white;
-  padding: 0 20px;
+  padding: 15px;
   border-radius: 20px;
   cursor: pointer;
   font-weight: 600;
 }
-
 .message-input-area button:disabled {
   background-color: #6c757d;
   cursor: not-allowed;
@@ -210,16 +184,15 @@
   color: #6c757d;
   font-size: 1.2rem;
   text-align: center;
+  padding: 20px;
 }
 
-.back-to-chats-btn {
-  display: none; /* Hidden by default */
-}
 
 /****************************************
  * Responsive Design for Chat
  ****************************************/
 @media screen and (max-width: 768px) {
+  /* On mobile, the two panels are positioned absolutely to allow sliding */
   .chat-sidebar,
   .chat-window {
     position: absolute;
@@ -227,6 +200,7 @@
     left: 0;
     width: 100%;
     height: 100%;
+    padding-top: 80px;
   }
 
   /* Initially, sidebar is visible, window is off-screen */
@@ -236,7 +210,7 @@
   }
   .chat-window {
     transform: translateX(100%);
-    z-index: 3;
+    z-index: 3; /* Window slides over the sidebar */
   }
   
   /* When a chat is active, slide sidebar out and window in */
@@ -247,13 +221,13 @@
     transform: translateX(0);
   }
 
-  /* Style and show the mobile back button */
+  /* Style the mobile back button */
   .back-to-chats-btn {
-    display: block; 
+    display: block; /* Show the back button on mobile */
     background: none;
     border: none;
     font-size: 1.5rem;
-    color: #343a40;
+    color: #333;
     margin-right: 15px;
     cursor: pointer;
     padding: 5px;
@@ -262,7 +236,7 @@
   .chat-window-header {
     padding: 10px 15px;
   }
-  
+
   .chat-window-header h3 {
     font-size: 1.1rem;
   }
