@@ -156,14 +156,65 @@
 .radio-group input[type="radio"] {
     display: none;
 }
+
+.add-btn, .remove-btn {
+    padding: 8px 12px;
+    border: 1px solid #ced4da;
+    background-color: #f8f9fa;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1rem;
+    line-height: 1;
+    border-radius: 6px;
+    flex-shrink: 0;
+}
+.add-btn { color: #28a745; }
+.remove-btn { color: #dc3545; }
+.add-btn:hover { background-color: #e9f5ec; }
+.remove-btn:hover { background-color: #f8d7da; }
+
+/* --- MODIFIED: Submit Button --- */
+.submit-job-btn {
+    padding: 12px 30px; /* Adjusted padding */
+    font-size: 1.1rem;
+    font-weight: bold;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+.submit-job-btn:hover:not(:disabled) { background-color: #218838; }
+.submit-job-btn:disabled { background-color: #6c757d; cursor: wait; }
+
+/* --- NEW: Cancel Button --- */
+.cancel-btn {
+    padding: 12px 30px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+.cancel-btn:hover:not(:disabled) {
+    background-color: #5a6268;
+}
+
+/* --- NEW: Final Actions Container --- */
 .form-final-actions {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    /* THIS IS THE FIX: The default 'stretch' will make both buttons the same height */
+    align-items: stretch;
     margin-top: 30px;
     padding-top: 20px;
     border-top: 1px solid #e9ecef;
 }
+
 /* --- Language Section --- */
 .language-section h4 {
     font-size: 1.1rem;
