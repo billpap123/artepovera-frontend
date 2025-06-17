@@ -60,7 +60,7 @@ const employerIcon = new L.Icon({
 
 const selfIcon = new L.Icon({
   iconUrl: selfIconPath,
-  iconSize: [35, 51],
+  iconSize: [55, 71],
   iconAnchor: [17, 51],
   popupAnchor: [1, -44],
   shadowUrl: markerShadow,

@@ -226,7 +226,8 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewed
                 <div className="portfolio-item-content">
                   {isEditingThis ? (<textarea value={editDescription} onChange={(e) => setEditDescription(e.target.value)} className="edit-description-input" rows={3} autoFocus/>) : (<p className="portfolio-description">{item.description || t('portfolioPage.status.noDescription')}</p>)}
                   
-                  {/* --- MODIFIED: The footer and actions are now separated --- */}
+                  {/* --- THIS IS THE FIX --- */}
+                  {/* Both the date and the actions are now inside the same footer container */}
                   <div className="portfolio-item-footer">
                     {formattedDate && (
                         <span className="posted-date">{t('portfolioPage.item.postedOn')}: {formattedDate}</span>
