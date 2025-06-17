@@ -1,4 +1,5 @@
 // src/components/RatingForm.tsx
+
 import React, { useState } from 'react';
 import axios from 'axios';
 import '../styles/RatingForm.css'; // Make sure you have created this CSS file
@@ -87,8 +88,8 @@ const RatingForm: React.FC<RatingFormProps> = (
             quality: dealMade === 'yes' ? qualityRating : undefined,
             communication: dealMade === 'yes' ? communicationRating : undefined,
             noDealPrimaryReason: dealMade === 'no' ? noDealPrimaryReason : undefined,
-            // communicationRating_noDeal has been removed
-            comment: comment.trim() || undefined,
+            communicationRating_noDeal: dealMade === 'no' ? communicationRating : undefined,
+            comment: comment.trim() || undefined, // Simplified to use the single 'comment' state
         };
         
         const payload = {
@@ -132,7 +133,10 @@ const RatingForm: React.FC<RatingFormProps> = (
                     <div className="follow-up-questions fade-in">
                         <hr />
                         <p className="rating-form-subtext">{t('ratingForm.noDeal.subtext')}</p>
-                        {/* --- THIS IS THE CHANGE: The star rating input has been removed --- */}
+                        <div className="form-group">
+                            <label id="comm-no-deal-label">{t('ratingForm.noDeal.communicationLabel')}</label>
+                            <StarRatingInput rating={communicationRating} onRatingChange={setCommunicationRating} labelId="comm-no-deal-label" />
+                        </div>
                         <div className="form-group">
                             <label htmlFor="no-deal-primary-reason">{t('ratingForm.noDeal.reasonLabel')}</label>
                             <select id="no-deal-primary-reason" value={noDealPrimaryReason} onChange={(e) => setNoDealPrimaryReason(e.target.value)} required>
@@ -174,6 +178,7 @@ const RatingForm: React.FC<RatingFormProps> = (
     
                 {error && <p className="error-message">{error}</p>}
     
+                {/* --- MODIFIED: Button Order Changed --- */}
                 <div className="form-actions">
                     <button type="submit" disabled={isSubmitting || dealMade === null} className="submit-btn">
                         {isSubmitting ? t('ratingForm.buttons.submitting') : t('ratingForm.buttons.submit')}

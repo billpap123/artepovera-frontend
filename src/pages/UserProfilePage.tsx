@@ -814,6 +814,7 @@ const UserProfilePage: React.FC = () => {
                       {interactionReviews.map((review) => {
                         const primaryReason = review.specific_answers?.noDealPrimaryReason;
                         const comment = review.specific_answers?.comment;
+                        const communicationRating = review.specific_answers?.communicationRating_noDeal;
 
                         return (
                           <div key={review.review_id} className="review-item interaction-review-item">
@@ -827,7 +828,13 @@ const UserProfilePage: React.FC = () => {
                             </div>
 
                             <div className="review-comment">
-                              {primaryReason && (
+                                {communicationRating && (
+                                    <div className="interaction-rating">
+                                        <strong>{t('userProfilePage.content.communicationRating', 'Communication Quality')}:</strong>
+                                        <DisplayStars rating={communicationRating} />
+                                    </div>
+                                )}
+                                {primaryReason && (
                                 <p className="interaction-reason">
                                   <strong>{t('userProfilePage.content.reason')}</strong> {primaryReason}
                                 </p>
@@ -961,6 +968,7 @@ const UserProfilePage: React.FC = () => {
       </div>
     </>
   );
+
 
 };
 
