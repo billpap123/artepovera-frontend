@@ -3,19 +3,20 @@
 /* --- Page & Form Container --- */
 .post-job-page-container {
     padding: 40px 20px;
-    background-color: #f8f9fa;
     font-family: 'Nunito', sans-serif;
     min-height: 100vh;
     padding-top: 100px; /* More space for fixed navbar */
 }
 
 .post-job-form {
+    padding: 30px;
+    margin: 30px;
+    width: 800px;
     max-width: 800px;
     margin: 0 auto;
     background-color: #ffffff;
     border-radius: 12px;
     overflow: hidden; /* To contain the header color */
-    box-shadow: 0 8px 30px rgba(0,0,0,0.08); /* Added shadow for depth */
 }
 
 /* --- Form Header --- */
@@ -208,7 +209,7 @@
 /* --- NEW: Final Actions Container --- */
 .form-final-actions {
     display: flex;
-    justify-content: baseline;
+    justify-content: center;
     /* THIS IS THE FIX: The default 'stretch' will make both buttons the same height */
     align-items: stretch;
     margin-top: 30px;
