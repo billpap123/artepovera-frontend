@@ -134,3 +134,10 @@ top: 0;
 .auth-switch-link a:hover {
   text-decoration: underline;
 }
+
+
+
+@media (max-width: 767px) {
+  .auth-form-container {margin-top: 50px;}
+} 
+  
