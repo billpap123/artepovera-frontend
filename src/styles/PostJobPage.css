@@ -190,6 +190,7 @@
 
 /* --- NEW: Cancel Button --- */
 .cancel-btn {
+    margin: 20px 10px 8px;
     padding: 12px 30px;
     font-size: 1.1rem;
     font-weight: bold;
@@ -250,7 +251,7 @@
 
 /* --- Submit Button --- */
 .submit-job-btn {
-    width: 100%;
+    width: auto;
     padding: 15px;
     font-size: 1.2rem;
     font-weight: bold;
@@ -318,9 +319,9 @@
         flex-direction: column;
     }
     .form-final-actions {
-        flex-direction: column-reverse; /* Stacks buttons, Submit on top */
+        flex-direction: column; /* Stacks buttons, Submit on top */
         gap: 15px;
-        align-items: stretch; /* Makes buttons full-width */
+        align-items: baseline; /* Makes buttons full-width */
     }
 
 }
