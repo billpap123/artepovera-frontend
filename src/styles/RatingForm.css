@@ -32,7 +32,7 @@
   right: 20px; /* Adjust horizontal position */
   background: none;
   border: none;
-  font-size: 2rem; /* Make the 'x' larger */
+  font-size: 1.5rem; /* Make the 'x' larger */
   line-height: 1;
   color: #aaa;
   cursor: pointer;
@@ -136,8 +136,9 @@
   margin-top: 25px;
   padding-top: 20px;
   border-top: 1px solid #f1f3f5;
-  /* MODIFIED: Added this to ensure vertical alignment if heights differ. */
-  align-items: center;
+  /* MODIFIED: Removed 'align-items: center'.
+     The default value is 'stretch', which will make flex items (the buttons)
+     equal in height. This is the most reliable way to align them. */
 }
 
 .form-actions button {
@@ -148,7 +149,6 @@
   font-size: 1rem;
   cursor: pointer;
   transition: all 0.2s ease;
-  /* MODIFIED: These lines ensure the buttons have the same height */
   display: flex;
   justify-content: center;
   align-items: center;
