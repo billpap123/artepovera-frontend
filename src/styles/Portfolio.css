@@ -380,7 +380,7 @@
 /* For Tablets */
 @media (max-width: 992px) {
   .portfolio-page {
-    padding: 20px 30px;
+    padding: 50px 30px;
   }
   .portfolio-grid {
     gap: 20px;
@@ -390,7 +390,7 @@
 /* For Mobile Phones */
 @media (max-width: 767px) {
   .portfolio-page {
-    padding: 40px 15px;
+    padding: 80px 15px;
     margin-top: 20px;
   }
 
@@ -399,7 +399,7 @@
     align-items: stretch; /* Make items take full width */
     text-align: center;
   }
-
+  .post-job-form h1{    font-size: 1.2rem;}
   .portfolio-header h2 {
     font-size: 1.8rem;
   }

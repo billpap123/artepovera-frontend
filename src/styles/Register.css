@@ -34,17 +34,6 @@
   transform: scale(1.05);
 }
 
-/* Added styles to position the language switcher on this page */
-.auth-page-container .language-switcher {
-  position: absolute;
-  top: 20px;
-  right: 30px;
-  z-index: 2;
-  background-color: rgba(255, 255, 255, 0.3);
-  padding: 5px 10px;
-  border-radius: 20px;
-}
-
 /* Centered white form container for Register */
 .auth-form-container.register-container {
   padding: 40px 50px;
@@ -54,7 +43,7 @@
   border-radius: 12px;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
   text-align: center;
-  margin-top: 0; /* REMOVED the problematic fixed margin */
+  margin-top: auto; /* REMOVED the problematic fixed margin */
 }
 
 .register-title {
@@ -193,6 +182,7 @@
   }
   .auth-form-container.register-container {
     padding: 30px 25px;
+    margin-top: auto;
   }
   .form-row {
     flex-direction: column;

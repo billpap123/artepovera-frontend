@@ -509,17 +509,6 @@ const ArtistProfile: React.FC = () => {
                     <hr className="section-divider" />
                     <h4>{t('artistProfile.account.title')}</h4>
 
-                    {/* Change Email Form */}
-                    <form onSubmit={handleEmailChange} className="account-form">
-                        <label className="account-form-label"><FaEnvelope /> {t('artistProfile.account.changeEmail')}</label>
-                        <p className="current-email-display">{t('artistProfile.account.currentEmail')}: <strong>{currentEmail}</strong></p>
-                        <div className="form-field-group">
-                            <input type="password" placeholder={t('artistProfile.account.currentPasswordPlaceholder')} value={passwordForEmail} onChange={(e) => setPasswordForEmail(e.target.value)} required />
-                            <input type="email" placeholder={t('artistProfile.account.newEmailPlaceholder')} value={newEmail} onChange={(e) => setNewEmail(e.target.value)} required />
-                            <input type="email" placeholder={t('artistProfile.account.confirmEmailPlaceholder')} value={confirmEmail} onChange={(e) => setConfirmEmail(e.target.value)} required />
-                        </div>
-                        <button type="submit" className="action-btn" disabled={accountActionLoading || saving}>{t('artistProfile.account.updateEmailButton')}</button>
-                    </form>
 
                     {/* Change Password Form */}
                     <form onSubmit={handlePasswordChange} className="account-form">

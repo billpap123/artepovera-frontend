@@ -3,11 +3,10 @@
 /* --- Page & Form Container --- */
 .post-job-page-container {
     padding: 40px 20px;
-    background-color: #f8f9fa; /* Lighter, cleaner background */
+    background-color: #f8f9fa;
     font-family: 'Nunito', sans-serif;
     min-height: 100vh;
-    padding-top: 70px;
-
+    padding-top: 100px; /* More space for fixed navbar */
 }
 
 .post-job-form {
@@ -16,14 +15,12 @@
     background-color: #ffffff;
     border-radius: 12px;
     overflow: hidden; /* To contain the header color */
-    padding-top: 70px;
-    padding: 40px 20px;
-
+    box-shadow: 0 8px 30px rgba(0,0,0,0.08); /* Added shadow for depth */
 }
 
 /* --- Form Header --- */
 .post-job-form-header {
-    background-color: #28a745; /* A professional blue */
+    background-color: #2c3e50; /* A more neutral, professional blue-gray */
     color: white;
     padding: 30px 40px;
     text-align: center;
@@ -90,16 +87,16 @@
     border: 1px solid #ced4da;
     border-radius: 8px;
     font-size: 1rem;
-    background-color: #f8f9fa;
+    background-color: #fff; /* Changed to white for better contrast */
     transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .post-job-form input:focus,
 .post-job-form select:focus,
 .post-job-form textarea:focus {
-    border-color: #5a67d8;
+    border-color: #4A90E2; /* A softer blue for focus */
     background-color: #fff;
-    box-shadow: 0 0 0 3px rgba(90, 103, 216, 0.25);
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
     outline: none;
 }
 
@@ -112,7 +109,6 @@
     flex: 1;
 }
 
-/* --- FIXED: Radio & Checkbox Groups --- */
 .radio-group, .form-checkbox-group {
     display: flex;
     align-items: center;
@@ -124,7 +120,7 @@
 .radio-group label, .form-checkbox-group label {
     display: flex;
     align-items: center;
-    gap: 8px; /* Space between box and text */
+    gap: 8px;
     margin: 0;
     font-weight: normal;
     cursor: pointer;
@@ -133,12 +129,11 @@
 .radio-group input[type="radio"],
 .form-checkbox-group input[type="checkbox"] {
     margin: 0;
-    width: 1.15em; /* Make checkbox slightly larger */
+    width: 1.15em;
     height: 1.15em;
     cursor: pointer;
 }
 
-/* Custom radio button styles for better UI */
 .radio-group {
     border: 1px solid #ced4da;
     border-radius: 8px;
@@ -154,12 +149,29 @@
     transition: background-color 0.2s, color 0.2s;
 }
 .radio-group label.active {
-    background-color: #5a67d8;
+    background-color: #4A90E2;
     color: white;
     font-weight: bold;
 }
 .radio-group input[type="radio"] {
-    display: none; /* Hide the actual radio button */
+    display: none;
+}
+
+/* --- Language Section --- */
+.language-section h4 {
+    font-size: 1.1rem;
+    color: #343a40;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+}
+.language-entry {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.language-entry input {
+    flex: 1;
 }
 
 .add-btn, .remove-btn {
@@ -170,9 +182,13 @@
     font-weight: bold;
     font-size: 1rem;
     line-height: 1;
+    border-radius: 6px;
+    flex-shrink: 0;
 }
 .add-btn { color: #28a745; }
 .remove-btn { color: #dc3545; }
+.add-btn:hover { background-color: #e9f5ec; }
+.remove-btn:hover { background-color: #f8d7da; }
 
 /* --- Submit Button --- */
 .submit-job-btn {
@@ -202,8 +218,45 @@
     margin-top: 20px;
 }
 
-/* Responsive adjustments */
-@media (max-width: 600px) {
-    .form-row, .radio-group { flex-direction: column; }
-    .post-job-form { padding: 20px; }
+/* ==========================================================================
+   RESPONSIVE STYLES
+   ========================================================================== */
+@media (max-width: 768px) {
+    .post-job-page-container {
+        padding: 85px 15px 30px 15px;
+    }
+
+    .post-job-form {
+        padding: 0;
+    }
+
+    .post-job-form-header {
+        padding: 25px 20px;
+    }
+
+    .post-job-form h1 {
+        font-size: 1.8rem;
+    }
+
+    .post-job-form .form-subtitle {
+        font-size: 1rem;
+    }
+
+    .post-job-form form {
+        padding: 25px 20px;
+    }
+
+    .form-row {
+        flex-direction: column;
+        gap: 0; /* Remove gap when stacking */
+    }
+
+    .language-entry {
+        flex-direction: column;
+        align-items: stretch; /* Make inputs full width */
+    }
+
+    .radio-group {
+        flex-direction: column;
+    }
 }

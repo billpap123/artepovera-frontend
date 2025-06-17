@@ -393,15 +393,7 @@ const EmployerProfile: React.FC = () => {
                   <hr className="section-divider" />
                   <h4>{t('employerProfile.account.title')}</h4>
 
-                  <form onSubmit={handleEmailChange} className="account-form">
-                      <label className="account-form-label"><FaEnvelope /> {t('employerProfile.account.changeEmail')}</label>
-                      <p className="current-email-display">{t('employerProfile.account.currentEmail')}: <strong>{currentEmail}</strong></p>
-                      <div className="form-field-group">
-                          <input type="email" placeholder={t('employerProfile.account.newEmailPlaceholder')} value={newEmail} onChange={(e) => setNewEmail(e.target.value)} required />
-                          <input type="email" placeholder={t('employerProfile.account.confirmEmailPlaceholder')} value={confirmEmail} onChange={(e) => setConfirmEmail(e.target.value)} required />
-                      </div>
-                      <button type="submit" className="action-btn" disabled={accountActionLoading || saving}>{t('employerProfile.account.updateEmailButton')}</button>
-                  </form>
+                  
 
                   <form onSubmit={handlePasswordChange} className="account-form">
                       <label className="account-form-label"><FaKey /> {t('employerProfile.account.changePassword')}</label>
