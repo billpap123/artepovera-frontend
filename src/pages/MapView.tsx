@@ -22,7 +22,7 @@ import Navbar from '../components/Navbar';
 // --- IMPORT ASSETS USING ES MODULE SYNTAX ---
 import artistIconPath from '../assets/icons/artist-icon.png';
 import employerIconPath from '../assets/icons/employer-icon.png';
-import selfIconPath from '../assets/icons/self-icon.png'; // Make sure you have this icon
+import selfIconPath from '../assets/icons/self-icon2.jpg'; // Make sure you have this icon
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';

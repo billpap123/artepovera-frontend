@@ -287,7 +287,8 @@
     }
 
     .post-job-form {
-        padding: 0;
+        padding: 5px;
+        width: 100%;
     }
 
     .post-job-form-header {
