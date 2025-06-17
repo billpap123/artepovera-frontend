@@ -4,12 +4,16 @@
  * Base & Desktop Styles
  ****************************************/
  .chat-page-layout {
-  /* This fills the remaining space below the 70px navbar */
-  height: calc(100vh - 70px);
   display: flex;
-  width: 100%; /* Changed from fixed width to fluid */
   background-color: #f8f9fa;
-  position: relative; /* Needed for absolute children in mobile view */
+  /* --- FIX: This set of rules makes the chat layout fill the entire viewport
+     below the navbar, ignoring any parent container's padding or max-width. --- */
+  position: fixed;
+  top: 70px; /* This must match your navbar's height */
+  left: 0;
+  right: 0;
+  bottom: 0;
+  /* The height/width are now controlled by the positioning properties above */
   overflow: hidden; /* Prevent scrollbars during transitions */
 }
 
