@@ -809,7 +809,33 @@
               "deleteFailed": "Η διαγραφή της ειδοποίησης απέτυχε."
             }
           }
+        },
+        "categories": {
+          "Actor": "Ηθοποιός",
+          "Actress": "Ηθοποιός",
+          "Animator": "Animator",
+          "Architect": "Αρχιτέκτονας",
+          "Calligrapher": "Καλλιγράφος",
+          "Ceramicist": "Κεραμίστας",
+          "Comedian": "Κωμικός",
+          "Dancer": "Χορευτής",
+          "Digital Artist": "Ψηφιακός Καλλιτέχνης",
+          "Fashion Designer": "Σχεδιαστής Μόδας",
+          "Filmmaker": "Κινηματογραφιστής",
+          "Graphic Designer": "Γραφίστας",
+          "Illustrator": "Εικονογράφος",
+          "Industrial Designer": "Βιομηχανικός Σχεδιαστής",
+          "Interior Designer": "Διακοσμητής Εσωτερικών Χώρων",
+          "Jewelry Designer": "Σχεδιαστής Κοσμημάτων",
+          "Musician": "Μουσικός",
+          "Painter": "Ζωγράφος",
+          "Photographer": "Φωτογράφος",
+          "Poet": "Ποιητής",
+          "Sculptor": "Γλύπτης",
+          "Woodworker": "Ξυλουργός",
+          "Writer": "Συγγραφέας"
         }
+      
         ,
           "ratingForm": {
             "title": "Αξιολογήστε την αλληλεπίδρασή σας με τον/την {{name}}",

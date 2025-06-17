@@ -1,13 +1,11 @@
 // src/components/JobFilters.tsx
 import React, { useState } from 'react';
-import '../styles/JobFilters.css'; // We'll create this new CSS file
+import '../styles/JobFilters.css';
 import { useTranslation } from "react-i18next";
 
-// These could be imported from a shared types file
 const artistCategories = [ "Dancer", "Painter", "Digital Artist", "Graphic Designer", "Musician", "Sculptor", "Photographer", "Actress", "Actor", "Comedian", "Poet", "Writer", "Illustrator", "Calligrapher", "Filmmaker", "Animator", "Fashion Designer", "Architect", "Interior Designer", "Jewelry Designer", "Industrial Designer", "Ceramicist", "Woodworker" ].sort();
 const experienceLevels = ["0-3", "4-7", "7-10", ">10"];
 
-// Define the shape of the filters
 export interface Filters {
     keywords: string;
     location: string;
@@ -29,8 +27,6 @@ const JobFilters: React.FC<JobFiltersProps> = ({ onFilterChange }) => {
         category: '', presence: '', experience: '', insurance: ''
     });
     const { t } = useTranslation();
-
-
 
     const handleInputChange = (field: keyof Filters, value: string | number) => {
         const newFilters = { ...filters, [field]: value };
@@ -67,7 +63,13 @@ const JobFilters: React.FC<JobFiltersProps> = ({ onFilterChange }) => {
                 />
                 <select className="filter-select" value={filters.category} onChange={(e) => handleInputChange('category', e.target.value)}>
                     <option value="">{t('jobFilters.options.allCategories')}</option>
-                    {artistCategories.map(cat => (<option key={cat} value={cat}>{cat}</option>))}
+                    {/* --- THIS IS THE CHANGE --- */}
+                    {/* We now display the English category and its Greek translation */}
+                    {artistCategories.map(cat => (
+                        <option key={cat} value={cat}>
+                            {`${cat} / ${t(`categories.${cat}`, cat)}`}
+                        </option>
+                    ))}
                 </select>
                 <select className="filter-select" value={filters.presence} onChange={(e) => handleInputChange('presence', e.target.value)}>
                     <option value="">{t('jobFilters.options.anyPresence')}</option>

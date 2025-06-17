@@ -288,7 +288,7 @@
   @media (max-width: 1200px) {
     .main-page-container {
       /* Revert to a fluid width to prevent horizontal scrolling */
-      width: 95%;
+      width: fit-content;
     }
   }
   
