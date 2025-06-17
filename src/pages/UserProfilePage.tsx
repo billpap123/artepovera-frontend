@@ -74,7 +74,9 @@ interface JobPosting {
   payment_total: number;
   createdAt: string;
 }
-interface PortfolioItem { portfolio_id: number; image_url?: string; description?: string; }
+interface PortfolioItem {
+  createdAt: string; portfolio_id: number; image_url?: string; description?: string; 
+}
 // --- THIS IS THE UPDATED JobPosting INTERFACE ---
 
 
@@ -698,20 +700,31 @@ const UserProfilePage: React.FC = () => {
                 {loading && portfolio.length === 0 ? <p>{t('userProfilePage.artistContent.loadingPortfolio')}</p> :
                   portfolio.length === 0 ? (<p>{t('userProfilePage.artistContent.noPortfolio')}</p>) : (
                     <div className="portfolio-items">
-                      {portfolio.map((item, index) => (
-                        <div key={item.portfolio_id} className="portfolio-item-card">
-                          {item.image_url && (
-                            <img
-                              className="portfolio-image"
-                              src={getImageUrl(item.image_url)}
-                              alt={t('userProfilePage.gallery.altText')}
-                              onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/default-portfolio.png'; }}
-                              onClick={() => openGallery(index)}
-                            />
-                          )}
-                          <p>{item.description || t('userProfilePage.artistContent.noDescription')}</p>
-                        </div>
-                      ))}
+                      
+                      {portfolio.map((item, index) => {
+                        const formattedDate = formatDate(item.createdAt);
+                        return (
+                          <div key={item.portfolio_id} className="portfolio-item-card">
+                            {item.image_url && (
+                              <img
+                                className="portfolio-image"
+                                src={getImageUrl(item.image_url)}
+                                alt={t('userProfilePage.gallery.altText')}
+                                onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/default-portfolio.png'; }}
+                                onClick={() => openGallery(index)}
+                              />
+                            )}
+                              <div className="portfolio-item-content">
+                                <p className="portfolio-description">{item.description || t('userProfilePage.artistContent.noDescription')}</p>
+                                {formattedDate && (
+                                  <div className="portfolio-item-footer">
+                                      <span className="posted-date">{t('userProfilePage.content.postedOn')}: {formattedDate}</span>
+                                  </div>
+                                )}
+                              </div>
+                          </div>
+                        )
+                      })}
                     </div>
                   )}
               </div>
@@ -752,12 +765,8 @@ const UserProfilePage: React.FC = () => {
 
             <div className="reviews-section profile-section-public">
 
-              {/* --- This is the corrected header structure --- */}
               <div className="section-header">
-                {/* The title is the first item inside the header */}
                 <h4>{t('userProfilePage.content.projectReviews', { count: completedReviews.length })}</h4>
-
-                {/* The rating display is the second item inside the header */}
                 {averageRating !== null && reviewCount > 0 && (
                   <div className="average-rating">
                     <DisplayStars rating={averageRating} />
@@ -920,7 +929,7 @@ const UserProfilePage: React.FC = () => {
               </button>
               <div className="gallery-content" onClick={(e) => e.stopPropagation()}>
                 <img
-                  src={getImageUrl(portfolio[currentImageIndex].image_url)}
+                  src={getImageUrl(portfolio[currentImageIndex].image_url!)}
                   alt={portfolio[currentImageIndex].description || t('userProfilePage.gallery.altText')}
                 />
                 <div className="gallery-info">
@@ -952,6 +961,7 @@ const UserProfilePage: React.FC = () => {
       </div>
     </>
   );
+
 };
 
 export default UserProfilePage;
