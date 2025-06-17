@@ -208,7 +208,7 @@
 /* --- NEW: Final Actions Container --- */
 .form-final-actions {
     display: flex;
-    justify-content: space-between;
+    justify-content: baseline;
     /* THIS IS THE FIX: The default 'stretch' will make both buttons the same height */
     align-items: stretch;
     margin-top: 30px;
@@ -321,7 +321,8 @@
     .form-final-actions {
         flex-direction: column; /* Stacks buttons, Submit on top */
         gap: 15px;
-        align-items: baseline; /* Makes buttons full-width */
+        align-items: center; /* Makes buttons full-width */
     }
+    .cancel-btn {width: auto;}
 
 }
