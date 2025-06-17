@@ -1,9 +1,12 @@
 /* src/styles/MyJobPostingsPage.css */
 
 .my-jobs-page-container {
-    max-width: 900px;
-    margin: 40px auto;
+    /* MODIFIED: Set to a fixed width for desktop */
+    width: 700px;
+    max-width: 700px;
+    margin: 0 auto;
     padding: 20px;
+    padding-top: 100px; /* Space for navbar */
     font-family: 'Nunito', sans-serif;
 }
 
@@ -14,6 +17,8 @@
     border-bottom: 1px solid #dee2e6;
     padding-bottom: 20px;
     margin-bottom: 30px;
+    flex-wrap: wrap; /* Allow wrapping */
+    gap: 15px; /* Add gap for when it wraps */
 }
 
 .my-jobs-header h1 {
@@ -22,11 +27,11 @@
 }
 
 .my-jobs-header .action-button {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: 8px;
     padding: 10px 18px;
-    background-color: #5a67d8;
+    background-color: #28a745;
     color: white;
     text-decoration: none;
     border-radius: 5px;
@@ -34,7 +39,7 @@
     transition: background-color 0.2s;
 }
 .my-jobs-header .action-button:hover {
-    background-color: #434190;
+    background-color: #218838;
 }
 
 .job-list-container {
@@ -77,6 +82,7 @@
 .job-card-actions {
     display: flex;
     gap: 10px;
+    flex-shrink: 0; /* Prevent buttons from shrinking */
 }
 
 .job-card-actions .edit-btn,
@@ -90,25 +96,22 @@
     cursor: pointer;
     font-weight: 500;
     transition: all 0.2s ease;
+    color: white !important;
 }
 
 .job-card-actions .edit-btn {
-    background-color: #f0f2f5;
-    color: #495057;
+    background-color: #fd7e14 !important; /* Orange */
     text-decoration: none;
 }
 .job-card-actions .edit-btn:hover {
-    background-color: #e2e6ea;
+    background-color: #e67311 !important;
 }
 
 .job-card-actions .delete-btn {
-    background-color: transparent;
-    color: #dc3545;
-    border-color: #dc3545;
+    background-color: #dc3545 !important; /* Red */
 }
 .job-card-actions .delete-btn:hover {
-    background-color: #dc3545;
-    color: #fff;
+    background-color: #c82333 !important;
 }
 
 /* --- Confirmation Modal Styles --- */
@@ -123,6 +126,7 @@
     justify-content: center;
     align-items: center;
     z-index: 1000;
+    padding: 15px;
 }
 
 .confirm-modal {
@@ -130,7 +134,7 @@
     padding: 30px;
     border-radius: 8px;
     box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-    width: 90%;
+    width: 100%;
     max-width: 450px;
     text-align: center;
 }
@@ -156,109 +160,55 @@
     cursor: pointer;
 }
 .modal-actions .cancel-btn {
-    background-color: #e9ecef;
-    color: #495057;
+    background-color: #6c757d;
+    color: #fff;
 }
 .modal-actions .confirm-delete-btn {
     background-color: #dc3545;
     color: #fff;
 }
-/* Button Color Scheme:
-  - GREEN (#28a745): Constructive actions (Add, Post, Update, Save, Submit, Apply).
-  - RED (#dc3545): Destructive actions (Delete, Remove, Cancel, Logout, Clear).
-  - ORANGE (#fd7e14): Modification actions (Edit, Upload).
-  - TERRACOTTA (#C96A50): Neutral/Theme actions (View Details, Primary Calls-to-Action).
-*/
 
-/* --- GENERIC/PRIMARY BUTTONS (Constructive - GREEN) --- */
-.save-btn,
-.upload-cv-btn,
-.submit-btn,
-.submit-job-btn,
-.apply-button-large,
-.apply-button-detailed,
-.action-button { /* <-- Added .action-button */
-  background-color: #28a745 !important; /* GREEN */
-  color: white !important;
-}
+/* ==========================================================================
+   RESPONSIVE STYLES
+   ========================================================================== */
+@media screen and (max-width: 767px) { /* Changed breakpoint to be just under 700px */
+    .my-jobs-page-container {
+        /* KEY FIX: Override the fixed width to be fluid on mobile */
+        width: 100%;
+        padding: 15px;
+        padding-top: 85px;
+    }
 
-.save-btn:hover:not(:disabled),
-.upload-cv-btn:hover:not(:disabled),
-.submit-btn:hover:not(:disabled),
-.submit-job-btn:hover:not(:disabled),
-.apply-button-large:hover:not(:disabled),
-.apply-button-detailed:hover:not(:disabled),
-.action-button:hover:not(:disabled) { /* <-- Added .action-button */
-  background-color: #218838 !important; /* Darker Green */
-}
+    .my-jobs-header {
+        flex-direction: column;
+        align-items: stretch; /* Make items take full width */
+    }
 
+    .my-jobs-header h1 {
+        font-size: 1.8rem;
+        text-align: center;
+    }
 
-/* --- DESTRUCTIVE/NEGATIVE BUTTONS (RED) --- */
-.logout-button,
-.cancel-btn,
-.delete-btn,
-.remove-btn,
-.delete-cv-btn,
-.clear-filters-button,
-.confirm-delete-btn { /* <-- Added .confirm-delete-btn */
-  background-color: #dc3545 !important; /* RED */
-  color: white !important;
-}
+    .my-jobs-header .action-button {
+        justify-content: center;
+    }
 
-.logout-button:hover:not(:disabled),
-.cancel-btn:hover:not(:disabled),
-.delete-btn:hover:not(:disabled),
-.remove-btn:hover:not(:disabled),
-.delete-cv-btn:hover:not(:disabled),
-.clear-filters-button:hover:not(:disabled),
-.confirm-delete-btn:hover:not(:disabled) { /* <-- Added .confirm-delete-btn */
-  background-color: #c82333 !important; /* Darker Red */
-}
+    .job-management-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
 
+    .job-card-actions {
+        width: 100%;
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px solid #e9ecef;
+    }
 
-/* --- MODIFICATION BUTTONS (ORANGE) --- */
-.edit-btn,
-.cv-upload-label { /* Treating 'upload' as an edit-like action */
-  background-color: #fd7e14 !important; /* ORANGE */
-  color: white !important;
-}
-
-.edit-btn:hover:not(:disabled),
-.cv-upload-label:hover:not(:disabled) {
-  background-color: #e67311 !important; /* Darker Orange */
-}
-
-
-/* --- NEUTRAL/THEME BUTTONS (TERRACOTTA) --- */
-.view-job-button,
-.btn-primary {
-  background-color: #C96A50 !important; /* TERRACOTTA */
-  color: white !important;
-}
-
-.view-job-button:hover:not(:disabled),
-.btn-primary:hover:not(:disabled) {
-  background-color: #b05c46 !important; /* Darker Terracotta */
-}
-
-
-/* --- SECONDARY/NEUTRAL BUTTONS (Outlined) --- */
-.add-btn {
-  background-color: white !important;
-  color: #28a745 !important; /* GREEN text */
-  border: 1px solid #28a745 !important;
-}
-
-.add-btn:hover {
-  background-color: #f0fff4 !important;
-}
-
-/* --- Default 'button' tag --- */
-/* This will apply to any <button> that doesn't have a more specific class. */
-button {
-    background-color: #333333 !important; /* Charcoal Gray */
-    color: white !important;
-}
-button:hover:not(:disabled) {
-    background-color: #444444 !important; /* Dark Gray */
+    .job-card-actions .edit-btn,
+    .job-card-actions .delete-btn {
+        flex-grow: 1; /* Make buttons share space equally */
+        justify-content: center;
+    }
 }
