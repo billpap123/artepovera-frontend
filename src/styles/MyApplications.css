@@ -1,165 +1,165 @@
 /* src/styles/MyApplications.css */
 .my-applications-page {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 2rem;
-    padding-top: 70px; /* Add padding to account for fixed navbar */
-  }
-  
-  .page-header {
-    text-align: center;
-    margin-bottom: 2.5rem;
-  }
-  
-  .page-header h1 {
-    font-size: 2.5rem;
-    color: #333;
-  }
-  
-  .page-header p {
-    font-size: 1.1rem;
-    color: #666;
-  }
-  
-  /* List container */
-  .applications-list {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem;
+  padding-top: 100px; /* Increased padding to account for fixed navbar */
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.page-header h1 {
+  font-size: 2.5rem;
+  color: #333;
+}
+
+.page-header p {
+  font-size: 1.1rem;
+  color: #666;
+}
+
+/* List container */
+.applications-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Individual list item */
+.application-list-item {
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 1.5rem 2rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
+  border: 1px solid #e9ecef;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  transition: box-shadow 0.2s ease-in-out;
+}
+
+.application-list-item:hover {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.item-main-content {
+  flex-grow: 1;
+}
+
+.job-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin: 0 0 0.25rem 0;
+}
+
+.employer-name {
+  font-size: 1rem;
+  color: #7f8c8d;
+  margin: 0 0 1rem 0;
+}
+
+.employer-name a {
+  color: #C96A50;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.employer-name a:hover {
+  text-decoration: underline;
+}
+
+.job-description {
+  font-size: 1rem;
+  color: #555;
+  line-height: 1.6;
+}
+
+.item-actions {
+  flex-shrink: 0;
+}
+
+.view-job-button {
+  background-color: #C96A50;
+  color: #fff;
+  text-decoration: none;
+  padding: 12px 22px;
+  border-radius: 8px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.view-job-button:hover {
+  background-color: #b05c46;
+}
+
+
+/* Re-using empty state and loader from previous styles */
+.loading-container, .empty-state-container {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
-  }
-  
-  /* Individual list item */
-  .application-list-item {
-    background-color: #ffffff;
-    border-radius: 12px;
-    padding: 1.5rem 2rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
-    border: 1px solid #e9ecef;
-    display: flex;
-    justify-content: space-between;
     align-items: center;
-    gap: 1rem;
-    transition: box-shadow 0.2s ease-in-out;
-  }
-  
-  .application-list-item:hover {
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-  }
-  
-  .item-main-content {
-    flex-grow: 1;
-  }
-  
-  .job-title {
+    justify-content: center;
+    padding: 4rem 1rem;
+    text-align: center;
+    color: #666;
+    margin-top: 2rem;
+}
+
+.spinner {
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #C96A50;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1rem;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.empty-state-icon {
+    color: #bdc3c7;
+    margin-bottom: 1rem;
+}
+
+.empty-state-container h2 {
     font-size: 1.5rem;
-    font-weight: 600;
-    color: #2c3e50;
-    margin: 0 0 0.25rem 0;
-  }
-  
-  .employer-name {
-    font-size: 1rem;
-    color: #7f8c8d;
-    margin: 0 0 1rem 0;
-  }
-  
-  .employer-name a {
-    color: #C96A50;
-    text-decoration: none;
-    font-weight: 500;
-  }
-  
-  .employer-name a:hover {
-    text-decoration: underline;
-  }
-  
-  .job-description {
-    font-size: 1rem;
-    color: #555;
-    line-height: 1.6;
-  }
-  
-  .item-actions {
-    flex-shrink: 0;
-  }
-  
-  .view-job-button {
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.btn-primary {
+    display: inline-block;
     background-color: #C96A50;
     color: #fff;
-    text-decoration: none;
-    padding: 12px 22px;
+    padding: 12px 25px;
     border-radius: 8px;
-    font-weight: 600;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    transition: background-color 0.2s ease;
-  }
-  
-  .view-job-button:hover {
-    background-color: #b05c46;
-  }
-  
-  
-  /* Re-using empty state and loader from previous styles */
-  .loading-container, .empty-state-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 4rem 1rem;
-      text-align: center;
-      color: #666;
-      margin-top: 2rem;
-  }
-  
-  .spinner {
-      border: 5px solid #f3f3f3;
-      border-top: 5px solid #C96A50;
-      border-radius: 50%;
-      width: 50px;
-      height: 50px;
-      animation: spin 1s linear infinite;
-      margin-bottom: 1rem;
-  }
-  
-  @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-  }
-  
-  .empty-state-icon {
-      color: #bdc3c7;
-      margin-bottom: 1rem;
-  }
-  
-  .empty-state-container h2 {
-      font-size: 1.5rem;
-      color: #333;
-      margin-bottom: 0.5rem;
-  }
-  
-  .btn-primary {
-      display: inline-block;
-      background-color: #C96A50;
-      color: #fff;
-      padding: 12px 25px;
-      border-radius: 8px;
-      text-decoration: none;
-      font-weight: 500;
-      margin-top: 1.5rem;
-      transition: background-color 0.3s ease;
-  }
-  
-  .btn-primary:hover {
-      background-color: #b05c46;
-  }
+    text-decoration: none;
+    font-weight: 500;
+    margin-top: 1.5rem;
+    transition: background-color 0.3s ease;
+}
 
-  /* Button Color Scheme:
-  - GREEN (#28a745): Constructive actions (Add, Post, Update, Save, Submit, Apply).
-  - RED (#dc3545): Destructive actions (Delete, Remove, Cancel, Logout, Clear).
-  - ORANGE (#fd7e14): Modification actions (Edit, Upload).
-  - TERRACOTTA (#C96A50): Neutral/Theme actions (View Details, Primary Calls-to-Action).
+.btn-primary:hover {
+    background-color: #b05c46;
+}
+
+/* Button Color Scheme:
+- GREEN (#28a745): Constructive actions (Add, Post, Update, Save, Submit, Apply).
+- RED (#dc3545): Destructive actions (Delete, Remove, Cancel, Logout, Clear).
+- ORANGE (#fd7e14): Modification actions (Edit, Upload).
+- TERRACOTTA (#C96A50): Neutral/Theme actions (View Details, Primary Calls-to-Action).
 */
 
 /* --- GENERIC/PRIMARY BUTTONS (Constructive - GREEN) --- */
@@ -169,8 +169,8 @@
 .submit-job-btn,
 .apply-button-large,
 .apply-button-detailed {
-  background-color: #28a745 !important; /* GREEN */
-  color: white !important;
+background-color: #28a745 !important; /* GREEN */
+color: white !important;
 }
 
 .save-btn:hover:not(:disabled),
@@ -179,7 +179,7 @@
 .submit-job-btn:hover:not(:disabled),
 .apply-button-large:hover:not(:disabled),
 .apply-button-detailed:hover:not(:disabled) {
-  background-color: #218838 !important; /* Darker Green */
+background-color: #218838 !important; /* Darker Green */
 }
 
 
@@ -190,8 +190,8 @@
 .remove-btn,
 .delete-cv-btn,
 .clear-filters-button {
-  background-color: #dc3545 !important; /* RED */
-  color: white !important;
+background-color: #dc3545 !important; /* RED */
+color: white !important;
 }
 
 .logout-button:hover:not(:disabled),
@@ -200,53 +200,94 @@
 .remove-btn:hover:not(:disabled),
 .delete-cv-btn:hover:not(:disabled),
 .clear-filters-button:hover:not(:disabled) {
-  background-color: #c82333 !important; /* Darker Red */
+background-color: #c82333 !important; /* Darker Red */
 }
 
 
 /* --- MODIFICATION BUTTONS (ORANGE) --- */
 .edit-btn,
 .cv-upload-label { /* Treating 'upload' as an edit-like action */
-  background-color: #fd7e14 !important; /* ORANGE */
-  color: white !important;
+background-color: #fd7e14 !important; /* ORANGE */
+color: white !important;
 }
 
 .edit-btn:hover:not(:disabled),
 .cv-upload-label:hover:not(:disabled) {
-  background-color: #e67311 !important; /* Darker Orange */
+background-color: #e67311 !important; /* Darker Orange */
 }
 
 
 /* --- NEUTRAL/THEME BUTTONS (TERRACOTTA) --- */
 .view-job-button,
 .btn-primary {
-  background-color: #C96A50 !important; /* TERRACOTTA */
-  color: white !important;
+background-color: #C96A50 !important; /* TERRACOTTA */
+color: white !important;
 }
 
 .view-job-button:hover:not(:disabled),
 .btn-primary:hover:not(:disabled) {
-  background-color: #b05c46 !important; /* Darker Terracotta */
+background-color: #b05c46 !important; /* Darker Terracotta */
 }
 
 
 /* --- SECONDARY/NEUTRAL BUTTONS (Outlined) --- */
 .add-btn {
-  background-color: white !important;
-  color: #28a745 !important; /* GREEN text */
-  border: 1px solid #28a745 !important;
+background-color: white !important;
+color: #28a745 !important; /* GREEN text */
+border: 1px solid #28a745 !important;
 }
 
 .add-btn:hover {
-  background-color: #f0fff4 !important;
+background-color: #f0fff4 !important;
 }
 
 /* --- Default 'button' tag --- */
 /* This will apply to any <button> that doesn't have a more specific class. */
 button {
-    background-color: #333333 !important; /* Charcoal Gray */
-    color: white !important;
+  background-color: #333333 !important; /* Charcoal Gray */
+  color: white !important;
 }
 button:hover:not(:disabled) {
-    background-color: #444444 !important; /* Dark Gray */
+  background-color: #444444 !important; /* Dark Gray */
+}
+
+/****************************************
+* Responsive Design
+****************************************/
+@media screen and (max-width: 768px) {
+.my-applications-page {
+  padding: 1.5rem 1rem;
+  padding-top: 85px;
+}
+
+.page-header h1 {
+  font-size: 2rem;
+}
+
+.application-list-item {
+  flex-direction: column;
+  align-items: flex-start; /* Align content to the left */
+  text-align: left;
+  padding: 1.5rem;
+}
+
+.item-main-content {
+  width: 100%;
+}
+
+.job-title {
+  font-size: 1.3rem;
+}
+
+.item-actions {
+  width: 100%;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e9ecef;
+}
+
+.view-job-button {
+  width: 100%;
+  justify-content: center; /* Center text and icon inside button */
+}
 }
