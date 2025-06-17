@@ -1,7 +1,5 @@
 // src/pages/Portfolio.tsx
 import { useTranslation } from "react-i18next";
-
-
 import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import Navbar from "../components/Navbar";
@@ -26,6 +24,17 @@ export interface PortfolioProps {
   viewedArtistName?: string; // Name of the artist being viewed
 }
 
+// --- NEW: Formatting Function for the date ---
+const formatDate = (dateString: string | undefined) => {
+    if (!dateString) return null;
+    return new Date(dateString).toLocaleDateString(undefined, {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+};
+
+
 const getItemTypeFromUrl = (url: string): 'image' | 'pdf' | 'video' | 'other' => {
     if (!url) return 'other';
     const lowerUrl = url.toLowerCase();
@@ -38,11 +47,7 @@ const getItemTypeFromUrl = (url: string): 'image' | 'pdf' | 'video' | 'other' =>
 const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewedArtistName }) => {
   const { artistId: loggedInUserArtistId } = useUserContext();
   const { t } = useTranslation();
-  console.log("--- isOwner Calculation ---");
-  console.log("Prop (from router) -> viewingArtistId:", viewingArtistId, "| type:", typeof viewingArtistId);
-  console.log("Context -> loggedInUserArtistId:", loggedInUserArtistId, "| type:", typeof loggedInUserArtistId);
-
-
+  
   const targetArtistId = viewingArtistId || loggedInUserArtistId;
   const isOwner = !!loggedInUserArtistId && (targetArtistId === loggedInUserArtistId);
 
@@ -211,6 +216,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewed
           {items.map((item) => {
             const itemType = item.item_type || getItemTypeFromUrl(item.image_url);
             const isEditingThis = editItemId === item.portfolio_id;
+            const formattedDate = formatDate(item.created_at);
 
             return (
               <div key={item.portfolio_id} className={`portfolio-item card-style item-type-${itemType} ${isEditingThis ? 'editing' : ''}`}>
@@ -220,6 +226,14 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewed
                  {itemType === 'other' && (<div className="portfolio-media portfolio-other-item"><span className="file-icon" role="img" aria-label={t('portfolioPage.item.otherAriaLabel')}>📎</span><p className="file-name">{(item.description || t('portfolioPage.item.otherDefaultName')).substring(0,25)}{item.description.length > 25 ? '...' : ''}</p><a href={item.image_url} target="_blank" rel="noopener noreferrer" className="view-file-link button-style">{t('portfolioPage.item.openFile')}</a></div>)}
                 <div className="portfolio-item-content">
                   {isEditingThis ? (<textarea value={editDescription} onChange={(e) => setEditDescription(e.target.value)} className="edit-description-input" rows={3} autoFocus/>) : (<p className="portfolio-description">{item.description || t('portfolioPage.status.noDescription')}</p>)}
+                  
+                  {/* --- NEW: Date Display --- */}
+                  {formattedDate && (
+                    <div className="portfolio-item-footer">
+                        <span className="posted-date">{t('portfolioPage.item.postedOn')}: {formattedDate}</span>
+                    </div>
+                  )}
+
                   {isOwner && (
                     <div className="portfolio-actions">
                       {isEditingThis ? (<> <button onClick={() => handleSaveEdit(item.portfolio_id)} className="action-btn save" disabled={uploading}>{t('portfolioPage.item.saveButton')}</button> <button onClick={cancelEditing} className="action-btn cancel" disabled={uploading}>{t('portfolioPage.form.cancelButton')}</button> </>) : (<button onClick={() => startEditing(item)} className="action-btn edit" disabled={uploading || showAddForm}>{t('portfolioPage.item.editButton')}</button>)}

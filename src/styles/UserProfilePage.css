@@ -175,12 +175,8 @@ width: 700px;
 .profile-actions {
 
   display: flex;
-
-  flex-wrap: wrap;
-
-  gap: 12px;
-
-  justify-content: center;
+  flex-wrap: nowrap;
+  white-space: nowrap;
 
 }
 

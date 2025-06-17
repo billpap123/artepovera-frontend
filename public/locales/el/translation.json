@@ -537,7 +537,9 @@
       "openFile": "Άνοιγμα αρχείου",
       "saveButton": "Αποθήκευση",
       "editButton": "Επεξεργασία περιγραφής",
-      "deleteButton": "Διαγραφή"
+      "deleteButton": "Διαγραφή",
+      "postedOn": "Δημοσιεύτηκε στις"
+
     },
     "modal": {
       "closeButton": "×",

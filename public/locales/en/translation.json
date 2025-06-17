@@ -539,7 +539,9 @@
       "openFile": "Open file",
       "saveButton": "Save",
       "editButton": "Edit descr",
-      "deleteButton": "Delete"
+      "deleteButton": "Delete",
+      "postedOn": "Posted on"
+
     },
     "modal": {
       "closeButton": "×",

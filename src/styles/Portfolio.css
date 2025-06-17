@@ -426,3 +426,16 @@
     width: 100%;
   }
 }
+
+.portfolio-item-footer {
+  margin-top: 15px;
+  padding-top: 10px;
+  border-top: 1px solid #f1f3f5;
+  text-align: right;
+}
+.posted-date {
+  font-size: 0.8rem;
+  color: #6c757d;
+  font-style: italic;
+}
+
