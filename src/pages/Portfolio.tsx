@@ -16,7 +16,8 @@ export interface PortfolioItem {
   description: string;
   item_type?: 'image' | 'pdf' | 'video' | 'other';
   public_id?: string;
-  created_at?: string;
+  // --- FIX 1: Changed from created_at to createdAt to match API response ---
+  createdAt?: string; 
 }
 
 export interface PortfolioProps {
@@ -215,7 +216,8 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewed
           {items.map((item) => {
             const itemType = item.item_type || getItemTypeFromUrl(item.image_url);
             const isEditingThis = editItemId === item.portfolio_id;
-            const formattedDate = formatDate(item.created_at);
+            // --- FIX 2: Using item.createdAt instead of item.created_at ---
+            const formattedDate = formatDate(item.createdAt); 
 
             return (
               <div key={item.portfolio_id} className={`portfolio-item card-style item-type-${itemType} ${isEditingThis ? 'editing' : ''}`}>
@@ -226,8 +228,6 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewed
                 <div className="portfolio-item-content">
                   {isEditingThis ? (<textarea value={editDescription} onChange={(e) => setEditDescription(e.target.value)} className="edit-description-input" rows={3} autoFocus/>) : (<p className="portfolio-description">{item.description || t('portfolioPage.status.noDescription')}</p>)}
                   
-                  {/* --- THIS IS THE FIX --- */}
-                  {/* Both the date and the actions are now inside the same footer container */}
                   <div className="portfolio-item-footer">
                     {formattedDate && (
                         <span className="posted-date">{t('portfolioPage.item.postedOn')}: {formattedDate}</span>
