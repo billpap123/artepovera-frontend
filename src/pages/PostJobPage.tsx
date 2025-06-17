@@ -329,9 +329,15 @@ const PostJobPage: React.FC = () => {
                     </fieldset>
     
                     {error && <p className="error-message">{error}</p>}
-                    <button type="submit" disabled={isSubmitting} className="submit-job-btn">
-                        {isSubmitting ? t('postJobPage.buttons.saving') : isEditMode ? t('postJobPage.buttons.saveChanges') : t('postJobPage.buttons.postJob')}
-                    </button>
+                    {/* --- THIS IS THE CHANGE --- */}
+                    <div className="form-final-actions">
+                        <button type="button" onClick={() => navigate(-1)} className="cancel-btn" disabled={isSubmitting}>
+                            {t('postJobPage.buttons.cancel', 'Cancel')}
+                        </button>
+                        <button type="submit" disabled={isSubmitting} className="submit-job-btn">
+                            {isSubmitting ? t('postJobPage.buttons.saving') : isEditMode ? t('postJobPage.buttons.saveChanges') : t('postJobPage.buttons.postJob')}
+                        </button>
+                    </div>
                 </form>
             </div>
         </>

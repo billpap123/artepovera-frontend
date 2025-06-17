@@ -156,7 +156,14 @@
 .radio-group input[type="radio"] {
     display: none;
 }
-
+.form-final-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #e9ecef;
+}
 /* --- Language Section --- */
 .language-section h4 {
     font-size: 1.1rem;
@@ -259,4 +266,10 @@
     .radio-group {
         flex-direction: column;
     }
+    .form-final-actions {
+        flex-direction: column-reverse; /* Stacks buttons, Submit on top */
+        gap: 15px;
+        align-items: stretch; /* Makes buttons full-width */
+    }
+
 }
