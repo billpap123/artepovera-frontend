@@ -731,7 +731,8 @@
       "posting": "Δημοσίευση...",
       "loadingViewpoints": "Φόρτωση απόψεων...",
       "noViewpoints": "Δεν υπάρχουν ακόμη καλλιτεχνικές απόψεις για τον/την {{name}}.",
-      "avgRating": "μέση βαθμ."
+      "avgRating": "μέση βαθμ.",
+      "postedOn":"Δημοσιεύτηκε στις"
 
     },
     "artistContent": {

@@ -431,7 +431,7 @@
 /* --- MODIFIED: Styles for Footer --- */
 .portfolio-item-footer {
   display: flex; /* Makes this a flex container */
-  justify-content: space-between; /* Pushes items to opposite ends */
+  justify-content: center; /* Pushes items to opposite ends */
   align-items: center; /* Vertically aligns them */
   margin-top: auto; /* Pushes footer to the bottom of the card content */
   padding-top: 15px;

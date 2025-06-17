@@ -759,7 +759,8 @@
       "posting": "Posting...",
       "loadingViewpoints": "Loading viewpoints...",
       "noViewpoints": "No artistic viewpoints yet for {{name}}.",
-      "avgRating": "avg rating"
+      "avgRating": "avg rating",
+      "postedOn":"Posted on"
 
     },
     "artistContent": {
