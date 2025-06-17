@@ -828,7 +828,7 @@ button:hover {
   .artist-profile-container {
     padding: 20px; /* Drastically reduce padding for mobile */
     margin: 20px 10px; /* Reduce margin */
-    width:70% ;
+    width:fit-content;
 
   }
 

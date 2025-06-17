@@ -1,14 +1,14 @@
 // src/pages/ChatPage.tsx
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
-import io, { Socket } from 'socket.io-client'; // Import socket.io-client
-// STEP 1: Import the useTranslation hook
+import io, { Socket } from 'socket.io-client';
 import { useTranslation } from 'react-i18next';
 import Navbar from '../components/Navbar';
 import { useUserContext } from '../context/UserContext';
 import '../styles/ChatPage.css';
+// --- NEW: Import the back arrow icon ---
+import { FaArrowLeft } from 'react-icons/fa';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:50001";
 
@@ -33,7 +33,6 @@ interface Message {
 // ---
 
 const ChatPage = () => {
-    // STEP 2: Initialize the hook to get the 't' function
     const { t } = useTranslation();
     const { userId: loggedInUserId } = useUserContext();
     const [searchParams] = useSearchParams();
@@ -49,27 +48,19 @@ const ChatPage = () => {
     const [error, setError] = useState<string | null>(null);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
-    // Use a ref to hold the socket instance to prevent re-renders from creating new connections
     const socketRef = useRef<Socket | null>(null);
 
-    // Effect for initializing and managing the socket connection
     useEffect(() => {
         if (loggedInUserId) {
-            // We only establish the connection once when the user is logged in.
             if (!socketRef.current) {
                 socketRef.current = io(API_BASE_URL);
             }
     
-            // Define the event handler function
             const handleNewMessage = (incomingMessage: Message) => {
-                // 1. --- THIS IS THE FIX ---
-                // Ignore the event if the logged-in user is the sender.
-                // The UI was already updated by the handleSendMessage function.
                 if (incomingMessage.sender_id === loggedInUserId) {
                     return; 
                 }
     
-                // 2. For everyone else, update the UI if the chat is active.
                 setActiveChat(currentActiveChat => {
                     if (currentActiveChat && incomingMessage.chat_id === currentActiveChat.chat_id) {
                         setMessages(prevMessages => [...prevMessages, incomingMessage]);
@@ -78,18 +69,15 @@ const ChatPage = () => {
                 });
             };
     
-            // Attach the listener
             socketRef.current.on('new_message', handleNewMessage);
     
-            // Cleanup: remove the listener when the component unmounts or dependencies change.
             return () => {
                 socketRef.current?.off('new_message', handleNewMessage);
             };
         }
-    }, [loggedInUserId]); // This effect now only depends on the user's login state.
+    }, [loggedInUserId]);
     
 
-    // Effect to fetch initial chat list (no major changes needed)
     useEffect(() => {
         const fetchUserChats = async () => {
             setLoadingChats(true);
@@ -108,7 +96,6 @@ const ChatPage = () => {
                     if(chatToOpen) setActiveChat(chatToOpen);
                 }
             } catch (err: any) {
-                // MODIFIED LINE
                 setError(err.response?.data?.message || t('chatPage.errors.loadFailed'));
             } finally {
                 setLoadingChats(false);
@@ -118,14 +105,12 @@ const ChatPage = () => {
         if (loggedInUserId) fetchUserChats();
     }, [loggedInUserId, searchParams, t]);
 
-    // Effect to fetch messages and JOIN the socket room when a chat becomes active
     useEffect(() => {
         if (!activeChat) {
             setMessages([]);
             return;
         }
 
-        // When a chat is selected, tell the server we want to join this room.
         socketRef.current?.emit('join_chat', activeChat.chat_id.toString());
         
         const fetchMessages = async () => {
@@ -142,7 +127,6 @@ const ChatPage = () => {
         fetchMessages();
     }, [activeChat]);
 
-    // Effect to scroll to bottom (no changes needed)
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
@@ -153,35 +137,29 @@ const ChatPage = () => {
 
         try {
             const token = localStorage.getItem('token');
-            // This POST request now also triggers the socket emit on the backend for the other user
             const response = await axios.post(`${API_BASE_URL}/api/chats/send`, 
                 { chat_id: activeChat.chat_id, message: newMessage.trim() },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
             
-            // The sender adds their own message to the UI immediately for a snappy feel.
-            // The receiver will get this same message via the socket.
             setMessages(prev => [...prev, response.data.data]);
             setNewMessage('');
         } catch (err) { 
-            // MODIFIED LINE
             alert(t('chatPage.errors.sendFailed')); 
         }
     };
     
-    // getImageUrl function (no changes needed)
     const getImageUrl = (path?: string | null): string => {
         if (!path) return '/default-profile.png';
         if (path.startsWith('http')) return path;
         return `${API_BASE_URL}/${path.replace(/^uploads\/uploads\//, 'uploads/')}`;
     };
 
-    // The entire JSX return block is the same as before.
     return (
         <>
             <Navbar />
-            <div className="chat-page-layout">
-                {/* Sidebar */}
+            {/* --- MODIFIED: The chat-view-active class is now dynamically applied --- */}
+            <div className={`chat-page-layout ${activeChat ? 'chat-view-active' : ''}`}>
                 <aside className="chat-sidebar">
                     <div className="sidebar-header"><h2>{t('chatPage.sidebar.title')}</h2></div>
                     <div className="chat-list">
@@ -202,13 +180,18 @@ const ChatPage = () => {
                     </div>
                 </aside>
 
-                {/* Main Chat Window */}
                 <main className="chat-window">
                     {activeChat ? (
                         <>
                             <header className="chat-window-header">
-                                <h3>{activeChat.otherUser?.fullname || t('chatPage.main.header.fallbackTitle')}</h3>
-                                <Link to={`/user-profile/${activeChat.otherUser?.user_id}`}>{t('chatPage.main.header.viewProfile')}</Link>
+                                {/* --- NEW: "Back to Chats" button for mobile --- */}
+                                <button className="back-to-chats-btn" onClick={() => setActiveChat(null)}>
+                                    <FaArrowLeft />
+                                </button>
+                                <div className="chat-header-info">
+                                    <h3>{activeChat.otherUser?.fullname || t('chatPage.main.header.fallbackTitle')}</h3>
+                                    <Link to={`/user-profile/${activeChat.otherUser?.user_id}`}>{t('chatPage.main.header.viewProfile')}</Link>
+                                </div>
                             </header>
                             <div className="messages-container">
                                 {loadingMessages ? <p>{t('chatPage.main.messages.loading')}</p> : (

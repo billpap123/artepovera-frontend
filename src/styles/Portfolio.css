@@ -448,6 +448,7 @@
 @media (max-width: 768px) {
   .portfolio-page {
     padding: 20px 15px;
+    width: fit-content;
   }
   
   .portfolio-header {
