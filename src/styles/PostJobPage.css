@@ -164,7 +164,6 @@
 
 .add-btn, .remove-btn {
     padding: 8px 12px;
-    border-radius: 50%;
     border: 1px solid #ced4da;
     background-color: #f8f9fa;
     cursor: pointer;

@@ -1,4 +1,5 @@
 // src/components/RatingForm.tsx
+
 import React, { useState } from 'react';
 import axios from 'axios';
 import '../styles/RatingForm.css'; // Make sure you have created this CSS file
@@ -177,11 +178,12 @@ const RatingForm: React.FC<RatingFormProps> = (
     
                 {error && <p className="error-message">{error}</p>}
     
+                {/* --- MODIFIED: Button Order Changed --- */}
                 <div className="form-actions">
-                    <button type="button" onClick={() => onClose(false)} disabled={isSubmitting} className="cancel-btn">{t('ratingForm.buttons.cancel')}</button>
                     <button type="submit" disabled={isSubmitting || dealMade === null} className="submit-btn">
                         {isSubmitting ? t('ratingForm.buttons.submitting') : t('ratingForm.buttons.submit')}
                     </button>
+                    <button type="button" onClick={() => onClose(false)} disabled={isSubmitting} className="cancel-btn">{t('ratingForm.buttons.cancel')}</button>
                 </div>
             </form>
         </div>

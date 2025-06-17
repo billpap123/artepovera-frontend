@@ -130,14 +130,28 @@
 }
 
 .form-actions {
-  display: flex; justify-content: flex-end; gap: 15px;
-  margin-top: 25px; padding-top: 20px; border-top: 1px solid #f1f3f5;
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  margin-top: 25px;
+  padding-top: 20px;
+  border-top: 1px solid #f1f3f5;
+  /* MODIFIED: Added this to ensure vertical alignment if heights differ. */
+  align-items: center;
 }
 
 .form-actions button {
-  padding: 10px 25px; border-radius: 8px; border: none;
-  font-weight: 600; font-size: 1rem; cursor: pointer;
+  padding: 10px 25px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
   transition: all 0.2s ease;
+  /* MODIFIED: These lines ensure the buttons have the same height */
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .submit-btn { background-color: #28a745; color: white; }

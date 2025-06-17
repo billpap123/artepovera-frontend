@@ -34,7 +34,7 @@
     "doneEditing": "Close",
     "account": {
       "title": "Account settings",
-      "changeEmail": "Change Account Email",
+      "changeEmail": "Change email",
       "currentEmail": "Current email",
       "newEmailPlaceholder": "New email",
       "confirmEmailPlaceholder": "Confirm new email",
@@ -173,7 +173,7 @@
     "cancel": "Cancel",
     "account": {
       "title": "Account settings",
-      "changeEmail": "Change Account Email",
+      "changeEmail": "Change email",
       "currentEmail": "Current email",
       "newEmailPlaceholder": "New email",
       "confirmEmailPlaceholder": "Confirm new email",
@@ -853,7 +853,7 @@
           "buttons": {
             "cancel": "Cancel",
             "submitting": "Submitting...",
-            "submit": "Submit Review"
+            "submit": "Submit review"
           },
           "errors": {
             "dealRequired": "Please indicate if you ended up working together.",
@@ -869,7 +869,7 @@
       
         "navbar": {
           "altText": {
-            "logo": "Artepovera Home"
+            "logo": "Artepovera home"
           },
           "links": {
             "home": "Home",

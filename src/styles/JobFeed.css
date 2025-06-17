@@ -29,7 +29,7 @@
 
 .job-card-header .employer-name {
   font-size: 0.9rem;
-  color: #6c757d;
+  color: #6c757d !important;
   margin: 0;
 }
 .job-card-header .employer-name a {
