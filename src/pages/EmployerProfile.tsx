@@ -326,9 +326,26 @@ const EmployerProfile: React.FC = () => {
               <div className="profile-section">
                 <h4>{t('employerProfile.shortDescription')}</h4>
                 <div className="bio-text markdown-content">
-                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                    {bio || t('employerProfile.noBio')}
-                  </ReactMarkdown>
+                <ReactMarkdown
+      remarkPlugins={[remarkGfm]}
+      // --- THIS IS THE FIX ---
+      // We are telling ReactMarkdown how to render all link (<a>) elements.
+      components={{
+        a: (props) => (
+          <a 
+            {...props} // This keeps all original properties like 'href'
+            target="_blank" // This tells the browser to open the link in a new tab
+            rel="noopener noreferrer" // Important for security and performance
+          >
+            {props.children} 
+          </a>
+        )
+      }}
+      // --- END OF FIX ---
+    >
+      {bio || t('artistProfile.noBio')}
+    </ReactMarkdown>
+
                 </div>
               </div>
               <div className="reviews-section profile-section">

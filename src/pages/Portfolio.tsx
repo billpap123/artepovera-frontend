@@ -17,7 +17,7 @@ export interface PortfolioItem {
   description: string;
   item_type?: 'image' | 'pdf' | 'video' | 'other';
   public_id?: string;
-  created_at?: string;
+  created_at?: string; // Corrected from createdAt to match your previous versions
 }
 
 export interface PortfolioProps {
@@ -35,7 +35,16 @@ const getItemTypeFromUrl = (url: string): 'image' | 'pdf' | 'video' | 'other' =>
     return 'other';
 };
 
-// --- FINAL, ROBUST PORTFOLIO COMPONENT ---
+// --- FIX: Add the formatDate function back ---
+const formatDate = (dateString: string | undefined) => {
+    if (!dateString) return null;
+    return new Date(dateString).toLocaleDateString(undefined, {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+};
+
 const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewedArtistName }) => {
   const { artistId: loggedInUserArtistId, setArtistId } = useUserContext();
   const { t } = useTranslation();
@@ -57,7 +66,6 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewed
 
   // --- Data Fetching Logic ---
   useEffect(() => {
-    // This function fetches the portfolio items for a given ID
     const fetchPortfolioForId = async (id: number) => {
         setLoading(true);
         setError(null);
@@ -75,9 +83,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewed
         }
     };
 
-    // This function runs if we're on our own portfolio page but the context isn't ready
     const fetchUserAndThenPortfolio = async () => {
-      console.log("Portfolio: Context ID not found, fetching user from /api/users/me...");
       setLoading(true);
       try {
         const token = localStorage.getItem("token");
@@ -87,8 +93,8 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewed
         
         const artistProfile = profileResponse.data.artist;
         if (artistProfile && artistProfile.artist_id) {
-          setArtistId(artistProfile.artist_id); // Populate the global context
-          fetchPortfolioForId(artistProfile.artist_id); // Now fetch the portfolio with the new ID
+          setArtistId(artistProfile.artist_id);
+          fetchPortfolioForId(artistProfile.artist_id);
         } else {
           throw new Error("Artist profile not found in your user data.");
         }
@@ -99,15 +105,11 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewed
       }
     };
 
-    // --- Main Logic ---
     if (targetArtistId) {
-      // If we already have the ID (from context or props), fetch the portfolio directly.
       fetchPortfolioForId(targetArtistId);
     } else if (!viewingArtistId) {
-      // If viewing our own portfolio but context isn't ready, be self-sufficient.
       fetchUserAndThenPortfolio();
     } else {
-      // If viewing someone else's portfolio but the ID is invalid, show an error.
       setError("No valid artist ID was provided to view this portfolio.");
       setLoading(false);
     }
@@ -253,6 +255,8 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewed
           {items.map((item) => {
             const itemType = item.item_type || getItemTypeFromUrl(item.image_url);
             const isEditingThis = editItemId === item.portfolio_id;
+            // --- FIX: Use the formatDate function ---
+            const formattedDate = formatDate(item.created_at);
 
             return (
               <div key={item.portfolio_id} className={`portfolio-item card-style item-type-${itemType} ${isEditingThis ? 'editing' : ''}`}>
@@ -262,7 +266,12 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewed
                  {itemType === 'other' && (<div className="portfolio-media portfolio-other-item"><span className="file-icon" role="img" aria-label={t('portfolioPage.item.otherAriaLabel')}>📎</span><p className="file-name">{(item.description || t('portfolioPage.item.otherDefaultName')).substring(0,25)}{item.description && item.description.length > 25 ? '...' : ''}</p><a href={item.image_url} target="_blank" rel="noopener noreferrer" className="view-file-link button-style">{t('portfolioPage.item.openFile')}</a></div>)}
                 <div className="portfolio-item-content">
                   {isEditingThis ? (<textarea value={editDescription} onChange={(e) => setEditDescription(e.target.value)} className="edit-description-input" rows={3} autoFocus/>) : (<p className="portfolio-description">{item.description || t('portfolioPage.status.noDescription')}</p>)}
+                  
+                  {/* --- FIX: The entire footer section is restored here --- */}
                   <div className="portfolio-item-footer">
+                    {formattedDate && (
+                      <span className="posted-date">{t('portfolioPage.item.postedOn')}: {formattedDate}</span>
+                    )}
                     {isOwner && (
                       <div className="portfolio-actions">
                         {isEditingThis ? (
