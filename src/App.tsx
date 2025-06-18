@@ -72,7 +72,7 @@ const backToTopStyles = `
     position: fixed;
     bottom: 25px; /* Distance from bottom */
     right: 25px;  /* Distance from right */
-    z-index: 999; /* Ensure it's above other content */
+    z-index: 11999; /* Ensure it's above other content */
   }
 
   .back-to-top-button {

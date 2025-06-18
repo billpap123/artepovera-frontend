@@ -385,6 +385,7 @@
   .portfolio-grid {
     gap: 20px;
   }
+  .portfolio-item-content{display: flow-root;}
 }
 
 /* For Mobile Phones */
