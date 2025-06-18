@@ -16,7 +16,6 @@ export interface PortfolioItem {
   description: string;
   item_type?: 'image' | 'pdf' | 'video' | 'other';
   public_id?: string;
-  // --- FIX 1: Changed from created_at to createdAt to match API response ---
   createdAt?: string; 
 }
 
@@ -65,6 +64,10 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewed
   const [editDescription, setEditDescription] = useState('');
 
   const fetchPortfolio = useCallback(async () => {
+    if (!targetArtistId) {
+        setLoading(false);
+        return;
+    }
     setLoading(true);
     setError(null);
     try {
@@ -86,13 +89,8 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewed
   }, [targetArtistId]);
 
   useEffect(() => {
-    if (targetArtistId) {
-      fetchPortfolio();
-    } else {
-      setLoading(false);
-      setItems([]);
-    }
-  }, [targetArtistId, fetchPortfolio]);
+    fetchPortfolio();
+  }, [fetchPortfolio]);
   
   const handleOpenModal = (imageUrl: string) => setModalImage(imageUrl);
   const handleCloseModal = () => setModalImage(null);
@@ -163,18 +161,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewed
     } finally { setUploading(false); }
   };
 
-  if (!viewingArtistId && !loggedInUserArtistId) {
-    return (
-        <>
-            <Navbar />
-            <div className="portfolio-page loading-portfolio">
-                <p className="loading-message">Loading user profile...</p>
-            </div>
-        </>
-    );
-  }
-
-  if (loading) return <><Navbar /><div className="portfolio-page loading-portfolio"><p className="loading-message">Loading portfolio...</p></div></>;
+  if (loading) return <><Navbar /><div className="portfolio-page loading-portfolio"><p className="loading-message">{t('portfolioPage.status.loadingPortfolio')}</p></div></>;
   
   if (error) return <><Navbar /><div className="portfolio-page error-portfolio"><p className="error-message">{error}</p>{isOwner && <button onClick={fetchPortfolio} className="action-btn">Try Again</button>}</div></>;
 
@@ -216,7 +203,6 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewed
           {items.map((item) => {
             const itemType = item.item_type || getItemTypeFromUrl(item.image_url);
             const isEditingThis = editItemId === item.portfolio_id;
-            // --- FIX 2: Using item.createdAt instead of item.created_at ---
             const formattedDate = formatDate(item.createdAt); 
 
             return (
