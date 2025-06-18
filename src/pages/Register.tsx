@@ -1,3 +1,4 @@
+// src/pages/Register.tsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
@@ -11,7 +12,10 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:50001";
 
 const Register = () => {
   const { t } = useTranslation();
-  const { setUserId, setArtistId, setEmployerId, setUserType, setFullname } = useUserContext();
+  
+  // --- STEP 1: Get the new 'loginUser' function from the context ---
+  const { loginUser } = useUserContext();
+  
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -70,27 +74,20 @@ const Register = () => {
       const response = await axios.post(`${API_BASE_URL}/api/users/register`, requestBody);
       const { token, user } = response.data;
 
-      localStorage.setItem('token', token);
-      localStorage.setItem('user', JSON.stringify(user));
+      // --- STEP 2: Use the single 'loginUser' function ---
+      // This one line replaces all the manual localStorage and context setter calls.
+      // It handles everything correctly for us.
+      loginUser(user, token);
 
-      if (user && user.user_id) {
-        setUserId(user.user_id);
-        setUserType(user.user_type);
-        setFullname(user.fullname);
-
-        if (user.user_type === 'Artist') {
-          setArtistId(user.artist_id || null);
-          navigate('/artist-profile/edit');
-        } else if (user.user_type === 'Employer') {
-          setEmployerId(user.employer_id || null);
-          navigate('/employer-profile/edit');
-        } else {
-          navigate('/main');
-        }
+      // The navigation logic remains the same.
+      if (user?.user_type === 'Artist') {
+        navigate('/artist-profile/edit');
+      } else if (user?.user_type === 'Employer') {
+        navigate('/employer-profile/edit');
       } else {
-        setError("Registration successful, but essential user data missing.");
-        navigate('/login');
+        navigate('/main');
       }
+
     } catch (err: any) {
       console.error('[REGISTER] Error:', err);
       if (axios.isAxiosError(err) && err.response) {
@@ -100,7 +97,8 @@ const Register = () => {
       }
     }
   };
-
+  
+  // The rest of your component's JSX remains exactly the same.
   return (
     <div className="auth-page-container">
         <LanguageSwitcher />

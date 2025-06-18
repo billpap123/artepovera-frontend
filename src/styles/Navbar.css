@@ -316,7 +316,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 1.5rem;
+    gap: 0.5rem;
   }
   .language-switcher2 {
     display: flex;
@@ -334,7 +334,7 @@
   /* Style the links inside the overlay */
   .nav-links.open a,
   .nav-links.open button {
-    font-size: 1.2rem;
+    font-size: 0.8rem;
     justify-content: center;
   }
 
