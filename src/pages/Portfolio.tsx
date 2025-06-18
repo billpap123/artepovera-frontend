@@ -17,12 +17,12 @@ export interface PortfolioItem {
   description: string;
   item_type?: 'image' | 'pdf' | 'video' | 'other';
   public_id?: string;
-  created_at?: string; // Corrected from createdAt to match your previous versions
+  created_at?: string;
 }
 
 export interface PortfolioProps {
-  artistId?: number; // For viewing someone else's portfolio
-  viewedArtistName?: string; // Name of the artist being viewed
+  artistId?: number;
+  viewedArtistName?: string;
 }
 
 // --- Helper Functions ---
@@ -35,7 +35,6 @@ const getItemTypeFromUrl = (url: string): 'image' | 'pdf' | 'video' | 'other' =>
     return 'other';
 };
 
-// --- FIX: Add the formatDate function back ---
 const formatDate = (dateString: string | undefined) => {
     if (!dateString) return null;
     return new Date(dateString).toLocaleDateString(undefined, {
@@ -255,7 +254,6 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewed
           {items.map((item) => {
             const itemType = item.item_type || getItemTypeFromUrl(item.image_url);
             const isEditingThis = editItemId === item.portfolio_id;
-            // --- FIX: Use the formatDate function ---
             const formattedDate = formatDate(item.created_at);
 
             return (
@@ -267,7 +265,6 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewed
                 <div className="portfolio-item-content">
                   {isEditingThis ? (<textarea value={editDescription} onChange={(e) => setEditDescription(e.target.value)} className="edit-description-input" rows={3} autoFocus/>) : (<p className="portfolio-description">{item.description || t('portfolioPage.status.noDescription')}</p>)}
                   
-                  {/* --- FIX: The entire footer section is restored here --- */}
                   <div className="portfolio-item-footer">
                     {formattedDate && (
                       <span className="posted-date">{t('portfolioPage.item.postedOn')}: {formattedDate}</span>

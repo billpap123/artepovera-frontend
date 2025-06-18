@@ -248,7 +248,7 @@ z-index: 2;
         .landing-section h2 { font-size: 2rem; }
         .category-grid { grid-template-columns: 1fr; }
         .landing-header { padding: 15px 3%; }
-        .hero-section{margin-top:70px}
+        .hero-section{margin-top:50px}
    }
     @media (max-width: 480px) {
          .hero-title { font-size: 2rem; }
