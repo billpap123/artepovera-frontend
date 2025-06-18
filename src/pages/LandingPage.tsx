@@ -15,57 +15,71 @@ const landingPageStyles = `
     background-color: #fdfbf7;
   }
   
-  /* --- THIS IS THE FIX --- */
-  /* These rules are a special override ONLY for the Landing Page.
-     They make the global switcher component look good on a dark background. */
+  /* --- NEW: Fixed Header for Logo and Language Switcher --- */
+  .landing-header {
+    position: fixed; /* Keep it at the top */
+    top: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 5%; /* Use percentage for responsive padding */
+    background-color: rgba(45, 35, 25, 0.5); /* Semi-transparent dark background */
+    backdrop-filter: blur(8px); /* Frosted glass effect */
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 1000; /* Ensure it's above all other content */
+    transition: background-color 0.3s ease;
+  }
+
+  .landing-header:hover {
+    background-color: rgba(45, 35, 25, 0.7);
+  }
+
+  .landing-logo img {
+    height: 40px; /* Control logo size */
+    width: auto;
+  }
+
+  /* --- Styles for the Language Switcher to look good on the new header --- */
   .language-switcher-select {
-    /* --- Appearance for Light Backgrounds --- */
-    background-color: #C96A50; /* Light beige */
-    color: #4d4033; /* Dark brown text */
-    border: 1px solid #dcd3c7; /* Light brown border */
+    background-color: transparent;
+    color: white; /* White text */
+    border: 1px solid rgba(255, 255, 255, 0.5); /* Light border */
     border-radius: 8px;
     padding: 8px 30px 8px 12px;
-    
-    /* --- Font and Cursor --- */
-    font-family: 'Nunito', sans-serif;
     font-size: 0.9rem;
     font-weight: 700;
     cursor: pointer;
-    
-    /* --- Removing Default OS Styling --- */
     outline: none;
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
   
-    /* --- Custom Dropdown Arrow (Dark Version) --- */
-    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%234D4033%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22/%3E%3C/svg%3E');
+    /* Custom Dropdown Arrow (Light Version) */
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23FFFFFF%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22/%3E%3C/svg%3E');
     background-repeat: no-repeat;
     background-position: right 10px top 50%;
     background-size: 10px auto;
-    
-    transition: background-color 0.2s ease;
+    transition: all 0.2s ease;
   }
   
   .language-switcher-select:hover {
-      background-color: #C96A50; /* Light beige */
-    ; /* Slightly darker beige on hover */
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.8);
   }
   
-  /* Styling for the dropdown options */
   .language-switcher-select option {
     background-color: #4d4033;
     color: white;
   }
-
-  /* --- END OF FIX --- */
-
+  /* --- End Header Styles --- */
 
   /* --- Hero Section --- */
   .hero-section {
     position: relative;
-    height: 85vh;
-    min-height: 500px;
+    height: 100vh; /* Make it full screen height */
+    min-height: 600px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -73,6 +87,7 @@ const landingPageStyles = `
     color: white;
     background-color: #654321;
     overflow: hidden;
+    /* No margin-top needed anymore as the header is fixed */
   }
 
   .hero-video-background {
@@ -88,7 +103,7 @@ const landingPageStyles = `
     position: absolute;
     top: 0; left: 0;
     width: 100%; height: 100%;
-    background-color: rgba(77, 64, 51, 0.6);
+    background: linear-gradient(to top, rgba(0,0,0,0.6), rgba(0,0,0,0.2)); /* Darker at bottom */
     z-index: 2;
   }
 
@@ -97,13 +112,19 @@ const landingPageStyles = `
     z-index: 3;
     max-width: 800px;
     padding: 20px;
+    animation: fadeIn 1.5s ease-in-out;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
   }
 
   .hero-title {
     font-size: 3.5rem;
     font-weight: 800;
     margin-bottom: 0.5em;
-    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.6);
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
   }
 
   .hero-subtitle {
@@ -119,12 +140,13 @@ const landingPageStyles = `
     max-width: 600px;
     margin-left: auto;
     margin-right: auto;
+    line-height: 1.6;
     opacity: 0.9;
   }
   .hero-description em {
-      font-style: normal;
-      color: #E2725B;
-      font-weight: 600;
+    font-style: normal;
+    color: #E2725B;
+    font-weight: 700;
   }
 
   .hero-cta-buttons {
@@ -142,13 +164,14 @@ const landingPageStyles = `
     font-size: 1rem;
     transition: all 0.3s ease;
     border: 2px solid white;
-    background-color: white;
-    color: #4d4033;
+    background-color: #E2725B; /* Primary CTA color */
+    color: white;
   }
    .hero-btn:hover {
-       background-color: rgba(255, 255, 255, 0.15);
+       background-color: #C96A50;
        color: white;
        transform: translateY(-2px);
+       box-shadow: 0 4px 15px rgba(0,0,0,0.2);
    }
 
    .hero-btn.alt {
@@ -158,11 +181,12 @@ const landingPageStyles = `
     .hero-btn.alt:hover {
         background-color: white;
         color: #4d4033;
+        box-shadow: none;
     }
 
-  /* --- Other Page Sections --- */
+  /* --- Other Page Sections (No major changes needed) --- */
   .landing-section {
-      padding: 70px 20px;
+      padding: 80px 5%;
       text-align: center;
   }
    .landing-section h2 {
@@ -176,41 +200,42 @@ const landingPageStyles = `
         color: #7d746b;
         max-width: 750px;
         margin: 0 auto 50px auto;
+        line-height: 1.7;
     }
 
   .category-showcase-section { background-color: #f5f0e8; }
-  .category-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 35px; max-width: 1100px; margin: 40px auto 0 auto; }
-  .category-card { background-color: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 5px 20px rgba(101, 67, 33, 0.1); text-align: center; transition: transform 0.3s ease, box-shadow 0.3s ease; padding-bottom: 30px; }
-  .category-card:hover { transform: translateY(-6px); box-shadow: 0 10px 25px rgba(101, 67, 33, 0.15); }
+  .category-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 35px; max-width: 1200px; margin: 40px auto 0 auto; }
+  .category-card { background-color: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 5px 20px rgba(101, 67, 33, 0.08); text-align: center; transition: transform 0.3s ease, box-shadow 0.3s ease; padding-bottom: 30px; }
+  .category-card:hover { transform: translateY(-8px); box-shadow: 0 10px 25px rgba(101, 67, 33, 0.12); }
   .category-card img { width: 100%; height: 210px; object-fit: cover; display: block; }
   .category-card h3 { font-size: 1.6rem; font-weight: 700; color: #A0522D; margin: 25px 15px 10px 15px; }
-  .category-card p { font-size: 1rem; color: #7d746b; padding: 0 25px; margin-bottom: 25px; min-height: 60px; }
+  .category-card p { font-size: 1rem; color: #7d746b; padding: 0 25px; margin-bottom: 25px; min-height: 60px; line-height: 1.6; }
   .category-link { display: inline-block; padding: 9px 22px; border-radius: 20px; background-color: transparent; color: #A0522D; text-decoration: none; font-weight: 600; border: 2px solid #dcd3c7; transition: all 0.2s ease; }
   .category-link:hover { background-color: #A0522D; color: white; border-color: #A0522D; }
 
   .cta-section { background-color: #654321; color: #fdfbf7; }
   .cta-section h2 { color: #fff; margin-bottom: 20px; }
   .cta-section p { color: rgba(253, 251, 247, 0.85); margin-bottom: 35px; }
-  .cta-button { padding: 15px 40px; border-radius: 30px; text-decoration: none; font-weight: 700; font-size: 1.15rem; transition: all 0.3s ease; background-color: #A0522D; color: white; border: 2px solid #A0522D; box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1); }
-  .cta-button:hover { background-color: #804123; border-color: #804123; transform: scale(1.03); box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15); }
-    @media (max-width:1200px) {
-    {  .hero-section { margin-top:70px;
-}}
+  .cta-button { padding: 15px 40px; border-radius: 30px; text-decoration: none; font-weight: 700; font-size: 1.15rem; transition: all 0.3s ease; background-color: #E2725B; color: white; border: 2px solid #E2725B; box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1); }
+  .cta-button:hover { background-color: #C96A50; border-color: #C96A50; transform: scale(1.03); box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15); }
+   
    /* Responsive Adjustments */
    @media (max-width: 768px) {
-        .hero-title { font-size: 2.8rem; }
+        .hero-title { font-size: 2.5rem; }
         .hero-subtitle { font-size: 1.2rem; }
         .landing-section h2 { font-size: 2rem; }
         .category-grid { grid-template-columns: 1fr; }
-        .hero-overlay{padding-top:0px !important;}
+        .landing-header { padding: 15px 3%; }
    }
     @media (max-width: 480px) {
-         .hero-title { font-size: 2.2rem; }
+         .hero-title { font-size: 2rem; }
+         .hero-subtitle { font-size: 1.1rem; }
          .hero-cta-buttons { flex-direction: column; }
          .hero-btn { width: 80%; margin: 5px auto; }
-         .hero-overlay{padding-top:0px !important;}
+         .landing-section { padding: 60px 5%; }
     }
 `;
+
 
 const LandingPage: React.FC = () => {
   const { t } = useTranslation();
