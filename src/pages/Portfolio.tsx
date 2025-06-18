@@ -1,6 +1,6 @@
 // src/pages/Portfolio.tsx
 import { useTranslation } from "react-i18next";
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState,useCallback } from 'react';
 import axios from 'axios';
 import Navbar from "../components/Navbar";
 import { useUserContext } from '../context/UserContext';
@@ -47,8 +47,9 @@ const formatDate = (dateString: string | undefined) => {
 };
 
 const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewedArtistName }) => {
+  const { t, i18n } = useTranslation();
+
   const { artistId: loggedInUserArtistId, setArtistId } = useUserContext();
-  const { t } = useTranslation();
   
   const targetArtistId = viewingArtistId || loggedInUserArtistId;
   const isOwner = !!loggedInUserArtistId && (targetArtistId === loggedInUserArtistId);
@@ -64,6 +65,18 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewed
   const [uploading, setUploading] = useState(false);
   const [editItemId, setEditItemId] = useState<number | null>(null);
   const [editDescription, setEditDescription] = useState('');
+  // --- STEP 2: Create a language-aware date formatter inside the component ---
+  // We use useCallback so this function is only redefined when the language changes.
+  const formatDate = useCallback((dateString: string | undefined) => {
+    if (!dateString) return null;
+    // We pass i18n.language (e.g., 'en' or 'el') to toLocaleDateString
+    return new Date(dateString).toLocaleDateString(i18n.language, {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+  }, [i18n.language]); // Dependency: The function updates if the language changes
+
 
   // --- Data Fetching Logic ---
   useEffect(() => {
