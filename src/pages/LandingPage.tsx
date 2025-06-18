@@ -256,7 +256,7 @@ z-index: 2;
          .hero-cta-buttons { flex-direction: column; }
          .hero-btn { width: 80%; margin: 5px auto; }
          .landing-section { padding: 60px 5%; }
-                 .hero-section{margin-top:50px}
+                 .hero-section{margin-top:20px}
 
     }
 `;
