@@ -242,12 +242,13 @@ z-index: 2;
   .cta-button:hover { background-color: #C96A50; border-color: #C96A50; transform: scale(1.03); box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15); }
    
    /* Responsive Adjustments */
-   @media (max-width: 768px) {
+   @media (max-width: 1268px) {
         .hero-title { font-size: 2.5rem; }
         .hero-subtitle { font-size: 1.2rem; }
         .landing-section h2 { font-size: 2rem; }
         .category-grid { grid-template-columns: 1fr; }
         .landing-header { padding: 15px 3%; }
+        .hero-section{margin-top:70px}
    }
     @media (max-width: 480px) {
          .hero-title { font-size: 2rem; }
