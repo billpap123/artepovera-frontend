@@ -67,7 +67,8 @@ const JobFilters: React.FC<JobFiltersProps> = ({ onFilterChange }) => {
                     {/* We now display the English category and its Greek translation */}
                     {artistCategories.map(cat => (
                         <option key={cat} value={cat}>
-                            {`${cat} / ${t(`categories.${cat}`, cat)}`}
+                                     {t(`postJobPage.categories.${cat.replace(/\s/g, '').replace(/[^\w]/g, '')}`)}
+
                         </option>
                     ))}
                 </select>
