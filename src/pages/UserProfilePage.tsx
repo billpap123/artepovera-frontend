@@ -75,7 +75,7 @@ interface JobPosting {
   createdAt: string;
 }
 interface PortfolioItem {
-  createdAt: string; portfolio_id: number; image_url?: string; description?: string; 
+  createdAt: string; portfolio_id: number; image_url?: string; description?: string;
 }
 // --- THIS IS THE UPDATED JobPosting INTERFACE ---
 
@@ -685,25 +685,25 @@ const UserProfilePage: React.FC = () => {
 
           <div className="profile-content-public">
             <div className="profile-section-public"><h4>{t('userProfilePage.content.bio')}</h4>                <div className="bio-text markdown-content">
-            <ReactMarkdown
-      remarkPlugins={[remarkGfm]}
-      // --- THIS IS THE FIX ---
-      // We are telling ReactMarkdown how to render all link (<a>) elements.
-      components={{
-        a: (props) => (
-          <a 
-            {...props} // This keeps all original properties like 'href'
-            target="_blank" // This tells the browser to open the link in a new tab
-            rel="noopener noreferrer" // Important for security and performance
-          >
-            {props.children} 
-          </a>
-        )
-      }}
-      // --- END OF FIX ---
-    >
-      {bio || t('artistProfile.noBio')}
-    </ReactMarkdown>
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                // --- THIS IS THE FIX ---
+                // We are telling ReactMarkdown how to render all link (<a>) elements.
+                components={{
+                  a: (props) => (
+                    <a
+                      {...props} // This keeps all original properties like 'href'
+                      target="_blank" // This tells the browser to open the link in a new tab
+                      rel="noopener noreferrer" // Important for security and performance
+                    >
+                      {props.children}
+                    </a>
+                  )
+                }}
+              // --- END OF FIX ---
+              >
+                {bio || t('artistProfile.noBio')}
+              </ReactMarkdown>
 
             </div>
             </div>
@@ -727,7 +727,7 @@ const UserProfilePage: React.FC = () => {
                 {loading && portfolio.length === 0 ? <p>{t('userProfilePage.artistContent.loadingPortfolio')}</p> :
                   portfolio.length === 0 ? (<p>{t('userProfilePage.artistContent.noPortfolio')}</p>) : (
                     <div className="portfolio-items">
-                      
+
                       {portfolio.map((item, index) => {
                         const formattedDate = formatDate(item.createdAt);
                         return (
@@ -741,14 +741,17 @@ const UserProfilePage: React.FC = () => {
                                 onClick={() => openGallery(index)}
                               />
                             )}
-                              <div className="portfolio-item-content">
-                                <p className="portfolio-description">{item.description || t('userProfilePage.artistContent.noDescription')}</p>
-                                {formattedDate && (
-                                  <div className="portfolio-item-footer">
-                                      <span className="posted-date">{t('userProfilePage.content.postedOn')} {formattedDate}</span>
-                                  </div>
-                                )}
-                              </div>
+                            <div className="portfolio-item-content">
+                              <p className="portfolio-description">{item.description || t('userProfilePage.artistContent.noDescription')}</p>
+                              {formattedDate && (
+                                <div className="portfolio-item-footer">
+                                  <span className="posted-date">
+                                    {t('userProfilePage.content.postedOn')}
+                                    <br />
+                                    {formattedDate}
+                                  </span>                                  </div>
+                              )}
+                            </div>
                           </div>
                         )
                       })}
@@ -855,13 +858,13 @@ const UserProfilePage: React.FC = () => {
                             </div>
 
                             <div className="review-comment">
-                                {communicationRating && (
-                                    <div className="interaction-rating">
-                                        <strong>{t('userProfilePage.content.communicationRating', 'Communication Quality')}:</strong>
-                                        <DisplayStars rating={communicationRating} />
-                                    </div>
-                                )}
-                                {primaryReason && (
+                              {communicationRating && (
+                                <div className="interaction-rating">
+                                  <strong>{t('userProfilePage.content.communicationRating', 'Communication Quality')}:</strong>
+                                  <DisplayStars rating={communicationRating} />
+                                </div>
+                              )}
+                              {primaryReason && (
                                 <p className="interaction-reason">
                                   <strong>{t('userProfilePage.content.reason')}</strong> {primaryReason}
                                 </p>
