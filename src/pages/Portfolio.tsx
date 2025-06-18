@@ -1,6 +1,6 @@
 // src/pages/Portfolio.tsx
 import { useTranslation } from "react-i18next";
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Navbar from "../components/Navbar";
 import { useUserContext } from '../context/UserContext';
@@ -9,6 +9,7 @@ import '../styles/Global.css';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:50001';
 
+// --- Interfaces ---
 export interface PortfolioItem {
   portfolio_id: number;
   artist_id: number;
@@ -24,6 +25,7 @@ export interface PortfolioProps {
   viewedArtistName?: string; // Name of the artist being viewed
 }
 
+// --- Helper Functions ---
 const getItemTypeFromUrl = (url: string): 'image' | 'pdf' | 'video' | 'other' => {
     if (!url) return 'other';
     const lowerUrl = url.toLowerCase();
@@ -33,15 +35,17 @@ const getItemTypeFromUrl = (url: string): 'image' | 'pdf' | 'video' | 'other' =>
     return 'other';
 };
 
+// --- FINAL, ROBUST PORTFOLIO COMPONENT ---
 const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewedArtistName }) => {
-  const { artistId: loggedInUserArtistId } = useUserContext();
+  const { artistId: loggedInUserArtistId, setArtistId } = useUserContext();
   const { t } = useTranslation();
   
   const targetArtistId = viewingArtistId || loggedInUserArtistId;
   const isOwner = !!loggedInUserArtistId && (targetArtistId === loggedInUserArtistId);
 
+  // --- State ---
   const [items, setItems] = useState<PortfolioItem[]>([]);
-  const [loading, setLoading] = useState(true); // Default to true
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [modalImage, setModalImage] = useState<string | null>(null);
   const [showAddForm, setShowAddForm] = useState(false);
@@ -51,47 +55,68 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewed
   const [editItemId, setEditItemId] = useState<number | null>(null);
   const [editDescription, setEditDescription] = useState('');
 
-  const fetchPortfolio = useCallback(async () => {
-    // The guard clause is still important here
-    if (!targetArtistId) return;
-
-    setLoading(true);
-    setError(null);
-    try {
-      const token = localStorage.getItem('token');
-      const headers = token ? { Authorization: `Bearer ${token}` } : {};
-      const res = await axios.get(`${API_BASE_URL}/api/portfolios/${targetArtistId}`, { headers });
-      const portfolioWithTypes = (res.data || []).map((item: PortfolioItem) => ({
-        ...item,
-        item_type: item.item_type || getItemTypeFromUrl(item.image_url)
-      }));
-      setItems(portfolioWithTypes);
-    } catch (err: any) {
-      console.error('Error fetching portfolio:', err);
-      setError(err.response?.data?.message || 'Failed to load portfolio items.');
-      setItems([]);
-    } finally {
-      setLoading(false);
-    }
-  }, [targetArtistId]);
-
-  // This useEffect now correctly handles the initial fetch
+  // --- Data Fetching Logic ---
   useEffect(() => {
-    // Only try to fetch if we have an ID to fetch for.
-    if (targetArtistId) {
-      fetchPortfolio();
-    } else {
-      // If we are on our own portfolio page but the context isn't ready,
-      // we do nothing and let the initial "Loading user profile..." screen show.
-      // If we are viewing someone else's profile but the ID is invalid, we stop loading.
-      if (viewingArtistId) {
+    // This function fetches the portfolio items for a given ID
+    const fetchPortfolioForId = async (id: number) => {
+        setLoading(true);
+        setError(null);
+        try {
+            const token = localStorage.getItem('token');
+            const headers = token ? { Authorization: `Bearer ${token}` } : {};
+            const res = await axios.get(`${API_BASE_URL}/api/portfolios/${id}`, { headers });
+            const portfolioWithTypes = (res.data || []).map((item: PortfolioItem) => ({ ...item, item_type: item.item_type || getItemTypeFromUrl(item.image_url) }));
+            setItems(portfolioWithTypes);
+        } catch (err: any) {
+            console.error('Error fetching portfolio:', err);
+            setError(err.response?.data?.message || 'Failed to load portfolio items.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // This function runs if we're on our own portfolio page but the context isn't ready
+    const fetchUserAndThenPortfolio = async () => {
+      console.log("Portfolio: Context ID not found, fetching user from /api/users/me...");
+      setLoading(true);
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) throw new Error("No token found");
+        
+        const profileResponse = await axios.get(`${API_BASE_URL}/api/users/me`, { headers: { Authorization: `Bearer ${token}` } });
+        
+        const artistProfile = profileResponse.data.artist;
+        if (artistProfile && artistProfile.artist_id) {
+          setArtistId(artistProfile.artist_id); // Populate the global context
+          fetchPortfolioForId(artistProfile.artist_id); // Now fetch the portfolio with the new ID
+        } else {
+          throw new Error("Artist profile not found in your user data.");
+        }
+      } catch (err) {
+        console.error("Failed to self-fetch user data:", err);
+        setError("Could not load your user profile. Please try logging in again.");
         setLoading(false);
       }
+    };
+
+    // --- Main Logic ---
+    if (targetArtistId) {
+      // If we already have the ID (from context or props), fetch the portfolio directly.
+      fetchPortfolioForId(targetArtistId);
+    } else if (!viewingArtistId) {
+      // If viewing our own portfolio but context isn't ready, be self-sufficient.
+      fetchUserAndThenPortfolio();
+    } else {
+      // If viewing someone else's portfolio but the ID is invalid, show an error.
+      setError("No valid artist ID was provided to view this portfolio.");
+      setLoading(false);
     }
-  }, [targetArtistId, fetchPortfolio, viewingArtistId]);
-  
+  }, [targetArtistId, viewingArtistId, setArtistId]);
+
+  // --- Handlers ---
   const handleOpenModal = (imageUrl: string) => setModalImage(imageUrl);
   const handleCloseModal = () => setModalImage(null);
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
@@ -104,7 +129,6 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewed
     } else { setSelectedFile(null); }
   };
   
-  // Using your faster "optimistic update" for a better UX
   const handleUpload = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedFile || !description.trim()) { alert('Please select a file and enter a description.'); return; }
@@ -114,8 +138,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewed
       if (!token) { throw new Error('Authentication token not found.'); }
       const formData = new FormData();
       formData.append("description", description.trim());
-      // The backend expects the file under the key "image" as per your previous code
-      formData.append("image", selectedFile); 
+      formData.append("image", selectedFile);
       
       const res = await axios.post(`${API_BASE_URL}/api/portfolios`, formData, { headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" } });
       
@@ -169,23 +192,29 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewed
     } finally { setUploading(false); }
   };
 
-  // Your excellent initial guard clause. This is the best way to handle the UI.
-  if (!viewingArtistId && !loggedInUserArtistId) {
+  // --- RENDER LOGIC ---
+  if (loading) {
     return (
         <>
             <Navbar />
             <div className="portfolio-page loading-portfolio">
-                <p className="loading-message">Loading user profile...</p>
+                <p className="loading-message">{!targetArtistId ? t('portfolioPage.status.loadingProfile') : t('portfolioPage.status.loadingPortfolio')}</p>
             </div>
         </>
     );
   }
-
-  if (loading) return <><Navbar /><div className="portfolio-page loading-portfolio"><p className="loading-message">Loading portfolio...</p></div></>;
   
-  if (error) return <><Navbar /><div className="portfolio-page error-portfolio"><p className="error-message">{error}</p>{isOwner && <button onClick={fetchPortfolio} className="action-btn">Try Again</button>}</div></>;
+  if (error) {
+    return (
+      <>
+        <Navbar />
+        <div className="portfolio-page error-portfolio">
+          <p className="error-message">{error}</p>
+        </div>
+      </>
+    );
+  }
 
-  // --- RENDER ---
   return (
     <>
       <Navbar />
@@ -218,7 +247,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewed
         )}
 
         <div className="portfolio-grid">
-          {!loading && items.length === 0 && !showAddForm && (
+          {items.length === 0 && !showAddForm && (
             <p className="no-items-message">{isOwner ? t('portfolioPage.status.emptyOwner') : t('portfolioPage.status.emptyViewer')}</p>
           )}
           {items.map((item) => {
@@ -229,12 +258,11 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewed
               <div key={item.portfolio_id} className={`portfolio-item card-style item-type-${itemType} ${isEditingThis ? 'editing' : ''}`}>
                  {itemType === 'image' && (<button onClick={() => handleOpenModal(item.image_url)} className="portfolio-image-button"><img src={item.image_url} alt={item.description || t('portfolioPage.item.imageAlt')} className="portfolio-media portfolio-image" loading="lazy"/></button>)}
                  {itemType === 'pdf' && (<div className="portfolio-media portfolio-pdf-item"><span className="file-icon pdf-icon" role="img" aria-label={t('portfolioPage.item.pdfAriaLabel')}>📄</span><p className="file-name">{(item.description || t('portfolioPage.item.pdfDefaultName')).substring(0, 25)}{item.description && item.description.length > 25 ? '...' : ''}</p><a href={item.image_url} target="_blank" rel="noopener noreferrer" className="view-file-link button-style">{t('portfolioPage.item.viewPdf')}</a></div>)}
-                 {itemType === 'video' && (<div className="portfolio-media portfolio-video-item"><video controls width="100%" preload="metadata" className="portfolio-video-player"><source src={item.image_url} type={selectedFile && item.image_url === URL.createObjectURL(selectedFile) ? selectedFile.type : 'video/mp4'} />{t('portfolioPage.item.videoError')}</video></div>)}
-                 {itemType === 'other' && (<div className="portfolio-media portfolio-other-item"><span className="file-icon" role="img" aria-label={t('portfolioPage.item.otherAriaLabel')}>📎</span><p className="file-name">{(item.description || t('portfolioPage.item.otherDefaultName')).substring(0,25)}{item.description.length > 25 ? '...' : ''}</p><a href={item.image_url} target="_blank" rel="noopener noreferrer" className="view-file-link button-style">{t('portfolioPage.item.openFile')}</a></div>)}
+                 {itemType === 'video' && (<div className="portfolio-media portfolio-video-item"><video controls width="100%" preload="metadata" className="portfolio-video-player"><source src={item.image_url} type={'video/mp4'} />{t('portfolioPage.item.videoError')}</video></div>)}
+                 {itemType === 'other' && (<div className="portfolio-media portfolio-other-item"><span className="file-icon" role="img" aria-label={t('portfolioPage.item.otherAriaLabel')}>📎</span><p className="file-name">{(item.description || t('portfolioPage.item.otherDefaultName')).substring(0,25)}{item.description && item.description.length > 25 ? '...' : ''}</p><a href={item.image_url} target="_blank" rel="noopener noreferrer" className="view-file-link button-style">{t('portfolioPage.item.openFile')}</a></div>)}
                 <div className="portfolio-item-content">
                   {isEditingThis ? (<textarea value={editDescription} onChange={(e) => setEditDescription(e.target.value)} className="edit-description-input" rows={3} autoFocus/>) : (<p className="portfolio-description">{item.description || t('portfolioPage.status.noDescription')}</p>)}
                   <div className="portfolio-item-footer">
-                    {/* Your original footer content was missing, I've restored the actions part */}
                     {isOwner && (
                       <div className="portfolio-actions">
                         {isEditingThis ? (
