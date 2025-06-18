@@ -14,7 +14,7 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:50001";
 
 // In a real app, this would be fetched from your /api/categories endpoint
 // KEEP THESE AS RAW STRINGS FOR INTERNAL LOGIC
-const artistCategories = [ "Dancer", "Painter", "Digital artist", "Graphic designer", "Musician", "Sculptor", "Photographer", "Actress", "Actor", "Comedian", "Poet", "Writer", "Illustrator", "Calligrapher", "Filmmaker", "Animator", "Fashion designer", "Architect", "Interior designer", "Jewelry designer", "Industrial designer", "Ceramicist", "Woodworker" ].sort();
+const artistCategories = [ "Dancer", "Painter", "Digital Artist", "Graphic Designer", "Musician", "Sculptor", "Photographer", "Actress", "Actor", "Comedian", "Poet", "Writer", "Illustrator", "Calligrapher", "Filmmaker", "Animator", "Fashion Designer", "Architect", "Interior Designer", "Jewelry Designer", "Industrial Designer", "Ceramicist", "Woodworker" ].sort();
 const experienceLevels = ["0-3", "4-7", "7-10", ">10"];
 
 const PostJobPage: React.FC = () => {
