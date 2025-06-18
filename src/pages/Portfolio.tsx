@@ -252,6 +252,8 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewed
             <p className="no-items-message">{isOwner ? t('portfolioPage.status.emptyOwner') : t('portfolioPage.status.emptyViewer')}</p>
           )}
           {items.map((item) => {
+                        console.log("Data for portfolio item:", item);
+
             const itemType = item.item_type || getItemTypeFromUrl(item.image_url);
             const isEditingThis = editItemId === item.portfolio_id;
             const formattedDate = formatDate(item.created_at);
