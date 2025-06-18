@@ -534,7 +534,7 @@
   "portfolioPage": {
     "header": {
       "myPortfolio": "My portfolio",
-      "artistsPortfolio": "{{name}}'s portfolio",
+      "artistsPortfolio": "Portfolio",
       "genericArtist": "Artist",
       "addNew": "+ add new work"
     },

@@ -63,34 +63,38 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewed
   const [editItemId, setEditItemId] = useState<number | null>(null);
   const [editDescription, setEditDescription] = useState('');
 
-  const fetchPortfolio = useCallback(async () => {
-    if (!targetArtistId) {
-        setLoading(false);
-        return;
-    }
-    setLoading(true);
-    setError(null);
-    try {
-      const token = localStorage.getItem('token');
-      const headers = token ? { Authorization: `Bearer ${token}` } : {};
-      const res = await axios.get(`${API_BASE_URL}/api/portfolios/${targetArtistId}`, { headers });
-      const portfolioWithTypes = (res.data || []).map((item: PortfolioItem) => ({
-        ...item,
-        item_type: item.item_type || getItemTypeFromUrl(item.image_url)
-      }));
-      setItems(portfolioWithTypes);
-    } catch (err: any) {
-      console.error('Error fetching portfolio:', err);
-      setError(err.response?.data?.message || 'Failed to load portfolio items.');
-      setItems([]);
-    } finally {
-      setLoading(false);
-    }
-  }, [targetArtistId]);
-
+  // --- THIS IS THE FIX (Part 1): The fetch logic is now inside useEffect ---
   useEffect(() => {
+    // If there's no ID yet, we just wait. The effect will re-run when it's available.
+    if (!targetArtistId) {
+      setLoading(false); // Set loading to false to prevent showing the loading message indefinitely
+      return;
+    }
+    
+    const fetchPortfolio = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const token = localStorage.getItem('token');
+        const headers = token ? { Authorization: `Bearer ${token}` } : {};
+        const res = await axios.get(`${API_BASE_URL}/api/portfolios/${targetArtistId}`, { headers });
+        const portfolioWithTypes = (res.data || []).map((item: PortfolioItem) => ({
+          ...item,
+          item_type: item.item_type || getItemTypeFromUrl(item.image_url)
+        }));
+        setItems(portfolioWithTypes);
+      } catch (err: any) {
+        console.error('Error fetching portfolio:', err);
+        setError(err.response?.data?.message || 'Failed to load portfolio items.');
+        setItems([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
     fetchPortfolio();
-  }, [fetchPortfolio]);
+    // --- THIS IS THE FIX (Part 2): The effect now correctly depends on `targetArtistId` ---
+  }, [targetArtistId]);
   
   const handleOpenModal = (imageUrl: string) => setModalImage(imageUrl);
   const handleCloseModal = () => setModalImage(null);
@@ -118,7 +122,12 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewed
       const res = await axios.post(`${API_BASE_URL}/api/portfolios`, formData, { headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" } });
       const newItemData = res.data;
       const newItem: PortfolioItem = { ...newItemData, item_type: newItemData.item_type || getItemTypeFromUrl(newItemData.image_url) };
-      setItems(prevItems => [newItem, ...prevItems]);
+      // Refresh the portfolio to get the latest data
+      const fetchAgain = async () => {
+        const response = await axios.get(`${API_BASE_URL}/api/portfolios/${targetArtistId}`, { headers: { Authorization: `Bearer ${token}` } });
+        setItems(response.data || []);
+      };
+      fetchAgain();
       setSelectedFile(null); setDescription(''); setShowAddForm(false);
       alert("Portfolio item uploaded successfully!");
     } catch (err: any) {
@@ -163,7 +172,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewed
 
   if (loading) return <><Navbar /><div className="portfolio-page loading-portfolio"><p className="loading-message">{t('portfolioPage.status.loadingPortfolio')}</p></div></>;
   
-  if (error) return <><Navbar /><div className="portfolio-page error-portfolio"><p className="error-message">{error}</p>{isOwner && <button onClick={fetchPortfolio} className="action-btn">Try Again</button>}</div></>;
+  if (error) return <><Navbar /><div className="portfolio-page error-portfolio"><p className="error-message">{error}</p></div></>;
 
   return (
     <>

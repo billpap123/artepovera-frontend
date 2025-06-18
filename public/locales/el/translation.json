@@ -506,7 +506,7 @@
   "portfolioPage": {
     "header": {
       "myPortfolio": "Το πορτφόλιό μου",
-      "artistsPortfolio": "Πορτφόλιο του/της {{name}}",
+      "artistsPortfolio": "Πορτφόλιο",
       "genericArtist": "Καλλιτέχνης",
       "addNew": "+ προσθήκη νέου έργου"
     },
