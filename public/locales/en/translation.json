@@ -680,6 +680,31 @@
     "alerts": {
       "updateSuccess": "Job updated successfully!",
       "postSuccess": "Job posted successfully!"
+    },
+    "postJobPage.categories": {
+      "Dancer": "Dancer",
+      "Painter": "Painter",
+      "DigitalArtist": "Digital artist",
+      "GraphicDesigner": "Graphic designer",
+      "Musician": "Musician",
+      "Sculptor": "Sculptor",
+      "Photographer": "Photographer",
+      "Actress": "Actress",
+      "Actor": "Actor",
+      "Comedian": "Comedian",
+      "Poet": "Poet",
+      "Writer": "Writer",
+      "Illustrator": "Illustrator",
+      "Calligrapher": "Calligrapher",
+      "Filmmaker": "Filmmaker",
+      "Animator": "Animator",
+      "FashionDesigner": "Fashion designer",
+      "Architect": "Architect",
+      "InteriorDesigner": "Interior designer",
+      "JewelryDesigner": "Jewelry designer",
+      "IndustrialDesigner": "Industrial designer",
+      "Ceramicist": "Ceramicist",
+      "Woodworker": "Woodworker"
     }
   },
   "registerPage": {

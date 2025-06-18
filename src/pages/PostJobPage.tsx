@@ -13,6 +13,7 @@ import { useTranslation } from "react-i18next";
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:50001";
 
 // In a real app, this would be fetched from your /api/categories endpoint
+// KEEP THESE AS RAW STRINGS FOR INTERNAL LOGIC
 const artistCategories = [ "Dancer", "Painter", "Digital Artist", "Graphic Designer", "Musician", "Sculptor", "Photographer", "Actress", "Actor", "Comedian", "Poet", "Writer", "Illustrator", "Calligrapher", "Filmmaker", "Animator", "Fashion Designer", "Architect", "Interior Designer", "Jewelry Designer", "Industrial Designer", "Ceramicist", "Woodworker" ].sort();
 const experienceLevels = ["0-3", "4-7", "7-10", ">10"];
 
@@ -65,7 +66,7 @@ const PostJobPage: React.FC = () => {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 const job = response.data;
-                
+
                 setTitle(job.title || '');
                 setDescription(job.description || '');
                 setLocation(job.location || '');
@@ -80,7 +81,7 @@ const PostJobPage: React.FC = () => {
                 setTotalPayment(job.payment_total || '');
                 setMonthlyPayment(job.payment_monthly_amount || '');
                 setNumberOfMonths(job.number_of_months || 1);
-                
+
                 if (artistCategories.includes(job.category)) {
                     setCategory(job.category);
                 } else {
@@ -119,30 +120,30 @@ const PostJobPage: React.FC = () => {
         e.preventDefault();
         setError('');
         const finalCategory = category === 'Other' ? customCategory.trim() : category;
-        
+
         let finalTotalPayment = 0;
         if (paymentType === 'total') {
             if (totalPayment === '' || totalPayment <= 0) {
-                setError("Please enter a valid total payment amount.");
+                setError(t('postJobPage.errors.totalPaymentInvalid')); // Translated error
                 return;
             }
             finalTotalPayment = totalPayment;
         } else { // 'monthly'
             if (monthlyPayment === '' || monthlyPayment <= 0 || numberOfMonths === '' || numberOfMonths <= 0) {
-                setError("Please enter a valid monthly wage and number of months.");
+                setError(t('postJobPage.errors.monthlyPaymentInvalid')); // Translated error
                 return;
             }
             finalTotalPayment = monthlyPayment * numberOfMonths;
         }
 
         if (!title || !finalCategory) {
-            setError("Title and Category are required.");
+            setError(t('postJobPage.errors.titleCategoryRequired')); // Translated error
             return;
         }
 
         setIsSubmitting(true);
         const token = localStorage.getItem('token');
-        
+
         const jobData = {
             title, category: finalCategory, description, location, presence,
             start_date: startDate || null,
@@ -165,23 +166,23 @@ const PostJobPage: React.FC = () => {
         try {
             if (isEditMode) {
                 await axios.put(`${API_BASE_URL}/api/job-postings/${job_id}`, jobData, { headers: { Authorization: `Bearer ${token}` } });
-                alert("Job updated successfully!");
+                alert(t('postJobPage.alerts.jobUpdated')); // Translated alert
             } else {
                 await axios.post(`${API_BASE_URL}/api/job-postings`, jobData, { headers: { Authorization: `Bearer ${token}` } });
-                alert("Job posted successfully!");
+                alert(t('postJobPage.alerts.jobPosted')); // Translated alert
             }
             navigate('/my-jobs');
         } catch (err: any) {
-            setError(err.response?.data?.message || "An error occurred.");
+            setError(err.response?.data?.message || t('postJobPage.errors.genericError')); // Translated error
         } finally {
             setIsSubmitting(false);
         }
     };
 
     if (pageLoading) {
-        return <><Navbar /><div className="post-job-container"><p>Loading job details...</p></div></>;
+        return <><Navbar /><div className="post-job-container"><p>{t('postJobPage.loading')}</p></div></>; // Translated loading
     }
-    
+
     return (
         <>
             <Navbar />
@@ -189,7 +190,7 @@ const PostJobPage: React.FC = () => {
                 <form onSubmit={handleSubmit} className="post-job-form">
                     <h1>{isEditMode ? t('postJobPage.title.edit') : t('postJobPage.title.create')}</h1>
                     <p className="form-subtitle">{isEditMode ? t('postJobPage.subtitle.edit') : t('postJobPage.subtitle.create')}</p>
-    
+
                     <fieldset>
                         <legend>{t('postJobPage.sections.coreDetails')}</legend>
                         <div className="form-group">
@@ -200,7 +201,10 @@ const PostJobPage: React.FC = () => {
                             <label htmlFor="job-category">{t('postJobPage.labels.category')}</label>
                             <select id="job-category" value={category} onChange={e => setCategory(e.target.value)} required>
                                 <option value="" disabled>{t('postJobPage.options.selectCategory')}</option>
-                                {artistCategories.map(cat => (<option key={cat} value={cat}>{cat}</option>))}
+                                {/* --- TRANSLATED CATEGORIES --- */}
+                                {artistCategories.map(cat => (
+                                  <option key={cat} value={cat}>{t(`postJobPage.categories.${cat.replace(/\s/g, '').replace(/[^\w]/g, '')}`)}</option>
+                                ))}
                                 <option value="Other">{t('postJobPage.options.otherCategory')}</option>
                             </select>
                         </div>
@@ -215,7 +219,7 @@ const PostJobPage: React.FC = () => {
                             <textarea id="job-description" value={description} onChange={e => setDescription(e.target.value)} rows={4} placeholder={t('postJobPage.placeholders.description')}/>
                         </div>
                     </fieldset>
-    
+
                     <fieldset>
                         <legend>{t('postJobPage.sections.logistics')}</legend>
                         <div className="form-group">
@@ -245,7 +249,7 @@ const PostJobPage: React.FC = () => {
                             <input id="deadline" type="date" value={deadline} onChange={e => setDeadline(e.target.value)} />
                         </div>
                     </fieldset>
-                    
+
                     <fieldset>
                         <legend>{t('postJobPage.sections.compensation')}</legend>
                         <div className="form-group">
@@ -284,7 +288,7 @@ const PostJobPage: React.FC = () => {
                             <label htmlFor="insurance">{t('postJobPage.labels.insurance')}</label>
                         </div>
                     </fieldset>
-    
+
                     <fieldset>
                         <legend>{t('postJobPage.sections.requirements')}</legend>
                         <div className="form-group">
@@ -297,7 +301,7 @@ const PostJobPage: React.FC = () => {
                             <input type="checkbox" id="degreeRequired" checked={degreeRequired} onChange={e => setDegreeRequired(e.target.checked)} />
                             <label htmlFor="degreeRequired">{t('postJobPage.labels.degreeRequired')}</label>
                         </div>
-                        {degreeRequired && 
+                        {degreeRequired &&
                             <div className="form-group fade-in">
                                 <label htmlFor="degree-details">{t('postJobPage.labels.degreeDetails')}</label>
                                 <input id="degree-details" type="text" value={degreeDetails} onChange={e => setDegreeDetails(e.target.value)} placeholder={t('postJobPage.placeholders.degreeDetails')} />
@@ -327,11 +331,10 @@ const PostJobPage: React.FC = () => {
                             <textarea id="keywords" value={desiredKeywords} onChange={e => setDesiredKeywords(e.target.value)} rows={2} placeholder={t('postJobPage.placeholders.keywords')} />
                         </div>
                     </fieldset>
-    
+
                     {error && <p className="error-message">{error}</p>}
-                    {/* --- THIS IS THE CHANGE --- */}
                     <div className="form-final-actions">
-                        
+
                         <button type="submit" disabled={isSubmitting} className="submit-job-btn">
                             {isSubmitting ? t('postJobPage.buttons.saving') : isEditMode ? t('postJobPage.buttons.saveChanges') : t('postJobPage.buttons.postJob')}
                         </button>
