@@ -105,13 +105,14 @@ const landingPageStyles = `
     /* No margin-top needed anymore as the header is fixed */
   }
 
-  .hero-video-background {
+.hero-video-background {
     position: absolute;
-    top: 50%; left: 50%;
-    min-width: 100%; min-height: 100%;
-    width: auto; height: auto;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     z-index: 1;
-    transform: translate(-50%, -50%);
+    object-fit: cover; /* This is the key property */
   }
 
 .hero-overlay {
