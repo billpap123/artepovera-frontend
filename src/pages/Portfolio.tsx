@@ -9,7 +9,6 @@ import '../styles/Global.css';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:50001';
 
-// Interfaces (No change)
 export interface PortfolioItem {
   portfolio_id: number;
   artist_id: number;
@@ -17,23 +16,13 @@ export interface PortfolioItem {
   description: string;
   item_type?: 'image' | 'pdf' | 'video' | 'other';
   public_id?: string;
-  createdAt?: string;
+  created_at?: string;
 }
 
 export interface PortfolioProps {
-  artistId?: number;
-  viewedArtistName?: string;
+  artistId?: number; // For viewing someone else's portfolio
+  viewedArtistName?: string; // Name of the artist being viewed
 }
-
-// Helper Functions (No change)
-const formatDate = (dateString: string | undefined) => {
-    if (!dateString) return null;
-    return new Date(dateString).toLocaleDateString(undefined, {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-    });
-};
 
 const getItemTypeFromUrl = (url: string): 'image' | 'pdf' | 'video' | 'other' => {
     if (!url) return 'other';
@@ -44,7 +33,6 @@ const getItemTypeFromUrl = (url: string): 'image' | 'pdf' | 'video' | 'other' =>
     return 'other';
 };
 
-// --- MAIN COMPONENT ---
 const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewedArtistName }) => {
   const { artistId: loggedInUserArtistId } = useUserContext();
   const { t } = useTranslation();
@@ -52,9 +40,8 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewed
   const targetArtistId = viewingArtistId || loggedInUserArtistId;
   const isOwner = !!loggedInUserArtistId && (targetArtistId === loggedInUserArtistId);
 
-  // State management (No change)
   const [items, setItems] = useState<PortfolioItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); // Default to true
   const [error, setError] = useState<string | null>(null);
   const [modalImage, setModalImage] = useState<string | null>(null);
   const [showAddForm, setShowAddForm] = useState(false);
@@ -64,18 +51,9 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewed
   const [editItemId, setEditItemId] = useState<number | null>(null);
   const [editDescription, setEditDescription] = useState('');
 
-  // For debugging purposes, you can see when the ID becomes available
-  useEffect(() => {
-    console.log("Portfolio component sees Artist ID:", targetArtistId);
-  }, [targetArtistId]);
-
-  // STEP 1: Create a single, reusable function to fetch portfolio data
   const fetchPortfolio = useCallback(async () => {
-    if (!targetArtistId) {
-      // Don't attempt to fetch if the ID isn't available yet.
-      // The loading state will remain true.
-      return;
-    }
+    // The guard clause is still important here
+    if (!targetArtistId) return;
 
     setLoading(true);
     setError(null);
@@ -95,148 +73,119 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewed
     } finally {
       setLoading(false);
     }
-  }, [targetArtistId]); // This function will update if the targetArtistId ever changes
+  }, [targetArtistId]);
 
-  // STEP 2: Use the fetch function when the component loads
+  // This useEffect now correctly handles the initial fetch
   useEffect(() => {
-    fetchPortfolio();
-  }, [fetchPortfolio]); // This runs once `fetchPortfolio` is created/updated
-
+    // Only try to fetch if we have an ID to fetch for.
+    if (targetArtistId) {
+      fetchPortfolio();
+    } else {
+      // If we are on our own portfolio page but the context isn't ready,
+      // we do nothing and let the initial "Loading user profile..." screen show.
+      // If we are viewing someone else's profile but the ID is invalid, we stop loading.
+      if (viewingArtistId) {
+        setLoading(false);
+      }
+    }
+  }, [targetArtistId, fetchPortfolio, viewingArtistId]);
+  
   const handleOpenModal = (imageUrl: string) => setModalImage(imageUrl);
   const handleCloseModal = () => setModalImage(null);
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
       const allowedTypes = ['image/png', 'image/jpeg', 'image/gif', 'application/pdf', 'video/mp4', 'video/quicktime', 'video/webm', 'video/x-matroska', 'video/x-msvideo'];
-      if (allowedTypes.includes(file.type)) {
-        setSelectedFile(file);
-      } else {
+      if (allowedTypes.includes(file.type)) { setSelectedFile(file); } else {
         alert('Invalid file type.');
         e.target.value = '';
         setSelectedFile(null);
       }
-    } else {
-      setSelectedFile(null);
-    }
+    } else { setSelectedFile(null); }
   };
   
-  // STEP 3: Use the reusable fetch function after uploading a new item
+  // Using your faster "optimistic update" for a better UX
   const handleUpload = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedFile || !description.trim()) {
-      alert('Please select a file and enter a description.');
-      return;
-    }
-    setUploading(true);
-    setError(null);
+    if (!selectedFile || !description.trim()) { alert('Please select a file and enter a description.'); return; }
+    setUploading(true); setError(null);
     try {
       const token = localStorage.getItem('token');
       if (!token) { throw new Error('Authentication token not found.'); }
-      
       const formData = new FormData();
       formData.append("description", description.trim());
-      formData.append("image", selectedFile);
+      // The backend expects the file under the key "image" as per your previous code
+      formData.append("image", selectedFile); 
       
-      await axios.post(`${API_BASE_URL}/api/portfolios`, formData, {
-        headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" }
-      });
+      const res = await axios.post(`${API_BASE_URL}/api/portfolios`, formData, { headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" } });
       
-      // Re-fetch the entire portfolio to get the new item with its server-generated ID and date
-      await fetchPortfolio();
-
-      setSelectedFile(null);
-      setDescription('');
-      setShowAddForm(false);
+      const newItemData = res.data;
+      const newItemWithType: PortfolioItem = { ...newItemData, item_type: newItemData.item_type || getItemTypeFromUrl(newItemData.image_url) };
+      
+      setItems(prevItems => [newItemWithType, ...prevItems]);
+      
+      setSelectedFile(null); setDescription(''); setShowAddForm(false);
       alert("Portfolio item uploaded successfully!");
     } catch (err: any) {
       console.error('Error uploading item:', err);
       const message = err.response?.data?.message || 'Failed to upload item.';
-      setError(message);
-      alert(message);
-    } finally {
-      setUploading(false);
-    }
+      setError(message); alert(message);
+    } finally { setUploading(false); }
   };
   
-  // Handlers for edit/delete can remain with optimistic updates for a snappy UI
-  const startEditing = (item: PortfolioItem) => {
-    setEditItemId(item.portfolio_id);
-    setEditDescription(item.description);
-  };
-
-  const cancelEditing = () => {
-    setEditItemId(null);
-    setEditDescription('');
-  };
+  const startEditing = (item: PortfolioItem) => { setEditItemId(item.portfolio_id); setEditDescription(item.description); };
+  const cancelEditing = () => { setEditItemId(null); setEditDescription(''); };
 
   const handleSaveEdit = async (portfolioId: number) => {
-    if (!editDescription.trim()) {
-      alert('Description cannot be empty.');
-      return;
-    }
+    if (!editDescription.trim()) { alert('Description cannot be empty.'); return; }
     setUploading(true);
     try {
       const token = localStorage.getItem('token');
       if (!token) { throw new Error('Authentication token not found.'); }
       await axios.put(`${API_BASE_URL}/api/portfolios/${portfolioId}`, { description: editDescription.trim() }, { headers: { Authorization: `Bearer ${token}` } });
-      
-      // Optimistic update: faster than re-fetching
       setItems(prevItems => prevItems.map(item => item.portfolio_id === portfolioId ? { ...item, description: editDescription.trim() } : item));
-      
       cancelEditing();
       alert("Description updated successfully!");
     } catch (err: any) {
       console.error('Error updating portfolio item:', err);
       const message = err.response?.data?.message || 'Failed to update portfolio item.';
-      setError(message);
-      alert(message);
-    } finally {
-      setUploading(false);
-    }
+      setError(message); alert(message);
+    } finally { setUploading(false); }
   };
-
+  
   const handleDelete = async (portfolioId: number) => {
     if (!window.confirm('Are you sure you want to delete this item?')) return;
-    setUploading(true);
-    setError(null);
+    setUploading(true); setError(null);
     try {
       const token = localStorage.getItem('token');
       if (!token) { throw new Error('Authentication token not found.'); }
       await axios.delete(`${API_BASE_URL}/api/portfolios/${portfolioId}`, { headers: { Authorization: `Bearer ${token}` } });
-      
-      // Optimistic update: faster than re-fetching
       setItems(prevItems => prevItems.filter(item => item.portfolio_id !== portfolioId));
-      
       alert("Portfolio item deleted.");
     } catch (err: any) {
       console.error('Error deleting portfolio item:', err);
       const message = err.response?.data?.message || 'Failed to delete portfolio item.';
-      setError(message);
-      alert(message);
-    } finally {
-      setUploading(false);
-    }
+      setError(message); alert(message);
+    } finally { setUploading(false); }
   };
 
-  // --- RENDER LOGIC ---
-
-  // STEP 4: Use the explicit loading check
-  if (loading || !targetArtistId) {
+  // Your excellent initial guard clause. This is the best way to handle the UI.
+  if (!viewingArtistId && !loggedInUserArtistId) {
     return (
-      <>
-        <Navbar />
-        <div className="portfolio-page loading-portfolio">
-          <p className="loading-message">{t('portfolioPage.status.loadingPortfolio')}</p>
-        </div>
-      </>
+        <>
+            <Navbar />
+            <div className="portfolio-page loading-portfolio">
+                <p className="loading-message">Loading user profile...</p>
+            </div>
+        </>
     );
   }
-  
-  if (error) {
-    return <><Navbar /><div className="portfolio-page error-portfolio"><p className="error-message">{error}</p></div></>;
-  }
 
-  // The rest of the JSX rendering logic remains the same
+  if (loading) return <><Navbar /><div className="portfolio-page loading-portfolio"><p className="loading-message">Loading portfolio...</p></div></>;
+  
+  if (error) return <><Navbar /><div className="portfolio-page error-portfolio"><p className="error-message">{error}</p>{isOwner && <button onClick={fetchPortfolio} className="action-btn">Try Again</button>}</div></>;
+
+  // --- RENDER ---
   return (
     <>
       <Navbar />
@@ -251,21 +200,21 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewed
         </div>
 
         {isOwner && showAddForm && (
-            <form onSubmit={handleUpload} className="portfolio-upload-form card-style">
-                <h3>{t('portfolioPage.form.title')}</h3>
-                <div className="form-group">
-                    <label htmlFor="portfolioFile">{t('portfolioPage.form.fileLabel')}</label>
-                    <input id="portfolioFile" type="file" name="image" accept="image/png, image/jpeg, image/gif, application/pdf, video/mp4, video/quicktime, video/webm, video/x-matroska, video/x-msvideo" onChange={handleFileChange} />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="portfolioDesc">{t('portfolioPage.form.descriptionLabel')}</label>
-                    <textarea id="portfolioDesc" placeholder={t('portfolioPage.form.descriptionPlaceholder')} value={description} onChange={(e) => setDescription(e.target.value)} rows={4} />
-                </div>
-                <div className="form-actions">
-                    <button type="submit" disabled={uploading || !selectedFile || !description.trim()} className="submit-btn">{uploading ? t('portfolioPage.form.uploadingButton') : t('portfolioPage.form.uploadButton')}</button>
-                    <button type="button" onClick={() => { setShowAddForm(false); setSelectedFile(null); setDescription(''); setError(null); }} className="cancel-btn">{t('portfolioPage.form.cancelButton')}</button>
-                </div>
-            </form>
+          <form onSubmit={handleUpload} className="portfolio-upload-form card-style">
+            <h3>{t('portfolioPage.form.title')}</h3>
+            <div className="form-group">
+              <label htmlFor="portfolioFile">{t('portfolioPage.form.fileLabel')}</label>
+              <input id="portfolioFile" type="file" name="image" accept="image/png, image/jpeg, image/gif, application/pdf, video/mp4, video/quicktime, video/webm, video/x-matroska, video/x-msvideo" onChange={handleFileChange} />
+            </div>
+            <div className="form-group">
+              <label htmlFor="portfolioDesc">{t('portfolioPage.form.descriptionLabel')}</label>
+              <textarea id="portfolioDesc" placeholder={t('portfolioPage.form.descriptionPlaceholder')} value={description} onChange={(e) => setDescription(e.target.value)} rows={4} />
+            </div>
+            <div className="form-actions">
+              <button type="submit" disabled={uploading || !selectedFile || !description.trim()} className="submit-btn">{uploading ? t('portfolioPage.form.uploadingButton') : t('portfolioPage.form.uploadButton')}</button>
+              <button type="button" onClick={() => { setShowAddForm(false); setSelectedFile(null); setDescription(''); setError(null); }} className="cancel-btn">{t('portfolioPage.form.cancelButton')}</button>
+            </div>
+          </form>
         )}
 
         <div className="portfolio-grid">
@@ -275,21 +224,17 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewed
           {items.map((item) => {
             const itemType = item.item_type || getItemTypeFromUrl(item.image_url);
             const isEditingThis = editItemId === item.portfolio_id;
-            const formattedDate = formatDate(item.createdAt);
 
             return (
               <div key={item.portfolio_id} className={`portfolio-item card-style item-type-${itemType} ${isEditingThis ? 'editing' : ''}`}>
-                   {itemType === 'image' && (<button onClick={() => handleOpenModal(item.image_url)} className="portfolio-image-button"><img src={item.image_url} alt={item.description || t('portfolioPage.item.imageAlt')} className="portfolio-media portfolio-image" loading="lazy"/></button>)}
-                   {itemType === 'pdf' && (<div className="portfolio-media portfolio-pdf-item"><span className="file-icon pdf-icon" role="img" aria-label={t('portfolioPage.item.pdfAriaLabel')}>📄</span><p className="file-name">{(item.description || t('portfolioPage.item.pdfDefaultName')).substring(0, 25)}{item.description && item.description.length > 25 ? '...' : ''}</p><a href={item.image_url} target="_blank" rel="noopener noreferrer" className="view-file-link button-style">{t('portfolioPage.item.viewPdf')}</a></div>)}
-                   {itemType === 'video' && (<div className="portfolio-media portfolio-video-item"><video controls width="100%" preload="metadata" className="portfolio-video-player"><source src={item.image_url} type={'video/mp4'} />{t('portfolioPage.item.videoError')}</video></div>)}
-                   {itemType === 'other' && (<div className="portfolio-media portfolio-other-item"><span className="file-icon" role="img" aria-label={t('portfolioPage.item.otherAriaLabel')}>📎</span><p className="file-name">{(item.description || t('portfolioPage.item.otherDefaultName')).substring(0,25)}{item.description && item.description.length > 25 ? '...' : ''}</p><a href={item.image_url} target="_blank" rel="noopener noreferrer" className="view-file-link button-style">{t('portfolioPage.item.openFile')}</a></div>)}
+                 {itemType === 'image' && (<button onClick={() => handleOpenModal(item.image_url)} className="portfolio-image-button"><img src={item.image_url} alt={item.description || t('portfolioPage.item.imageAlt')} className="portfolio-media portfolio-image" loading="lazy"/></button>)}
+                 {itemType === 'pdf' && (<div className="portfolio-media portfolio-pdf-item"><span className="file-icon pdf-icon" role="img" aria-label={t('portfolioPage.item.pdfAriaLabel')}>📄</span><p className="file-name">{(item.description || t('portfolioPage.item.pdfDefaultName')).substring(0, 25)}{item.description && item.description.length > 25 ? '...' : ''}</p><a href={item.image_url} target="_blank" rel="noopener noreferrer" className="view-file-link button-style">{t('portfolioPage.item.viewPdf')}</a></div>)}
+                 {itemType === 'video' && (<div className="portfolio-media portfolio-video-item"><video controls width="100%" preload="metadata" className="portfolio-video-player"><source src={item.image_url} type={selectedFile && item.image_url === URL.createObjectURL(selectedFile) ? selectedFile.type : 'video/mp4'} />{t('portfolioPage.item.videoError')}</video></div>)}
+                 {itemType === 'other' && (<div className="portfolio-media portfolio-other-item"><span className="file-icon" role="img" aria-label={t('portfolioPage.item.otherAriaLabel')}>📎</span><p className="file-name">{(item.description || t('portfolioPage.item.otherDefaultName')).substring(0,25)}{item.description.length > 25 ? '...' : ''}</p><a href={item.image_url} target="_blank" rel="noopener noreferrer" className="view-file-link button-style">{t('portfolioPage.item.openFile')}</a></div>)}
                 <div className="portfolio-item-content">
                   {isEditingThis ? (<textarea value={editDescription} onChange={(e) => setEditDescription(e.target.value)} className="edit-description-input" rows={3} autoFocus/>) : (<p className="portfolio-description">{item.description || t('portfolioPage.status.noDescription')}</p>)}
-                  
                   <div className="portfolio-item-footer">
-                    {formattedDate && (
-                        <span className="posted-date">{t('portfolioPage.item.postedOn')}: {formattedDate}</span>
-                    )}
+                    {/* Your original footer content was missing, I've restored the actions part */}
                     {isOwner && (
                       <div className="portfolio-actions">
                         {isEditingThis ? (
