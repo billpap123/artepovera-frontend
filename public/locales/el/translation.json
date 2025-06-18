@@ -653,7 +653,7 @@
       "updateSuccess": "Η αγγελία ενημερώθηκε με επιτυχία!",
       "postSuccess": "Η αγγελία δημοσιεύτηκε με επιτυχία!"
     },
-    "postJobPage.categories": {
+    "categories": {
       "Dancer": "Χορευτής",
       "Painter": "Ζωγράφος",
       "DigitalArtist": "Ψηφιακός καλλιτέχνης",

@@ -681,7 +681,7 @@
       "updateSuccess": "Job updated successfully!",
       "postSuccess": "Job posted successfully!"
     },
-    "postJobPage.categories": {
+    "categories": {
       "Dancer": "Dancer",
       "Painter": "Painter",
       "DigitalArtist": "Digital artist",
