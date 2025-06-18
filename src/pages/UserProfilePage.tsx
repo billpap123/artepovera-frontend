@@ -746,8 +746,7 @@ const UserProfilePage: React.FC = () => {
                               {formattedDate && (
                                 <div className="portfolio-item-footer">
                                   <span className="posted-date">
-                                    {t('userProfilePage.content.postedOn')}
-                                    <br />
+                                   
                                     {formattedDate}
                                   </span>                                  </div>
                               )}
