@@ -204,7 +204,7 @@
   padding: 20px;
   flex-grow: 1;
   display: flex;
-  flex-direction: row;
+  flex-direction: row !important;
 }
 
 .portfolio-description {
@@ -385,7 +385,7 @@
   .portfolio-grid {
     gap: 20px;
   }
-  .portfolio-item-content{display: flow-root;}
+  .portfolio-item-content{display: flow-root !important;}
 }
 
 /* For Mobile Phones */
@@ -417,7 +417,7 @@
 
   .portfolio-item-content {
     padding: 15px;
-    display: inline-grid;
+    display: inline-grid !important;
   }
 .portfolio-description{
   margin-bottom: 0px;
