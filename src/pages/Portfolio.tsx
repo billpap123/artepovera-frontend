@@ -17,7 +17,9 @@ export interface PortfolioItem {
   description: string;
   item_type?: 'image' | 'pdf' | 'video' | 'other';
   public_id?: string;
-  created_at?: string;
+  // --- THIS IS THE FIX ---
+  // Change the property name to match the data from your API (camelCase)
+  createdAt?: string; 
 }
 
 export interface PortfolioProps {
@@ -252,11 +254,11 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewed
             <p className="no-items-message">{isOwner ? t('portfolioPage.status.emptyOwner') : t('portfolioPage.status.emptyViewer')}</p>
           )}
           {items.map((item) => {
-                        console.log("Data for portfolio item:", item);
-
             const itemType = item.item_type || getItemTypeFromUrl(item.image_url);
             const isEditingThis = editItemId === item.portfolio_id;
-            const formattedDate = formatDate(item.created_at);
+            // --- THIS IS THE FIX ---
+            // Accessing item.createdAt (camelCase) to match the API data
+            const formattedDate = formatDate(item.createdAt);
 
             return (
               <div key={item.portfolio_id} className={`portfolio-item card-style item-type-${itemType} ${isEditingThis ? 'editing' : ''}`}>
