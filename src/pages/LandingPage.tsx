@@ -73,7 +73,6 @@ const landingPageStyles = `
     color: white;
     background-color: #654321;
     overflow: hidden;
-    margin-top:70px;
   }
 
   .hero-video-background {
@@ -194,7 +193,9 @@ const landingPageStyles = `
   .cta-section p { color: rgba(253, 251, 247, 0.85); margin-bottom: 35px; }
   .cta-button { padding: 15px 40px; border-radius: 30px; text-decoration: none; font-weight: 700; font-size: 1.15rem; transition: all 0.3s ease; background-color: #A0522D; color: white; border: 2px solid #A0522D; box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1); }
   .cta-button:hover { background-color: #804123; border-color: #804123; transform: scale(1.03); box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15); }
-
+    @media (max-width:1200px) {
+    {  .hero-section { margin-top:70px;
+}}
    /* Responsive Adjustments */
    @media (max-width: 768px) {
         .hero-title { font-size: 2.8rem; }
