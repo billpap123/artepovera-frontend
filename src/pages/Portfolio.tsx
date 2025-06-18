@@ -271,7 +271,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewed
                   
                   <div className="portfolio-item-footer">
                     {formattedDate && (
-                      <span className="posted-date">{t('portfolioPage.item.postedOn')}: {formattedDate}</span>
+                      <span className="posted-date">{t('portfolioPage.item.postedOn')} {formattedDate}</span>
                     )}
                     {isOwner && (
                       <div className="portfolio-actions">
