@@ -388,9 +388,8 @@ const LandingPage: React.FC = () => {
           <h3>{t('landingPage.footer.title')}</h3>
           <p>{t('landingPage.footer.description')}</p>
           <div className="landing-footer-contact">
-            <a href="mailto:info@artconnect.com"></a>
+            <a href="mailto:info@artconnect.com">{t('landingPage.footer.contactEmail')}</a>
           </div>
-          
           
         </footer>
       </div>
