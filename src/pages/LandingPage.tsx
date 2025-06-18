@@ -390,10 +390,7 @@ const LandingPage: React.FC = () => {
           <div className="landing-footer-contact">
             <a href="mailto:info@artconnect.com">{t('landingPage.footer.contactEmail')}</a>
           </div>
-          <div className="landing-footer-links">
-            <Link to="/privacy">{t('landingPage.footer.privacyPolicy')}</Link>
-            <Link to="/terms">{t('landingPage.footer.termsOfService')}</Link>
-          </div>
+          
           <div className="landing-footer-bottom">
             <p>{t('landingPage.footer.rightsReserved')}</p>
           </div>
