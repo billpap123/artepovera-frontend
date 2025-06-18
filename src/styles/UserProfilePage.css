@@ -882,6 +882,10 @@ h3 {font-size: 19.2px !important;}
 
 }
 
+.portfolio-item-content{
+  display: block !important;
+}
+
 
 
 .portfolio-item-card:hover {

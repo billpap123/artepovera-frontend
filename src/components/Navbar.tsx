@@ -1,43 +1,36 @@
 import React, { useState } from "react";
-import { NavLink, Link, useNavigate } from "react-router-dom";
+import { NavLink, Link, useNavigate, useLocation } from "react-router-dom"; // Import useLocation
 import axios from "axios";
 import { FaHome, FaUserAlt, FaBell, FaMapMarkerAlt } from "react-icons/fa";
 import { useUserContext } from '../context/UserContext';
 import '../styles/Navbar.css';
 import { useTranslation, Trans } from 'react-i18next';
 
-// No longer need socket.io-client imported here
-// const API_BASE_URL = import.meta.env.VITE_API_URL || "https://artepovera2.vercel.app";
 const API_BASE_URL = import.meta.env.VITE_API_URL || "https://artepovera2.vercel.app";
-
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const { t, i18n } = useTranslation();
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
+  const location = useLocation(); // Initialize useLocation hook
 
-  // --- 1. Get notifications and the setter from the global context ---
-  const { 
-    userId, 
-    userType, 
-    notifications, 
+  const {
+    userId,
+    userType,
+    notifications,
     setNotifications,
-    setUserId, 
-    setArtistId, 
-    setEmployerId, 
-    setUserType 
+    setUserId,
+    setArtistId,
+    setEmployerId,
+    setUserType
   } = useUserContext();
-  
-  const token = localStorage.getItem('token');
 
-  // --- 2. ALL local state and useEffects for notifications and sockets are now DELETED from this file. ---
-  // The UserContext handles everything.
+  const token = localStorage.getItem('token');
 
   const toggleMenu = () => setIsMenuOpen((prev) => !prev);
   const toggleDropdown = () => setShowDropdown((prev) => !prev);
 
-  // This function now updates the GLOBAL state via the context's setNotifications
   const markAsRead = async (notificationId: number) => {
     try {
       await axios.put(
@@ -57,7 +50,6 @@ const Navbar = () => {
     }
   };
 
-  // This function also updates the GLOBAL state
   const deleteNotification = async (notificationId: number) => {
     try {
       await axios.delete(`${API_BASE_URL}/api/notifications/${notificationId}`, {
@@ -73,13 +65,12 @@ const Navbar = () => {
 
   const handleLogout = () => {
     if (window.confirm(t('navbar.alerts.logoutConfirm'))) {
-      // Clear all user state and storage first
       setUserId(null);
       setArtistId(null);
       setEmployerId(null);
       setUserType(null);
       setNotifications([]);
-      
+
       localStorage.clear();
       sessionStorage.clear();
       document.cookie.split(";").forEach((c) => {
@@ -88,7 +79,6 @@ const Navbar = () => {
           .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
       });
 
-      // 3. Use navigate for a smooth, client-side transition without a page reload
       navigate('/');
     }
   };
@@ -101,7 +91,7 @@ const Navbar = () => {
     } else if (userType === 'Employer') {
       profilePath = "/employer-profile/edit";
     } else {
-      profilePath = `/user-profile/${userId}`; 
+      profilePath = `/user-profile/${userId}`;
     }
   }
 
@@ -110,12 +100,26 @@ const Navbar = () => {
     setIsMenuOpen(false);
   };
 
+  // --- NEW FUNCTION: Handle navigation link clicks ---
+  const handleNavLinkClick = (path: string) => {
+    // Close the mobile menu
+    setIsMenuOpen(false);
+
+    // If the user is already on the target path, scroll to the top
+    if (location.pathname === path) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    // NavLink usually handles navigation, but if you were using Link,
+    // you'd call navigate(path) here if the path isn't current.
+    // NavLink does this implicitly if isActive is false.
+  };
+
   return (
     <nav className="navbar">
       <Link to={isLoggedIn ? "/main" : "/"} className="logo-link">
         <img src="/images/logo2.png" alt={t('navbar.altText.logo')} className="logo-image" />
       </Link>
-      
+
       <div className={`hamburger ${isMenuOpen ? "open" : ""}`} onClick={toggleMenu}>
         <span></span>
         <span></span>
@@ -126,22 +130,30 @@ const Navbar = () => {
         {isLoggedIn ? (
           <>
             <li>
-              <NavLink to="/main" className={({ isActive }) => (isActive ? "active" : "")} onClick={() => setIsMenuOpen(false)}>
+              <NavLink
+                to="/main"
+                className={({ isActive }) => (isActive ? "active" : "")}
+                onClick={() => handleNavLinkClick("/main")} {/* Use the new handler */}
+              >
                 <FaHome className="nav-icon" />
                 <span className="nav-text">{t('navbar.links.home')}</span>
               </NavLink>
             </li>
             <li>
-              <NavLink to="/map" className={({ isActive }) => (isActive ? "active" : "")} onClick={() => setIsMenuOpen(false)}>
+              <NavLink
+                to="/map"
+                className={({ isActive }) => (isActive ? "active" : "")}
+                onClick={() => handleNavLinkClick("/map")} {/* Use the new handler */}
+              >
                 <FaMapMarkerAlt className="nav-icon" />
                 <span className="nav-text">{t('navbar.links.map')}</span>
               </NavLink>
             </li>
             <li>
-              <NavLink 
+              <NavLink
                 to={profilePath}
-                className={({ isActive }) => (isActive ? "active" : "")} 
-                onClick={() => setIsMenuOpen(false)}
+                className={({ isActive }) => (isActive ? "active" : "")}
+                onClick={() => handleNavLinkClick(profilePath)} {/* Use the new handler */}
               >
                 <FaUserAlt className="nav-icon" />
                 <span className="nav-text">{t('navbar.links.profile')}</span>
@@ -158,8 +170,7 @@ const Navbar = () => {
 
               {showDropdown && (
                 <div className="notifications-dropdown">
-                  {/* We can remove the loading/error state as the context handles it */}
-                   {notifications.length > 0 ? (
+                  {notifications.length > 0 ? (
                     <ul>
                       {notifications.map((notif) => (
                         <li key={notif.notification_id} className={notif.read_status ? "read" : "unread"}>
@@ -191,17 +202,17 @@ const Navbar = () => {
             </li>
             <li className="language-switcher2 nav-link">
               <button onClick={() => changeLanguage('en')} className={i18n.language === 'en' ? 'active' : ''}>{t('navbar.language.en')}</button>
-              <span className="lang-separator"></span> 
+              <span className="lang-separator"></span>
               <button onClick={() => changeLanguage('el')} className={i18n.language === 'el' ? 'active' : ''}>{t('navbar.language.el')}</button>
             </li>
           </>
         ) : (
           <>
             <li>
-              <NavLink to="/login" className="nav-link">{t('navbar.actions.login')}</NavLink>
+              <NavLink to="/login" className="nav-link" onClick={() => handleNavLinkClick("/login")}>{t('navbar.actions.login')}</NavLink>
             </li>
             <li>
-              <NavLink to="/register" className="nav-button register-button">{t('navbar.actions.register')}</NavLink>
+              <NavLink to="/register" className="nav-button register-button" onClick={() => handleNavLinkClick("/register")}>{t('navbar.actions.register')}</NavLink>
             </li>
             <li className="language-switcher2 nav-link">
               <button onClick={() => changeLanguage('en')} className={i18n.language === 'en' ? 'active' : ''}>{t('navbar.language.en')}</button>

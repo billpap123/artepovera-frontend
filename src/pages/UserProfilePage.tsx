@@ -735,7 +735,7 @@ const UserProfilePage: React.FC = () => {
                                 <p className="portfolio-description">{item.description || t('userProfilePage.artistContent.noDescription')}</p>
                                 {formattedDate && (
                                   <div className="portfolio-item-footer">
-                                      <span className="posted-date">{t('userProfilePage.content.postedOn')}: {formattedDate}</span>
+                                      <span className="posted-date">{t('userProfilePage.content.postedOn')} {formattedDate}</span>
                                   </div>
                                 )}
                               </div>
