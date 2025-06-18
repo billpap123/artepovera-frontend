@@ -64,6 +64,8 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [socket, setSocket] = useState<Socket | null>(null);
 
   const loginUser = useCallback((userData: UserData, token: string) => {
+    console.log("!!!!!!!! FRONTEND CONTEXT received this user object:", userData);
+
     setUserIdState(userData.user_id);
     setUserTypeState(userData.user_type);
     setFullnameState(userData.fullname);
