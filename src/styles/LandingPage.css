@@ -7,7 +7,7 @@
   background: #774402; 
   overflow-x: hidden;
   margin: 0;
-  margin-top: 70px;
+  margin-top: 70px !important;
   padding: 0;
 }
 
