@@ -250,6 +250,7 @@ z-index: 2;
     text-align: center;
     font-size: 0.95rem;
     line-height: 1.6;
+    padding: 80px 5%;
   }
 
   .landing-footer h3 {
