@@ -73,6 +73,7 @@ const landingPageStyles = `
     color: white;
     background-color: #654321;
     overflow: hidden;
+    margin-top:70px;
   }
 
   .hero-video-background {

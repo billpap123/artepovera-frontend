@@ -63,11 +63,14 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewed
   const [editItemId, setEditItemId] = useState<number | null>(null);
   const [editDescription, setEditDescription] = useState('');
 
-  // --- THIS IS THE FIX (Part 1): The fetch logic is now inside useEffect ---
+  // --- THIS IS THE FIX ---
+  // The logic is simplified to correctly handle the initial loading state.
   useEffect(() => {
-    // If there's no ID yet, we just wait. The effect will re-run when it's available.
+    // If there is no targetArtistId yet (e.g., right after login),
+    // we simply wait. The `loading` state remains `true`, so the user
+    // continues to see the loading message. The effect will re-run automatically
+    // once the `targetArtistId` is available from the context.
     if (!targetArtistId) {
-      setLoading(false); // Set loading to false to prevent showing the loading message indefinitely
       return;
     }
     
@@ -93,8 +96,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewed
     };
     
     fetchPortfolio();
-    // --- THIS IS THE FIX (Part 2): The effect now correctly depends on `targetArtistId` ---
-  }, [targetArtistId]);
+  }, [targetArtistId]); // The dependency on targetArtistId ensures this runs when the ID becomes available.
   
   const handleOpenModal = (imageUrl: string) => setModalImage(imageUrl);
   const handleCloseModal = () => setModalImage(null);
@@ -109,6 +111,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewed
       }
     } else { setSelectedFile(null); }
   };
+
   const handleUpload = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedFile || !description.trim()) { alert('Please select a file and enter a description.'); return; }
@@ -119,15 +122,12 @@ const Portfolio: React.FC<PortfolioProps> = ({ artistId: viewingArtistId, viewed
       const formData = new FormData();
       formData.append("description", description.trim());
       formData.append("image", selectedFile);
-      const res = await axios.post(`${API_BASE_URL}/api/portfolios`, formData, { headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" } });
-      const newItemData = res.data;
-      const newItem: PortfolioItem = { ...newItemData, item_type: newItemData.item_type || getItemTypeFromUrl(newItemData.image_url) };
-      // Refresh the portfolio to get the latest data
-      const fetchAgain = async () => {
-        const response = await axios.get(`${API_BASE_URL}/api/portfolios/${targetArtistId}`, { headers: { Authorization: `Bearer ${token}` } });
-        setItems(response.data || []);
-      };
-      fetchAgain();
+      await axios.post(`${API_BASE_URL}/api/portfolios`, formData, { headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" } });
+      
+      // After a successful upload, re-fetch the portfolio to show the new item.
+      const response = await axios.get(`${API_BASE_URL}/api/portfolios/${targetArtistId}`, { headers: { Authorization: `Bearer ${token}` } });
+      setItems(response.data || []);
+
       setSelectedFile(null); setDescription(''); setShowAddForm(false);
       alert("Portfolio item uploaded successfully!");
     } catch (err: any) {
