@@ -159,7 +159,7 @@ const DisplayStars = ({ rating }: { rating: number | null }) => {
 // --- End Helper Functions ---
 
 const UserProfilePage: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { userId: userIdFromParams } = useParams<{ userId: string }>();
   const navigate = useNavigate();
   const [supportRating, setSupportRating] = useState(0);
@@ -203,6 +203,16 @@ const UserProfilePage: React.FC = () => {
   const [viewpointCount, setViewpointCount] = useState(0);
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const formatDate = useCallback((dateString: string | undefined | null): string => {
+    if (!dateString) { return 'Date unknown'; }
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) { return 'Invalid Date'; }
+      // The i18n.language is passed as the first argument to format the date correctly.
+      return date.toLocaleDateString(i18n.language, { year: 'numeric', month: 'short', day: 'numeric' });
+    } catch (e) { console.error("Error parsing date:", dateString, e); return 'Invalid Date'; }
+  }, [i18n.language]); // This function will only update when the language changes.
+
 
   // --- END ADD ---
   // --- Handlers for Rating Form (General Reviews) ---
