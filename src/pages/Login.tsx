@@ -1,8 +1,9 @@
+// src/pages/Login.tsx
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { useUserContext } from '../context/UserContext';
-import '../styles/Login.css'; // We will replace the content of this file
+import '../styles/Login.css';
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from '../components/LanguageSwitcher';
 
@@ -14,7 +15,7 @@ const Login = () => {
     const [error, setError] = useState('');
     const navigate = useNavigate();
     const { t } = useTranslation();
-    const { setUserId, setUserType, setArtistId, setEmployerId, setFullname } = useUserContext();
+    const { loginUser } = useUserContext();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -24,22 +25,16 @@ const Login = () => {
                 email,
                 password,
             });
+            
             const { token, user } = response.data;
 
-            localStorage.setItem('token', token);
-            localStorage.setItem('user', JSON.stringify(user));
-            
-            setUserId(user.user_id);
-            setUserType(user.user_type);
-            setFullname(user.fullname);
-
-            if (user.user_type === 'Artist' && user.artistProfile) {
-                setArtistId(user.artistProfile.artist_id);
-            } else if (user.user_type === 'Employer' && user.employerProfile) {
-                setEmployerId(user.employerProfile.employer_id);
-            }
+            // --- THIS IS THE FIX ---
+            // The 'user' object from your API is already perfect.
+            // We remove the broken "flattening" logic and pass it directly.
+            loginUser(user, token);
             
             navigate('/main');
+
         } catch (err: any) {
             console.error('Login error:', err);
             if (axios.isAxiosError(err) && err.response) {
@@ -52,16 +47,13 @@ const Login = () => {
 
     return (
         <div className="auth-page-container">
-            {/* These elements are positioned relative to the full page */}
             <LanguageSwitcher />
             <Link to="/" className="auth-logo-corner">
                 <img src="/images/logo2.png" alt={t('loginPage.altText.logo')} />
             </Link>
     
-            {/* This is the centered white form box */}
             <div className="auth-form-container">
                 <div className="auth-form-header">
-                     {/* The logo inside the white box has been removed for a cleaner look */}
                      <h2 className="login-title">{t('loginPage.title')}</h2>
                 </div>
 
