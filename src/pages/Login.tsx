@@ -1,8 +1,9 @@
+// src/pages/Login.tsx
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { useUserContext } from '../context/UserContext';
-import '../styles/Login.css'; // We will replace the content of this file
+import '../styles/Login.css';
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from '../components/LanguageSwitcher';
 
@@ -14,7 +15,10 @@ const Login = () => {
     const [error, setError] = useState('');
     const navigate = useNavigate();
     const { t } = useTranslation();
-    const { setUserId, setUserType, setArtistId, setEmployerId, setFullname } = useUserContext();
+    
+    // --- STEP 1: Get the new 'loginUser' function from the context ---
+    // We no longer need the individual setters here.
+    const { loginUser } = useUserContext();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -26,20 +30,24 @@ const Login = () => {
             });
             const { token, user } = response.data;
 
-            localStorage.setItem('token', token);
-            localStorage.setItem('user', JSON.stringify(user));
-            
-            setUserId(user.user_id);
-            setUserType(user.user_type);
-            setFullname(user.fullname);
+            // --- STEP 2: Prepare the user data to match the context's expectation ---
+            // The context's `loginUser` function expects a flat object.
+            const userDataForContext = {
+                user_id: user.user_id,
+                user_type: user.user_type,
+                fullname: user.fullname,
+                // Use optional chaining (?.) for safety in case profile is missing
+                artist_id: user.artistProfile?.artist_id, 
+                employer_id: user.employerProfile?.employer_id,
+            };
 
-            if (user.user_type === 'Artist' && user.artistProfile) {
-                setArtistId(user.artistProfile.artist_id);
-            } else if (user.user_type === 'Employer' && user.employerProfile) {
-                setEmployerId(user.employerProfile.employer_id);
-            }
+            // --- STEP 3: Call the single context function ---
+            // This one line replaces all the manual localStorage.setItem and set... calls.
+            // It updates the state and localStorage at the same time.
+            loginUser(userDataForContext, token);
             
             navigate('/main');
+
         } catch (err: any) {
             console.error('Login error:', err);
             if (axios.isAxiosError(err) && err.response) {
@@ -50,18 +58,16 @@ const Login = () => {
         }
     };
 
+    // The rest of your component's JSX remains exactly the same.
     return (
         <div className="auth-page-container">
-            {/* These elements are positioned relative to the full page */}
             <LanguageSwitcher />
             <Link to="/" className="auth-logo-corner">
                 <img src="/images/logo2.png" alt={t('loginPage.altText.logo')} />
             </Link>
     
-            {/* This is the centered white form box */}
             <div className="auth-form-container">
                 <div className="auth-form-header">
-                     {/* The logo inside the white box has been removed for a cleaner look */}
                      <h2 className="login-title">{t('loginPage.title')}</h2>
                 </div>
 
