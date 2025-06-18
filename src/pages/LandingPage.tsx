@@ -241,7 +241,67 @@ z-index: 2;
   .cta-section p { color: rgba(253, 251, 247, 0.85); margin-bottom: 35px; }
   .cta-button { padding: 15px 40px; border-radius: 30px; text-decoration: none; font-weight: 700; font-size: 1.15rem; transition: all 0.3s ease; background-color: #E2725B; color: white; border: 2px solid #E2725B; box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1); }
   .cta-button:hover { background-color: #C96A50; border-color: #C96A50; transform: scale(1.03); box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15); }
-   
+    
+   /* --- Footer Styles --- */
+  .landing-footer {
+    background-color: #4d4033;
+    color: #fdfbf7;
+    padding: 40px 5%;
+    text-align: center;
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+
+  .landing-footer h3 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+    color: #E2725B;
+  }
+
+  .landing-footer p {
+    max-width: 700px;
+    margin: 0 auto 25px auto;
+    color: rgba(253, 251, 247, 0.9);
+  }
+
+  .landing-footer-contact {
+    margin-bottom: 20px;
+  }
+
+  .landing-footer-contact a {
+    color: #C96A50;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s ease;
+  }
+
+  .landing-footer-contact a:hover {
+    color: #E2725B;
+    text-decoration: underline;
+  }
+
+  .landing-footer-links {
+    margin-top: 25px;
+  }
+
+  .landing-footer-links a {
+    color: #fdfbf7;
+    text-decoration: none;
+    margin: 0 15px;
+    transition: color 0.2s ease;
+  }
+
+  .landing-footer-links a:hover {
+    color: #C96A50;
+  }
+
+  .landing-footer-bottom {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(253, 251, 247, 0.1);
+    color: rgba(253, 251, 247, 0.7);
+  }
    /* Responsive Adjustments */
    @media (max-width: 1268px) {
         .hero-title { font-size: 2.5rem; }
@@ -323,7 +383,21 @@ const LandingPage: React.FC = () => {
           <p className="section-intro">{t('landingPage.cta.intro')}</p>
           <Link to="/register" className="cta-button">{t('landingPage.cta.button')}</Link>
         </section>
-
+   {/* --- NEW: Footer Section --- */}
+   <footer className="landing-footer">
+          <h3>{t('landingPage.footer.title')}</h3>
+          <p>{t('landingPage.footer.description')}</p>
+          <div className="landing-footer-contact">
+            <a href="mailto:info@artconnect.com">{t('landingPage.footer.contactEmail')}</a>
+          </div>
+          <div className="landing-footer-links">
+            <Link to="/privacy">{t('landingPage.footer.privacyPolicy')}</Link>
+            <Link to="/terms">{t('landingPage.footer.termsOfService')}</Link>
+          </div>
+          <div className="landing-footer-bottom">
+            <p>{t('landingPage.footer.rightsReserved')}</p>
+          </div>
+        </footer>
       </div>
     </>
   );
