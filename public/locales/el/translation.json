@@ -365,7 +365,15 @@
       "acting": {
         "title": "Ηθοποιοί & ερμηνευτές",
         "description": "Βρείτε τον επόμενο ρόλο σας. βρείτε οντισιόν για θέατρο, κινηματογράφο, εκφωνήσεις και ζωντανές εκδηλώσεις.",
-        "link": "Δείτε οντισιόν"
+        "link": "Δείτε οντισιόν",
+        "footer": {
+          "title": "Get in touch",
+          "description": "Have questions or want to learn more? Reach out to us!",
+          "contactEmail": "Email Us: info@artepovera.com",
+          "privacyPolicy": "Privacy policy",
+          "termsOfService": "Terms of service",
+          "rightsReserved": "© 2025 ARTEPOVERA. All rights reserved."
+        }
       }
     },
     "features": {
