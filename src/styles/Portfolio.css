@@ -416,8 +416,11 @@
 
   .portfolio-item-content {
     padding: 15px;
+    display: inline-grid;
   }
-
+.portfolio-description{
+  margin-bottom: 0px;
+}
   .form-actions {
     flex-direction: column;
     align-items: stretch; /* Buttons take full width */
