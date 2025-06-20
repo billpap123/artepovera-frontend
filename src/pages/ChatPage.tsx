@@ -163,27 +163,40 @@ const ChatPage = () => {
   /* ---------------------------------------------------------------------- */
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newMessage.trim() || !activeChat) return;
-
+    if (!newMessage.trim() || !activeChat || !loggedInUserId) return;
+  
+    /* ---------- 1. optimistic local bubble ---------- */
+    const tmpId = -Date.now();          // negative → never collides with real ids
+    const optimisticMsg: Message = {
+      message_id : tmpId,               // 👈  no cast needed
+      chat_id    : activeChat.chat_id,
+      sender_id  : loggedInUserId,
+      message    : newMessage.trim(),
+      createdAt  : new Date().toISOString(),
+    };
+    setMessages(prev => [...prev, optimisticMsg]);
+    setNewMessage('');
+  
+    /* ---------- 2. send to server in background ------ */
     try {
-      const token = localStorage.getItem('token');
+      const token   = localStorage.getItem('token');
       const { data } = await axios.post(
         `${API_BASE_URL}/api/chats/send`,
-        { chat_id: activeChat.chat_id, message: newMessage.trim() },
+        { chat_id: activeChat.chat_id, message: optimisticMsg.message },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-
-      // dedup πριν το προσθέσουμε
+  
+      /* ---------- 3. reconcile: replace tmp with real -- */
       setMessages(prev =>
-        prev.some(m => m.message_id === data.data.message_id)
-          ? prev
-          : [...prev, data.data]
+        prev.map(m => m.message_id === tmpId ? data.data : m)
       );
-      setNewMessage('');
-    } catch {
+    } catch (err) {
+      /* ---------- 4. roll back on error ---------------- */
+      setMessages(prev => prev.filter(m => m.message_id !== tmpId));
       alert(t('chatPage.errors.sendFailed'));
     }
   };
+    
 
   /* ---------------------------------------------------------------------- */
   /*  6. Helpers                                                            */
