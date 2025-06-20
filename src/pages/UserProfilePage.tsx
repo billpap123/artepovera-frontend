@@ -353,7 +353,16 @@ const UserProfilePage: React.FC = () => {
     if (path.startsWith('http')) return path;
     return `${API_BASE_URL}/${path.replace(/^uploads\/uploads\//, 'uploads/')}`;
   };
-
+  const safeLikeOnce = (() => {
+    let inFlight = false;
+    return async (fn: () => Promise<void>) => {
+      if (inFlight) return;          // drop double-clicks
+      inFlight = true;
+      try   { await fn(); }
+      finally { inFlight = false; }  // always reset
+    };
+  })();
+  
   const fetchLikeStatus = useCallback(async (profileUserId: string, token: string | null) => {
     if (!token || !loggedInUser) return;
     try {
@@ -364,17 +373,32 @@ const UserProfilePage: React.FC = () => {
     } catch (err) { console.error('Error fetching like status:', err); }
   }, [API_BASE_URL, loggedInUser]); // Dependency on loggedInUser
 
-  const handleLike = async () => {
-    if (!userIdFromParams || !loggedInUser) { alert("You must be logged in to like someone."); return; }
-    const token = localStorage.getItem('token');
-    if (!token) return; // Should be covered by !loggedInUser
-    if (liked) { console.log("Already liked/unliking not implemented here."); return; }
-    try {
-      await axios.post(`${API_BASE_URL}/api/users/${userIdFromParams}/like`, {}, { headers: { Authorization: `Bearer ${token}` } });
-      setLiked(true);
-    } catch (err: any) { console.error('Error liking user:', err); alert(err.response?.data?.message || 'Failed to like user.'); }
-  };
-  const handleCvDownload = async (url: string | null, artistName: string) => {
+  const handleLike = () =>
+    safeLikeOnce(async () => {
+      if (!userIdFromParams || !loggedInUser) {
+        alert("You must be logged in to like someone.");
+        return;
+      }
+  
+      // ▶▶ optimistic UI
+      if (liked) return;               // already liked, nothing to do
+      setLiked(true);                  // flip heart immediately
+  
+      const token = localStorage.getItem('token');
+      try {
+        await axios.post(
+          `${API_BASE_URL}/api/users/${userIdFromParams}/like`,
+          {},
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        // ✅ success – nothing else, UI already updated
+      } catch (err: any) {
+        console.error('Error liking user:', err);
+        setLiked(false);               // ⏪ revert
+        alert(err.response?.data?.message || 'Failed to like user.');
+      }
+    });
+    const handleCvDownload = async (url: string | null, artistName: string) => {
     if (!url) {
       alert('No CV available to download.');
       return;

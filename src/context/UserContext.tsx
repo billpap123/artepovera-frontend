@@ -123,7 +123,11 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   /* ---- live notifications ---- */
   useEffect(() => {
     if (!socket) return;
-    const handler = (n: any) => setNotifications(p => [n, ...p]);
+    const handler = (n: any) =>                       // 🔄 dedup guard
+      setNotifications(p =>
+        p.some(x => x.notification_id === n.notification_id)
+          ? p
+          : [n, ...p]);
     socket.on('new_notification', handler);
     return () => { socket.off('new_notification', handler); };
   }, [socket]);
