@@ -59,11 +59,17 @@ const ChatPage = () => {
   useEffect(() => {
     if (!loggedInUserId) return;
 
-    // init – once
     if (!socketRef.current) {
-      socketRef.current = io(API_BASE_URL, { withCredentials: true });
+      socketRef.current = io(API_BASE_URL, {
+        transports       : ['websocket'],      // ⭐ direct WS
+        withCredentials  : false,              // ⭐ no cookies
+        transportOptions : {                   // ⭐ even if it falls back
+          polling: { withCredentials: false }  //   don't send creds
+        }
+      });
       socketRef.current.emit('add_user', loggedInUserId);
     }
+
 
     /* ---------- handle incoming message (dedup guard) ---------- */
     const handleNewMessage = (incoming: Message) => {

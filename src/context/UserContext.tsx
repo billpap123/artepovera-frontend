@@ -1,24 +1,15 @@
 // src/context/UserContext.tsx
 import React, {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  ReactNode,
-  useCallback,
+  createContext, useContext, useState, useEffect,
+  ReactNode, useCallback,
 } from 'react';
 import axios from 'axios';
 import { io, Socket } from 'socket.io-client';
 
-/* -------------------------------------------------------------------------- */
-/*  CONFIG                                                                    */
-/* -------------------------------------------------------------------------- */
 const API_BASE_URL =
   import.meta.env.VITE_API_URL || 'https://artepovera-backend.onrender.com';
 
-/* -------------------------------------------------------------------------- */
-/*  TYPES                                                                     */
-/* -------------------------------------------------------------------------- */
+/* ---------- types ---------- */
 interface UserData {
   user_id: number;
   artist_id?: number;
@@ -26,68 +17,52 @@ interface UserData {
   user_type: string;
   fullname: string;
 }
-
-type UserContextType = {
+type Ctx = {
   userId: number | null;
   artistId: number | null;
   employerId: number | null;
   userType: string | null;
   fullname: string | null;
-
-  loginUser: (userData: UserData, token: string) => void;
+  loginUser: (u: UserData, t: string) => void;
   logoutUser: () => void;
-
-  setUserId: (userId: number | null) => void;
-  setArtistId: (id: number | null) => void;
-  setEmployerId: (id: number | null) => void;
-  setUserType: (t: string | null) => void;
-  setFullname: (n: string | null) => void;
-
+  setUserId: (n: number | null) => void;
+  setArtistId: (n: number | null) => void;
+  setEmployerId: (n: number | null) => void;
+  setUserType: (s: string | null) => void;
+  setFullname: (s: string | null) => void;
   notifications: any[];
   setNotifications: React.Dispatch<React.SetStateAction<any[]>>;
   socket: Socket | null;
 };
+const UserContext = createContext<Ctx | undefined>(undefined);
 
-const UserContext = createContext<UserContextType | undefined>(undefined);
-
-/* -------------------------------------------------------------------------- */
-/*  helper – update localStorage                                              */
-/* -------------------------------------------------------------------------- */
-const updateUserInStorage = (updates: Partial<UserData>) => {
+/* ---------- helper ---------- */
+const updateLocal = (u: Partial<UserData>) => {
   const raw = localStorage.getItem('user');
   if (!raw) return;
-  try {
-    const cur = JSON.parse(raw);
-    localStorage.setItem('user', JSON.stringify({ ...cur, ...updates }));
-  } catch (e) {
-    console.error('Failed to update localStorage user', e);
-  }
+  localStorage.setItem('user', JSON.stringify({ ...JSON.parse(raw), ...u }));
 };
 
-/* -------------------------------------------------------------------------- */
-/*  PROVIDER                                                                  */
-/* -------------------------------------------------------------------------- */
+/* ---------- provider ---------- */
 export const UserProvider = ({ children }: { children: ReactNode }) => {
-  /* ------------------------------ state ---------------------------------- */
-  const [userId, setUserIdState] = useState<number | null>(null);
-  const [artistId, setArtistIdState] = useState<number | null>(null);
-  const [employerId, setEmployerIdState] = useState<number | null>(null);
-  const [userType, setUserTypeState] = useState<string | null>(null);
-  const [fullname, setFullnameState] = useState<string | null>(null);
-  const [notifications, setNotifications] = useState<any[]>([]);
-  const [socket, setSocket] = useState<Socket | null>(null);
+  const [userId, setUserIdState]             = useState<number | null>(null);
+  const [artistId, setArtistIdState]         = useState<number | null>(null);
+  const [employerId, setEmployerIdState]     = useState<number | null>(null);
+  const [userType, setUserTypeState]         = useState<string | null>(null);
+  const [fullname, setFullnameState]         = useState<string | null>(null);
+  const [notifications, setNotifications]    = useState<any[]>([]);
+  const [socket, setSocket]                  = useState<Socket | null>(null);
 
-  /* ----------------------------- login / logout -------------------------- */
-  const loginUser = useCallback((u: UserData, token: string) => {
+  /* ---- login / logout ---- */
+  const loginUser = useCallback((u: UserData, tok: string) => {
     setUserIdState(u.user_id);
     setUserTypeState(u.user_type);
     setFullnameState(u.fullname);
-    setArtistIdState(u.artist_id || null);
-    setEmployerIdState(u.employer_id || null);
+    setArtistIdState(u.artist_id ?? null);
+    setEmployerIdState(u.employer_id ?? null);
     localStorage.setItem('user', JSON.stringify(u));
-    localStorage.setItem('token', token);
+    localStorage.setItem('token', tok);
   }, []);
-
   const logoutUser = useCallback(() => {
     setUserIdState(null);
     setArtistIdState(null);
@@ -99,61 +74,40 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     localStorage.removeItem('token');
   }, []);
 
-  /* --------------------------- bootstrap from storage -------------------- */
+  /* ---- bootstrap από localStorage ---- */
   useEffect(() => {
-    const raw = localStorage.getItem('user');
+    const raw   = localStorage.getItem('user');
     const token = localStorage.getItem('token');
     if (raw && token) {
-      try {
-        loginUser(JSON.parse(raw), token);
-      } catch (e) {
-        console.error('[UserContext] bad stored user', e);
-        logoutUser();
-      }
+      try { loginUser(JSON.parse(raw), token); }
+      catch { logoutUser(); }
     }
   }, [loginUser, logoutUser]);
 
-  /* --------------------------- setters that sync storage ----------------- */
-  const setUserId = (id: number | null) => {
-    setUserIdState(id);
-    updateUserInStorage({ user_id: id! });
-  };
-  const setArtistId = (id: number | null) => {
-    setArtistIdState(id);
-    updateUserInStorage({ artist_id: id! });
-  };
-  const setEmployerId = (id: number | null) => {
-    setEmployerIdState(id);
-    updateUserInStorage({ employer_id: id! });
-  };
-  const setUserType = (t: string | null) => {
-    setUserTypeState(t);
-    updateUserInStorage({ user_type: t! });
-  };
-  const setFullname = (n: string | null) => {
-    setFullnameState(n);
-    updateUserInStorage({ fullname: n! });
-  };
+  /* ---- setters που sync-άρουν localStorage ---- */
+  const setUserId      = (n: number | null) => { setUserIdState(n); updateLocal({ user_id: n! }); };
+  const setArtistId    = (n: number | null) => { setArtistIdState(n); updateLocal({ artist_id: n! }); };
+  const setEmployerId  = (n: number | null) => { setEmployerIdState(n); updateLocal({ employer_id: n! }); };
+  const setUserType    = (s: string | null)  => { setUserTypeState(s); updateLocal({ user_type: s! }); };
+  const setFullname    = (s: string | null)  => { setFullnameState(s); updateLocal({ fullname: s! }); };
 
-  /* --------------------------- Socket.IO lifecycle ----------------------- */
+  /* ---------------------------------------------------------------------- */
+  /*  Socket.IO lifecycle – ΧΩΡΙΣ credentials και με έλεγχο polling         */
+  /* ---------------------------------------------------------------------- */
   useEffect(() => {
-    // 👉 1. Όταν ΔΕΝ υπάρχει userId αποσυνδέσου και καθάρισε state
-    if (!userId) {
-      socket?.disconnect();
-      setSocket(null);
-      return;               // early-exit
-    }
-  
-    // 👉 2. Φτιάχνεις ΝΕΑ σύνδεση (δεν ελέγχουμε εδώ το socket)
+    if (!userId) { socket?.disconnect(); setSocket(null); return; }
+
     const newSocket = io(API_BASE_URL, {
+      transports: ['websocket'],      // 🚫 απενεργοποιεί Polling
       withCredentials: false,
-      transports: ['websocket'],
+      // ακόμη κι αν «πέσει» σε polling (π.χ. Render free),
+      // βεβαιώσου ότι δεν θα στείλει credentials:
+      transportOptions: { polling: { withCredentials: false } },
     });
-  
+
     newSocket.emit('add_user', userId);
     setSocket(newSocket);
-  
-    // 👉 3. Αρχικές ειδοποιήσεις
+
     const token = localStorage.getItem('token');
     if (token) {
       axios
@@ -161,58 +115,35 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then(r => setNotifications(r.data.notifications || []))
-        .catch(err => console.error('Failed to fetch initial notifications', err));
+        .catch(err => console.error('Failed to fetch notifications', err));
     }
-  
-    // 👉 4. CLEAN-UP — επιστρέφει **function** που ΔΕΝ επιστρέφει τίποτα
-    return () => {
-      newSocket.disconnect();     // TypeScript OK
-    };
-  }, [userId]);                   // ← τρέχει μόνο όταν αλλάζει χρήστης
-  
-  /* --------------------------- live notif listener ----------------------- */
+    return () => { newSocket.disconnect(); };
+  }, [userId]);
+
+  /* ---- live notifications ---- */
   useEffect(() => {
-    if (!socket) return;          // κανένα socket ακόμη
-  
-    const onNotif = (n: any) => setNotifications(prev => [n, ...prev]);
-    socket.on('new_notification', onNotif);
-  
-    return () => {
-      socket.off('new_notification', onNotif);   // clean-up σωστό
-    };
-  }, [socket]);                    // τρέχει όταν οριστεί ή αλλάξει socket
-  
-  /* --------------------------- provider value ---------------------------- */
+    if (!socket) return;
+    const handler = (n: any) => setNotifications(p => [n, ...p]);
+    socket.on('new_notification', handler);
+    return () => { socket.off('new_notification', handler); };
+  }, [socket]);
+
+  /* ---- provider value ---- */
   return (
-    <UserContext.Provider
-      value={{
-        userId,
-        artistId,
-        employerId,
-        userType,
-        fullname,
-        loginUser,
-        logoutUser,
-        setUserId,
-        setArtistId,
-        setEmployerId,
-        setUserType,
-        setFullname,
-        notifications,
-        setNotifications,
-        socket,
-      }}
-    >
+    <UserContext.Provider value={{
+      userId, artistId, employerId, userType, fullname,
+      loginUser, logoutUser,
+      setUserId, setArtistId, setEmployerId, setUserType, setFullname,
+      notifications, setNotifications, socket,
+    }}>
       {children}
     </UserContext.Provider>
   );
 };
 
-/* -------------------------------------------------------------------------- */
-/*  Hook                                                                       */
-/* -------------------------------------------------------------------------- */
+/* ---------- hook ---------- */
 export const useUserContext = () => {
   const ctx = useContext(UserContext);
-  if (!ctx) throw new Error('useUserContext must be used within a UserProvider');
+  if (!ctx) throw new Error('useUserContext must be used within UserProvider');
   return ctx;
 };
