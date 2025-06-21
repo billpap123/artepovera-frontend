@@ -358,11 +358,11 @@ const UserProfilePage: React.FC = () => {
     return async (fn: () => Promise<void>) => {
       if (inFlight) return;          // drop double-clicks
       inFlight = true;
-      try   { await fn(); }
+      try { await fn(); }
       finally { inFlight = false; }  // always reset
     };
   })();
-  
+
   const fetchLikeStatus = useCallback(async (profileUserId: string, token: string | null) => {
     if (!token || !loggedInUser) return;
     try {
@@ -379,11 +379,11 @@ const UserProfilePage: React.FC = () => {
         alert("You must be logged in to like someone.");
         return;
       }
-  
+
       // ▶▶ optimistic UI
       if (liked) return;               // already liked, nothing to do
       setLiked(true);                  // flip heart immediately
-  
+
       const token = localStorage.getItem('token');
       try {
         await axios.post(
@@ -398,7 +398,7 @@ const UserProfilePage: React.FC = () => {
         alert(err.response?.data?.message || 'Failed to like user.');
       }
     });
-    const handleCvDownload = async (url: string | null, artistName: string) => {
+  const handleCvDownload = async (url: string | null, artistName: string) => {
     if (!url) {
       alert('No CV available to download.');
       return;
@@ -646,8 +646,11 @@ const UserProfilePage: React.FC = () => {
             <div className="profile-summary-public">
               <h3 className="user-fullname">{profile.fullname}</h3>
               <p className="user-type-public">
-  {isStudent ? t('userTypes.StudentArtist') : t(`userTypes.${profile.user_type}`)}
-</p>
+                {isStudent
+                  ? <span className="student-badge-public">{t('userTypes.StudentArtist')}</span>
+                  : t(`userTypes.${profile.user_type}`)
+                }
+              </p>
               <div className="average-rating-display">
                 {reviewsLoading && reviewCount === 0 ? (<span>{t('userProfilePage.status.loadingRating')}</span>)
                   : reviewCount > 0 && averageRating !== null ? (
@@ -772,7 +775,7 @@ const UserProfilePage: React.FC = () => {
                               {formattedDate && (
                                 <div className="portfolio-item-footer">
                                   <span className="posted-date">
-                                   
+
                                     {formattedDate}
                                   </span>                                  </div>
                               )}
