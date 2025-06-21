@@ -1,88 +1,96 @@
 /* src/styles/AccessibilityMenu.css */
 
 .accessibility-container {
-    position: fixed;
-    bottom: 20px;
-    left: 20px;
-    z-index: 2000; /* Must be on top of everything */
-  }
-  
-  .accessibility-fab {
-    background-color: var(--navbar-bg, #1a202c);
-    color: white;
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    border: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    cursor: pointer;
-    transition: transform 0.2s ease;
-  }
-  
-  .accessibility-fab:hover {
-    transform: scale(1.1);
-  }
-  
-  .accessibility-fab svg {
-    font-size: 1.8rem;
-  }
-  
-  .accessibility-menu {
-    position: absolute;
-    bottom: 80px; /* Position above the button */
-    left: 0;
-    width: 280px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
-    padding: 1rem;
-    border: 1px solid #ddd;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    word-wrap: break-word; 
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 2000;
+  /* Must be on top of everything */
+}
 
-  }
-  
-  .accessibility-menu h3 {
-    margin: 0 0 10px 0;
-    font-size: 1.1rem;
-    color: #333;
-    text-align: center;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 10px;
-  }
-  
-  .access-option {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 0.95rem;
-    color: #555;
-  }
-  
-  .font-size-controls, .toggle-btn {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  
-  .font-size-controls button, .toggle-btn {
-    background-color: #f0f0f0;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    padding: 8px 10px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-  }
-  
-  .toggle-btn.active {
-    background-color: var(--navbar-accent, #4299e1);
-    color: white;
-    border-color: var(--navbar-accent, #4299e1);
-  }
+.accessibility-fab {
+  background-color: var(--navbar-bg, #1a202c);
+  color: white;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.accessibility-fab:hover {
+  transform: scale(1.1);
+}
+
+.accessibility-fab svg {
+  font-size: 1.8rem;
+}
+
+.accessibility-menu {
+  position: absolute;
+  bottom: 80px;
+  /* Position above the button */
+  left: 0;
+  width: clamp(260px, 40vw, 350px);
+  /* min-max με βάση την οθόνη */
+  max-width: 95vw;
+  /* ποτέ πέρα από το viewport */
+
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+  padding: 1rem;
+  border: 1px solid #ddd;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  word-wrap: break-word;
+
+}
+
+.accessibility-menu h3 {
+  margin: 0 0 10px 0;
+  font-size: 1.1rem;
+  color: #333;
+  text-align: center;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+.access-option {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.font-size-controls,
+.toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.font-size-controls button,
+.toggle-btn {
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 8px 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.toggle-btn.active {
+  background-color: var(--navbar-accent, #4299e1);
+  color: white;
+  border-color: var(--navbar-accent, #4299e1);
+}
