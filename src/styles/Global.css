@@ -168,17 +168,29 @@ footer a:hover {
 
 
 /* Add this to src/styles/Global.css */
-
-/* --- High Contrast Mode --- */
-/* This is the new, corrected code */
-/* --- Make focus more obvious in High Contrast --- */
-body.high-contrast .main-app-container input:focus,
-body.high-contrast .main-app-container textarea:focus,
-body.high-contrast .main-app-container select:focus {
-   /* This bright yellow will stand out clearly on the re-inverted white input */
-   box-shadow: 0 0 8px 3px yellow;
-   border-color: yellow; /* Optional: change border color too */
-}  
+body.high-contrast .main-app-container {
+    filter: invert(1) hue-rotate(180deg);
+    /* It's also good practice to set a solid background for the container */
+    background: #000;
+  }
+  
+  /* 2. Re-invert elements inside the container that should NOT be inverted. */
+  body.high-contrast .main-app-container img,
+  body.high-contrast .main-app-container video,
+  body.high-contrast .main-app-container input,
+  body.high-contrast .main-app-container textarea,
+  body.high-contrast .main-app-container select {
+    filter: invert(1) hue-rotate(180deg);
+  }
+  
+  /* 3. Your existing focus styles (which are correct and should be kept). */
+  body.high-contrast .main-app-container input:focus,
+  body.high-contrast .main-app-container textarea:focus,
+  body.high-coast .main-app-container select:focus {
+     box-shadow: 0 0 8px 3px yellow;
+     border-color: yellow;
+  }
+  
   /* --- Highlight Links Mode --- */
   body.links-highlighted a {
     text-decoration: underline !important;
