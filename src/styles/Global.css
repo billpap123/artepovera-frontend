@@ -173,31 +173,22 @@ footer a:hover {
 /* ================================== */
 
 /* --- High Contrast Mode --- */
-
-/* 1. Apply the filter ONLY to the main content container. */
-body.high-contrast .main-app-container {
-  filter: invert(1) hue-rotate(180deg);
-  background: #000;
-}
-
-/* 2. Re-invert elements that should NOT be inverted.
-      This will now fix your login/register page inputs.
-*/
-body.high-contrast .main-app-container img,
-body.high-contrast .main-app-container video,
-body.high-contrast .main-app-container input,
-body.high-contrast .main-app-container textarea,
-body.high-contrast .main-app-container select {
-  filter: invert(1) hue-rotate(180deg);
-}
-
-/* 3. Keep your specific focus styles for high-contrast mode. */
-body.high-contrast .main-app-container input:focus,
-body.high-contrast .main-app-container textarea:focus,
-body.high-contrast .main-app-container select:focus {
-   box-shadow: 0 0 8px 3px yellow;
-   border-color: yellow;
-}
+.hc-overlay{
+    position:fixed;
+    inset:0;                     /* top:0 right:0 bottom:0 left:0 */
+    background:#fff;             /* λευκό + blend = invert */
+    mix-blend-mode:difference;   /* ΜΑΓΙΚΟ: αντιστρέφει όλα τα χρώματα από κάτω */
+    pointer-events:none;         /* δεν κλέβει κλικς */
+    z-index:2147483647;          /* πάνω από όλα */
+  }
+  
+  /* προαιρετικά: κάνε links πιο φανταχτερά όταν είναι HC */
+  .links-highlighted a{
+    background:yellow;
+    color:black;
+    text-decoration:underline;
+  }
+  
 
 /* --- Highlight Links Mode --- */
 body.links-highlighted a {
@@ -205,9 +196,4 @@ body.links-highlighted a {
   background-color: yellow !important;
   color: black !important;
   padding: 2px 4px;
-}
-
-body.high-contrast {               /* ακυρώνει το κρυφό flex */
-    display:block !important;
-    flex:none !important;
 }

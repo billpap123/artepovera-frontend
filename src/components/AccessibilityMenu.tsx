@@ -1,87 +1,105 @@
 // src/components/AccessibilityMenu.tsx
-
 import React, { useState, useEffect } from 'react';
-import { FaUniversalAccess, FaSearchPlus, FaSearchMinus, FaSyncAlt, FaEye, FaLink } from 'react-icons/fa';
-import { useTranslation } from 'react-i18next'; // Import useTranslation
+import { createPortal } from 'react-dom';         // ⚠️
+import {
+  FaUniversalAccess, FaSearchPlus, FaSearchMinus,
+  FaSyncAlt, FaEye, FaLink
+} from 'react-icons/fa';
+import { useTranslation } from 'react-i18next';
 import '../styles/AccessibilityMenu.css';
 
 const AccessibilityMenu: React.FC = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { t } = useTranslation(); // Initialize useTranslation
+  const { t } = useTranslation();
 
-  // Initialize state from localStorage or use defaults
-  const [fontSize, setFontSize] = useState<number>(() => Number(localStorage.getItem('accessibility-fontSize') || 100));
-  const [highContrast, setHighContrast] = useState<boolean>(() => localStorage.getItem('accessibility-highContrast') === 'true');
-  const [highlightLinks, setHighlightLinks] = useState<boolean>(() => localStorage.getItem('accessibility-highlightLinks') === 'true');
+  // UI state
+  const [isMenuOpen,    setIsMenuOpen]    = useState(false);
+  const [fontSize,      setFontSize]      = useState<number>(
+    () => Number(localStorage.getItem('accessibility-fontSize') || 100)
+  );
+  const [highContrast,  setHighContrast]  = useState<boolean>(
+    () => localStorage.getItem('accessibility-highContrast') === 'true'
+  );
+  const [highlightLinks,setHighlightLinks]= useState<boolean>(
+    () => localStorage.getItem('accessibility-highlightLinks') === 'true'
+  );
 
-  // Effect to apply styles and save to localStorage whenever a setting changes
+  /* ---------------- Side-effects ---------------- */
   useEffect(() => {
-    // Font Size
+    /* font-size */
     document.documentElement.style.fontSize = `${fontSize}%`;
     localStorage.setItem('accessibility-fontSize', String(fontSize));
 
-    // High Contrast
-    document.body.classList.toggle('high-contrast', highContrast);
-    localStorage.setItem('accessibility-highContrast', String(highContrast));
-
-    // Highlight Links
+    /* highlight links */
     document.body.classList.toggle('links-highlighted', highlightLinks);
     localStorage.setItem('accessibility-highlightLinks', String(highlightLinks));
 
-  }, [fontSize, highContrast, highlightLinks]);
+    /* save HC flag (το overlay μπαίνει αλλού) */
+    localStorage.setItem('accessibility-highContrast', String(highContrast));
+  }, [fontSize, highlightLinks, highContrast]);
 
-  const increaseFontSize = () => setFontSize(prev => Math.min(prev + 10, 150));
-  const decreaseFontSize = () => setFontSize(prev => Math.max(prev - 10, 70));
-  const resetFontSize = () => setFontSize(100);
+  /* ---------------- Handlers ---------------- */
+  const incFont = () => setFontSize(f => Math.min(f + 10, 150));
+  const decFont = () => setFontSize(f => Math.max(f - 10, 70));
+  const rstFont = () => setFontSize(100);
 
-  const toggleHighContrast = () => setHighContrast(prev => !prev);
-  const toggleHighlightLinks = () => setHighlightLinks(prev => !prev);
+  const toggleHC     = () => setHighContrast(hc => !hc);
+  const toggleLinks  = () => setHighlightLinks(l => !l);
+
+  /* ---------------- Overlay Node ---------------- */
+  const overlay = highContrast
+    ? createPortal(<div className="hc-overlay" aria-hidden="true"/>, document.body)
+    : null;
 
   return (
-    <div className="accessibility-container">
-      <button
-        className="accessibility-fab"
-        onClick={() => setIsMenuOpen(!isMenuOpen)}
-        aria-label={t('accessibilityMenu.ariaLabel.openMenu')} // Translated aria-label
-      >
-        <FaUniversalAccess />
-      </button>
+    <>
+      {overlay /* ⚠️ ρίχνουμε το overlay στην κορυφή του body */}
+      <div className="accessibility-container">
+        <button
+          className="accessibility-fab"
+          onClick={() => setIsMenuOpen(o => !o)}
+          aria-label={t('accessibilityMenu.ariaLabel.openMenu')}
+        >
+          <FaUniversalAccess/>
+        </button>
 
-      {isMenuOpen && (
-        <div className="accessibility-menu" role="dialog" aria-labelledby="accessibility-title">
-          <h3 id="accessibility-title">{t('accessibilityMenu.title')}</h3> {/* Translated title */}
+        {isMenuOpen && (
+          <div className="accessibility-menu" role="dialog" aria-labelledby="accessibility-title">
+            <h3 id="accessibility-title">{t('accessibilityMenu.title')}</h3>
 
-          <div className="access-option">
-            <label>{t('accessibilityMenu.fontSize.label')}</label> {/* Translated label */}
-            <div className="font-size-controls">
-              <button onClick={decreaseFontSize} aria-label={t('accessibilityMenu.fontSize.decreaseAriaLabel')}>
-                <FaSearchMinus />
+            <div className="access-option">
+              <label>{t('accessibilityMenu.fontSize.label')}</label>
+              <div className="font-size-controls">
+                <button onClick={decFont} aria-label={t('accessibilityMenu.fontSize.decreaseAriaLabel')}>
+                  <FaSearchMinus/>
+                </button>
+                <button onClick={rstFont} aria-label={t('accessibilityMenu.fontSize.resetAriaLabel')}>
+                  <FaSyncAlt/>
+                </button>
+                <button onClick={incFont} aria-label={t('accessibilityMenu.fontSize.increaseAriaLabel')}>
+                  <FaSearchPlus/>
+                </button>
+              </div>
+            </div>
+
+            <div className="access-option">
+              <label>{t('accessibilityMenu.highContrast.label')}</label>
+              <button onClick={toggleHC} className={`toggle-btn ${highContrast ? 'active' : ''}`}>
+                <FaEye/><span>{highContrast ? t('accessibilityMenu.highContrast.on')
+                                            : t('accessibilityMenu.highContrast.off')}</span>
               </button>
-              <button onClick={resetFontSize} aria-label={t('accessibilityMenu.fontSize.resetAriaLabel')}>
-                <FaSyncAlt />
-              </button>
-              <button onClick={increaseFontSize} aria-label={t('accessibilityMenu.fontSize.increaseAriaLabel')}>
-                <FaSearchPlus />
+            </div>
+
+            <div className="access-option">
+              <label>{t('accessibilityMenu.highlightLinks.label')}</label>
+              <button onClick={toggleLinks} className={`toggle-btn ${highlightLinks ? 'active' : ''}`}>
+                <FaLink/><span>{highlightLinks ? t('accessibilityMenu.highlightLinks.on')
+                                               : t('accessibilityMenu.highlightLinks.off')}</span>
               </button>
             </div>
           </div>
-
-          <div className="access-option">
-            <label>{t('accessibilityMenu.highContrast.label')}</label> {/* Translated label */}
-            <button onClick={toggleHighContrast} className={`toggle-btn ${highContrast ? 'active' : ''}`}>
-              <FaEye /> <span>{highContrast ? t('accessibilityMenu.highContrast.on') : t('accessibilityMenu.highContrast.off')}</span> {/* Translated On/Off */}
-            </button>
-          </div>
-
-          <div className="access-option">
-            <label>{t('accessibilityMenu.highlightLinks.label')}</label> {/* Translated label */}
-            <button onClick={toggleHighlightLinks} className={`toggle-btn ${highlightLinks ? 'active' : ''}`}>
-              <FaLink /> <span>{highlightLinks ? t('accessibilityMenu.highlightLinks.on') : t('accessibilityMenu.highlightLinks.off')}</span> {/* Translated On/Off */}
-            </button>
-          </div>
-        </div>
-      )}
-    </div>
+        )}
+      </div>
+    </>
   );
 };
 
