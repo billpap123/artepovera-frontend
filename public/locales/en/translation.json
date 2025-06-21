@@ -987,7 +987,9 @@
         },
         "userTypes": {
   "Artist": "Artist",
-  "Employer": "Employer"
+  "Employer": "Employer",
+  "StudentArtist": "Student Artist" 
+
 }
 ,
 "notifications": {

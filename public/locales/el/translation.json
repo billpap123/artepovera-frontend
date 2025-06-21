@@ -957,7 +957,10 @@
           },
           "userTypes": {
   "Artist": "Καλλιτεχνης",
-  "Employer": "Εργοδοτης"
+  "Employer": "Εργοδοτης",
+  "StudentArtist": "Φοιτητης Καλλιτεχνης"
+
+
 },
 "notifications": {
     "newApplication": "Ο/Η {{artistName}} έκανε αίτηση στην αγγελία σας '{{jobTitle}}'. <a>Προβολή προφίλ</a>",
