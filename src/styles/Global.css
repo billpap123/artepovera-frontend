@@ -166,15 +166,15 @@ footer a:hover {
     }
 }
 
-
-/* Add this to src/styles/Global.css */
+/* 1. Apply the filter ONLY to the main content container. */
 body.high-contrast .main-app-container {
     filter: invert(1) hue-rotate(180deg);
-    /* It's also good practice to set a solid background for the container */
-    background: #000;
+    background: #000; /* Ensures a consistent black background */
   }
   
-  /* 2. Re-invert elements inside the container that should NOT be inverted. */
+  /* 2. Re-invert elements that should appear normal. 
+        This is the key fix for your login/register pages.
+  */
   body.high-contrast .main-app-container img,
   body.high-contrast .main-app-container video,
   body.high-contrast .main-app-container input,
@@ -183,13 +183,14 @@ body.high-contrast .main-app-container {
     filter: invert(1) hue-rotate(180deg);
   }
   
-  /* 3. Your existing focus styles (which are correct and should be kept). */
+  /* 3. Keep your specific focus styles for high-contrast mode. */
   body.high-contrast .main-app-container input:focus,
   body.high-contrast .main-app-container textarea:focus,
-  body.high-coast .main-app-container select:focus {
+  body.high-contrast .main-app-container select:focus {
      box-shadow: 0 0 8px 3px yellow;
      border-color: yellow;
   }
+  
   
   /* --- Highlight Links Mode --- */
   body.links-highlighted a {
