@@ -542,22 +542,22 @@
   
     "accessibilityMenu": {
       "ariaLabel": {
-        "openMenu": "Open Accessibility Menu"
+        "openMenu": "Open accessibility menu"
       },
-      "title": "Accessibility Tools",
+      "title": "Accessibility tools",
       "fontSize": {
-        "label": "Font Size",
-        "increaseAriaLabel": "Increase Font Size",
-        "decreaseAriaLabel": "Decrease Font Size",
-        "resetAriaLabel": "Reset Font Size"
+        "label": "Font size",
+        "increaseAriaLabel": "Increase font size",
+        "decreaseAriaLabel": "Decrease font size",
+        "resetAriaLabel": "Reset font size"
       },
       "highContrast": {
-        "label": "High Contrast",
+        "label": "High contrast",
         "on": "On",
         "off": "Off"
       },
       "highlightLinks": {
-        "label": "Highlight Links",
+        "label": "Highlight links",
         "on": "On",
         "off": "Off"
       }
@@ -703,7 +703,8 @@
     },
     "alerts": {
       "updateSuccess": "Job updated successfully!",
-      "postSuccess": "Job posted successfully!"
+      "postSuccess": "Job posted successfully!",
+      "jobPosted":"Job posted successfully!"
     },
     "categories": {
       "Dancer": "Dancer",
