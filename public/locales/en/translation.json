@@ -539,6 +539,30 @@
       "loadFailed": "Could not load your applications. please try again later."
     }
   },
+  
+    "accessibilityMenu": {
+      "ariaLabel": {
+        "openMenu": "Open Accessibility Menu"
+      },
+      "title": "Accessibility Tools",
+      "fontSize": {
+        "label": "Font Size",
+        "increaseAriaLabel": "Increase Font Size",
+        "decreaseAriaLabel": "Decrease Font Size",
+        "resetAriaLabel": "Reset Font Size"
+      },
+      "highContrast": {
+        "label": "High Contrast",
+        "on": "On",
+        "off": "Off"
+      },
+      "highlightLinks": {
+        "label": "Highlight Links",
+        "on": "On",
+        "off": "Off"
+      }
+    
+  },
   "portfolioPage": {
     "header": {
       "myPortfolio": "My portfolio",
