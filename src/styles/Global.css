@@ -1,3 +1,6 @@
+/* src/styles/Global.css */
+/* --- THIS IS THE COMPLETE, CORRECTED FILE --- */
+
 /* =======================
    Artepovera Global Styles
    ======================= */
@@ -99,7 +102,6 @@ input:focus, textarea:focus, select:focus {
     margin: 0 1rem;
 }
 
-
 /* Cards */
 .card {
     border: 1px solid var(--charcoal-gray);
@@ -166,36 +168,41 @@ footer a:hover {
     }
 }
 
+/* ================================== */
+/* --- Accessibility Rules Section --- */
+/* ================================== */
+
+/* --- High Contrast Mode --- */
+
 /* 1. Apply the filter ONLY to the main content container. */
 body.high-contrast .main-app-container {
-    filter: invert(1) hue-rotate(180deg);
-    background: #000; /* Ensures a consistent black background */
-  }
-  
-  /* 2. Re-invert elements that should appear normal. 
-        This is the key fix for your login/register pages.
-  */
-  body.high-contrast .main-app-container img,
-  body.high-contrast .main-app-container video,
-  body.high-contrast .main-app-container input,
-  body.high-contrast .main-app-container textarea,
-  body.high-contrast .main-app-container select {
-    filter: invert(1) hue-rotate(180deg);
-  }
-  
-  /* 3. Keep your specific focus styles for high-contrast mode. */
-  body.high-contrast .main-app-container input:focus,
-  body.high-contrast .main-app-container textarea:focus,
-  body.high-contrast .main-app-container select:focus {
-     box-shadow: 0 0 8px 3px yellow;
-     border-color: yellow;
-  }
-  
-  
-  /* --- Highlight Links Mode --- */
-  body.links-highlighted a {
-    text-decoration: underline !important;
-    background-color: yellow !important;
-    color: black !important;
-    padding: 2px 4px;
-  }
+  filter: invert(1) hue-rotate(180deg);
+  background: #000;
+}
+
+/* 2. Re-invert elements that should NOT be inverted.
+      This will now fix your login/register page inputs.
+*/
+body.high-contrast .main-app-container img,
+body.high-contrast .main-app-container video,
+body.high-contrast .main-app-container input,
+body.high-contrast .main-app-container textarea,
+body.high-contrast .main-app-container select {
+  filter: invert(1) hue-rotate(180deg);
+}
+
+/* 3. Keep your specific focus styles for high-contrast mode. */
+body.high-contrast .main-app-container input:focus,
+body.high-contrast .main-app-container textarea:focus,
+body.high-contrast .main-app-container select:focus {
+   box-shadow: 0 0 8px 3px yellow;
+   border-color: yellow;
+}
+
+/* --- Highlight Links Mode --- */
+body.links-highlighted a {
+  text-decoration: underline !important;
+  background-color: yellow !important;
+  color: black !important;
+  padding: 2px 4px;
+}
