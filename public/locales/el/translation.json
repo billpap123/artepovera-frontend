@@ -727,7 +727,7 @@
       "loading": "Φόρτωση..."
     },
     "header": {
-      "studentBadge": " (φοιτητής)",
+      "studentBadge": " φοιτητης",
       "reviews_one": "{{count}} αξιολόγηση ",
       "reviews_other": "{{count}} αξιολογήσεις "
     },

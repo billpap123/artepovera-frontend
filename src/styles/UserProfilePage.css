@@ -23,16 +23,19 @@ width: 700px;
 }
 .student-badge-public {
   display: inline-block;
-  margin-left: 10px;
-  padding: 3px 10px;
-  background-color: var(--muted-gold, #D4AF37); /* Or your preferred highlight color */
-  color: var(--charcoal-gray, #2C2C2C);
-  border-radius: 12px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  vertical-align: middle; /* Helps align it nicely with the text */
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+    background-color: var(--light-beige, #E0D7C6);
+    color: var(--dark-gray, #444444);
+    padding: 6px 12px;
+    border-radius: 15px;
+    margin-bottom: 15px;
+    font-weight: 600;
+    font-size: .75rem;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    border: 1px solid var(--terracotta-red, #C96A50);
+    white-space: nowrap;
+    box-shadow: 0 1px 3px #0000001a;
+    text-align: center;
 }
 
 
