@@ -206,3 +206,8 @@ body.links-highlighted a {
   color: black !important;
   padding: 2px 4px;
 }
+
+body.high-contrast {               /* ακυρώνει το κρυφό flex */
+    display:block !important;
+    flex:none !important;
+}
