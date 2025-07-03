@@ -140,6 +140,24 @@ body {
   align-items: center;
   margin-bottom: .5rem;
 }
+.section-header2 {
+
+  display: flex
+  ;
+      justify-content: space-between;
+      align-items: center;
+      /* 3. Vertically aligns everything in the middle */
+    
+      flex-wrap: wrap;
+      /* Allows items to wrap on very small screens */
+    
+      gap: 1rem;
+      /* Adds space between items if they wrap */
+    
+      margin-bottom: 1.5rem;
+      /* Adds space below the header */
+    
+  }
 
 .profile-title {
   font-size: 1.8rem;

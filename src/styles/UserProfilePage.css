@@ -362,7 +362,12 @@ h3 {font-size: 19.2px !important;}
   text-align: left;
 
 }
+.section-header2 {
 
+display: flex
+;
+    justify-content: space-between;
+}
 .section-header {
 
   display: flex;

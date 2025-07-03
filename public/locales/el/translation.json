@@ -1,5 +1,7 @@
 {
   "artistProfile": {
+    "avgRating": "μέση βαθμ.",
+
     "noReviewsYet": "Δεν υπάρχουν αξιολογήσεις",
     "projectAvg": "μέση βαθμ.",
     "interactionAvg": "μέση βαθμ.",
@@ -771,7 +773,6 @@
       "posting": "Δημοσίευση...",
       "loadingViewpoints": "Φόρτωση απόψεων...",
       "noViewpoints": "Δεν υπάρχουν ακόμη καλλιτεχνικές απόψεις για τον/την {{name}}.",
-      "avgRating": "μέση βαθμ.",
       "postedOn":"Δημοσιεύτηκε την"
 
     },
