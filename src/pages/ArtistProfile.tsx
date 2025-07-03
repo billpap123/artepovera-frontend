@@ -14,20 +14,20 @@ import { Upload, Trash2 } from 'lucide-react';
 // --- Interfaces and Helper Components ---
 interface Reviewer { user_id: number; fullname: string; profile_picture: string | null; }
 interface ReviewData {
-   review_id: number;
-    overall_rating: number | null;
-    specific_answers?: {
-      dealMade?: 'yes' | 'no';
-    
-     communicationRating_noDeal?: number;
-      noDealPrimaryReason?: string;
+  review_id: number;
+  overall_rating: number | null;
+  specific_answers?: {
+    dealMade?: 'yes' | 'no';
 
-      comment?: string;
-    };
-   created_at: string;
-   reviewer?: Reviewer;
-  }
-  const DisplayStars = ({ rating }: { rating: number | null }) => {
+    communicationRating_noDeal?: number;
+    noDealPrimaryReason?: string;
+
+    comment?: string;
+  };
+  created_at: string;
+  reviewer?: Reviewer;
+}
+const DisplayStars = ({ rating }: { rating: number | null }) => {
   if (rating === null || typeof rating !== 'number' || rating <= 0) return null;
   const fullStars = Math.floor(rating);
   const halfStar = Math.round(rating * 2) % 2 !== 0 ? 1 : 0;
@@ -85,58 +85,58 @@ const ArtistProfile: React.FC = () => {
   const [reviews, setReviews] = useState<ReviewData[]>([]);    // ✅
 
   // ─── HELPERS ───────────────────────────────────────────────────────────
-const average = (nums: number[]) =>
-  nums.length ? nums.reduce((s, n) => s + n, 0) / nums.length : null;
+  const average = (nums: number[]) =>
+    nums.length ? nums.reduce((s, n) => s + n, 0) / nums.length : null;
 
-// ─── MEMOS ─────────────────────────────────────────────────────────────
-const projectReviews = useMemo(
-  () =>
-    reviews.filter(
-      (r: ReviewData) =>
-        r.specific_answers?.dealMade !== 'no' &&
-        typeof r.overall_rating === 'number'
-    ),
-  [reviews]
-);
-
-const interactionReviews = useMemo(
-  () =>
-    reviews.filter(
-      (r: ReviewData) =>
-        r.specific_answers?.dealMade === 'no' &&
-        typeof r.specific_answers?.communicationRating_noDeal === 'number'
-    ),
-  [reviews]
-);
-
-const avgProject = useMemo(
-  () => average(projectReviews.map(r => r.overall_rating!)),
-  [projectReviews]
-);
-
-const avgInteraction = useMemo(
-  () =>
-    average(
-      interactionReviews.map(
-        r => r.specific_answers!.communicationRating_noDeal!
-      )
-    ),
-  [interactionReviews]
-);
-
-/* τελικός μέσος όρος από όσους υπολογισμούς υπάρχουν */
-const grandAverage = useMemo(() => {
-  const arr = [avgProject, avgInteraction].filter(
-    (n): n is number => typeof n === 'number'
+  // ─── MEMOS ─────────────────────────────────────────────────────────────
+  const projectReviews = useMemo(
+    () =>
+      reviews.filter(
+        (r: ReviewData) =>
+          r.specific_answers?.dealMade !== 'no' &&
+          typeof r.overall_rating === 'number'
+      ),
+    [reviews]
   );
-  return average(arr);
-}, [avgProject, avgInteraction]);
-  
+
+  const interactionReviews = useMemo(
+    () =>
+      reviews.filter(
+        (r: ReviewData) =>
+          r.specific_answers?.dealMade === 'no' &&
+          typeof r.specific_answers?.communicationRating_noDeal === 'number'
+      ),
+    [reviews]
+  );
+
+  const avgProject = useMemo(
+    () => average(projectReviews.map(r => r.overall_rating!)),
+    [projectReviews]
+  );
+
+  const avgInteraction = useMemo(
+    () =>
+      average(
+        interactionReviews.map(
+          r => r.specific_answers!.communicationRating_noDeal!
+        )
+      ),
+    [interactionReviews]
+  );
+
+  /* τελικός μέσος όρος από όσους υπολογισμούς υπάρχουν */
+  const grandAverage = useMemo(() => {
+    const arr = [avgProject, avgInteraction].filter(
+      (n): n is number => typeof n === 'number'
+    );
+    return average(arr);
+  }, [avgProject, avgInteraction]);
+
   const [reviewsLoading, setReviewsLoading] = useState<boolean>(true);
 
   const navigate = useNavigate();
   const BACKEND_URL = import.meta.env.VITE_API_URL || "http://localhost:50001";
-  
+
   const getImageUrl = (path?: string | null): string => {
     if (!path) return '/default-profile.png';
     if (path.startsWith('http')) return path;
@@ -216,9 +216,9 @@ const grandAverage = useMemo(() => {
       setAccountActionLoading(false);
     }
   };
-  
 
-  
+
+
   const handlePasswordChange = async (e: React.FormEvent) => {
     e.preventDefault();
     if (newPassword !== confirmNewPassword) {
@@ -248,7 +248,7 @@ const grandAverage = useMemo(() => {
       setAccountActionLoading(false);
     }
   };
-  
+
   const handleDeleteAccount = async () => {
     const confirmationText = t('artistProfile.account.deleteConfirmText');
     if (window.confirm(confirmationText)) {
@@ -259,7 +259,7 @@ const grandAverage = useMemo(() => {
         try {
           const response = await axios.delete(`${BACKEND_URL}/api/users/me`, {
             headers: { Authorization: `Bearer ${token}` },
-            data: { password: password } 
+            data: { password: password }
           });
           alert(response.data.message);
           setUserId(null); setUserType(null); setFullname(null); setArtistId(null);
@@ -364,7 +364,7 @@ const grandAverage = useMemo(() => {
       setCvProcessing(false);
     }
   };
-  
+
   const handleCvDownload = async (url: string | null) => {
     if (!url) return;
     try {
@@ -407,7 +407,7 @@ const grandAverage = useMemo(() => {
   //const interactionReviews = useMemo(() => reviews.filter((r: ReviewData) => r.specific_answers?.dealMade === 'no'), [reviews]);
 
   if (loading) { return (<> <Navbar /> <div className="profile-container artist-profile-container loading-profile"> <p>Loading artist profile...</p> </div> </>); }
-  
+
   if (error && !isEditing && !saving && !deleting && !cvProcessing) {
     return (
       <>
@@ -425,73 +425,58 @@ const grandAverage = useMemo(() => {
       <div className="profile-container artist-profile-container">
 
         <div className="profile-header">
-            <div className="profile-picture-wrapper">
-              <img src={getImageUrl(profilePicture)} alt="Artist profile" className="profile-picture" />
-              {isEditing && (
-                <div className="edit-picture-options flex items-center gap-3">
-                  <label
-                    htmlFor="profilePicUpload"
-                    className="flex items-center gap-2 cursor-pointer bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200 ease-in-out transform hover:scale-105"
+          <div className="profile-picture-wrapper">
+            <img src={getImageUrl(profilePicture)} alt="Artist profile" className="profile-picture" />
+            {isEditing && (
+              <div className="edit-picture-options flex items-center gap-3">
+                <label
+                  htmlFor="profilePicUpload"
+                  className="flex items-center gap-2 cursor-pointer bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200 ease-in-out transform hover:scale-105"
+                >
+                  <Upload size={16} />
+                  {t('artistProfile.change')}
+                </label>
+                <input
+                  id="profilePicUpload"
+                  type="file"
+                  accept="image/png, image/jpeg"
+                  onChange={handleProfilePictureChange}
+                  className="hidden"
+                />
+                {profilePicture && (
+                  <button
+                    type="button"
+                    className="flex items-center gap-2 delete-btn bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200 ease-in-out transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                    onClick={handleDeletePicture}
+                    disabled={deleting || saving || cvProcessing}
                   >
-                    <Upload size={16} />
-                    {t('artistProfile.change')}
-                  </label>
-                  <input
-                    id="profilePicUpload"
-                    type="file"
-                    accept="image/png, image/jpeg"
-                    onChange={handleProfilePictureChange}
-                    className="hidden"
-                  />
-                  {profilePicture && (
-                    <button
-                      type="button"
-                      className="flex items-center gap-2 delete-btn bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200 ease-in-out transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
-                      onClick={handleDeletePicture}
-                      disabled={deleting || saving || cvProcessing}
-                    >
-                      <Trash2 size={16} />
-                      {deleting ? t('artistProfile.removing') : t('artistProfile.remove')}
-                    </button>
-                  )}
-                </div>
+                    <Trash2 size={16} />
+                    {deleting ? t('artistProfile.removing') : t('artistProfile.remove')}
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+          <div className="profile-summary">
+            <h3 className="profile-name">{profileUserName || 'Artist Name'}</h3>
+            {isStudent && (<span className="student-badge">{t('artistProfile.studentBadge')}</span>)}
+            <div className="average-rating-display">
+              {reviewsLoading ? (
+                <span>{t('artistProfile.loadingRating')}</span>
+              ) : grandAverage !== null ? (
+                <>
+                  <DisplayStars rating={grandAverage} />
+                  <span className="rating-value">{grandAverage.toFixed(1)}</span>
+                </>
+              ) : (
+                <span className="no-rating">{t('artistProfile.noReviewsYet')}</span>
               )}
             </div>
-            <div className="profile-summary">
-                 <h3 className="profile-name">{profileUserName || 'Artist Name'}</h3>
-                 {isStudent && (<span className="student-badge">{t('artistProfile.studentBadge')}</span>)}
-                 <div className="average-rating-display">
-  {reviewsLoading ? (
-    <span>{t('artistProfile.loadingRating')}</span>
-  ) : grandAverage !== null ? (
-    <>
-      <DisplayStars rating={grandAverage} />
-      <span className="rating-value">{grandAverage.toFixed(1)}</span>
-    </>
-  ) : (
-    <span className="no-rating">{t('artistProfile.noReviewsYet')}</span>
-  )}
-</div>
-
-{/* δείχνεις και τα δύο επιμέρους */}
-<div className="split-averages">
-  <div className="avg-box">
-    <DisplayStars rating={avgProject} />
-    <span>
-      {avgProject?.toFixed(1) ?? '–'} {t('artistProfile.projectAvg')}
-    </span>
-  </div>
-  <div className="avg-box">
-    <DisplayStars rating={avgInteraction} />
-    <span>
-      {avgInteraction?.toFixed(1) ?? '–'} {t('artistProfile.interactionAvg')}
-    </span>
-  </div>
-</div>
 
 
-                 {!isEditing && ( <button className="edit-btn" onClick={handleEditToggle}>{t('artistProfile.editProfile')}</button> )}
-            </div>
+
+            {!isEditing && (<button className="edit-btn" onClick={handleEditToggle}>{t('artistProfile.editProfile')}</button>)}
+          </div>
         </div>
 
         {error && isEditing && <p className="error-message inline-error">{error}</p>}
@@ -502,25 +487,25 @@ const grandAverage = useMemo(() => {
               <div className="profile-section">
                 <h4>{t('artistProfile.shortDescription')}</h4>
                 <div className="bio-text markdown-content">
-                <ReactMarkdown
-      remarkPlugins={[remarkGfm]}
-      // --- THIS IS THE FIX ---
-      // We are telling ReactMarkdown how to render all link (<a>) elements.
-      components={{
-        a: (props) => (
-          <a 
-            {...props} // This keeps all original properties like 'href'
-            target="_blank" // This tells the browser to open the link in a new tab
-            rel="noopener noreferrer" // Important for security and performance
-          >
-            {props.children} 
-          </a>
-        )
-      }}
-      // --- END OF FIX ---
-    >
-      {bio || t('artistProfile.noBio')}
-    </ReactMarkdown>
+                  <ReactMarkdown
+                    remarkPlugins={[remarkGfm]}
+                    // --- THIS IS THE FIX ---
+                    // We are telling ReactMarkdown how to render all link (<a>) elements.
+                    components={{
+                      a: (props) => (
+                        <a
+                          {...props} // This keeps all original properties like 'href'
+                          target="_blank" // This tells the browser to open the link in a new tab
+                          rel="noopener noreferrer" // Important for security and performance
+                        >
+                          {props.children}
+                        </a>
+                      )
+                    }}
+                  // --- END OF FIX ---
+                  >
+                    {bio || t('artistProfile.noBio')}
+                  </ReactMarkdown>
 
                 </div>
               </div>
@@ -537,127 +522,170 @@ const grandAverage = useMemo(() => {
                 )}
               </div>
 
-              <div className="reviews-section profile-section">
-                     <h4>{t('artistProfile.projectReviews', { count: completedReviews.length })}</h4>
-                     {reviewsLoading ? ( <p>Loading...</p> ) : completedReviews.length > 0 ? ( <div className="reviews-list"> {completedReviews.map((review: ReviewData) => (
-                        <div key={review.review_id} className="review-item">
-                            <div className="review-header">
-                                <img src={getImageUrl(review.reviewer?.profile_picture)} alt={review.reviewer?.fullname || t('artistProfile.anonymous')} className="reviewer-pic"/>
-                                <div className="reviewer-info"> <strong>{review.reviewer?.fullname || t('artistProfile.anonymous')}</strong> <span className="review-date">{formatDate(review.created_at)}</span> </div>
-                                <div className="review-stars"> <DisplayStars rating={review.overall_rating} /> </div>
-                            </div>
-                            {review.specific_answers?.comment && ( <p className="review-comment">"{review.specific_answers.comment}"</p> )}
-                        </div>
-                     ))} </div>
-                     ) : ( <p className="no-reviews">{t('artistProfile.noProjectReviews')}</p> )}
-              </div>
-
-              {/* ─────────────────────────  ΑΞΙΟΛΟΓΗΣΕΙΣ ΑΛΛΗΛΕΠΙΔΡΑΣΗΣ  ───────────────────────── */}
+              {/* ─────────────────────────  PROJECT REVIEWS  ───────────────────────── */}
 <div className="reviews-section profile-section">
+
+{/* header με τίτλο + μέσο όρο έργου */}
 <div className="section-header">
   <h4>
-    {t('artistProfile.interactionFeedback', { count: interactionReviews.length })}
+    {t('artistProfile.projectReviews', { count: projectReviews.length })}
   </h4>
 
-  {interactionReviews.length > 0 && (
+  {/* αν υπάρχει τουλάχιστον ένα review έργου */}
+  {avgProject !== null && projectReviews.length > 0 && (
     <div className="average-rating">
-      <DisplayStars rating={avgInteraction} />
-      <span>{avgInteraction!.toFixed(1)} {t('artistProfile.interactionAvg')}</span>
+      <DisplayStars rating={avgProject} />
+      <span>
+        {avgProject.toFixed(1)} {t('artistProfile.avgRating')}
+      </span>
     </div>
   )}
 </div>
 
+{/* λίστα κριτικών */}
+{reviewsLoading ? (
+  <p>Loading…</p>
+) : projectReviews.length > 0 ? (
+  <div className="reviews-list">
+    {projectReviews.map((review: ReviewData) => (
+      <div key={review.review_id} className="review-item">
+        <div className="review-header">
+          <img
+            src={getImageUrl(review.reviewer?.profile_picture)}
+            alt={review.reviewer?.fullname || t('artistProfile.anonymous')}
+            className="reviewer-pic"
+          />
 
-  {reviewsLoading ? (
-    <p>{t('artistProfile.loadingFeedback')}</p>
-  ) : interactionReviews.length > 0 ? (
-    <div className="reviews-list">
-      {interactionReviews.map((review: ReviewData) => (
-        <div key={review.review_id} className="review-item interaction-review">
-          <div className="review-header">
-            <img
-              src={getImageUrl(review.reviewer?.profile_picture)}
-              alt={review.reviewer?.fullname || t('artistProfile.anonymous')}
-              className="reviewer-pic"
-            />
-            <div className="reviewer-info">
-              <strong>{review.reviewer?.fullname || t('artistProfile.anonymous')}</strong>
-              <span className="review-date">{formatDate(review.created_at)}</span>
-            </div>
+          <div className="reviewer-info">
+            <strong>{review.reviewer?.fullname || t('artistProfile.anonymous')}</strong>
+            <span className="review-date">{formatDate(review.created_at)}</span>
           </div>
 
-          <div className="review-comment">
-            {review.specific_answers?.noDealPrimaryReason && (
-              <p className="interaction-reason">
-                <strong>{t('artistProfile.reason')}</strong>{' '}
-                {review.specific_answers.noDealPrimaryReason}
-              </p>
-            )}
-
-            {review.specific_answers?.comment && (
-              <p>
-                <strong>{t('artistProfile.comment')}</strong> "
-                {review.specific_answers.comment}"
-              </p>
-            )}
+          <div className="review-stars">
+            <DisplayStars rating={review.overall_rating} />
           </div>
         </div>
-      ))}
-    </div>
-  ) : (
-    <p className="no-reviews">{t('artistProfile.noInteractionFeedback')}</p>
-  )}
+
+        {review.specific_answers?.comment && (
+          <p className="review-comment">
+            “{review.specific_answers.comment}”
+          </p>
+        )}
+      </div>
+    ))}
+  </div>
+) : (
+  <p className="no-reviews">{t('artistProfile.noProjectReviews')}</p>
+)}
 </div>
+
+
+              {/* ─────────────────────────  ΑΞΙΟΛΟΓΗΣΕΙΣ ΑΛΛΗΛΕΠΙΔΡΑΣΗΣ  ───────────────────────── */}
+              <div className="reviews-section profile-section">
+                <div className="section-header">
+                  <h4>
+                    {t('artistProfile.interactionFeedback', { count: interactionReviews.length })}
+                  </h4>
+
+                  {interactionReviews.length > 0 && (
+                    <div className="average-rating">
+                      <DisplayStars rating={avgInteraction} />
+                      <span>{avgInteraction!.toFixed(1)} {t('artistProfile.interactionAvg')}</span>
+                    </div>
+                  )}
+                </div>
+
+
+                {reviewsLoading ? (
+                  <p>{t('artistProfile.loadingFeedback')}</p>
+                ) : interactionReviews.length > 0 ? (
+                  <div className="reviews-list">
+                    {interactionReviews.map((review: ReviewData) => (
+                      <div key={review.review_id} className="review-item interaction-review">
+                        <div className="review-header">
+                          <img
+                            src={getImageUrl(review.reviewer?.profile_picture)}
+                            alt={review.reviewer?.fullname || t('artistProfile.anonymous')}
+                            className="reviewer-pic"
+                          />
+                          <div className="reviewer-info">
+                            <strong>{review.reviewer?.fullname || t('artistProfile.anonymous')}</strong>
+                            <span className="review-date">{formatDate(review.created_at)}</span>
+                          </div>
+                        </div>
+
+                        <div className="review-comment">
+                          {review.specific_answers?.noDealPrimaryReason && (
+                            <p className="interaction-reason">
+                              <strong>{t('artistProfile.reason')}</strong>{' '}
+                              {review.specific_answers.noDealPrimaryReason}
+                            </p>
+                          )}
+
+                          {review.specific_answers?.comment && (
+                            <p>
+                              <strong>{t('artistProfile.comment')}</strong> "
+                              {review.specific_answers.comment}"
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="no-reviews">{t('artistProfile.noInteractionFeedback')}</p>
+                )}
+              </div>
 
             </>
 
           ) : (
             <div className="edit-form">
-                {/* --- PROFILE EDITING --- */}
-                <div className="form-field-group">
-                    <label htmlFor="artistBio">{t('artistProfile.shortDescription')}</label>
-                    <textarea id="artistBio" value={newBio} onChange={(e) => setNewBio(e.target.value)} rows={5} className="bio-input" />
-                </div>
-                <div className="form-field-group cv-edit-section">
-                    <label htmlFor="cvUpload" className="cv-section-title">{t('artistProfile.updateCvTitle')}</label>
-                    <label htmlFor="cvUpload" className="cv-upload-label action-btn">{newCvFile ? `Selected: ${newCvFile.name.substring(0, 25)}${newCvFile.name.length > 25 ? '...' : ''}` : (cvUrl ? t('artistProfile.changeCvFile') : t('artistProfile.chooseCvFile'))}</label>
-                    <input id="cvUpload" type="file" accept="application/pdf" onChange={handleCvFileChange} style={{ display: 'none' }} className="file-input-hidden" />
-                    {newCvFile && (<button type="button" onClick={handleCvUpload} disabled={cvProcessing || saving || deleting} className="action-btn upload-cv-btn" style={{ marginTop: '10px' }}> {cvProcessing ? t('artistProfile.uploadingCv') : t('artistProfile.uploadSelectedCv')} </button>)}
-                    {cvUrl && (<div className="current-cv-display"><span>{t('artistProfile.currentCv')} <FaFilePdf className="pdf-icon-inline" /><button onClick={() => handleCvDownload(cvUrl)} className="cv-link-inline">Download</button></span>{!newCvFile && (<button type="button" onClick={handleCvDelete} disabled={cvProcessing || saving || deleting} className="action-btn delete-cv-btn danger"> {cvProcessing ? t('artistProfile.removingCv') : t('artistProfile.removeCv')} </button>)}</div>)}
-                    {!cvUrl && !newCvFile && <p className="no-cv-message-edit">{t('artistProfile.noCvEdit')}</p>}
-                </div>
-                <div className="btn-row form-actions">
-                    <button className="save-btn submit-btn" onClick={handleSaveChanges} disabled={saving || deleting || cvProcessing || accountActionLoading}> {saving ? t('artistProfile.savingProfile') : t('artistProfile.saveChanges')} </button>
-                </div>
+              {/* --- PROFILE EDITING --- */}
+              <div className="form-field-group">
+                <label htmlFor="artistBio">{t('artistProfile.shortDescription')}</label>
+                <textarea id="artistBio" value={newBio} onChange={(e) => setNewBio(e.target.value)} rows={5} className="bio-input" />
+              </div>
+              <div className="form-field-group cv-edit-section">
+                <label htmlFor="cvUpload" className="cv-section-title">{t('artistProfile.updateCvTitle')}</label>
+                <label htmlFor="cvUpload" className="cv-upload-label action-btn">{newCvFile ? `Selected: ${newCvFile.name.substring(0, 25)}${newCvFile.name.length > 25 ? '...' : ''}` : (cvUrl ? t('artistProfile.changeCvFile') : t('artistProfile.chooseCvFile'))}</label>
+                <input id="cvUpload" type="file" accept="application/pdf" onChange={handleCvFileChange} style={{ display: 'none' }} className="file-input-hidden" />
+                {newCvFile && (<button type="button" onClick={handleCvUpload} disabled={cvProcessing || saving || deleting} className="action-btn upload-cv-btn" style={{ marginTop: '10px' }}> {cvProcessing ? t('artistProfile.uploadingCv') : t('artistProfile.uploadSelectedCv')} </button>)}
+                {cvUrl && (<div className="current-cv-display"><span>{t('artistProfile.currentCv')} <FaFilePdf className="pdf-icon-inline" /><button onClick={() => handleCvDownload(cvUrl)} className="cv-link-inline">Download</button></span>{!newCvFile && (<button type="button" onClick={handleCvDelete} disabled={cvProcessing || saving || deleting} className="action-btn delete-cv-btn danger"> {cvProcessing ? t('artistProfile.removingCv') : t('artistProfile.removeCv')} </button>)}</div>)}
+                {!cvUrl && !newCvFile && <p className="no-cv-message-edit">{t('artistProfile.noCvEdit')}</p>}
+              </div>
+              <div className="btn-row form-actions">
+                <button className="save-btn submit-btn" onClick={handleSaveChanges} disabled={saving || deleting || cvProcessing || accountActionLoading}> {saving ? t('artistProfile.savingProfile') : t('artistProfile.saveChanges')} </button>
+              </div>
 
-                {/* --- NEW ACCOUNT SETTINGS SECTION --- */}
-                <div className="account-settings-section">
-                    <hr className="section-divider" />
-                    <h4>{t('artistProfile.account.title')}</h4>
+              {/* --- NEW ACCOUNT SETTINGS SECTION --- */}
+              <div className="account-settings-section">
+                <hr className="section-divider" />
+                <h4>{t('artistProfile.account.title')}</h4>
 
 
-                    {/* Change Password Form */}
-                    <form onSubmit={handlePasswordChange} className="account-form">
-                        <label className="account-form-label"><FaKey /> {t('artistProfile.account.changePassword')}</label>
-                        <div className="form-field-group">
-                            <input type="password" placeholder={t('artistProfile.account.currentPasswordPlaceholder')} value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} required />
-                            <input type="password" placeholder={t('artistProfile.account.newPasswordPlaceholder')} value={newPassword} onChange={(e) => setNewPassword(e.target.value)} required />
-                            <input type="password" placeholder={t('artistProfile.account.confirmNewPasswordPlaceholder')} value={confirmNewPassword} onChange={(e) => setConfirmNewPassword(e.target.value)} required />
-                        </div>
-                        <button type="submit" className="action-btn" disabled={accountActionLoading || saving}>{t('artistProfile.account.updatePasswordButton')}</button>
-                    </form>
-                    
-                    {/* Delete Account Section */}
-                    <div className="account-form delete-account-section">
-                        <label className="account-form-label danger-text"><FaExclamationTriangle /> {t('artistProfile.account.dangerZone')}</label>
-                        <p>{t('artistProfile.account.deleteWarning')}</p>
-                        <button type="button" className="action-btn danger" onClick={handleDeleteAccount} disabled={accountActionLoading || saving}>{t('artistProfile.account.deleteAccountButton')}</button>
-                    </div>
+                {/* Change Password Form */}
+                <form onSubmit={handlePasswordChange} className="account-form">
+                  <label className="account-form-label"><FaKey /> {t('artistProfile.account.changePassword')}</label>
+                  <div className="form-field-group">
+                    <input type="password" placeholder={t('artistProfile.account.currentPasswordPlaceholder')} value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} required />
+                    <input type="password" placeholder={t('artistProfile.account.newPasswordPlaceholder')} value={newPassword} onChange={(e) => setNewPassword(e.target.value)} required />
+                    <input type="password" placeholder={t('artistProfile.account.confirmNewPasswordPlaceholder')} value={confirmNewPassword} onChange={(e) => setConfirmNewPassword(e.target.value)} required />
+                  </div>
+                  <button type="submit" className="action-btn" disabled={accountActionLoading || saving}>{t('artistProfile.account.updatePasswordButton')}</button>
+                </form>
+
+                {/* Delete Account Section */}
+                <div className="account-form delete-account-section">
+                  <label className="account-form-label danger-text"><FaExclamationTriangle /> {t('artistProfile.account.dangerZone')}</label>
+                  <p>{t('artistProfile.account.deleteWarning')}</p>
+                  <button type="button" className="action-btn danger" onClick={handleDeleteAccount} disabled={accountActionLoading || saving}>{t('artistProfile.account.deleteAccountButton')}</button>
                 </div>
+              </div>
 
-                <div className="btn-row form-actions">
-                    <button type="button" className="cancel-btn" onClick={handleEditToggle} disabled={saving || deleting || cvProcessing || accountActionLoading}> {t('artistProfile.doneEditing')} </button>
-                </div>
+              <div className="btn-row form-actions">
+                <button type="button" className="cancel-btn" onClick={handleEditToggle} disabled={saving || deleting || cvProcessing || accountActionLoading}> {t('artistProfile.doneEditing')} </button>
+              </div>
             </div>
           )}
         </div>
