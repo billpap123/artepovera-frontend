@@ -152,6 +152,11 @@
     }
   },
   "employerProfile": {
+    "avgRating": "avg rating",
+    "noReviewsYet": "No reviews yet",
+    "projectAvg": "avg rating",
+    "interactionAvg": "avg rating",
+    "avgCommunication": "avg rating",
     "altText": "Employer profile",
     "unnamed": "Employer name",
     "change": "Change",

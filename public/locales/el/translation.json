@@ -152,6 +152,12 @@
     }
   },
   "employerProfile": {
+    "avgRating": "μέση βαθμ.",
+
+    "noReviewsYet": "Δεν υπάρχουν αξιολογήσεις",
+    "projectAvg": "μέση βαθμ.",
+    "interactionAvg": "μέση βαθμ.",
+    "avgCommunication": "μέση βαθμ.",
     "altText": "Προφίλ εργοδότη",
     "unnamed": "Όνομα εργοδότη",
     "change": "Αλλαγή",
