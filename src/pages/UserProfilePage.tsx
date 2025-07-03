@@ -897,54 +897,87 @@ const UserProfilePage: React.FC = () => {
             </div>
 
             {interactionReviews.length > 0 && (
-              <div className="interaction-feedback-section profile-section-public">
-                <h4>{t('userProfilePage.content.interactionFeedback', { count: interactionReviews.length })}</h4>
-                {reviewsLoading ? (<p>{t('userProfilePage.content.loadingFeedback')}</p>)
-                  : interactionReviews.length > 0 ? (
-                    <div className="reviews-list">
-                      {interactionReviews.map((review) => {
-                        const primaryReason = review.specific_answers?.noDealPrimaryReason;
-                        const comment = review.specific_answers?.comment;
-                        const communicationRating = review.specific_answers?.communicationRating_noDeal;
+  <div className="interaction-feedback-section profile-section-public">
+    {/* ---------- section-header με τον μέσο όρο ---------- */}
+    <div className="section-header">
+      <h4>
+        {t('userProfilePage.content.interactionFeedback', {
+          count: interactionReviews.length
+        })}
+      </h4>
 
-                        return (
-                          <div key={review.review_id} className="review-item interaction-review-item">
-                            <div className="review-header">
-                              <img src={getImageUrl(review.reviewer?.profile_picture)} alt={review.reviewer?.fullname || t('userProfilePage.content.anonymous')} className="reviewer-pic" />
-                              <div className="reviewer-info">
-                                <strong>{review.reviewer?.fullname || t('userProfilePage.content.anonymous')}</strong>
-                                <span className="review-date">{formatDate(review.created_at)}</span>
-                              </div>
-                              <span className="interaction-tag">{t('userProfilePage.content.noDealTag')}</span>
-                            </div>
+      {/* Αν υπάρχει τουλάχιστον 1 review με score επικοινωνίας */}
+      {avgInteraction !== null && (
+        <div className="average-interaction-rating">
+          <DisplayStars rating={avgInteraction} />
+          <span className="rating-value">{avgInteraction.toFixed(1)}</span>
+        </div>
+      )}
+    </div>
+    {/* ---------------------------------------------------- */}
 
-                            <div className="review-comment">
-                              {communicationRating && (
-                                <div className="interaction-rating">
-                                  <strong>{t('userProfilePage.content.communicationRating', 'Communication Quality')}:</strong>
-                                  <DisplayStars rating={communicationRating} />
-                                </div>
-                              )}
-                              {primaryReason && (
-                                <p className="interaction-reason">
-                                  <strong>{t('userProfilePage.content.reason')}</strong> {primaryReason}
-                                </p>
-                              )}
-                              {comment && (
-                                <p>
-                                  <strong>{t('userProfilePage.content.comment')}</strong> "{comment}"
-                                </p>
-                              )}
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  ) : (
-                    <p className="no-reviews">{t('userProfilePage.content.noInteractionFeedback')}</p>
-                  )}
+    {reviewsLoading ? (
+      <p>{t('userProfilePage.content.loadingFeedback')}</p>
+    ) : interactionReviews.length > 0 ? (
+      <div className="reviews-list">
+        {interactionReviews.map((review) => {
+          const {
+            noDealPrimaryReason: primaryReason,
+            comment,
+            communicationRating_noDeal: communicationRating
+          } = review.specific_answers ?? {};
+
+          return (
+            <div key={review.review_id} className="review-item interaction-review-item">
+              <div className="review-header">
+                <img
+                  src={getImageUrl(review.reviewer?.profile_picture)}
+                  alt={review.reviewer?.fullname || t('userProfilePage.content.anonymous')}
+                  className="reviewer-pic"
+                />
+                <div className="reviewer-info">
+                  <strong>{review.reviewer?.fullname || t('userProfilePage.content.anonymous')}</strong>
+                  <span className="review-date">{formatDate(review.created_at)}</span>
+                </div>
+                <span className="interaction-tag">
+                  {t('userProfilePage.content.noDealTag')}
+                </span>
               </div>
-            )}
+
+              <div className="review-comment">
+                {communicationRating && (
+                  <div className="interaction-rating">
+                    <strong>
+                      {t('userProfilePage.content.communicationRating', 'Communication Quality')}:
+                    </strong>
+                    <DisplayStars rating={communicationRating} />
+                  </div>
+                )}
+
+                {primaryReason && (
+                  <p className="interaction-reason">
+                    <strong>{t('userProfilePage.content.reason')}</strong> {primaryReason}
+                  </p>
+                )}
+
+                {comment && (
+                  <p>
+                    <strong>{t('userProfilePage.content.comment')}</strong> “{comment}”
+                  </p>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    ) : (
+      <p className="no-reviews">
+        {t('userProfilePage.content.noInteractionFeedback')}
+      </p>
+    )}
+  </div>
+)}
+
             {isArtistProfile && (
               <div className="artist-comments-section profile-section-public">
                 <div className="section-header">
