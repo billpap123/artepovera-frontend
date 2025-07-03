@@ -680,16 +680,18 @@ const UserProfilePage: React.FC = () => {
                   : t(`userTypes.${profile.user_type}`)
                 }
               </p>
-              <div className="overall-rating-display">
-                {grandAverage !== null ? (
-                  <>
-                    <DisplayStars rating={grandAverage} />
-                    <span className="rating-value">{grandAverage.toFixed(1)}</span>
-                  </>
-                ) : (
-                  <span className="no-rating">–</span>
-                )}
-              </div>
+              <div className="average-rating-display">
+    {reviewsLoading ? (
+      <span>{t('artistProfile.loadingRating')}</span>
+    ) : grandAverage !== null ? (
+      <>
+        <DisplayStars rating={grandAverage} />
+        <span className="rating-value">{grandAverage.toFixed(1)}</span>
+      </>
+    ) : (
+      <span className="no-rating">{t('artistProfile.noReviewsYet')}</span>
+    )}
+  </div>
 
 
 
@@ -854,17 +856,18 @@ const UserProfilePage: React.FC = () => {
               </div>
             )}
 
-            <div className="reviews-section profile-section-public">
+<div className="reviews-section profile-section">
+  <div className="section-header">
+    <h4>{t('artistProfile.interactionFeedback', { count: interactionReviews.length })}</h4>
 
-              <div className="section-header">
-                <h4>{t('userProfilePage.content.projectReviews', { count: completedReviews.length })}</h4>
-                {averageRating !== null && reviewCount > 0 && (
-                  <div className="average-rating">
-                    <DisplayStars rating={averageRating} />
-                    <span>{averageRating.toFixed(1)} {t('userProfilePage.content.avgRating')}</span>
-                  </div>
-                )}
-              </div>
+    {avgInteraction !== null && interactionReviews.length > 0 && (
+      <div className="average-rating">
+        <DisplayStars rating={avgInteraction} />
+        <span>{avgInteraction.toFixed(1)} {t('artistProfile.avgRating')}</span>
+      </div>
+    )}
+  </div>
+
 
               {reviewsLoading ? (
                 <p>{t('userProfilePage.content.loadingReviews')}</p>

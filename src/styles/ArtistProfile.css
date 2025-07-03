@@ -125,6 +125,21 @@ body {
   padding: 50px;
   margin: 120px;
 }
+/* ArtistProfile.css */
+.average-rating {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: .9rem;
+  color: #555;
+}
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: .5rem;
+}
 
 .profile-title {
   font-size: 1.8rem;
