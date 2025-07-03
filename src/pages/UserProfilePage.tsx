@@ -178,6 +178,36 @@ const UserProfilePage: React.FC = () => {
   const [averageRating, setAverageRating] = useState<number | null>(null);
   const [reviewCount, setReviewCount] = useState<number>(0);
   const [reviews, setReviews] = useState<ReviewData[]>([]);
+  const average = (nums: number[]) =>
+    nums.length ? nums.reduce((s, n) => s + n, 0) / nums.length : null;
+  
+  // --- NEW memos ---
+  const projectReviews = React.useMemo(
+    () => reviews.filter(r => r.specific_answers?.dealMade !== 'no' && typeof r.overall_rating === 'number'),
+    [reviews]
+  );
+  
+  const interactionReviews = React.useMemo(
+    () => reviews.filter(r => r.specific_answers?.dealMade === 'no'
+      && typeof r.specific_answers?.communicationRating_noDeal === 'number'),
+    [reviews]
+  );
+  
+  const avgProject = React.useMemo(
+    () => average(projectReviews.map(r => r.overall_rating!)),
+    [projectReviews]
+  );
+  
+  const avgInteraction = React.useMemo(
+    () => average(interactionReviews.map(r => r.specific_answers!.communicationRating_noDeal!)),
+    [interactionReviews]
+  );
+  
+  // απλός (όχι ζυγισμένος) grand-avg
+  const grandAverage = React.useMemo(() => {
+    const arr = [avgProject, avgInteraction].filter(n => n !== null) as number[];
+    return average(arr);
+  }, [avgProject, avgInteraction]);
   const [reviewsLoading, setReviewsLoading] = useState<boolean>(true);
 
   const [isRatingFormOpen, setIsRatingFormOpen] = useState(false);
@@ -633,38 +663,8 @@ const UserProfilePage: React.FC = () => {
   const profilePic = isArtistProfile ? profile.artistProfile?.profile_picture : profile.employerProfile?.profile_picture;
   const isStudent = isArtistProfile && profile.artistProfile?.is_student === true;
   const cvUrl = isArtistProfile ? profile.artistProfile?.cv_url : null;
-  const completedReviews = reviews.filter(review => review.specific_answers?.dealMade !== 'no');
-// --- NEW helper ---
-const average = (nums: number[]) =>
-  nums.length ? nums.reduce((s, n) => s + n, 0) / nums.length : null;
+  const completedReviews = projectReviews; // --- NEW helper ---
 
-// --- NEW memos ---
-const projectReviews = React.useMemo(
-  () => reviews.filter(r => r.specific_answers?.dealMade !== 'no' && typeof r.overall_rating === 'number'),
-  [reviews]
-);
-
-const interactionReviews = React.useMemo(
-  () => reviews.filter(r => r.specific_answers?.dealMade === 'no'
-    && typeof r.specific_answers?.communicationRating_noDeal === 'number'),
-  [reviews]
-);
-
-const avgProject = React.useMemo(
-  () => average(projectReviews.map(r => r.overall_rating!)),
-  [projectReviews]
-);
-
-const avgInteraction = React.useMemo(
-  () => average(interactionReviews.map(r => r.specific_answers!.communicationRating_noDeal!)),
-  [interactionReviews]
-);
-
-// απλός (όχι ζυγισμένος) grand-avg
-const grandAverage = React.useMemo(() => {
-  const arr = [avgProject, avgInteraction].filter(n => n !== null) as number[];
-  return average(arr);
-}, [avgProject, avgInteraction]);
   return (
     <>
       <Navbar />
