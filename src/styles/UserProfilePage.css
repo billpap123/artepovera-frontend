@@ -470,7 +470,8 @@ h3 {font-size: 19.2px !important;}
 }
 
 /* This styles BOTH the star rating and heart rating containers */
-.average-rating, .average-support-rating {
+.average-rating, .average-support-rating, .average-interaction-rating 
+  {
   display: flex;
   align-items: center;
   gap: 8px;

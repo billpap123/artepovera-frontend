@@ -910,9 +910,13 @@ const UserProfilePage: React.FC = () => {
       {avgInteraction !== null && (
         <div className="average-interaction-rating">
           <DisplayStars rating={avgInteraction} />
-          <span className="rating-value">{avgInteraction.toFixed(1)}</span>
+          <span>
+            {avgInteraction.toFixed(1)} {t('userProfilePage.content.avgRating')}
+            {/* π.χ. “μέση επικοιν.” */}
+          </span>
         </div>
       )}
+
     </div>
     {/* ---------------------------------------------------- */}
 
