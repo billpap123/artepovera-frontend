@@ -751,7 +751,7 @@
       "loadingReviews": "Φόρτωση αξιολογήσεων...",
       "noProjectReviews": "Αυτός ο χρήστης δεν έχει λάβει ακόμη καμία αξιολόγηση έργου.",
       "anonymous": "Ανώνυμος",
-      "interactionFeedback": "Αξιολόγησεις αλληλεπίδρασης ({{count}}) ",
+      "interactionFeedback": "Κριτικές επικοινωνίας ({{count}}) ",
       "loadingFeedback": "Φόρτωση αξιολόγησης...",
       "noInteractionFeedback": "Δεν υπάρχει αξιολόγηση αλληλεπίδρασης ακόμα.",
       "noDealTag": "Χωρίς συμφωνία",
