@@ -160,7 +160,7 @@
     "loadingReviews": "Φόρτωση αξιολογήσεων...",
     "anonymous": "Ανώνυμος",
     "noProjectReviewsReceived": "Δεν έχετε λάβει ακόμη αξιολογήσεις.",
-    "interactionFeedback": "Aξιολογήσεις αλληλεπίδρασης ({{count}}) ",
+    "interactionFeedback": "Κριτικές επικοινωνίας ({{count}}) ",
     "loadingFeedback": "Φόρτωση αξιολόγησης...",
     "reason": "Αιτία:",
     "comment": "Σχόλιο:",
