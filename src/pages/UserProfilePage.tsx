@@ -634,8 +634,37 @@ const UserProfilePage: React.FC = () => {
   const isStudent = isArtistProfile && profile.artistProfile?.is_student === true;
   const cvUrl = isArtistProfile ? profile.artistProfile?.cv_url : null;
   const completedReviews = reviews.filter(review => review.specific_answers?.dealMade !== 'no');
-  const interactionReviews = reviews.filter(review => review.specific_answers?.dealMade === 'no');
+// --- NEW helper ---
+const average = (nums: number[]) =>
+  nums.length ? nums.reduce((s, n) => s + n, 0) / nums.length : null;
 
+// --- NEW memos ---
+const projectReviews = React.useMemo(
+  () => reviews.filter(r => r.specific_answers?.dealMade !== 'no' && typeof r.overall_rating === 'number'),
+  [reviews]
+);
+
+const interactionReviews = React.useMemo(
+  () => reviews.filter(r => r.specific_answers?.dealMade === 'no'
+    && typeof r.specific_answers?.communicationRating_noDeal === 'number'),
+  [reviews]
+);
+
+const avgProject = React.useMemo(
+  () => average(projectReviews.map(r => r.overall_rating!)),
+  [projectReviews]
+);
+
+const avgInteraction = React.useMemo(
+  () => average(interactionReviews.map(r => r.specific_answers!.communicationRating_noDeal!)),
+  [interactionReviews]
+);
+
+// απλός (όχι ζυγισμένος) grand-avg
+const grandAverage = React.useMemo(() => {
+  const arr = [avgProject, avgInteraction].filter(n => n !== null) as number[];
+  return average(arr);
+}, [avgProject, avgInteraction]);
   return (
     <>
       <Navbar />
@@ -651,16 +680,26 @@ const UserProfilePage: React.FC = () => {
                   : t(`userTypes.${profile.user_type}`)
                 }
               </p>
-              <div className="average-rating-display">
-                {reviewsLoading && reviewCount === 0 ? (<span>{t('userProfilePage.status.loadingRating')}</span>)
-                  : reviewCount > 0 && averageRating !== null ? (
-                    <>
-                      <DisplayStars rating={averageRating} />
-                      <span className="rating-value">{averageRating.toFixed(1)}</span>
-                      <span className="review-count">({t('userProfilePage.header.reviews', { count: reviewCount })})</span>
-                    </>
-                  ) : (<span className="no-rating">{t('userProfilePage.status.noReviews')}</span>)}
-              </div>
+              <div className="overall-rating-display">
+  {grandAverage !== null ? (
+    <>
+      <DisplayStars rating={grandAverage} />
+      <span className="rating-value">{grandAverage.toFixed(1)}</span>
+    </>
+  ) : <span className="no-rating">–</span>}
+</div>
+
+<div className="split-averages">
+  <div className="avg-box">
+    <DisplayStars rating={avgProject} />
+    <span>{avgProject?.toFixed(1) ?? '–'} {t('userProfilePage.content.projectAvg')}</span>
+  </div>
+  <div className="avg-box">
+    <DisplayStars rating={avgInteraction} />
+    <span>{avgInteraction?.toFixed(1) ?? '–'} {t('userProfilePage.content.interactionAvg')}</span>
+  </div>
+</div>
+
 
               <div className="profile-actions">
                 {canLoggedInUserInteract && (
