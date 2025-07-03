@@ -13,8 +13,21 @@ import { Upload, Trash2 } from 'lucide-react';
 
 // --- Interfaces and Helper Components ---
 interface Reviewer { user_id: number; fullname: string; profile_picture: string | null; }
-interface ReviewData { review_id: number; overall_rating: number | null; specific_answers?: { dealMade?: 'yes' | 'no'; noDealPrimaryReason?: string; comment?: string; }; created_at: string; reviewer?: Reviewer; }
-const DisplayStars = ({ rating }: { rating: number | null }) => {
+interface ReviewData {
+   review_id: number;
+    overall_rating: number | null;
+    specific_answers?: {
+      dealMade?: 'yes' | 'no';
+    
+     communicationRating_noDeal?: number;
+      noDealPrimaryReason?: string;
+
+      comment?: string;
+    };
+   created_at: string;
+   reviewer?: Reviewer;
+  }
+  const DisplayStars = ({ rating }: { rating: number | null }) => {
   if (rating === null || typeof rating !== 'number' || rating <= 0) return null;
   const fullStars = Math.floor(rating);
   const halfStar = Math.round(rating * 2) % 2 !== 0 ? 1 : 0;
@@ -69,7 +82,37 @@ const ArtistProfile: React.FC = () => {
   const [error, setErrorState] = useState<string | null>(null);
   const [averageRating, setAverageRating] = useState<number | null>(null);
   const [reviewCount, setReviewCount] = useState<number>(0);
+  // --- helper ---
+const average = (nums: number[]) =>
+  nums.length ? nums.reduce((s, n) => s + n, 0) / nums.length : null;
+
+// --- memos που θα δουλέψουν όπως στο UserProfilePage ---
+
   const [reviews, setReviews] = useState<ReviewData[]>([]);
+  const projectReviews   = useMemo(
+    () => reviews.filter(r =>
+      r.specific_answers?.dealMade !== 'no' && typeof r.overall_rating === 'number'),
+    [reviews]
+  );
+  
+  const interactionReviews = useMemo(
+    () => reviews.filter(r =>
+      r.specific_answers?.dealMade === 'no' &&
+      typeof r.specific_answers?.communicationRating_noDeal === 'number'),
+    [reviews]
+  );
+  
+  const avgProject = useMemo(
+    () => average(projectReviews.map(r => r.overall_rating!)),
+    [projectReviews]
+  );
+  
+  const avgInteraction = useMemo(
+    () => average(interactionReviews.map(
+        r => r.specific_answers!.communicationRating_noDeal!
+    )),
+    [interactionReviews]
+  );
   const [reviewsLoading, setReviewsLoading] = useState<boolean>(true);
 
   const navigate = useNavigate();
@@ -342,7 +385,7 @@ const ArtistProfile: React.FC = () => {
   };
 
   const completedReviews = useMemo(() => reviews.filter((r: ReviewData) => r.specific_answers?.dealMade !== 'no' && r.overall_rating), [reviews]);
-  const interactionReviews = useMemo(() => reviews.filter((r: ReviewData) => r.specific_answers?.dealMade === 'no'), [reviews]);
+  //const interactionReviews = useMemo(() => reviews.filter((r: ReviewData) => r.specific_answers?.dealMade === 'no'), [reviews]);
 
   if (loading) { return (<> <Navbar /> <div className="profile-container artist-profile-container loading-profile"> <p>Loading artist profile...</p> </div> </>); }
   
@@ -399,15 +442,21 @@ const ArtistProfile: React.FC = () => {
                  <h3 className="profile-name">{profileUserName || 'Artist Name'}</h3>
                  {isStudent && (<span className="student-badge">{t('artistProfile.studentBadge')}</span>)}
                  <div className="average-rating-display">
-                    {reviewsLoading ? ( <span>{t('artistProfile.loadingRating')}</span> )
-                    : completedReviews.length > 0 && averageRating ? (
-                        <>
-                            <DisplayStars rating={averageRating} />
-                            <span className="rating-value">{averageRating.toFixed(1)}</span>
-                            <span className="review-count">({t('artistProfile.projectReviews', { count: completedReviews.length })})</span>
-                        </>
-                    ) : ( <span className="no-rating">{t('artistProfile.noProjectReviews')}</span> )}
-                </div>
+  {reviewsLoading ? (
+    <span>{t('artistProfile.loadingRating')}</span>
+  ) : projectReviews.length ? (
+    <>
+      <DisplayStars rating={avgProject} />
+      <span className="rating-value">{avgProject!.toFixed(1)}</span>
+      <span className="review-count">
+        ({t('artistProfile.projectReviews', { count: projectReviews.length })})
+      </span>
+    </>
+  ) : (
+    <span className="no-rating">{t('artistProfile.noProjectReviews')}</span>
+  )}
+</div>
+
                  {!isEditing && ( <button className="edit-btn" onClick={handleEditToggle}>{t('artistProfile.editProfile')}</button> )}
             </div>
         </div>
@@ -470,36 +519,65 @@ const ArtistProfile: React.FC = () => {
                      ) : ( <p className="no-reviews">{t('artistProfile.noProjectReviews')}</p> )}
               </div>
 
-              <div className="reviews-section profile-section">
-                <h4>{t('artistProfile.interactionFeedback', { count: interactionReviews.length })}</h4>
-                {reviewsLoading ? (<p>{t('artistProfile.loadingFeedback')}</p>)
-                  : interactionReviews.length > 0 ? (
-                    <div className="reviews-list">
-                      {interactionReviews.map((review: ReviewData) => (
-                        <div key={review.review_id} className="review-item interaction-review">
-                          <div className="review-header">
-                            <img src={getImageUrl(review.reviewer?.profile_picture)} alt={review.reviewer?.fullname || t('artistProfile.anonymous')} className="reviewer-pic" />
-                            <div className="reviewer-info">
-                              <strong>{review.reviewer?.fullname || t('artistProfile.anonymous')}</strong>
-                              <span className="review-date">{formatDate(review.created_at)}</span>
-                            </div>
-                          </div>
-                          <div className="review-comment">
-                            {review.specific_answers?.noDealPrimaryReason && (
-                              <p className="interaction-reason">
-                                <strong>{t('artistProfile.reason')}</strong> {review.specific_answers.noDealPrimaryReason}
-                              </p>
-                            )}
-                            {review.specific_answers?.comment && (
-                              <p><strong>{t('artistProfile.comment')}</strong> "{review.specific_answers.comment}"</p>
-                            )}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (<p className="no-reviews">{t('artistProfile.noInteractionFeedback')}</p>
-                )}
-              </div>
+              {/* ─────────────────────────  ΑΞΙΟΛΟΓΗΣΕΙΣ ΑΛΛΗΛΕΠΙΔΡΑΣΗΣ  ───────────────────────── */}
+<div className="reviews-section profile-section">
+  <div className="section-header">
+    <h4>
+      {t('artistProfile.interactionFeedback', { count: interactionReviews.length })}
+    </h4>
+
+    {/* ▸ μέσος όρος επικοινωνίας – εμφανίζεται μόνο αν υπάρχουν τέτοια reviews */}
+    {interactionReviews.length > 0 && (
+      <div className="average-rating">
+        <DisplayStars rating={avgInteraction} />
+        <span>
+          {avgInteraction!.toFixed(1)} {t('artistProfile.avgCommunication')}
+        </span>
+      </div>
+    )}
+  </div>
+
+  {reviewsLoading ? (
+    <p>{t('artistProfile.loadingFeedback')}</p>
+  ) : interactionReviews.length > 0 ? (
+    <div className="reviews-list">
+      {interactionReviews.map((review: ReviewData) => (
+        <div key={review.review_id} className="review-item interaction-review">
+          <div className="review-header">
+            <img
+              src={getImageUrl(review.reviewer?.profile_picture)}
+              alt={review.reviewer?.fullname || t('artistProfile.anonymous')}
+              className="reviewer-pic"
+            />
+            <div className="reviewer-info">
+              <strong>{review.reviewer?.fullname || t('artistProfile.anonymous')}</strong>
+              <span className="review-date">{formatDate(review.created_at)}</span>
+            </div>
+          </div>
+
+          <div className="review-comment">
+            {review.specific_answers?.noDealPrimaryReason && (
+              <p className="interaction-reason">
+                <strong>{t('artistProfile.reason')}</strong>{' '}
+                {review.specific_answers.noDealPrimaryReason}
+              </p>
+            )}
+
+            {review.specific_answers?.comment && (
+              <p>
+                <strong>{t('artistProfile.comment')}</strong> "
+                {review.specific_answers.comment}"
+              </p>
+            )}
+          </div>
+        </div>
+      ))}
+    </div>
+  ) : (
+    <p className="no-reviews">{t('artistProfile.noInteractionFeedback')}</p>
+  )}
+</div>
+
             </>
 
           ) : (
