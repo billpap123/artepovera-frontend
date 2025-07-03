@@ -82,37 +82,56 @@ const ArtistProfile: React.FC = () => {
   const [error, setErrorState] = useState<string | null>(null);
   const [averageRating, setAverageRating] = useState<number | null>(null);
   const [reviewCount, setReviewCount] = useState<number>(0);
-  // --- helper ---
+  const [reviews, setReviews] = useState<ReviewData[]>([]);    // ✅
+
+  // ─── HELPERS ───────────────────────────────────────────────────────────
 const average = (nums: number[]) =>
   nums.length ? nums.reduce((s, n) => s + n, 0) / nums.length : null;
 
-// --- memos που θα δουλέψουν όπως στο UserProfilePage ---
+// ─── MEMOS ─────────────────────────────────────────────────────────────
+const projectReviews = useMemo(
+  () =>
+    reviews.filter(
+      (r: ReviewData) =>
+        r.specific_answers?.dealMade !== 'no' &&
+        typeof r.overall_rating === 'number'
+    ),
+  [reviews]
+);
 
-  const [reviews, setReviews] = useState<ReviewData[]>([]);
-  const projectReviews   = useMemo(
-    () => reviews.filter(r =>
-      r.specific_answers?.dealMade !== 'no' && typeof r.overall_rating === 'number'),
-    [reviews]
-  );
-  
-  const interactionReviews = useMemo(
-    () => reviews.filter(r =>
-      r.specific_answers?.dealMade === 'no' &&
-      typeof r.specific_answers?.communicationRating_noDeal === 'number'),
-    [reviews]
-  );
-  
-  const avgProject = useMemo(
-    () => average(projectReviews.map(r => r.overall_rating!)),
-    [projectReviews]
-  );
-  
-  const avgInteraction = useMemo(
-    () => average(interactionReviews.map(
+const interactionReviews = useMemo(
+  () =>
+    reviews.filter(
+      (r: ReviewData) =>
+        r.specific_answers?.dealMade === 'no' &&
+        typeof r.specific_answers?.communicationRating_noDeal === 'number'
+    ),
+  [reviews]
+);
+
+const avgProject = useMemo(
+  () => average(projectReviews.map(r => r.overall_rating!)),
+  [projectReviews]
+);
+
+const avgInteraction = useMemo(
+  () =>
+    average(
+      interactionReviews.map(
         r => r.specific_answers!.communicationRating_noDeal!
-    )),
-    [interactionReviews]
+      )
+    ),
+  [interactionReviews]
+);
+
+/* τελικός μέσος όρος από όσους υπολογισμούς υπάρχουν */
+const grandAverage = useMemo(() => {
+  const arr = [avgProject, avgInteraction].filter(
+    (n): n is number => typeof n === 'number'
   );
+  return average(arr);
+}, [avgProject, avgInteraction]);
+  
   const [reviewsLoading, setReviewsLoading] = useState<boolean>(true);
 
   const navigate = useNavigate();
@@ -444,18 +463,32 @@ const average = (nums: number[]) =>
                  <div className="average-rating-display">
   {reviewsLoading ? (
     <span>{t('artistProfile.loadingRating')}</span>
-  ) : projectReviews.length ? (
+  ) : grandAverage !== null ? (
     <>
-      <DisplayStars rating={avgProject} />
-      <span className="rating-value">{avgProject!.toFixed(1)}</span>
-      <span className="review-count">
-        ({t('artistProfile.projectReviews', { count: projectReviews.length })})
-      </span>
+      <DisplayStars rating={grandAverage} />
+      <span className="rating-value">{grandAverage.toFixed(1)}</span>
     </>
   ) : (
-    <span className="no-rating">{t('artistProfile.noProjectReviews')}</span>
+    <span className="no-rating">{t('artistProfile.noReviewsYet')}</span>
   )}
 </div>
+
+{/* δείχνεις και τα δύο επιμέρους */}
+<div className="split-averages">
+  <div className="avg-box">
+    <DisplayStars rating={avgProject} />
+    <span>
+      {avgProject?.toFixed(1) ?? '–'} {t('artistProfile.projectAvg')}
+    </span>
+  </div>
+  <div className="avg-box">
+    <DisplayStars rating={avgInteraction} />
+    <span>
+      {avgInteraction?.toFixed(1) ?? '–'} {t('artistProfile.interactionAvg')}
+    </span>
+  </div>
+</div>
+
 
                  {!isEditing && ( <button className="edit-btn" onClick={handleEditToggle}>{t('artistProfile.editProfile')}</button> )}
             </div>
@@ -521,21 +554,19 @@ const average = (nums: number[]) =>
 
               {/* ─────────────────────────  ΑΞΙΟΛΟΓΗΣΕΙΣ ΑΛΛΗΛΕΠΙΔΡΑΣΗΣ  ───────────────────────── */}
 <div className="reviews-section profile-section">
-  <div className="section-header">
-    <h4>
-      {t('artistProfile.interactionFeedback', { count: interactionReviews.length })}
-    </h4>
+<div className="section-header">
+  <h4>
+    {t('artistProfile.interactionFeedback', { count: interactionReviews.length })}
+  </h4>
 
-    {/* ▸ μέσος όρος επικοινωνίας – εμφανίζεται μόνο αν υπάρχουν τέτοια reviews */}
-    {interactionReviews.length > 0 && (
-      <div className="average-rating">
-        <DisplayStars rating={avgInteraction} />
-        <span>
-          {avgInteraction!.toFixed(1)} {t('artistProfile.avgCommunication')}
-        </span>
-      </div>
-    )}
-  </div>
+  {interactionReviews.length > 0 && (
+    <div className="average-rating">
+      <DisplayStars rating={avgInteraction} />
+      <span>{avgInteraction!.toFixed(1)} {t('artistProfile.interactionAvg')}</span>
+    </div>
+  )}
+</div>
+
 
   {reviewsLoading ? (
     <p>{t('artistProfile.loadingFeedback')}</p>

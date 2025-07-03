@@ -52,7 +52,11 @@
       "deleteAccountButton": "Διαγραφή",
       "deleteConfirmText": "Είστε απολύτως βέβαιοι ότι θέλετε να διαγράψετε τον λογαριασμό σας; Αυτό είναι μη αναστρέψιμο.",
       "deletePasswordPrompt": "Για επιβεβαίωση, παρακαλώ εισάγετε τον τρέχοντα κωδικό σας:",
-      "featureNotImplemented": "Αυτή η λειτουργία δεν έχει υλοποιηθεί πλήρως ακόμα."
+      "featureNotImplemented": "Αυτή η λειτουργία δεν έχει υλοποιηθεί πλήρως ακόμα.",
+      "noReviewsYet": "Δεν υπάρχουν αξιολογήσεις",
+      "projectAvg": "μέση βαθμ.",
+      "interactionAvg": "μέση βαθμ.",
+      "avgCommunication": "μέση βαθμ."
     }
   },
   "chatPage": {

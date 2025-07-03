@@ -106,6 +106,9 @@ body {
   margin-top: 100px; /* Push below the navbar */
   width: 100%;
 }
+.split-averages{display:flex;gap:8px;margin-top:4px}
+.avg-box{display:flex;align-items:center;gap:4px;
+         background:#f7f7f7;padding:3px 8px;border-radius:14px;font-size:.75rem}
 
 /****************************************
  * ARTIST PROFILE CONTAINER

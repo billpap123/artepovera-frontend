@@ -52,7 +52,11 @@
       "deleteAccountButton": "Delete",
       "deleteConfirmText": "Are you absolutely sure you want to delete your account? This is irreversible.",
       "deletePasswordPrompt": "To confirm, please enter your current password:",
-      "featureNotImplemented": "This feature is not yet fully implemented."
+      "featureNotImplemented": "This feature is not yet fully implemented.",
+      "noReviewsYet": "Δεν υπάρχουν αξιολογήσεις",
+      "projectAvg": "avg rating",
+      "interactionAvg": "avg rating",
+      "avgCommunication": "avg rating"
     }
   
   },
