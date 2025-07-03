@@ -180,29 +180,29 @@ const UserProfilePage: React.FC = () => {
   const [reviews, setReviews] = useState<ReviewData[]>([]);
   const average = (nums: number[]) =>
     nums.length ? nums.reduce((s, n) => s + n, 0) / nums.length : null;
-  
+
   // --- NEW memos ---
   const projectReviews = React.useMemo(
     () => reviews.filter(r => r.specific_answers?.dealMade !== 'no' && typeof r.overall_rating === 'number'),
     [reviews]
   );
-  
+
   const interactionReviews = React.useMemo(
     () => reviews.filter(r => r.specific_answers?.dealMade === 'no'
       && typeof r.specific_answers?.communicationRating_noDeal === 'number'),
     [reviews]
   );
-  
+
   const avgProject = React.useMemo(
     () => average(projectReviews.map(r => r.overall_rating!)),
     [projectReviews]
   );
-  
+
   const avgInteraction = React.useMemo(
     () => average(interactionReviews.map(r => r.specific_answers!.communicationRating_noDeal!)),
     [interactionReviews]
   );
-  
+
   // απλός (όχι ζυγισμένος) grand-avg
   const grandAverage = React.useMemo(() => {
     const arr = [avgProject, avgInteraction].filter(n => n !== null) as number[];
@@ -681,24 +681,18 @@ const UserProfilePage: React.FC = () => {
                 }
               </p>
               <div className="overall-rating-display">
-  {grandAverage !== null ? (
-    <>
-      <DisplayStars rating={grandAverage} />
-      <span className="rating-value">{grandAverage.toFixed(1)}</span>
-    </>
-  ) : <span className="no-rating">–</span>}
-</div>
+                {grandAverage !== null ? (
+                  <>
+                    <DisplayStars rating={grandAverage} />
+                    <span className="rating-value">{grandAverage.toFixed(1)}</span>
+                  </>
+                ) : (
+                  <span className="no-rating">–</span>
+                )}
+              </div>
 
-<div className="split-averages">
-  <div className="avg-box">
-    <DisplayStars rating={avgProject} />
-    <span>{avgProject?.toFixed(1) ?? '–'} {t('userProfilePage.content.projectAvg')}</span>
-  </div>
-  <div className="avg-box">
-    <DisplayStars rating={avgInteraction} />
-    <span>{avgInteraction?.toFixed(1) ?? '–'} {t('userProfilePage.content.interactionAvg')}</span>
-  </div>
-</div>
+
+
 
 
               <div className="profile-actions">
