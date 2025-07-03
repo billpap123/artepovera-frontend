@@ -123,18 +123,18 @@ const EmployerProfile: React.FC = () => {
             setProfilePicture(employer.profile_picture || null);
             setNewBio(employer.bio || "");
           } else { console.warn("Logged in user does not have an associated employer profile."); }
-        
-            const profileOwnerUserId = user_id;
-            if (profileOwnerUserId) {
-                const ratingPromise = axios.get(`${BACKEND_URL}/api/users/${profileOwnerUserId}/average-rating`);
-                const reviewsPromise = axios.get(`${BACKEND_URL}/api/users/${profileOwnerUserId}/reviews`);
-                const [ratingResponse, reviewsResponse] = await Promise.all([ratingPromise, reviewsPromise]);
-                if (isMounted) {
-                    setAverageRating(ratingResponse.data.averageRating);
-                    setReviewCount(ratingResponse.data.reviewCount);
-                    setReviews(reviewsResponse.data.reviews || []);
-                }
+
+          const profileOwnerUserId = user_id;
+          if (profileOwnerUserId) {
+            const ratingPromise = axios.get(`${BACKEND_URL}/api/users/${profileOwnerUserId}/average-rating`);
+            const reviewsPromise = axios.get(`${BACKEND_URL}/api/users/${profileOwnerUserId}/reviews`);
+            const [ratingResponse, reviewsResponse] = await Promise.all([ratingPromise, reviewsPromise]);
+            if (isMounted) {
+              setAverageRating(ratingResponse.data.averageRating);
+              setReviewCount(ratingResponse.data.reviewCount);
+              setReviews(reviewsResponse.data.reviews || []);
             }
+          }
         }
       } catch (error) { console.error("Error fetching profile or ratings:", error); }
       finally { if (isMounted) { setLoading(false); setReviewsLoading(false); } }
@@ -214,7 +214,7 @@ const EmployerProfile: React.FC = () => {
       setDeleting(false);
     }
   };
-  
+
   // --- NEW: Account Action Handlers ---
   const handleEmailChange = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -227,7 +227,7 @@ const EmployerProfile: React.FC = () => {
     alert(t('employerProfile.account.featureNotImplemented'));
     setAccountActionLoading(false);
   };
-  
+
   const handlePasswordChange = async (e: React.FormEvent) => {
     e.preventDefault();
     if (newPassword !== confirmNewPassword) {
@@ -235,15 +235,15 @@ const EmployerProfile: React.FC = () => {
       return;
     }
     if (newPassword.length < 6) {
-        alert(t('employerProfile.account.passwordLengthError'));
-        return;
+      alert(t('employerProfile.account.passwordLengthError'));
+      return;
     }
     setAccountActionLoading(true);
     console.log("Attempting to change password.");
     alert(t('employerProfile.account.featureNotImplemented'));
     setAccountActionLoading(false);
   };
-  
+
   const handleDeleteAccount = async () => {
     const confirmationText = t('employerProfile.account.deleteConfirmText');
     if (window.confirm(confirmationText)) {
@@ -326,73 +326,134 @@ const EmployerProfile: React.FC = () => {
               <div className="profile-section">
                 <h4>{t('employerProfile.shortDescription')}</h4>
                 <div className="bio-text markdown-content">
-                <ReactMarkdown
-      remarkPlugins={[remarkGfm]}
-      // --- THIS IS THE FIX ---
-      // We are telling ReactMarkdown how to render all link (<a>) elements.
-      components={{
-        a: (props) => (
-          <a 
-            {...props} // This keeps all original properties like 'href'
-            target="_blank" // This tells the browser to open the link in a new tab
-            rel="noopener noreferrer" // Important for security and performance
-          >
-            {props.children} 
-          </a>
-        )
-      }}
-      // --- END OF FIX ---
-    >
-      {bio || t('artistProfile.noBio')}
-    </ReactMarkdown>
+                  <ReactMarkdown
+                    remarkPlugins={[remarkGfm]}
+                    // --- THIS IS THE FIX ---
+                    // We are telling ReactMarkdown how to render all link (<a>) elements.
+                    components={{
+                      a: (props) => (
+                        <a
+                          {...props} // This keeps all original properties like 'href'
+                          target="_blank" // This tells the browser to open the link in a new tab
+                          rel="noopener noreferrer" // Important for security and performance
+                        >
+                          {props.children}
+                        </a>
+                      )
+                    }}
+                  // --- END OF FIX ---
+                  >
+                    {bio || t('artistProfile.noBio')}
+                  </ReactMarkdown>
 
                 </div>
               </div>
               <div className="reviews-section profile-section">
-                <h4>{t('employerProfile.projectReviews_plural', { count: completedReviews.length })}</h4>
-                {reviewsLoading ? (<p>{t('employerProfile.loadingReviews')}</p>)
-                  : completedReviews.length > 0 ? (
-                    <div className="reviews-list">
-                      {completedReviews.map((review) => (
-                        <div key={review.review_id} className="review-item">
-                          <div className="review-header">
-                            <img src={getImageUrl(review.reviewer?.profile_picture)} alt={review.reviewer?.fullname || t('employerProfile.anonymous')} className="reviewer-pic" />
-                            <div className="reviewer-info">
-                              <strong>{review.reviewer?.fullname || t('employerProfile.anonymous')}</strong>
-                              <span className="review-date">{formatDate(review.created_at)}</span>
-                            </div>
-                            <div className="review-stars"><DisplayStars rating={review.overall_rating} /></div>
-                          </div>
-                          {review.specific_answers?.comment && (<p className="review-comment">"{review.specific_answers.comment}"</p>)}
-                        </div>
-                      ))}
+
+                {/* title + average */}
+                <div className="section-header2">
+                  <h4>
+                    {t('employerProfile.projectReviews_plural', { count: completedReviews.length })}
+                  </h4>
+
+                  {averageRating !== null && completedReviews.length > 0 && (
+                    <div className="average-rating">
+                      <DisplayStars rating={averageRating} />
+                      <span>
+                        {averageRating.toFixed(1)} {t('employerProfile.avgRating')}
+                      </span>
                     </div>
-                  ) : ( <p className="no-reviews">{t('employerProfile.noProjectReviewsReceived')}</p> )}
+                  )}
+                </div>
+
+                {/* list */}
+                {reviewsLoading ? (
+                  <p>{t('employerProfile.loadingReviews')}</p>
+                ) : completedReviews.length > 0 ? (
+                  <div className="reviews-list">
+                    {completedReviews.map((review) => (
+                      <div key={review.review_id} className="review-item">
+                        <div className="review-header">
+                          <img
+                            src={getImageUrl(review.reviewer?.profile_picture)}
+                            alt={review.reviewer?.fullname || t('employerProfile.anonymous')}
+                            className="reviewer-pic"
+                          />
+                          <div className="reviewer-info">
+                            <strong>{review.reviewer?.fullname || t('employerProfile.anonymous')}</strong>
+                            <span className="review-date">{formatDate(review.created_at)}</span>
+                          </div>
+                          <div className="review-stars">
+                            <DisplayStars rating={review.overall_rating} />
+                          </div>
+                        </div>
+
+                        {review.specific_answers?.comment && (
+                          <p className="review-comment">“{review.specific_answers.comment}”</p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="no-reviews">
+                    {t('employerProfile.noProjectReviewsReceived')}
+                  </p>
+                )}
               </div>
 
+
+              {/* ──────────────────────  INTERACTION FEEDBACK  ────────────────────── */}
               <div className="reviews-section profile-section">
-                <h4>{t('employerProfile.interactionFeedback')} ({interactionReviews.length})</h4>
-                 {reviewsLoading ? (<p>{t('employerProfile.loadingFeedback')}</p>)
-                  : interactionReviews.length > 0 ? (
-                    <div className="reviews-list">
-                      {interactionReviews.map((review) => (
-                        <div key={review.review_id} className="review-item interaction-review">
-                          <div className="review-header">
-                            <img src={getImageUrl(review.reviewer?.profile_picture)} alt={review.reviewer?.fullname || t('employerProfile.anonymous')} className="reviewer-pic" />
-                            <div className="reviewer-info">
-                              <strong>{review.reviewer?.fullname || t('employerProfile.anonymous')}</strong>
-                              <span className="review-date">{formatDate(review.created_at)}</span>
-                            </div>
-                          </div>
-                          <div className="review-comment">
-                            {review.specific_answers?.noDealPrimaryReason && ( <p className="interaction-reason"><strong>{t('employerProfile.reason')}</strong> {review.specific_answers.noDealPrimaryReason}</p> )}
-                            {review.specific_answers?.comment && ( <p><strong>{t('employerProfile.comment')}</strong> "{review.specific_answers.comment}"</p> )}
+
+                <div className="section-header2">
+                  <h4>
+                    {t('employerProfile.interactionFeedback')} ({interactionReviews.length})
+                  </h4>
+                </div>
+
+                {reviewsLoading ? (
+                  <p>{t('employerProfile.loadingFeedback')}</p>
+                ) : interactionReviews.length > 0 ? (
+                  <div className="reviews-list">
+                    {interactionReviews.map((review) => (
+                      <div key={review.review_id} className="review-item interaction-review">
+                        <div className="review-header">
+                          <img
+                            src={getImageUrl(review.reviewer?.profile_picture)}
+                            alt={review.reviewer?.fullname || t('employerProfile.anonymous')}
+                            className="reviewer-pic"
+                          />
+                          <div className="reviewer-info">
+                            <strong>{review.reviewer?.fullname || t('employerProfile.anonymous')}</strong>
+                            <span className="review-date">{formatDate(review.created_at)}</span>
                           </div>
                         </div>
-                      ))}
-                    </div>
-                  ) : ( <p className="no-reviews">{t('employerProfile.noInteractionFeedback')}</p> )}
+
+                        <div className="review-comment">
+                          {review.specific_answers?.noDealPrimaryReason && (
+                            <p className="interaction-reason">
+                              <strong>{t('employerProfile.reason')}</strong>{' '}
+                              {review.specific_answers.noDealPrimaryReason}
+                            </p>
+                          )}
+
+                          {review.specific_answers?.comment && (
+                            <p>
+                              <strong>{t('employerProfile.comment')}</strong> “
+                              {review.specific_answers.comment}”
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="no-reviews">
+                    {t('employerProfile.noInteractionFeedback')}
+                  </p>
+                )}
               </div>
+
             </>
           ) : (
             // --- Editing Mode ---
@@ -404,33 +465,33 @@ const EmployerProfile: React.FC = () => {
               <div className="btn-row form-actions">
                 <button className="save-btn submit-btn" onClick={handleSaveChanges} disabled={saving || deleting || accountActionLoading}> {saving ? t('employerProfile.saving') : t('employerProfile.saveChanges')} </button>
               </div>
-              
+
               {/* --- NEW ACCOUNT SETTINGS SECTION --- */}
               <div className="account-settings-section">
-                  <hr className="section-divider" />
-                  <h4>{t('employerProfile.account.title')}</h4>
+                <hr className="section-divider" />
+                <h4>{t('employerProfile.account.title')}</h4>
 
-                  
 
-                  <form onSubmit={handlePasswordChange} className="account-form">
-                      <label className="account-form-label"><FaKey /> {t('employerProfile.account.changePassword')}</label>
-                      <div className="form-field-group">
-                          <input type="password" placeholder={t('employerProfile.account.currentPasswordPlaceholder')} value={currentPasswordForConfirm} onChange={(e) => setCurrentPasswordForConfirm(e.target.value)} required />
-                          <input type="password" placeholder={t('employerProfile.account.newPasswordPlaceholder')} value={newPassword} onChange={(e) => setNewPassword(e.target.value)} required />
-                          <input type="password" placeholder={t('employerProfile.account.confirmNewPasswordPlaceholder')} value={confirmNewPassword} onChange={(e) => setConfirmNewPassword(e.target.value)} required />
-                      </div>
-                      <button type="submit" className="action-btn" disabled={accountActionLoading || saving}>{t('employerProfile.account.updatePasswordButton')}</button>
-                  </form>
-                  
-                  <div className="account-form delete-account-section">
-                      <label className="account-form-label danger-text"><FaExclamationTriangle /> {t('employerProfile.account.dangerZone')}</label>
-                      <p>{t('employerProfile.account.deleteWarning')}</p>
-                      <button type="button" className="action-btn danger" onClick={handleDeleteAccount} disabled={accountActionLoading || saving}>{t('employerProfile.account.deleteAccountButton')}</button>
+
+                <form onSubmit={handlePasswordChange} className="account-form">
+                  <label className="account-form-label"><FaKey /> {t('employerProfile.account.changePassword')}</label>
+                  <div className="form-field-group">
+                    <input type="password" placeholder={t('employerProfile.account.currentPasswordPlaceholder')} value={currentPasswordForConfirm} onChange={(e) => setCurrentPasswordForConfirm(e.target.value)} required />
+                    <input type="password" placeholder={t('employerProfile.account.newPasswordPlaceholder')} value={newPassword} onChange={(e) => setNewPassword(e.target.value)} required />
+                    <input type="password" placeholder={t('employerProfile.account.confirmNewPasswordPlaceholder')} value={confirmNewPassword} onChange={(e) => setConfirmNewPassword(e.target.value)} required />
                   </div>
+                  <button type="submit" className="action-btn" disabled={accountActionLoading || saving}>{t('employerProfile.account.updatePasswordButton')}</button>
+                </form>
+
+                <div className="account-form delete-account-section">
+                  <label className="account-form-label danger-text"><FaExclamationTriangle /> {t('employerProfile.account.dangerZone')}</label>
+                  <p>{t('employerProfile.account.deleteWarning')}</p>
+                  <button type="button" className="action-btn danger" onClick={handleDeleteAccount} disabled={accountActionLoading || saving}>{t('employerProfile.account.deleteAccountButton')}</button>
+                </div>
               </div>
 
               <div className="btn-row form-actions">
-                  <button type="button" className="cancel-btn" onClick={handleEditToggle} disabled={saving || deleting || accountActionLoading}> {t('employerProfile.cancel')} </button>
+                <button type="button" className="cancel-btn" onClick={handleEditToggle} disabled={saving || deleting || accountActionLoading}> {t('employerProfile.cancel')} </button>
               </div>
             </div>
           )}

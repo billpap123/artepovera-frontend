@@ -526,7 +526,7 @@ const ArtistProfile: React.FC = () => {
 <div className="reviews-section profile-section">
 
 {/* header με τίτλο + μέσο όρο έργου */}
-<div className="section-header">
+<div className="section-header2">
   <h4>
     {t('artistProfile.projectReviews', { count: projectReviews.length })}
   </h4>
@@ -582,7 +582,7 @@ const ArtistProfile: React.FC = () => {
 
               {/* ─────────────────────────  ΑΞΙΟΛΟΓΗΣΕΙΣ ΑΛΛΗΛΕΠΙΔΡΑΣΗΣ  ───────────────────────── */}
               <div className="reviews-section profile-section">
-                <div className="section-header">
+                <div className="section-header2">
                   <h4>
                     {t('artistProfile.interactionFeedback', { count: interactionReviews.length })}
                   </h4>
