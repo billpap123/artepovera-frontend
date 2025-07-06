@@ -1,5 +1,10 @@
 {
   "artistProfile": {
+    "noDealReasons": {
+    "budget_mismatch":     "Ασυμφωνία προϋπολογισμού",
+    "timeline_conflict":   "Διαφορετικό χρονοδιάγραμμα",
+    "creative_difference": "Δημιουργικές διαφορές"
+  },
     "avgRating": "μέση βαθμ.",
 
     "noReviewsYet": "Δεν υπάρχουν αξιολογήσεις",
@@ -152,6 +157,11 @@
     }
   },
   "employerProfile": {
+    "noDealReasons": {
+    "budget_mismatch":     "Ασυμφωνία προϋπολογισμού",
+    "timeline_conflict":   "Διαφορετικό χρονοδιάγραμμα",
+    "creative_difference": "Δημιουργικές διαφορές"
+  },
     "avgRating": "μέση βαθμ.",
 
     "noReviewsYet": "Δεν υπάρχουν αξιολογήσεις",
