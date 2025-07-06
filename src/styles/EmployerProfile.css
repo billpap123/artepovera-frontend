@@ -369,6 +369,7 @@ button:hover {
   border-top: 1px solid var(--light-beige); /* Separator line */
   width: 100%; /* Ensure it takes full width */
   text-align: left; /* Align content left */
+  margin-bottom: 40px;
 }
 
 .reviews-section h4 {
