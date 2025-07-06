@@ -880,6 +880,14 @@
       }
     }
     ,
+    
+      "noDealReasons": {
+        "budget_mismatch":     "Budget mismatch",
+        "timeline_conflict":   "Timeline conflict",
+        "creative_difference": "Creative difference"
+      }
+    ,
+    
       "likeButton": {
         "status": {
           "loading": "Loading...",

@@ -975,7 +975,8 @@ const UserProfilePage: React.FC = () => {
 
                             {primaryReason && (
                               <p className="interaction-reason">
-                                <strong>{t('userProfilePage.content.reason')}</strong> {primaryReason}
+                                <strong>{t('userProfilePage.content.reason')}</strong>{' '}
+                                {t(`noDealReasons.${primaryReason}`)}
                               </p>
                             )}
 
