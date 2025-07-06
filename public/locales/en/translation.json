@@ -172,7 +172,7 @@
     "loadingReviews": "Loading reviews...",
     "anonymous": "Anonymous",
     "noProjectReviewsReceived": "You haven't received any reviews yet.",
-    "interactionFeedback": "Interaction feedback",
+    "interactionFeedback": "Interaction feedback ({{count}})",
     "loadingFeedback": "Loading feedback...",
     "reason": "Reason:",
     "comment": "Comment:",

@@ -681,17 +681,17 @@ const UserProfilePage: React.FC = () => {
                 }
               </p>
               <div className="average-rating-display">
-    {reviewsLoading ? (
-      <span>{t('artistProfile.loadingRating')}</span>
-    ) : grandAverage !== null ? (
-      <>
-        <DisplayStars rating={grandAverage} />
-        <span className="rating-value">{grandAverage.toFixed(1)}</span>
-      </>
-    ) : (
-      <span className="no-rating">{t('artistProfile.noReviewsYet')}</span>
-    )}
-  </div>
+                {reviewsLoading ? (
+                  <span>{t('artistProfile.loadingRating')}</span>
+                ) : grandAverage !== null ? (
+                  <>
+                    <DisplayStars rating={grandAverage} />
+                    <span className="rating-value">{grandAverage.toFixed(1)}</span>
+                  </>
+                ) : (
+                  <span className="no-rating">{t('artistProfile.noReviewsYet')}</span>
+                )}
+              </div>
 
 
 
@@ -856,134 +856,146 @@ const UserProfilePage: React.FC = () => {
               </div>
             )}
 
-<div className="reviews-section profile-section">
-  <div className="section-header">
-    <h4>{t('artistProfile.interactionFeedback', { count: interactionReviews.length })}</h4>
+            <div className="reviews-section profile-section">
+              <div className="section-header">
+                {/* σωστός τίτλος + counter */}
+                <h4>
+                  {t('userProfilePage.content.projectReviews', {
+                    count: projectReviews.length
+                  })}
+                </h4>
 
-    {avgInteraction !== null && interactionReviews.length > 0 && (
-      <div className="average-rating">
-        <DisplayStars rating={avgInteraction} />
-        <span>{avgInteraction.toFixed(1)} {t('artistProfile.avgRating')}</span>
-      </div>
-    )}
-  </div>
+                {/* μέσος όρος έργου, αν υπάρχει */}
+                {avgProject !== null && projectReviews.length > 0 && (
+                  <div className="average-rating">
+                    <DisplayStars rating={avgProject} />
+                    <span>
+                      {avgProject.toFixed(1)} {t('userProfilePage.content.avgRating')}
+                    </span>
+                  </div>
+                )}
+              </div>
 
-
+              {/* λίστα ή empty-state */}
               {reviewsLoading ? (
                 <p>{t('userProfilePage.content.loadingReviews')}</p>
-              ) : completedReviews.length > 0 ? (
+              ) : projectReviews.length > 0 ? (
                 <div className="reviews-list">
-                  {completedReviews.map((review) => {
-                    const reviewerProfilePic = review.reviewer?.profile_picture || null;
-                    return (
-                      <div key={review.review_id} className="review-item">
-                        <div className="review-header">
-                          <img
-                            src={getImageUrl(reviewerProfilePic)}
-                            alt={review.reviewer?.fullname || t('userProfilePage.content.anonymous')}
-                            className="reviewer-pic"
-                          />
-                          <div className="reviewer-info">
-                            <strong>{review.reviewer?.fullname || t('userProfilePage.content.anonymous')}</strong>
-                            <span className="review-date">{formatDate(review.created_at)}</span>
-                          </div>
-                          <div className="review-stars"><DisplayStars rating={review.overall_rating} /></div>
+                  {projectReviews.map((review) => (
+                    <div key={review.review_id} className="review-item">
+                      <div className="review-header">
+                        <img
+                          src={getImageUrl(review.reviewer?.profile_picture)}
+                          alt={review.reviewer?.fullname || t('userProfilePage.content.anonymous')}
+                          className="reviewer-pic"
+                        />
+                        <div className="reviewer-info">
+                          <strong>{review.reviewer?.fullname || t('userProfilePage.content.anonymous')}</strong>
+                          <span className="review-date">{formatDate(review.created_at)}</span>
                         </div>
-                        {review.specific_answers?.comment && <p className="review-comment">"{review.specific_answers.comment}"</p>}
+                        <div className="review-stars">
+                          <DisplayStars rating={review.overall_rating} />
+                        </div>
                       </div>
-                    );
-                  })}
+                      {review.specific_answers?.comment && (
+                        <p className="review-comment">“{review.specific_answers.comment}”</p>
+                      )}
+                    </div>
+                  ))}
                 </div>
               ) : (
-                <p className="no-reviews">{t('userProfilePage.content.noProjectReviews')}</p>
+                <p className="no-reviews">
+                  {t('userProfilePage.content.noProjectReviews')}
+                </p>
               )}
             </div>
 
+
             {interactionReviews.length > 0 && (
-  <div className="interaction-feedback-section profile-section-public">
-    {/* ---------- section-header με τον μέσο όρο ---------- */}
-    <div className="section-header">
-      <h4>
-        {t('userProfilePage.content.interactionFeedback', {
-          count: interactionReviews.length
-        })}
-      </h4>
+              <div className="interaction-feedback-section profile-section-public">
+                {/* ---------- section-header με τον μέσο όρο ---------- */}
+                <div className="section-header">
+                  <h4>
+                    {t('userProfilePage.content.interactionFeedback', {
+                      count: interactionReviews.length
+                    })}
+                  </h4>
 
-      {/* Αν υπάρχει τουλάχιστον 1 review με score επικοινωνίας */}
-      {avgInteraction !== null && (
-        <div className="average-interaction-rating">
-          <DisplayStars rating={avgInteraction} />
-          <span>
-            {avgInteraction.toFixed(1)} {t('userProfilePage.content.avgRating')}
-            {/* π.χ. “μέση επικοιν.” */}
-          </span>
-        </div>
-      )}
+                  {/* Αν υπάρχει τουλάχιστον 1 review με score επικοινωνίας */}
+                  {avgInteraction !== null && (
+                    <div className="average-interaction-rating">
+                      <DisplayStars rating={avgInteraction} />
+                      <span>
+                        {avgInteraction.toFixed(1)} {t('userProfilePage.content.avgRating')}
+                        {/* π.χ. “μέση επικοιν.” */}
+                      </span>
+                    </div>
+                  )}
 
-    </div>
-    {/* ---------------------------------------------------- */}
-
-    {reviewsLoading ? (
-      <p>{t('userProfilePage.content.loadingFeedback')}</p>
-    ) : interactionReviews.length > 0 ? (
-      <div className="reviews-list">
-        {interactionReviews.map((review) => {
-          const {
-            noDealPrimaryReason: primaryReason,
-            comment,
-            communicationRating_noDeal: communicationRating
-          } = review.specific_answers ?? {};
-
-          return (
-            <div key={review.review_id} className="review-item interaction-review-item">
-              <div className="review-header">
-                <img
-                  src={getImageUrl(review.reviewer?.profile_picture)}
-                  alt={review.reviewer?.fullname || t('userProfilePage.content.anonymous')}
-                  className="reviewer-pic"
-                />
-                <div className="reviewer-info">
-                  <strong>{review.reviewer?.fullname || t('userProfilePage.content.anonymous')}</strong>
-                  <span className="review-date">{formatDate(review.created_at)}</span>
                 </div>
-                <span className="interaction-tag">
-                  {t('userProfilePage.content.noDealTag')}
-                </span>
-              </div>
+                {/* ---------------------------------------------------- */}
 
-              <div className="review-comment">
-                {communicationRating && (
-                  <div className="interaction-rating">
-                    <strong>
-                      {t('userProfilePage.content.communicationRating', 'Communication Quality')}:
-                    </strong>
-                    <DisplayStars rating={communicationRating} />
+                {reviewsLoading ? (
+                  <p>{t('userProfilePage.content.loadingFeedback')}</p>
+                ) : interactionReviews.length > 0 ? (
+                  <div className="reviews-list">
+                    {interactionReviews.map((review) => {
+                      const {
+                        noDealPrimaryReason: primaryReason,
+                        comment,
+                        communicationRating_noDeal: communicationRating
+                      } = review.specific_answers ?? {};
+
+                      return (
+                        <div key={review.review_id} className="review-item interaction-review-item">
+                          <div className="review-header">
+                            <img
+                              src={getImageUrl(review.reviewer?.profile_picture)}
+                              alt={review.reviewer?.fullname || t('userProfilePage.content.anonymous')}
+                              className="reviewer-pic"
+                            />
+                            <div className="reviewer-info">
+                              <strong>{review.reviewer?.fullname || t('userProfilePage.content.anonymous')}</strong>
+                              <span className="review-date">{formatDate(review.created_at)}</span>
+                            </div>
+                            <span className="interaction-tag">
+                              {t('userProfilePage.content.noDealTag')}
+                            </span>
+                          </div>
+
+                          <div className="review-comment">
+                            {communicationRating && (
+                              <div className="interaction-rating">
+                                <strong>
+                                  {t('userProfilePage.content.communicationRating', 'Communication Quality')}:
+                                </strong>
+                                <DisplayStars rating={communicationRating} />
+                              </div>
+                            )}
+
+                            {primaryReason && (
+                              <p className="interaction-reason">
+                                <strong>{t('userProfilePage.content.reason')}</strong> {primaryReason}
+                              </p>
+                            )}
+
+                            {comment && (
+                              <p>
+                                <strong>{t('userProfilePage.content.comment')}</strong> “{comment}”
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
-                )}
-
-                {primaryReason && (
-                  <p className="interaction-reason">
-                    <strong>{t('userProfilePage.content.reason')}</strong> {primaryReason}
-                  </p>
-                )}
-
-                {comment && (
-                  <p>
-                    <strong>{t('userProfilePage.content.comment')}</strong> “{comment}”
+                ) : (
+                  <p className="no-reviews">
+                    {t('userProfilePage.content.noInteractionFeedback')}
                   </p>
                 )}
               </div>
-            </div>
-          );
-        })}
-      </div>
-    ) : (
-      <p className="no-reviews">
-        {t('userProfilePage.content.noInteractionFeedback')}
-      </p>
-    )}
-  </div>
-)}
+            )}
 
             {isArtistProfile && (
               <div className="artist-comments-section profile-section-public">
