@@ -27,6 +27,15 @@ interface ReviewData {
   created_at: string;
   reviewer?: Reviewer;
 }
+const reasonKeyMap: Record<string, string> = {
+  'Budget Mismatch': 'budget',
+  'Scheduling Conflict': 'scheduling',
+  'Creative Differences': 'creative',
+  'Poor Communication': 'communication',
+  'Chose Another Option': 'direction',
+  Other: 'other'
+};
+
 const DisplayStars = ({ rating }: { rating: number | null }) => {
   if (rating === null || typeof rating !== 'number' || rating <= 0) return null;
   const fullStars = Math.floor(rating);
@@ -523,61 +532,61 @@ const ArtistProfile: React.FC = () => {
               </div>
 
               {/* ─────────────────────────  PROJECT REVIEWS  ───────────────────────── */}
-<div className="reviews-section profile-section">
+              <div className="reviews-section profile-section">
 
-{/* header με τίτλο + μέσο όρο έργου */}
-<div className="section-header2">
-  <h4>
-    {t('artistProfile.projectReviews', { count: projectReviews.length })}
-  </h4>
+                {/* header με τίτλο + μέσο όρο έργου */}
+                <div className="section-header2">
+                  <h4>
+                    {t('artistProfile.projectReviews', { count: projectReviews.length })}
+                  </h4>
 
-  {/* αν υπάρχει τουλάχιστον ένα review έργου */}
-  {avgProject !== null && projectReviews.length > 0 && (
-    <div className="average-rating">
-      <DisplayStars rating={avgProject} />
-      <span>
-        {avgProject.toFixed(1)} {t('artistProfile.avgRating')}
-      </span>
-    </div>
-  )}
-</div>
+                  {/* αν υπάρχει τουλάχιστον ένα review έργου */}
+                  {avgProject !== null && projectReviews.length > 0 && (
+                    <div className="average-rating">
+                      <DisplayStars rating={avgProject} />
+                      <span>
+                        {avgProject.toFixed(1)} {t('artistProfile.avgRating')}
+                      </span>
+                    </div>
+                  )}
+                </div>
 
-{/* λίστα κριτικών */}
-{reviewsLoading ? (
-  <p>Loading…</p>
-) : projectReviews.length > 0 ? (
-  <div className="reviews-list">
-    {projectReviews.map((review: ReviewData) => (
-      <div key={review.review_id} className="review-item">
-        <div className="review-header">
-          <img
-            src={getImageUrl(review.reviewer?.profile_picture)}
-            alt={review.reviewer?.fullname || t('artistProfile.anonymous')}
-            className="reviewer-pic"
-          />
+                {/* λίστα κριτικών */}
+                {reviewsLoading ? (
+                  <p>Loading…</p>
+                ) : projectReviews.length > 0 ? (
+                  <div className="reviews-list">
+                    {projectReviews.map((review: ReviewData) => (
+                      <div key={review.review_id} className="review-item">
+                        <div className="review-header">
+                          <img
+                            src={getImageUrl(review.reviewer?.profile_picture)}
+                            alt={review.reviewer?.fullname || t('artistProfile.anonymous')}
+                            className="reviewer-pic"
+                          />
 
-          <div className="reviewer-info">
-            <strong>{review.reviewer?.fullname || t('artistProfile.anonymous')}</strong>
-            <span className="review-date">{formatDate(review.created_at)}</span>
-          </div>
+                          <div className="reviewer-info">
+                            <strong>{review.reviewer?.fullname || t('artistProfile.anonymous')}</strong>
+                            <span className="review-date">{formatDate(review.created_at)}</span>
+                          </div>
 
-          <div className="review-stars">
-            <DisplayStars rating={review.overall_rating} />
-          </div>
-        </div>
+                          <div className="review-stars">
+                            <DisplayStars rating={review.overall_rating} />
+                          </div>
+                        </div>
 
-        {review.specific_answers?.comment && (
-          <p className="review-comment">
-            “{review.specific_answers.comment}”
-          </p>
-        )}
-      </div>
-    ))}
-  </div>
-) : (
-  <p className="no-reviews">{t('artistProfile.noProjectReviews')}</p>
-)}
-</div>
+                        {review.specific_answers?.comment && (
+                          <p className="review-comment">
+                            “{review.specific_answers.comment}”
+                          </p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="no-reviews">{t('artistProfile.noProjectReviews')}</p>
+                )}
+              </div>
 
 
               {/* ─────────────────────────  ΑΞΙΟΛΟΓΗΣΕΙΣ ΑΛΛΗΛΕΠΙΔΡΑΣΗΣ  ───────────────────────── */}
@@ -618,9 +627,13 @@ const ArtistProfile: React.FC = () => {
                           {review.specific_answers?.noDealPrimaryReason && (
                             <p className="interaction-reason">
                               <strong>{t('artistProfile.reason')}</strong>{' '}
-                              {review.specific_answers.noDealPrimaryReason}
+                              {t(
+                                `ratingForm.noDeal.reasons.${reasonKeyMap[review.specific_answers.noDealPrimaryReason] ?? 'other'
+                                }`
+                              )}
                             </p>
                           )}
+
 
                           {review.specific_answers?.comment && (
                             <p>

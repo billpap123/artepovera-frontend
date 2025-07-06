@@ -64,6 +64,16 @@ const DisplayStars = ({ rating }: { rating: number | null }) => {
     </div>
   );
 };
+// Αγγλική τιμή από DB  ➜  key του i18n JSON
+const reasonKeyMap: Record<string, string> = {
+  'Budget Mismatch': 'budget',
+  'Scheduling Conflict': 'scheduling',
+  'Creative Differences': 'creative',
+  'Poor Communication': 'communication',
+  'Chose Another Option': 'direction',
+  Other: 'other'
+};
+
 
 // --- END Star Display Component ---
 
@@ -397,99 +407,103 @@ const EmployerProfile: React.FC = () => {
                 </div>
               </div>
               {/* ─────────────────────────  PROJECT REVIEWS  ───────────────────────── */}
-<div className="reviews-section profile-section">
-  <div className="section-header2">
-    <h4>{t('employerProfile.projectReviews_plural', { count: projectReviews.length })}</h4>
+              <div className="reviews-section profile-section">
+                <div className="section-header2">
+                  <h4>{t('employerProfile.projectReviews_plural', { count: projectReviews.length })}</h4>
 
-    {avgProject !== null && projectReviews.length > 0 && (
-      <div className="average-rating">
-        <DisplayStars rating={avgProject} />
-        <span>{avgProject.toFixed(1)} {t('employerProfile.avgRating')}</span>
-      </div>
-    )}
-  </div>
+                  {avgProject !== null && projectReviews.length > 0 && (
+                    <div className="average-rating">
+                      <DisplayStars rating={avgProject} />
+                      <span>{avgProject.toFixed(1)} {t('employerProfile.avgRating')}</span>
+                    </div>
+                  )}
+                </div>
 
-  {reviewsLoading ? (
-    <p>{t('employerProfile.loadingReviews')}</p>
-  ) : projectReviews.length > 0 ? (
-    <div className="reviews-list">
-      {projectReviews.map((review) => (
-        <div key={review.review_id} className="review-item">
-          <div className="review-header">
-            <img src={getImageUrl(review.reviewer?.profile_picture)}
-                 alt={review.reviewer?.fullname || t('employerProfile.anonymous')}
-                 className="reviewer-pic" />
-            <div className="reviewer-info">
-              <strong>{review.reviewer?.fullname || t('employerProfile.anonymous')}</strong>
-              <span className="review-date">{formatDate(review.created_at)}</span>
-            </div>
-            <div className="review-stars">
-              <DisplayStars rating={review.overall_rating} />
-            </div>
-          </div>
-          {review.specific_answers?.comment && (
-            <p className="review-comment">“{review.specific_answers.comment}”</p>
-          )}
-        </div>
-      ))}
-    </div>
-  ) : (
-    <p className="no-reviews">{t('employerProfile.noProjectReviewsReceived')}</p>
-  )}
-</div>
+                {reviewsLoading ? (
+                  <p>{t('employerProfile.loadingReviews')}</p>
+                ) : projectReviews.length > 0 ? (
+                  <div className="reviews-list">
+                    {projectReviews.map((review) => (
+                      <div key={review.review_id} className="review-item">
+                        <div className="review-header">
+                          <img src={getImageUrl(review.reviewer?.profile_picture)}
+                            alt={review.reviewer?.fullname || t('employerProfile.anonymous')}
+                            className="reviewer-pic" />
+                          <div className="reviewer-info">
+                            <strong>{review.reviewer?.fullname || t('employerProfile.anonymous')}</strong>
+                            <span className="review-date">{formatDate(review.created_at)}</span>
+                          </div>
+                          <div className="review-stars">
+                            <DisplayStars rating={review.overall_rating} />
+                          </div>
+                        </div>
+                        {review.specific_answers?.comment && (
+                          <p className="review-comment">“{review.specific_answers.comment}”</p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="no-reviews">{t('employerProfile.noProjectReviewsReceived')}</p>
+                )}
+              </div>
 
 
 
-{/* ──────────────────────  INTERACTION FEEDBACK  ────────────────────── */}
-<div className="reviews-section profile-section">
-  <div className="section-header2">
-    <h4>{t('employerProfile.interactionFeedback', { count: interactionReviews.length })}</h4>
+              {/* ──────────────────────  INTERACTION FEEDBACK  ────────────────────── */}
+              <div className="reviews-section profile-section">
+                <div className="section-header2">
+                  <h4>{t('employerProfile.interactionFeedback', { count: interactionReviews.length })}</h4>
 
-    {avgInteraction !== null && interactionReviews.length > 0 && (
-      <div className="average-rating">
-        <DisplayStars rating={avgInteraction} />
-        <span>{avgInteraction.toFixed(1)} {t('employerProfile.interactionAvg')}</span>
-      </div>
-    )}
-  </div>
+                  {avgInteraction !== null && interactionReviews.length > 0 && (
+                    <div className="average-rating">
+                      <DisplayStars rating={avgInteraction} />
+                      <span>{avgInteraction.toFixed(1)} {t('employerProfile.interactionAvg')}</span>
+                    </div>
+                  )}
+                </div>
 
-  {reviewsLoading ? (
-    <p>{t('employerProfile.loadingFeedback')}</p>
-  ) : interactionReviews.length > 0 ? (
-    <div className="reviews-list">
-      {interactionReviews.map((review) => (
-        <div key={review.review_id} className="review-item interaction-review">
-          <div className="review-header">
-            <img src={getImageUrl(review.reviewer?.profile_picture)}
-                 alt={review.reviewer?.fullname || t('employerProfile.anonymous')}
-                 className="reviewer-pic" />
-            <div className="reviewer-info">
-              <strong>{review.reviewer?.fullname || t('employerProfile.anonymous')}</strong>
-              <span className="review-date">{formatDate(review.created_at)}</span>
-            </div>
-          </div>
+                {reviewsLoading ? (
+                  <p>{t('employerProfile.loadingFeedback')}</p>
+                ) : interactionReviews.length > 0 ? (
+                  <div className="reviews-list">
+                    {interactionReviews.map((review) => (
+                      <div key={review.review_id} className="review-item interaction-review">
+                        <div className="review-header">
+                          <img src={getImageUrl(review.reviewer?.profile_picture)}
+                            alt={review.reviewer?.fullname || t('employerProfile.anonymous')}
+                            className="reviewer-pic" />
+                          <div className="reviewer-info">
+                            <strong>{review.reviewer?.fullname || t('employerProfile.anonymous')}</strong>
+                            <span className="review-date">{formatDate(review.created_at)}</span>
+                          </div>
+                        </div>
 
-          <div className="review-comment">
-            {review.specific_answers?.noDealPrimaryReason && (
-              <p className="interaction-reason">
-                <strong>{t('employerProfile.reason')}</strong>{' '}
-                {review.specific_answers.noDealPrimaryReason}
-              </p>
-            )}
-            {review.specific_answers?.comment && (
-              <p>
-                <strong>{t('employerProfile.comment')}</strong> “
-                {review.specific_answers.comment}”
-              </p>
-            )}
-          </div>
-        </div>
-      ))}
-    </div>
-  ) : (
-    <p className="no-reviews">{t('employerProfile.noInteractionFeedback')}</p>
-  )}
-</div>
+                        <div className="review-comment">
+                          {review.specific_answers?.noDealPrimaryReason && (
+                            <p className="interaction-reason">
+                              <strong>{t('employerProfile.reason')}</strong>{' '}
+                              {t(
+                                `ratingForm.noDeal.reasons.${reasonKeyMap[review.specific_answers.noDealPrimaryReason] ?? 'other'
+                                }`
+                              )}
+                            </p>
+                          )}
+
+                          {review.specific_answers?.comment && (
+                            <p>
+                              <strong>{t('employerProfile.comment')}</strong> “
+                              {review.specific_answers.comment}”
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="no-reviews">{t('employerProfile.noInteractionFeedback')}</p>
+                )}
+              </div>
 
             </>
           ) : (

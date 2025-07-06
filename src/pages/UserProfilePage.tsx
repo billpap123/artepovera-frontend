@@ -94,6 +94,15 @@ interface UserProfile {
 
 
 interface CommenterDetails { user_id: number; fullname: string; profile_picture: string | null; user_type?: string; }
+// Αγγλική φράση από DB  ➜  key που υπάρχει στο i18n JSON
+const reasonKeyMap: Record<string, string> = {
+  'Budget Mismatch':        'budget',
+  'Scheduling Conflict':    'scheduling',
+  'Creative Differences':   'creative',
+  'Poor Communication':     'communication',
+  'Chose Another Option':   'direction',
+  Other:                    'other'
+};
 
 
 // --- End Interfaces ---
@@ -973,12 +982,13 @@ const UserProfilePage: React.FC = () => {
                               </div>
                             )}
 
-                            {primaryReason && (
-                              <p className="interaction-reason">
-                                <strong>{t('userProfilePage.content.reason')}</strong>{' '}
-                                {t(`noDealReasons.${primaryReason}`)}
-                              </p>
-                            )}
+{primaryReason && (
+  <p className="interaction-reason">
+    <strong>{t('userProfilePage.content.reason')}</strong>{' '}
+    {t(`ratingForm.noDeal.reasons.${reasonKeyMap[primaryReason] ?? 'other'}`)}
+  </p>
+)}
+
 
                             {comment && (
                               <p>
