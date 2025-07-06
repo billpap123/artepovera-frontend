@@ -367,6 +367,18 @@ h3 {font-size: 19.2px !important;}
 display: flex
 ;
     justify-content: space-between;
+    align-items: center;
+    /* 3. Vertically aligns everything in the middle */
+  
+    flex-wrap: wrap;
+    /* Allows items to wrap on very small screens */
+  
+    gap: 1rem;
+    /* Adds space between items if they wrap */
+  
+    margin-bottom: 1.5rem;
+    /* Adds space below the header */
+  
 }
 .section-header {
 
@@ -973,7 +985,7 @@ display: flex
 /* Style the main title */
 
 .section-header h4 {
-
+ color:#343a40 !important;
   margin: 0;
   /* Remove default margin */
 
