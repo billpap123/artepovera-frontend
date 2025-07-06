@@ -1,4 +1,10 @@
 {
+  "noDealReasons": {
+    "budget_mismatch":     "Ασυμφωνία προϋπολογισμού",
+    "timeline_conflict":   "Διαφορετικό χρονοδιάγραμμα",
+    "creative_difference": "Διαφορετική καλλιτεχνική προσέγγιση"
+  },
+
   "artistProfile": {
     "noDealReasons": {
     "budget_mismatch":     "Ασυμφωνία προϋπολογισμού",
@@ -989,12 +995,7 @@
 
 },
 
-  "noDealReasons": {
-    "budget_mismatch":     "Ασυμφωνία προϋπολογισμού",
-    "timeline_conflict":   "Διαφορετικό χρονοδιάγραμμα",
-    "creative_difference": "Διαφορετική καλλιτεχνική προσέγγιση"
-  },
-
+ 
 "notifications": {
     "newApplication": "Ο/Η {{artistName}} έκανε αίτηση στην αγγελία σας '{{jobTitle}}'. <a>Προβολή προφίλ</a>",
     "newMatch": "Έχετε ένα νέο match με τον/την {{name}}! <a>Ξεκινήστε τη συνομιλία</a>",

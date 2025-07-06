@@ -1,4 +1,10 @@
 {
+  "noDealReasons": {
+        "budget_mismatch":     "Budget mismatch",
+        "timeline_conflict":   "Timeline conflict",
+        "creative_difference": "Creative difference"
+      }
+    ,
   "artistProfile": {
     
     "avgRating": "avg rating",
@@ -882,12 +888,7 @@
     }
     ,
     
-      "noDealReasons": {
-        "budget_mismatch":     "Budget mismatch",
-        "timeline_conflict":   "Timeline conflict",
-        "creative_difference": "Creative difference"
-      }
-    ,
+      
     
       "likeButton": {
         "status": {
