@@ -359,64 +359,66 @@
       "applyNow": "Apply now"
     }
   },
-  "landingPage": {
-    "hero": {
-      "videoError": "Your browser does not support the video tag.",
-      "title": "ARTEPOVERA",
-      "subtitle": "Where imagination meets opportunity.",
-      "description": "Showcase your talents, discover unique gigs, and connect with the creative world—<em>all in one place</em>.",
-      "loginButton": "Log in",
-      "signupButton": "Sign up"
-    },
-    "categories": {
-      "title": "Explore opportunities",
-      "intro": "Find jobs tailored to your craft. connect with employers looking for painters, musicians, performers, and more.",
-      "visuals": {
-        "title": "Visual creators",
-        "description": "Find commissions, gallery showings, illustration gigs, and graphic design projects.",
-        "link": "Browse visual gigs"
+  
+    "landingPage": {
+      "hero": {
+        "videoError": "Your browser does not support the video tag.",
+        "title": "ARTEPOVERA",
+        "subtitle": "Where imagination meets opportunity.",
+        "description": "Showcase your talents, discover unique gigs, and connect with the creative world—<em>all in one place</em>.",
+        "loginButton": "Log in",
+        "signupButton": "Sign up"
       },
-      "music": {
-        "title": "Musicians & composers",
-        "description": "Discover live performance opportunities, scoring jobs, session work, and band openings.",
-        "link": "Find music opps"
+      "categories": {
+        "title": "Explore opportunities",
+        "intro": "Find jobs tailored to your craft. connect with employers looking for painters, musicians, performers, and more.",
+        "visuals": {
+          "title": "Visual creators",
+          "description": "Find commissions, gallery showings, illustration gigs, and graphic design projects.",
+          "link": "Browse visual gigs"
+        },
+        "music": {
+          "title": "Musicians & composers",
+          "description": "Discover live performance opportunities, scoring jobs, session work, and band openings.",
+          "link": "Find music opps"
+        },
+        "acting": {
+          "title": "Actors & performers",
+          "description": "Get cast in your next role. find auditions for theatre, film, voice-over, and live events.",
+          "link": "See casting calls"
+        }
       },
-      "acting": {
-        "title": "Actors & performers",
-        "description": "Get cast in your next role. find auditions for theatre, film, voice-over, and live events.",
-        "link": "See casting calls"
+      "features": {
+        "title": "How it works",
+        "intro": "A platform designed for creative connections and career growth.",
+        "portfolio": {
+          "title": "Build your portfolio",
+          "description": "Showcase your best work with a beautiful, easy-to-manage portfolio."
+        },
+        "find": {
+          "title": "Find opportunities",
+          "description": "Browse relevant job postings and gigs filtered by your artistic discipline."
+        },
+        "connect": {
+          "title": "Connect & collaborate",
+          "description": "Directly message employers and fellow artists to build your network."
+        }
+      },
+      "cta": {
+        "title": "Ready to join the creative revolution?",
+        "intro": "Unlock your full potential—sign up and connect with a vibrant community of artists and employers today.",
+        "button": "Sign up now"
+      },
+      "footer": {
+        "title": "Get in touch",
+        "description": "Have questions or want to learn more? Reach out to us!",
+        "contactEmail": "info@artepovera.com",
+        "privacyPolicy": "Privacy policy",
+        "termsOfService": "Terms of service",
+        "rightsReserved": "© 2025 ARTEPOVERA. All rights reserved."
       }
-    },
-    "features": {
-      "title": "How it works",
-      "intro": "A platform designed for creative connections and career growth.",
-      "portfolio": {
-        "title": "Build your portfolio",
-        "description": "Showcase your best work with a beautiful, easy-to-manage portfolio."
-      },
-      "find": {
-        "title": "Find opportunities",
-        "description": "Browse relevant job postings and gigs filtered by your artistic discipline."
-      },
-      "connect": {
-        "title": "Connect & collaborate",
-        "description": "Directly message employers and fellow artists to build your network."
-      }
-    },
-    "cta": {
-      "title": "Ready to join the creative revolution?",
-      "intro": "Unlock your full potential—sign up and connect with a vibrant community of artists and employers today.",
-      "button": "Sign up now"
-    },
-    "footer": {
-
-          "title": "Get in touch",
-          "description": "Have questions or want to learn more? Reach out to us!",
-          "contactEmail": "info@artepovera.com",
-          "privacyPolicy": "Privacy policy",
-          "termsOfService": "Terms of service",
-          "rightsReserved": "© 2025 ARTEPOVERA. All rights reserved."
-  } },
+    }
+  ,
   "loginPage": {
     "backLink": "Back to main page",
     "title": "Login to your account",
