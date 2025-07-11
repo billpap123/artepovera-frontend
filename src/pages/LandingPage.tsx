@@ -386,10 +386,10 @@ const LandingPage: React.FC = () => {
         </section>
    {/* --- NEW: Footer Section --- */}
    <footer className="landing-footer">
-          <h3>{t('landingPage.categories.acting.footer.title')}</h3>
-          <p>{t('landingPage.categories.acting.footer.description')}</p>
+          <h3>{t('landingPage.footer.title')}</h3>
+          <p>{t('landingPage.footer.description')}</p>
           <div className="landing-footer-contact">
-            <a href="mailto:info@artconnect.com">{t('landingPage.categories.acting.footer.contactEmail')}</a>
+            <a href="mailto:info@artconnect.com">{t('landingPage.footer.contactEmail')}</a>
           </div>
           
         </footer>

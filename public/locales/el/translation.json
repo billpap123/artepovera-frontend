@@ -394,15 +394,8 @@
       "acting": {
         "title": "Ηθοποιοί & ερμηνευτές",
         "description": "Βρείτε τον επόμενο ρόλο σας. βρείτε οντισιόν για θέατρο, κινηματογράφο, εκφωνήσεις και ζωντανές εκδηλώσεις.",
-        "link": "Δείτε οντισιόν",
-        "footer": {
-          "title": "Επικοινωνία",
-          "description": "Για ερωτήσεις ή πληροφορίες επικοινωνήστε μαζί μας!",
-          "contactEmail": "info@artepovera.com",
-          "privacyPolicy": "Privacy policy",
-          "termsOfService": "Terms of service",
-          "rightsReserved": "© 2025 ARTEPOVERA. All rights reserved."
-        }
+        "link": "Δείτε οντισιόν"
+        
       }
     },
     "features": {
@@ -425,7 +418,15 @@
       "title": "Έτοιμοι να γίνετε μέρος της δημιουργικής επανάστασης;",
       "intro": "Απελευθερώστε πλήρως τις δυνατότητές σας—εγγραφείτε και συνδεθείτε με μια ζωντανή κοινότητα καλλιτεχνών και εργοδοτών σήμερα.",
       "button": "Εγγραφείτε τώρα"
-    }
+    },
+    "footer": {
+          "title": "Επικοινωνία",
+          "description": "Για ερωτήσεις ή πληροφορίες επικοινωνήστε μαζί μας!",
+          "contactEmail": "info@artepovera.com",
+          "privacyPolicy": "Privacy policy",
+          "termsOfService": "Terms of service",
+          "rightsReserved": "© 2025 ARTEPOVERA. All rights reserved."
+        }
   },
   "loginPage": {
     "backLink": "Επιστροφή στην αρχική σελίδα",
