@@ -831,7 +831,7 @@
       "artisticViewpoints": "Artistic viewpoints",
       "avgSupport": "avg support",
       "alreadyCommented": "You have already shared your viewpoint on this artist.",
-      "commentFormLabel": "Rate your support for this artist's work*",
+      "commentFormLabel": "Rate this artist's work*",
       "commentFormPlaceholder": "Share your artistic viewpoint on {{name}}'s work...",
       "postViewpoint": "Post viewpoint",
       "posting": "Posting...",
