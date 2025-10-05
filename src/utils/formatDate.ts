@@ -1,36 +1,20 @@
 // src/utils/formatDate.ts
+export const formatDate = (
+  dateString: string | undefined | null,
+  pattern: 'dd/mm/yyyy' | 'yyyy-mm-dd' = 'dd/mm/yyyy',
+  useUTC = false // set true if your backend sends UTC-only dates and you want to avoid TZ shifts
+): string => {
+  if (!dateString) return '—';
+  const d = new Date(dateString);
+  if (isNaN(d.getTime())) return 'Invalid Date';
 
-/**
- * Formats a date string into a more readable format (e.g., "Jun 8, 2025").
- * Gracefully handles null, undefined, or invalid date strings.
- * @param dateString The date string to format (e.g., an ISO string from your backend).
- * @returns A formatted date string like "Jun 8, 2025", or a fallback string like "Date unknown".
- */
-export const formatDate = (dateString: string | undefined | null): string => {
-    // Return a fallback if the dateString is null, undefined, or empty
-    if (!dateString) {
-      return 'Date unknown';
-    }
-  
-    try {
-      const date = new Date(dateString);
-  
-      // An invalid date's time is NaN (Not-a-Number). This is a reliable check.
-      if (isNaN(date.getTime())) {
-        console.warn(`formatDate received an invalid date string: ${dateString}`);
-        return 'Invalid Date';
-      }
-  
-      // If the date is valid, format it and return it.
-      // 'undefined' for locales uses the browser's default locale.
-      return date.toLocaleDateString(undefined, {
-        year: 'numeric',
-        month: 'short', // e.g., "Jun"
-        day: 'numeric',
-      });
-    } catch (e) {
-      // This catch block is a safeguard for any other unexpected errors.
-      console.error("Error parsing date in formatDate function:", dateString, e);
-      return 'Invalid Date';
-    }
-  };
+  const year  = useUTC ? d.getUTCFullYear()  : d.getFullYear();
+  const month = (useUTC ? d.getUTCMonth()    : d.getMonth()) + 1; // 0-based
+  const day   = useUTC ? d.getUTCDate()      : d.getDate();
+
+  const dd = String(day).padStart(2, '0');
+  const mm = String(month).padStart(2, '0');
+  const yyyy = String(year);
+
+  return pattern === 'yyyy-mm-dd' ? `${yyyy}-${mm}-${dd}` : `${dd}/${mm}/${yyyy}`;
+};
